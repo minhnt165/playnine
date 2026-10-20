@@ -1,0 +1,14 @@
+{
+  "name": "playnine",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "echo \"no workspaces yet\"",
+    "assemble": "node scripts/assemble.mjs",
+    "test": "node --test \"scripts/*.test.mjs\"",
+    "e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}
