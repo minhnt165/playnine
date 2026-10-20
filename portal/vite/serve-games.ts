@@ -67,7 +67,16 @@ export function serveGames(repoRoot: string, base = '/playnine/'): Plugin {
         const file = resolveGameFile(req.url ?? '', repoRoot, base)
         if (!file) return next()
         res.setHeader('Content-Type', MIME[path.extname(file).toLowerCase()] ?? 'application/octet-stream')
-        fs.createReadStream(file).pipe(res)
+        const stream = fs.createReadStream(file)
+        // Lỗi đọc file không được làm sập dev server: trả 500 hoặc đóng response.
+        stream.on('error', () => {
+          if (!res.headersSent) {
+            res.statusCode = 500
+            res.removeHeader('Content-Type')
+          }
+          res.end()
+        })
+        stream.pipe(res)
       })
     },
   }

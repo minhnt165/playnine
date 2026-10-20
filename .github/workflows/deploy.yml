@@ -3,16 +3,13 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
+# Quyền tối thiểu cho CI; quyền ghi Pages chỉ cấp cho job deploy.
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 jobs:
   build:
@@ -46,8 +43,18 @@ jobs:
       - run: npm run e2e
 
   deploy:
+    # Không bao giờ deploy từ pull_request.
+    if: github.event_name != 'pull_request'
     needs: [build, e2e]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # Concurrency chỉ ở job deploy để PR không chặn/hủy deploy.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
