@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { CATS, GAMES } from '../games/catalog'
 import type { SudokuData } from '../data/sudoku'
 import type { XqData } from '../data/xiangqi'
@@ -9,9 +9,14 @@ import { readRaw, write } from '../lib/storage'
 import { fmtDuration } from '../lib/time'
 import { Filters, type FilterKey } from './Filters'
 import { GameCard } from './GameCard'
+import { mountPreviews } from '../legacy/previews'
+import { prefersReducedMotion } from './media'
 import { lastPlayedId, ribbonFor } from './ribbon'
 
 const FILTER_KEY = 'game-portal-filter-v1'
+
+// Task 7 sẽ gắn class 'playing' lên body khi mở game; preview tạm dừng lúc đó.
+const isPlaying = () => document.body.classList.contains('playing')
 
 const initialFilter = (): FilterKey => {
   const v = readRaw(FILTER_KEY)
@@ -31,6 +36,11 @@ export function GameGrid({ sd, xq, rec, sums, openIds, now }: Props) {
   const { t, loc } = useI18n()
   const [filter, setFilter] = useState<FilterKey>(initialFilter)
   const lastId = lastPlayedId(rec)
+  const listRef = useRef<HTMLUListElement>(null)
+  const cardKey = GAMES.map((g) => g.id).join()
+
+  // Chỉ gắn lại preview khi tập thẻ đổi (không phải mỗi lần render); dọn khi gỡ.
+  useEffect(() => mountPreviews(listRef.current!, { isPlaying, reduceMotion: prefersReducedMotion() }), [cardKey])
   const notes: Record<string, string> = {
     sudoku: sd.won
       ? t('note.sudokuWins', { n: sd.won }) + (sd.best ? t('note.sudokuBest', { time: fmtDuration(sd.best.time) }) : '')
@@ -50,7 +60,7 @@ export function GameGrid({ sd, xq, rec, sums, openIds, now }: Props) {
           }}
         />
       </div>
-      <ul className="games" id="games">
+      <ul className="games" id="games" ref={listRef}>
         {GAMES.map((g, i) => (
           <GameCard
             key={g.id}
