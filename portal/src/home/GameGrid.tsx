@@ -11,12 +11,10 @@ import { Filters, type FilterKey } from './Filters'
 import { GameCard } from './GameCard'
 import { mountPreviews } from '../legacy/previews'
 import { prefersReducedMotion } from './media'
+import { isPlaying } from '../player/playing'
 import { lastPlayedId, ribbonFor } from './ribbon'
 
 const FILTER_KEY = 'game-portal-filter-v1'
-
-// Task 7 sẽ gắn class 'playing' lên body khi mở game; preview tạm dừng lúc đó.
-const isPlaying = () => document.body.classList.contains('playing')
 
 const initialFilter = (): FilterKey => {
   const v = readRaw(FILTER_KEY)
