@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#f6f2ea">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="2048">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="2048 tiếng Việt: vuốt để ghép các ô cùng số, chạm tới ô 2048. Lưới 3x3, 4x4, 5x5, hoàn tác, thống kê, tự lưu ván chơi.">
+  <title>2048</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <script>
+    // Áp giao diện sáng/tối đã chọn trước khi vẽ trang để tránh nháy màu
+    try {
+      var t = JSON.parse(localStorage.getItem('playnine-2048-settings-v1') || '{}').theme;
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="style.css?v=1.0.0">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-mark" src="icon.svg" alt="" width="34" height="34">
+        <h1 class="logo">2048</h1>
+        <span class="size-badge" id="size-badge" title="Kích thước lưới">4x4</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" id="btn-stats" type="button" aria-label="Thống kê" title="Thống kê">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-settings" type="button" aria-label="Cài đặt" title="Cài đặt">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+        </button>
+        <button class="btn btn-primary btn-new" id="btn-new" type="button" title="Ván mới (N)">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>
+          <span>Ván mới</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="hud">
+      <div class="score-box" id="score-box">
+        <span class="score-label">Điểm</span>
+        <span class="score-value" id="score">0</span>
+      </div>
+      <div class="score-box">
+        <span class="score-label">Cao nhất</span>
+        <span class="score-value" id="best">0</span>
+      </div>
+      <button class="btn btn-undo" id="btn-undo" type="button" title="Hoàn tác (Z)">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+        <span class="undo-text">Hoàn tác</span>
+        <span class="undo-badge" id="undo-left" aria-label="lượt còn lại">3</span>
+      </button>
+    </section>
+
+    <main class="board-area" id="board-area">
+      <div class="board" id="board" tabindex="0" role="application" aria-roledescription="bàn chơi 2048"
+           aria-label="Bàn chơi 2048. Dùng phím mũi tên hoặc W A S D để dồn các ô." aria-describedby="board-desc">
+        <div class="grid" id="grid" aria-hidden="true"></div>
+        <div class="tiles" id="tiles" aria-hidden="true"></div>
+
+        <div class="overlay" id="overlay-win" hidden>
+          <div class="overlay-card">
+            <p class="overlay-title">Bạn đạt 2048!</p>
+            <p class="overlay-sub" id="win-sub">Điểm 0</p>
+            <div class="overlay-actions">
+              <button class="btn btn-ghost" type="button" id="btn-win-new">Ván mới</button>
+              <button class="btn btn-primary" type="button" id="btn-continue">Chơi tiếp</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="overlay" id="overlay-over" hidden>
+          <div class="overlay-card">
+            <p class="overlay-title">Hết nước đi</p>
+            <p class="overlay-sub" id="over-sub">Điểm 0</p>
+            <div class="overlay-actions">
+              <button class="btn btn-ghost" type="button" id="btn-over-undo">Hoàn tác</button>
+              <button class="btn btn-primary" type="button" id="btn-over-new">Ván mới</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <p class="help" id="board-desc">
+      <span class="help-touch">Vuốt trên bàn chơi để dồn các ô. Hai ô cùng số chạm nhau sẽ gộp lại.</span>
+      <span class="help-keys">Phím <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> hoặc <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> để dồn ô · <kbd>Z</kbd> hoàn tác · <kbd>N</kbd> ván mới</span>
+    </p>
+  </div>
+
+  <div class="sr-only" id="announcer" aria-live="polite"></div>
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <!-- Cài đặt -->
+  <div class="modal" id="modal-settings" hidden>
+    <div class="modal-backdrop" data-close="modal-settings"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h2 id="settings-title">Cài đặt</h2>
+      <div class="settings-list">
+        <div class="setting">
+          <span class="setting-name" id="lbl-theme">Giao diện</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="lbl-theme" data-setting="theme">
+            <button type="button" role="radio" data-value="auto">Tự động</button>
+            <button type="button" role="radio" data-value="light">Sáng</button>
+            <button type="button" role="radio" data-value="dark">Tối</button>
+          </div>
+        </div>
+        <div class="setting">
+          <div class="setting-text">
+            <span class="setting-name" id="lbl-size">Kích thước lưới</span>
+            <span class="setting-desc">Đổi kích thước sẽ bắt đầu ván mới. Mỗi kích thước có điểm cao nhất riêng.</span>
+          </div>
+          <div class="segmented" role="radiogroup" aria-labelledby="lbl-size" data-setting="size">
+            <button type="button" role="radio" data-value="3">3x3</button>
+            <button type="button" role="radio" data-value="4">4x4</button>
+            <button type="button" role="radio" data-value="5">5x5</button>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" type="button" data-close="modal-settings">Xong</button>
+      <p class="app-version">2048 · phiên bản <span id="app-version">—</span></p>
+    </div>
+  </div>
+
+  <!-- Thống kê -->
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-backdrop" data-close="modal-stats"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
+      <h2 id="stats-title">Thống kê</h2>
+      <dl class="stat-grid">
+        <div><dt>Ván đã chơi</dt><dd id="st-played">0</dd></div>
+        <div><dt>Lần đạt 2048</dt><dd id="st-won">0</dd></div>
+        <div><dt>Ô lớn nhất</dt><dd id="st-tile">—</dd></div>
+        <div><dt>Điểm cao nhất</dt><dd id="st-best">0</dd></div>
+      </dl>
+      <p class="stats-section">Điểm cao nhất theo kích thước</p>
+      <dl class="best-list" id="st-best-list"></dl>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" id="btn-stats-reset">Đặt lại</button>
+        <button class="btn btn-primary" type="button" data-close="modal-stats">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Xác nhận -->
+  <div class="modal" id="modal-confirm" hidden>
+    <div class="modal-backdrop" data-close="modal-confirm"></div>
+    <div class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+      <h2 id="confirm-title">Bắt đầu ván mới?</h2>
+      <p class="modal-text" id="confirm-text">Ván đang chơi sẽ bị bỏ.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" data-close="modal-confirm">Hủy</button>
+        <button class="btn btn-primary" type="button" id="btn-confirm-ok">Ván mới</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="engine.js?v=1.0.0"></script>
+  <script src="app.js?v=1.0.0"></script>
+</body>
+</html>

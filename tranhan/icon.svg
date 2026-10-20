@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0cd7a"/>
+      <stop offset="1" stop-color="#c9902d"/>
+    </linearGradient>
+    <clipPath id="heart">
+      <path d="M18.2 9h9.2v9.2h9.2V9h9.2v9.2H55v18.4h-9.2v9.2h-9.2V55h-9.2v-9.2h-9.2v-9.2H9V18.2h9.2z"/>
+    </clipPath>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#g)"/>
+  <!-- Lưới 5x5 của tranh ẩn, trái tim đã tô -->
+  <rect x="9" y="9" width="46" height="46" rx="6" fill="#fffdf8"/>
+  <path d="M18.2 9v46M27.4 9v46M36.6 9v46M45.8 9v46M9 18.2h46M9 27.4h46M9 36.6h46M9 45.8h46" stroke="#e2cfa8" stroke-width="1"/>
+  <path d="M18.2 9h9.2v9.2h9.2V9h9.2v9.2H55v18.4h-9.2v9.2h-9.2V55h-9.2v-9.2h-9.2v-9.2H9V18.2h9.2z" fill="#1d1711"/>
+  <path clip-path="url(#heart)" d="M18.2 9v46M27.4 9v46M36.6 9v46M45.8 9v46M9 18.2h46M9 27.4h46M9 36.6h46M9 45.8h46" stroke="#4a3c30" stroke-width="1"/>
+</svg>

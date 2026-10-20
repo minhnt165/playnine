@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b2118"/>
+      <stop offset="1" stop-color="#110d0a"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- 9 bàn nhỏ; bàn giữa sáng màu vàng là bàn đang phải đánh -->
+  <g fill="#3a2e23">
+    <rect x="8" y="8" width="14" height="14" rx="3.5"/>
+    <rect x="25" y="8" width="14" height="14" rx="3.5"/>
+    <rect x="42" y="8" width="14" height="14" rx="3.5"/>
+    <rect x="8" y="25" width="14" height="14" rx="3.5"/>
+    <rect x="42" y="25" width="14" height="14" rx="3.5"/>
+    <rect x="8" y="42" width="14" height="14" rx="3.5"/>
+    <rect x="25" y="42" width="14" height="14" rx="3.5"/>
+    <rect x="42" y="42" width="14" height="14" rx="3.5"/>
+  </g>
+  <rect x="23.5" y="23.5" width="17" height="17" rx="4.5" fill="#e0b964"/>
+  <!-- X đỏ ở góc trên trái, O vàng ở góc dưới phải -->
+  <path d="M11.5 11.5l7 7M18.5 11.5l-7 7" stroke="#e5534b" stroke-width="3.2" stroke-linecap="round"/>
+  <circle cx="49" cy="49" r="4.2" fill="none" stroke="#e0b964" stroke-width="3"/>
+  <path d="M28 28l8 8M36 28l-8 8" stroke="#b3261e" stroke-width="3.4" stroke-linecap="round"/>
+</svg>

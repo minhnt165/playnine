@@ -1,0 +1,642 @@
+/* =====================================================================
+ * 2048 - Logic giao diện (cần engine.js nạp trước)
+ *   - Render theo id ô: ô trượt bằng transform, ô gộp / ô mới có hiệu ứng nảy
+ *   - Bàn phím (mũi tên, WASD), vuốt (pointer events)
+ *   - Lưu ván, cài đặt, thống kê vào localStorage; ghi tóm tắt cho cổng PlayNine
+ * ===================================================================== */
+(function () {
+  'use strict';
+
+  const APP_VERSION = '1.0.0';
+  const G = window.Game2048;
+
+  // Mọi khóa localStorage đều có tiền tố playnine-2048-
+  const KEYS = {
+    settings: 'playnine-2048-settings-v1',
+    game: 'playnine-2048-game-v1',
+    stats: 'playnine-2048-stats-v1',
+    summary: 'playnine-2048-summary-v1',
+  };
+  const SWIPE_MIN = 24; // px, quãng vuốt tối thiểu
+  const SLIDE_MS = 110; // khớp với --slide trong style.css
+  const THEMES = ['auto', 'light', 'dark'];
+
+  const $ = (id) => document.getElementById(id);
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const slideMs = () => (reduceMotion.matches ? 0 : SLIDE_MS);
+  const fmt = (n) => Number(n || 0).toLocaleString('vi-VN');
+
+  /* ---------------- localStorage (mọi truy cập đều bọc try/catch) ---------------- */
+  function readJSON(key) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  function writeJSON(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {}
+  }
+
+  /* ---------------- Cài đặt ---------------- */
+  function loadSettings() {
+    const s = readJSON(KEYS.settings) || {};
+    return {
+      theme: THEMES.includes(s.theme) ? s.theme : 'auto',
+      size: G.SIZES.includes(s.size) ? s.size : G.DEFAULT_SIZE,
+    };
+  }
+  const settings = loadSettings();
+  const saveSettings = () => writeJSON(KEYS.settings, settings);
+
+  function applyTheme() {
+    const root = document.documentElement;
+    if (settings.theme === 'auto') root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', settings.theme);
+    const meta = $('theme-color');
+    if (meta) meta.content = getComputedStyle(root).getPropertyValue('--bg').trim() || '#f6f2ea';
+  }
+
+  /* ---------------- Thống kê ---------------- */
+  function emptyStats() {
+    return { played: 0, won: 0, bestTile: 0, best: { 3: 0, 4: 0, 5: 0 } };
+  }
+  function loadStats() {
+    const s = readJSON(KEYS.stats);
+    const out = emptyStats();
+    if (!s || typeof s !== 'object') return out;
+    const int = (v) => (Number.isInteger(v) && v >= 0 ? v : 0);
+    out.played = int(s.played);
+    out.won = int(s.won);
+    out.bestTile = int(s.bestTile);
+    if (s.best && typeof s.best === 'object') G.SIZES.forEach((k) => (out.best[k] = int(s.best[k])));
+    return out;
+  }
+  let stats = loadStats();
+  const saveStats = () => writeJSON(KEYS.stats, stats);
+  const bestOverall = () => Math.max(0, ...G.SIZES.map((k) => stats.best[k]));
+
+  /* ---------------- Ván đang chơi ---------------- */
+  // counted: ván này đã được tính vào "ván đã chơi" chưa (tính khi đi nước đầu tiên)
+  let game = null;
+  let counted = false;
+
+  function loadGame() {
+    const saved = readJSON(KEYS.game);
+    const g = saved && G.restore(saved.game);
+    if (!g) return false;
+    game = g;
+    counted = saved.counted === true;
+    return true;
+  }
+  const saveGame = () => writeJSON(KEYS.game, { game, counted });
+
+  /** Tóm tắt cho thẻ game ở cổng PlayNine. */
+  function writeSummary() {
+    const best = bestOverall();
+    const list = [];
+    if (best > 0) list.push({ value: fmt(best), label: 'Điểm cao nhất' });
+    if (stats.bestTile > 0) list.push({ value: String(stats.bestTile), label: 'Ô lớn nhất' });
+    if (stats.won > 0) list.push({ value: fmt(stats.won), label: 'Lần đạt 2048' });
+
+    let note = 'Vuốt để ghép các ô cùng số, chạm tới ô 2048';
+    if (best > 0) note = 'Điểm cao nhất ' + fmt(best) + ' · ô lớn nhất ' + stats.bestTile;
+
+    let resume = null;
+    if (game && game.moves > 0 && !game.over) {
+      const sizeTxt = game.size !== G.DEFAULT_SIZE ? game.size + 'x' + game.size + ' · ' : '';
+      resume = {
+        title: 'Tiếp tục 2048',
+        detail: sizeTxt + 'Điểm ' + fmt(game.score) + ' · ô lớn nhất ' + G.maxTile(game),
+        pct: null,
+      };
+    }
+    writeJSON(KEYS.summary, {
+      v: 1,
+      updatedAt: Date.now(),
+      played: stats.played,
+      won: stats.won,
+      note,
+      stats: list,
+      resume,
+      daily: null,
+    });
+  }
+
+  function persist() {
+    saveGame();
+    saveStats();
+    writeSummary();
+  }
+
+  /* ---------------- DOM ---------------- */
+  const boardEl = $('board');
+  const gridEl = $('grid');
+  const tilesEl = $('tiles');
+  const scoreEl = $('score');
+  const scoreBox = $('score-box');
+  const bestEl = $('best');
+  const undoBtn = $('btn-undo');
+  const undoLeftEl = $('undo-left');
+  const overlayWin = $('overlay-win');
+  const overlayOver = $('overlay-over');
+
+  /* ---------------- Render theo id ô ---------------- */
+  const tileEls = new Map(); // id -> phần tử .tile
+  let leaving = []; // phần tử ô bị gộp, gỡ sau khi trượt xong
+  let leaveTimer = 0;
+
+  function digitsClass(v) {
+    const d = String(v).length;
+    return d >= 3 ? 'd' + Math.min(d, 6) : '';
+  }
+
+  function placeTile(el, idx) {
+    el.style.setProperty('--r', Math.floor(idx / game.size));
+    el.style.setProperty('--c', idx % game.size);
+  }
+
+  function createTile(tile, idx, kind) {
+    const el = document.createElement('div');
+    el.className = 'tile ' + (tile.v <= G.WIN_VALUE ? 'v' + tile.v : 'vbig');
+    const dc = digitsClass(tile.v);
+    if (dc) el.classList.add(dc);
+    if (kind) el.classList.add(kind);
+    const inner = document.createElement('div');
+    inner.className = 'tile-inner';
+    inner.textContent = tile.v;
+    el.appendChild(inner);
+    placeTile(el, idx);
+    tilesEl.appendChild(el);
+    tileEls.set(tile.id, el);
+    return el;
+  }
+
+  function flushLeaving() {
+    clearTimeout(leaveTimer);
+    leaving.forEach((el) => el.remove());
+    leaving = [];
+  }
+
+  /** Dựng lại nền lưới khi đổi kích thước. */
+  function buildGrid() {
+    boardEl.dataset.n = game.size;
+    gridEl.textContent = '';
+    for (let i = 0; i < game.size * game.size; i++) gridEl.appendChild(document.createElement('span'));
+    flushLeaving();
+    tilesEl.textContent = '';
+    tileEls.clear();
+  }
+
+  /**
+   * Đồng bộ phần tử với state: ô có sẵn thì trượt tới chỗ mới, ô thiếu thì tạo,
+   * ô thừa thì gỡ. Dùng khi tải trang, ván mới, hoàn tác.
+   */
+  function reconcile(kindForNew) {
+    flushLeaving();
+    const alive = new Set();
+    game.cells.forEach((t, i) => {
+      if (!t) return;
+      alive.add(t.id);
+      const el = tileEls.get(t.id);
+      if (el) {
+        el.classList.remove('new', 'merged', 'restored');
+        placeTile(el, i);
+      } else {
+        createTile(t, i, kindForNew);
+      }
+    });
+    tileEls.forEach((el, id) => {
+      if (!alive.has(id)) {
+        el.remove();
+        tileEls.delete(id);
+      }
+    });
+  }
+
+  /** Hiệu ứng cho một nước đi theo kết quả engine trả về. */
+  function animateMove(res) {
+    flushLeaving();
+    // Bỏ hiệu ứng nảy cũ để ô trượt không bị nảy lại
+    tileEls.forEach((el) => el.classList.remove('new', 'merged', 'restored'));
+    for (const s of res.slides) {
+      const el = tileEls.get(s.id);
+      if (el) placeTile(el, s.to);
+    }
+    for (const m of res.merges) {
+      for (const id of m.from) {
+        const el = tileEls.get(id);
+        tileEls.delete(id);
+        if (el) {
+          el.classList.add('leaving');
+          leaving.push(el);
+        }
+      }
+      createTile({ id: m.id, v: m.v }, m.at, 'merged');
+    }
+    if (res.spawned) createTile(res.spawned, res.spawned.at, 'new');
+    if (leaving.length) leaveTimer = setTimeout(flushLeaving, slideMs() + 20);
+  }
+
+  /* ---------------- HUD ---------------- */
+  function updateHud() {
+    scoreEl.textContent = fmt(game.score);
+    bestEl.textContent = fmt(stats.best[game.size]);
+    undoLeftEl.textContent = game.undoLeft;
+    const can = G.canUndo(game);
+    undoBtn.disabled = !can;
+    undoBtn.setAttribute(
+      'aria-label',
+      'Hoàn tác, còn ' + game.undoLeft + ' lượt' + (can ? '' : game.undoLeft ? ', chưa có nước để hoàn tác' : '')
+    );
+    $('size-badge').textContent = game.size + 'x' + game.size;
+    $('btn-over-undo').hidden = !can;
+  }
+
+  function floatScore(n) {
+    if (!n || reduceMotion.matches) return;
+    const el = document.createElement('span');
+    el.className = 'score-float';
+    el.textContent = '+' + fmt(n);
+    el.setAttribute('aria-hidden', 'true');
+    scoreBox.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+    setTimeout(() => el.remove(), 1200);
+  }
+
+  function announce(text) {
+    const el = $('announcer');
+    el.textContent = '';
+    setTimeout(() => (el.textContent = text), 30);
+  }
+
+  let toastTimer = 0;
+  function toast(text) {
+    const el = $('toast');
+    el.textContent = text;
+    el.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => (el.hidden = true), 1800);
+  }
+
+  /* ---------------- Lớp phủ thắng / thua ---------------- */
+  function syncOverlays(focus) {
+    const showWin = game.won && !game.keepPlaying && !game.over;
+    const showOver = game.over;
+    overlayWin.hidden = !showWin;
+    overlayOver.hidden = !showOver;
+    if (showWin) $('win-sub').textContent = 'Điểm ' + fmt(game.score) + ' · ' + game.moves + ' nước';
+    if (showOver) $('over-sub').textContent = 'Điểm ' + fmt(game.score) + ' · ô lớn nhất ' + G.maxTile(game);
+    if (focus) {
+      if (showWin) $('btn-continue').focus();
+      else if (showOver) (G.canUndo(game) ? $('btn-over-undo') : $('btn-over-new')).focus();
+    }
+  }
+  const overlayShown = () => !overlayWin.hidden || !overlayOver.hidden;
+
+  /* ---------------- Luồng chơi ---------------- */
+  function startNewGame(size) {
+    game = G.newGame(size || settings.size);
+    counted = false;
+    buildGrid();
+    reconcile('new');
+    updateHud();
+    syncOverlays(false);
+    persist();
+  }
+
+  function doMove(dir) {
+    if (!game || modalOpen() || overlayShown()) return;
+    const res = G.move(game, dir);
+    if (!res.moved) return;
+    game = res.state;
+
+    if (!counted) {
+      counted = true;
+      stats.played++;
+    }
+    if (game.score > stats.best[game.size]) stats.best[game.size] = game.score;
+    const top = G.maxTile(game);
+    if (top > stats.bestTile) stats.bestTile = top;
+    if (res.reached) stats.won++;
+
+    animateMove(res);
+    floatScore(res.gained);
+    updateHud();
+    if (res.reached || game.over) {
+      syncOverlays(true);
+      announce(game.over ? 'Hết nước đi. Điểm ' + fmt(game.score) : 'Bạn đã đạt ô 2048!');
+    }
+    persist();
+  }
+
+  function doUndo() {
+    if (!game || modalOpen()) return;
+    const prev = G.undo(game);
+    if (!prev) {
+      toast(game.undoLeft ? 'Chưa có nước để hoàn tác' : 'Đã hết lượt hoàn tác');
+      return;
+    }
+    game = prev;
+    reconcile('restored');
+    updateHud();
+    syncOverlays(false);
+    announce('Đã hoàn tác. Còn ' + game.undoLeft + ' lượt hoàn tác');
+    if (document.activeElement && document.activeElement.closest('.overlay')) boardEl.focus();
+    persist();
+  }
+
+  function doContinue() {
+    game = G.continuePlaying(game);
+    syncOverlays(false);
+    boardEl.focus();
+    persist();
+  }
+
+  /** Ván mới: hỏi lại nếu đang dở ván. size khác size hiện tại thì đổi lưới. */
+  function requestNewGame(size) {
+    const target = size || settings.size;
+    const inProgress = game && game.moves > 0 && !game.over;
+    const go = () => {
+      if (target !== settings.size) {
+        settings.size = target;
+        saveSettings();
+      }
+      closeModal();
+      startNewGame(target);
+      syncSegmented();
+      boardEl.focus();
+    };
+    if (!inProgress) {
+      go();
+      return;
+    }
+    $('confirm-title').textContent = target !== game.size ? 'Đổi sang lưới ' + target + 'x' + target + '?' : 'Bắt đầu ván mới?';
+    $('confirm-text').textContent =
+      'Ván đang chơi (điểm ' + fmt(game.score) + ') sẽ bị bỏ và bắt đầu ván mới ' + target + 'x' + target + '.';
+    confirmAction = go;
+    openModal('modal-confirm', $('btn-confirm-ok'));
+  }
+
+  /* ---------------- Modal ---------------- */
+  let openId = null;
+  let returnFocus = null;
+  let confirmAction = null;
+  const modalOpen = () => openId !== null;
+
+  function openModal(id, focusEl) {
+    if (openId && openId !== id) $(openId).hidden = true;
+    else returnFocus = document.activeElement;
+    openId = id;
+    const m = $(id);
+    m.hidden = false;
+    // Mặc định focus vào khung hộp thoại (không vào nút "Đặt lại" để tránh bấm nhầm bằng Enter)
+    const card = m.querySelector('.modal-card');
+    card.tabIndex = -1;
+    (focusEl || card).focus();
+  }
+
+  function closeModal() {
+    if (!openId) return;
+    $(openId).hidden = true;
+    openId = null;
+    if (returnFocus && document.body.contains(returnFocus) && !returnFocus.closest('[hidden]')) returnFocus.focus();
+    else boardEl.focus();
+    returnFocus = null;
+  }
+
+  function trapFocus(e) {
+    const items = Array.from($(openId).querySelectorAll('.modal-card button:not([disabled])')).filter(
+      (b) => b.tabIndex >= 0
+    );
+    if (!items.length) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (!items.includes(document.activeElement)) {
+      e.preventDefault();
+      (e.shiftKey ? last : first).focus();
+    } else if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
+  document.addEventListener('click', (e) => {
+    const closer = e.target.closest('[data-close]');
+    if (closer) closeModal();
+  });
+
+  /* ---------------- Cài đặt (nút chọn dạng segmented) ---------------- */
+  function syncSegmented() {
+    document.querySelectorAll('.segmented').forEach((group) => {
+      const cur = String(settings[group.dataset.setting]);
+      group.querySelectorAll('button').forEach((b) => {
+        const on = b.dataset.value === cur;
+        b.setAttribute('aria-checked', on ? 'true' : 'false');
+        b.tabIndex = on ? 0 : -1;
+      });
+    });
+  }
+
+  function chooseSetting(key, value) {
+    if (key === 'theme') {
+      settings.theme = value;
+      saveSettings();
+      applyTheme();
+      syncSegmented();
+    } else if (key === 'size') {
+      const size = Number(value);
+      if (size === game.size) {
+        settings.size = size;
+        saveSettings();
+        syncSegmented();
+        return;
+      }
+      requestNewGame(size);
+    }
+  }
+
+  document.querySelectorAll('.segmented').forEach((group) => {
+    const key = group.dataset.setting;
+    group.addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-value]');
+      if (b) chooseSetting(key, b.dataset.value);
+    });
+    // Phím mũi tên di chuyển trong nhóm radio
+    group.addEventListener('keydown', (e) => {
+      if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const btns = Array.from(group.querySelectorAll('button'));
+      const i = btns.indexOf(document.activeElement);
+      const step = e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 1;
+      const next = btns[(i + step + btns.length) % btns.length];
+      next.focus();
+      if (key === 'theme') chooseSetting(key, next.dataset.value);
+    });
+  });
+
+  /* ---------------- Thống kê (modal) ---------------- */
+  function renderStats() {
+    $('st-played').textContent = fmt(stats.played);
+    $('st-won').textContent = fmt(stats.won);
+    $('st-tile').textContent = stats.bestTile ? String(stats.bestTile) : '—';
+    $('st-best').textContent = fmt(bestOverall());
+    const list = $('st-best-list');
+    list.textContent = '';
+    G.SIZES.forEach((k) => {
+      const row = document.createElement('div');
+      const dt = document.createElement('dt');
+      dt.textContent = 'Lưới ' + k + 'x' + k;
+      if (game && game.size === k) {
+        const tag = document.createElement('small');
+        tag.textContent = 'đang chơi';
+        dt.appendChild(tag);
+      }
+      const dd = document.createElement('dd');
+      dd.textContent = stats.best[k] ? fmt(stats.best[k]) : '—';
+      row.append(dt, dd);
+      list.appendChild(row);
+    });
+  }
+
+  let resetArmed = false;
+  let resetTimer = 0;
+  const resetBtn = $('btn-stats-reset');
+  function disarmReset() {
+    resetArmed = false;
+    clearTimeout(resetTimer);
+    resetBtn.textContent = 'Đặt lại';
+    resetBtn.classList.remove('btn-danger');
+  }
+  resetBtn.addEventListener('click', () => {
+    if (!resetArmed) {
+      // Bấm hai lần để tránh xóa nhầm
+      resetArmed = true;
+      resetBtn.textContent = 'Bấm lần nữa để xóa';
+      resetBtn.classList.add('btn-danger');
+      resetTimer = setTimeout(disarmReset, 3500);
+      return;
+    }
+    disarmReset();
+    stats = emptyStats();
+    counted = false; // ván đang dở sẽ được tính lại khi đi nước tiếp theo
+    persist();
+    renderStats();
+    updateHud();
+    toast('Đã đặt lại thống kê');
+  });
+
+  /* ---------------- Nút bấm ---------------- */
+  $('btn-new').addEventListener('click', () => requestNewGame());
+  $('btn-undo').addEventListener('click', doUndo);
+  $('btn-over-undo').addEventListener('click', doUndo);
+  $('btn-over-new').addEventListener('click', () => requestNewGame());
+  $('btn-win-new').addEventListener('click', () => requestNewGame());
+  $('btn-continue').addEventListener('click', doContinue);
+  $('btn-confirm-ok').addEventListener('click', () => {
+    const fn = confirmAction;
+    confirmAction = null;
+    if (fn) fn();
+    else closeModal();
+  });
+  $('btn-settings').addEventListener('click', () => {
+    syncSegmented();
+    openModal('modal-settings');
+  });
+  $('btn-stats').addEventListener('click', () => {
+    disarmReset();
+    renderStats();
+    openModal('modal-stats');
+  });
+
+  /* ---------------- Bàn phím ---------------- */
+  const KEY_DIRS = {
+    ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',
+    w: 'up', s: 'down', a: 'left', d: 'right',
+    W: 'up', S: 'down', A: 'left', D: 'right',
+  };
+
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (modalOpen()) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeModal();
+      } else if (e.key === 'Tab') {
+        trapFocus(e);
+      }
+      return;
+    }
+    const dir = KEY_DIRS[e.key];
+    if (dir) {
+      e.preventDefault();
+      doMove(dir);
+      return;
+    }
+    if (e.repeat) return;
+    if (e.key === 'z' || e.key === 'Z' || e.key === 'u' || e.key === 'U') doUndo();
+    else if (e.key === 'n' || e.key === 'N') requestNewGame();
+  });
+
+  /* ---------------- Vuốt (pointer events) ---------------- */
+  const pointers = new Set();
+  let swipe = null;
+
+  boardEl.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('.overlay')) return; // để nút trên lớp phủ bấm bình thường
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    pointers.add(e.pointerId);
+    // Hai ngón trở lên: bỏ qua cử chỉ
+    swipe = pointers.size === 1 ? { id: e.pointerId, x: e.clientX, y: e.clientY } : null;
+  });
+
+  function endPointer(e, cancelled) {
+    pointers.delete(e.pointerId);
+    if (!swipe || swipe.id !== e.pointerId) return;
+    const dx = e.clientX - swipe.x;
+    const dy = e.clientY - swipe.y;
+    swipe = null;
+    if (cancelled) return;
+    const ax = Math.abs(dx);
+    const ay = Math.abs(dy);
+    if (Math.max(ax, ay) < SWIPE_MIN) return;
+    doMove(ax > ay ? (dx > 0 ? 'right' : 'left') : dy > 0 ? 'down' : 'up');
+  }
+  window.addEventListener('pointerup', (e) => endPointer(e, false));
+  window.addEventListener('pointercancel', (e) => endPointer(e, true));
+  // Chặn cuộn trang bằng cảm ứng khi vuốt trên bàn chơi (dự phòng cho trình duyệt cũ)
+  boardEl.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+
+  /* ---------------- Lưu khi rời trang ---------------- */
+  window.addEventListener('pagehide', persist);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') persist();
+  });
+  const onSchemeChange = () => {
+    if (settings.theme === 'auto') applyTheme();
+  };
+  const schemeMQ = window.matchMedia('(prefers-color-scheme: dark)');
+  if (schemeMQ.addEventListener) schemeMQ.addEventListener('change', onSchemeChange);
+
+  /* ---------------- Khởi động ---------------- */
+  $('app-version').textContent = APP_VERSION;
+  applyTheme();
+  if (loadGame()) {
+    settings.size = game.size; // kích thước theo ván đang dở
+    buildGrid();
+    reconcile('');
+    updateHud();
+    syncOverlays(false);
+    persist();
+  } else {
+    startNewGame(settings.size);
+  }
+  syncSegmented();
+})();

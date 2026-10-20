@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b2118"/>
+      <stop offset="1" stop-color="#110d0a"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e0b964"/>
+      <stop offset="1" stop-color="#b07d1f"/>
+    </linearGradient>
+    <radialGradient id="quan" cx="0.35" cy="0.3" r="0.75">
+      <stop offset="0" stop-color="#f6dcaa"/>
+      <stop offset="0.35" stop-color="#c0703a"/>
+      <stop offset="1" stop-color="#5a2410"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Bàn gỗ: hai ô quan bán nguyệt hai đầu, hai hàng ô dân ở giữa -->
+  <path d="M19 16h26a16 16 0 0 1 0 32H19a16 16 0 0 1 0-32z" fill="url(#wood)"/>
+  <g fill="#6d4512">
+    <path d="M19 19.5v25a12.5 12.5 0 0 1 0-25z"/>
+    <path d="M45 19.5v25a12.5 12.5 0 0 0 0-25z"/>
+    <rect x="21" y="19.5" width="10" height="11.5" rx="2.4"/>
+    <rect x="33" y="19.5" width="10" height="11.5" rx="2.4"/>
+    <rect x="21" y="33" width="10" height="11.5" rx="2.4"/>
+    <rect x="33" y="33" width="10" height="11.5" rx="2.4"/>
+  </g>
+  <!-- Viên quan lớn ở ô quan trái, sỏi dân trong các ô -->
+  <ellipse cx="13.6" cy="32" rx="5" ry="4.5" fill="url(#quan)"/>
+  <g fill="#f1e9da">
+    <circle cx="24.5" cy="23.5" r="2"/>
+    <circle cx="28" cy="27.2" r="2"/>
+    <circle cx="38" cy="25.2" r="2"/>
+    <circle cx="26" cy="38.8" r="2"/>
+    <circle cx="36.3" cy="37" r="2"/>
+    <circle cx="39.7" cy="40.8" r="2"/>
+    <circle cx="48.6" cy="29" r="1.9"/>
+    <circle cx="49" cy="35.4" r="1.9"/>
+  </g>
+</svg>
