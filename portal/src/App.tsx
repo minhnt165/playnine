@@ -1,7 +1,8 @@
-import { useI18n } from './i18n/i18n'
+import { Home } from './home/Home'
 
-// Khung tạm: các task sau thay bằng trang chủ thật.
+// Khung tạm: Task 7 thay bằng router (#/play/<id>) và truyền openIds/refreshKey thật.
+const NO_OPEN = new Set<string>()
+
 export function App() {
-  const { t } = useI18n()
-  return <h1>{t('meta.description')}</h1>
+  return <Home openIds={NO_OPEN} refreshKey={0} />
 }
