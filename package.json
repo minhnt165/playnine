@@ -2,10 +2,11 @@
   "name": "playnine",
   "private": true,
   "type": "module",
+  "workspaces": ["portal"],
   "scripts": {
-    "build": "echo \"no workspaces yet\"",
+    "build": "npm run build --workspaces --if-present",
     "assemble": "node scripts/assemble.mjs",
-    "test": "node --test \"scripts/*.test.mjs\"",
+    "test": "node --test \"scripts/*.test.mjs\" && npm test -w portal",
     "e2e": "playwright test"
   },
   "devDependencies": {
