@@ -1,12 +1,15 @@
 // Ghép thư mục xuất bản (dist/) cho GitHub Pages từ cổng + các game.
-import { cp, rm, mkdir, mkdtemp, readdir, stat, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { cp, rm, mkdir, readdir, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const exists = (p) => stat(p).then(() => true, () => false);
 
-export async function assemble({ root, out, portalDir }) {
+export async function assemble({ root, out, portalDir = path.join(root, 'portal', 'dist') }) {
+  if (!(await exists(path.join(portalDir, 'index.html')))) {
+    throw new Error('Không thấy ' + path.join(portalDir, 'index.html') + ' - hãy chạy npm run build trước khi assemble.');
+  }
+
   await rm(out, { recursive: true, force: true });
   await mkdir(out, { recursive: true });
 
@@ -35,14 +38,8 @@ async function main() {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const args = process.argv.slice(2);
   const i = args.indexOf('--portal');
-  let portalDir;
-  if (i >= 0 && args[i + 1]) {
-    portalDir = path.resolve(args[i + 1]);
-  } else {
-    // Mặc định: cổng cũ là index.html ở gốc repo -> gói vào thư mục tạm.
-    portalDir = await mkdtemp(path.join(tmpdir(), 'portal-'));
-    await cp(path.join(root, 'index.html'), path.join(portalDir, 'index.html'));
-  }
+  // Mặc định: bản build của cổng React (portal/dist).
+  const portalDir = i >= 0 && args[i + 1] ? path.resolve(args[i + 1]) : undefined;
   await assemble({ root, out: path.join(root, 'dist'), portalDir });
   console.log('assembled -> dist/');
 }

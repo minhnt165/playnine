@@ -182,6 +182,13 @@ export function Player({ game, heldIds, portalSeen }: Props) {
         </button>
       </div>
       <div className="frames" id="frames">
+        {/* Render trước iframe (giống cổng cũ) để iframe đang tải không che spinner. */}
+        <div className={'loading' + (game && !ready.has(game.id) ? ' on' : '')} id="p-loading">
+          <div>
+            <i></i>
+            <span>{t('player.loading')}</span>
+          </div>
+        </div>
         {heldIds.map((id) => {
           const g = gameById(id)
           if (!g) return null
@@ -199,12 +206,6 @@ export function Player({ game, heldIds, portalSeen }: Props) {
             />
           )
         })}
-        <div className={'loading' + (game && !ready.has(game.id) ? ' on' : '')} id="p-loading">
-          <div>
-            <i></i>
-            <span>{t('player.loading')}</span>
-          </div>
-        </div>
       </div>
     </div>
   )

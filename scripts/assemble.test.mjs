@@ -56,6 +56,18 @@ test('copies portal, brand and writes .nojekyll', async () => {
   assert.equal(await exists(path.join(out, '.nojekyll')), true);
 });
 
+test('defaults to portal/dist under root', async () => {
+  const { root, out } = await fixture();
+  await put(path.join(root, 'portal', 'dist', 'index.html'), '<h1>react</h1>');
+  await assemble({ root, out });
+  assert.equal(await readFile(path.join(out, 'index.html'), 'utf8'), '<h1>react</h1>');
+});
+
+test('fails when portal build is missing', async () => {
+  const { root, out } = await fixture();
+  await assert.rejects(assemble({ root, out }), /npm run build/);
+});
+
 test('clears stale output', async () => {
   const { root, portalDir, out } = await fixture();
   await put(path.join(out, 'stale.txt'), 'old');
