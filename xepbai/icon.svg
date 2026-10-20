@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b2118"/>
+      <stop offset="1" stop-color="#110d0a"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e0b964"/>
+      <stop offset="1" stop-color="#b07d1f"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Lá sau bên trái: mặt lưng vàng PlayNine -->
+  <g transform="rotate(-20 32 56)">
+    <rect x="19" y="14" width="26" height="36" rx="3.6" fill="url(#gold)"/>
+    <rect x="22.2" y="17.2" width="19.6" height="29.6" rx="2" fill="none" stroke="#6d4512" stroke-width="1.8"/>
+    <path d="M32 24.5l4.6 7.5-4.6 7.5-4.6-7.5z" fill="#6d4512"/>
+  </g>
+  <!-- Lá sau bên phải: bích đen -->
+  <g transform="rotate(20 32 56)">
+    <rect x="19" y="14" width="26" height="36" rx="3.6" fill="#efe6d4"/>
+    <path transform="translate(33.6 16.4) scale(0.42)" fill="#1d1711" d="M12 1.8c.5.6 9.6 7.2 9.6 12.9 0 2.9-2.3 5.1-5 5.1-1.6 0-3-.7-3.8-1.9.3 1.8 1 3.1 2.5 4.5H8.7c1.5-1.4 2.2-2.7 2.5-4.5-.8 1.2-2.2 1.9-3.8 1.9-2.7 0-5-2.2-5-5.1C2.4 9 11.5 2.4 12 1.8z"/>
+  </g>
+  <!-- Lá trước: cơ đỏ lớn -->
+  <rect x="19" y="16" width="26" height="36" rx="3.6" fill="#fffdf8"/>
+  <rect x="19" y="16" width="26" height="36" rx="3.6" fill="none" stroke="#1d1711" stroke-opacity="0.25" stroke-width="1"/>
+  <path transform="translate(21.2 23.6) scale(0.9)" fill="#b3261e" d="M12 21.6c-.5-.5-9.7-7-9.7-13.2 0-3.2 2.4-5.6 5.5-5.6 1.8 0 3.3.9 4.2 2.4.9-1.5 2.4-2.4 4.2-2.4 3.1 0 5.5 2.4 5.5 5.6 0 6.2-9.2 12.7-9.7 13.2z"/>
+</svg>

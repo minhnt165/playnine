@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b2118"/>
+      <stop offset="1" stop-color="#110d0a"/>
+    </linearGradient>
+    <radialGradient id="red" cx="0.35" cy="0.3" r="0.75">
+      <stop offset="0" stop-color="#f6a39b"/>
+      <stop offset="0.45" stop-color="#e5534b"/>
+      <stop offset="1" stop-color="#8e1c16"/>
+    </radialGradient>
+    <radialGradient id="blue" cx="0.35" cy="0.3" r="0.75">
+      <stop offset="0" stop-color="#c3d6f0"/>
+      <stop offset="0.45" stop-color="#5b86c4"/>
+      <stop offset="1" stop-color="#1d3557"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Bàn 5 x 5 kiểu Alquerque: lưới, hai đường chéo lớn và hình thoi -->
+  <g fill="none" stroke="#e0b964" stroke-width="2" stroke-linecap="round" opacity="0.9">
+    <path d="M12 12h40M12 22h40M12 32h40M12 42h40M12 52h40M12 12v40M22 12v40M32 12v40M42 12v40M52 12v40"/>
+    <path d="M12 12l40 40M52 12L12 52M32 12L12 32l20 20 20-20z"/>
+  </g>
+  <!-- Quân xanh phía trên, quân đỏ phía dưới -->
+  <g stroke="#0d0a08" stroke-width="1.2">
+    <circle cx="12" cy="12" r="5" fill="url(#blue)"/>
+    <circle cx="32" cy="12" r="5" fill="url(#blue)"/>
+    <circle cx="52" cy="22" r="5" fill="url(#blue)"/>
+    <circle cx="22" cy="32" r="5" fill="url(#blue)"/>
+    <circle cx="32" cy="32" r="5" fill="url(#red)"/>
+    <circle cx="12" cy="52" r="5" fill="url(#red)"/>
+    <circle cx="42" cy="52" r="5" fill="url(#red)"/>
+    <circle cx="52" cy="42" r="5" fill="url(#red)"/>
+  </g>
+</svg>

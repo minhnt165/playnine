@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#2a1f16"/>
+  <g stroke="#2a1f16" stroke-width="0.8">
+    <!-- Tường gạch, hai viên giữa đã vỡ -->
+    <rect x="7" y="9" width="16" height="8" rx="2.4" fill="#e2604a"/>
+    <rect x="24" y="9" width="16" height="8" rx="2.4" fill="#f29a4f"/>
+    <rect x="41" y="9" width="16" height="8" rx="2.4" fill="#f0c04a"/>
+    <rect x="7" y="18" width="16" height="8" rx="2.4" fill="#45b5a8"/>
+    <rect x="41" y="18" width="16" height="8" rx="2.4" fill="#6a8bd0"/>
+    <rect x="7" y="27" width="16" height="8" rx="2.4" fill="#b876b2"/>
+    <rect x="41" y="27" width="16" height="8" rx="2.4" fill="#8fbd62"/>
+  </g>
+  <g fill="#ffffff" opacity="0.35">
+    <rect x="9" y="10.8" width="6" height="1.6" rx="0.8"/>
+    <rect x="26" y="10.8" width="6" height="1.6" rx="0.8"/>
+    <rect x="43" y="10.8" width="6" height="1.6" rx="0.8"/>
+    <rect x="9" y="19.8" width="6" height="1.6" rx="0.8"/>
+    <rect x="43" y="19.8" width="6" height="1.6" rx="0.8"/>
+    <rect x="9" y="28.8" width="6" height="1.6" rx="0.8"/>
+    <rect x="43" y="28.8" width="6" height="1.6" rx="0.8"/>
+  </g>
+  <!-- Vệt bóng bay lên khe gạch -->
+  <path d="M27 48L31.5 38" stroke="#e0b964" stroke-width="2" stroke-linecap="round" opacity="0.4" stroke-dasharray="0.1 3.6"/>
+  <circle cx="33.5" cy="34" r="4.6" fill="#f6f2ea"/>
+  <circle cx="32" cy="32.5" r="1.5" fill="#ffffff"/>
+  <!-- Thanh đỡ -->
+  <rect x="15" y="49" width="30" height="7" rx="3.5" fill="#e0b964"/>
+  <rect x="15" y="49" width="7" height="7" rx="3.5" fill="#b07d1f"/>
+  <rect x="38" y="49" width="7" height="7" rx="3.5" fill="#b07d1f"/>
+  <rect x="21" y="50.3" width="18" height="1.6" rx="0.8" fill="#ffffff" opacity="0.4"/>
+</svg>

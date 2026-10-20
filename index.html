@@ -206,6 +206,7 @@
     @media (hover: hover) { .tile:hover { transform: translateY(-2px); border-color: var(--accent); } }
     .tile:active { transform: scale(.985); }
     .tile-icon {
+      position: relative;
       flex: none;
       display: grid;
       place-items: center;
@@ -215,6 +216,21 @@
       font-size: 22px;
       background: var(--chip);
     }
+    .tile-icon > img, .tile-icon > svg { display: block; width: 100%; height: 100%; border-radius: inherit; }
+    .tile-badge {
+      position: absolute;
+      right: -5px;
+      bottom: -5px;
+      display: grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--on-accent);
+      box-shadow: 0 0 0 2px var(--surface-solid);
+    }
+    .tile-badge svg { width: 12px; height: 12px; }
     .tile-body { flex: 1; min-width: 0; }
     .tile-kicker { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
     .tile-kicker { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
@@ -292,6 +308,13 @@
     .pv-xepgach { background: radial-gradient(120% 120% at 70% 0%, rgba(122, 162, 255, .25), transparent 60%), linear-gradient(160deg, #182238, #0b1020); }
     .pv-ran { background: radial-gradient(120% 120% at 30% 0%, rgba(95, 208, 143, .25), transparent 60%), linear-gradient(160deg, #1f3320, #0c150c); }
     .pv-2048 { background: radial-gradient(120% 120% at 30% 0%, rgba(232, 98, 44, .3), transparent 60%), linear-gradient(160deg, #3b1f0e, #170c06); }
+    .pv-coganh { background: radial-gradient(120% 120% at 20% 0%, rgba(201, 190, 100, .26), transparent 60%), linear-gradient(160deg, #2c2a16, #121108); }
+    .pv-covua { background: radial-gradient(120% 120% at 80% 0%, rgba(243, 230, 200, .2), transparent 60%), linear-gradient(160deg, #2a2420, #100d0b); }
+    .pv-colat { background: radial-gradient(120% 120% at 30% 0%, rgba(95, 208, 180, .22), transparent 60%), linear-gradient(160deg, #143029, #081411); }
+    .pv-codam { background: radial-gradient(120% 120% at 80% 0%, rgba(229, 83, 75, .26), transparent 60%), linear-gradient(160deg, #361721, #15090d); }
+    .pv-bonlientiep { background: radial-gradient(120% 120% at 50% 0%, rgba(122, 162, 255, .24), transparent 60%), linear-gradient(160deg, #1e1f45, #0b0b1e); }
+    .pv-xepbai { background: radial-gradient(120% 120% at 50% 0%, rgba(224, 185, 100, .22), transparent 60%), linear-gradient(160deg, #17361f, #08160c); }
+    .pv-phagach { background: radial-gradient(120% 120% at 70% 0%, rgba(95, 208, 208, .2), transparent 60%), linear-gradient(160deg, #172a33, #091216); }
     .kbd {
       position: absolute;
       z-index: 2;
@@ -369,6 +392,9 @@
     .preview > .mini-oq { width: 88%; height: auto; }
     .preview > .mini-nono, .preview > .mini-snake { width: auto; height: 80%; }
     .preview > .mini-tet { width: auto; height: 88%; }
+    .preview > .mini-cg, .preview > .mini-cv, .preview > .mini-rv, .preview > .mini-cd, .preview > .mini-c4 { width: auto; height: 84%; }
+    .preview > .mini-sol { width: 84%; height: auto; }
+    .preview > .mini-bk { width: auto; height: 80%; }
 
     /* Ô Ăn Quan xem trước */
     .mini-oq { filter: drop-shadow(0 14px 26px rgba(0, 0, 0, .45)); }
@@ -427,6 +453,31 @@
     .mini-2048 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 6px; width: min(50%, 184px); aspect-ratio: 1; border-radius: 12px; background: rgba(0, 0, 0, .3); box-shadow: 0 16px 34px rgba(0, 0, 0, .4); }
     .mini-2048 span { display: grid; place-items: center; border-radius: 7px; background: rgba(255, 255, 255, .07); color: #1d1711; font-size: clamp(10px, 2.6vw, 16px); font-weight: 800; }
     .mini-2048 span.pop { animation: pop .28s cubic-bezier(.2, 1.4, .4, 1); }
+
+    /* Cờ Gánh, Cờ Vua, Cờ Lật, Cờ Đam, Bốn Liên Tiếp, Xếp Bài, Phá Gạch xem trước */
+    .mini-cg, .mini-cv, .mini-rv, .mini-cd, .mini-c4, .mini-sol, .mini-bk { filter: drop-shadow(0 16px 28px rgba(0, 0, 0, .45)); }
+    /* Màu quân đổi trễ đúng lúc hiệu ứng lật (co ngang) ở giữa chừng */
+    .mini-cg .pc circle, .mini-rv .discs circle { transform-box: fill-box; transform-origin: center; transition: fill 0s .21s, stroke 0s .21s; }
+    .mini-cg .pc circle { stroke-width: 1.6; }
+    .mini-cg .pc.r circle { fill: #b3261e; stroke: #f3e6c8; }
+    .mini-cg .pc.d circle { fill: #2a1f16; stroke: #e0b964; }
+    .mini-cg .pc.moving circle { stroke: #ffd36b; stroke-width: 2.6; }
+    .mini-cv .pc { transition: opacity .3s ease .25s; }
+    .mini-cv .last { fill: rgba(224, 185, 100, .55); }
+    .mini-cv .mate { fill: rgba(179, 38, 30, .8); }
+    .mini-rv .discs circle { stroke: rgba(20, 16, 13, .45); stroke-width: .8; }
+    .mini-rv .k { fill: #2a1f16; }
+    .mini-rv .w { fill: #f3e6c8; }
+    .mini-cd .pc { transition: opacity .35s ease .2s; }
+    .mini-cd .pc.gone { opacity: 0; }
+    .mini-cd .crown { opacity: 0; transition: opacity .3s ease .3s; }
+    .mini-cd .pc.king .crown { opacity: 1; }
+    .mini-c4 .win { stroke: #fffaf0; stroke-width: 3.2; stroke-linecap: round; stroke-dasharray: 200; stroke-dashoffset: 200; animation: draw .6s ease .45s forwards; }
+    .mini-sol .in { transform-box: fill-box; transform-origin: center; }
+    .mini-sol .bk { transition: opacity 0s .21s; }
+    .mini-sol .cd.up .bk { opacity: 0; }
+    .mini-bk .br { transform-box: fill-box; transform-origin: center; transition: opacity .25s ease, transform .25s ease; }
+    .mini-bk .br.hit { opacity: 0; transform: scale(.5); }
 
     /* Lọc thể loại */
     .filters { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -560,10 +611,12 @@
       box-shadow: var(--shadow);
     }
     .pmenu[hidden] { display: none; }
+    .pmenu { max-height: calc(100vh - 76px - env(safe-area-inset-top)); max-height: calc(100dvh - 76px - env(safe-area-inset-top)); overflow-y: auto; overscroll-behavior: contain; } /* 17 game dài hơn màn hình thấp: cuộn trong menu */
     .pmenu button { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 0; border-radius: 10px; background: none; cursor: pointer; font-size: 14px; font-weight: 600; text-align: left; }
     .pmenu button:hover, .pmenu button[aria-current="true"] { background: var(--chip); }
     .pmenu .card-icon { width: 28px; height: 28px; border-radius: 8px; }
-    @media (max-width: 720px) {
+    /* Dải icon chuyển game (17 game) cần thanh rộng ~1060px mới không cắt tên game: hẹp hơn thì dùng nút menu */
+    @media (max-width: 1080px) {
       .pswitch { display: none; }
       #p-menu { display: inline-flex; }
     }
@@ -647,6 +700,7 @@
       .card, .tile, .bar > i, .mini-xq .pc { transition: none; }
       .mini-sudoku span.fill { animation: none; }
       .mini-caro .win { animation: none; stroke-dashoffset: 0; }
+      .mini-c4 .win { animation: none; stroke-dashoffset: 0; }
     }
   </style>
 </head>
@@ -813,6 +867,18 @@
         icon: svgIcon,
       },
       {
+        id: 'coganh',
+        name: 'Cờ Gánh',
+        en: 'Trò chơi dân gian',
+        dir: 'coganh/',
+        cat: 'versus',
+        isNew: true,
+        desc: 'Cờ dân gian Việt trên bàn 5x5: chen vào giữa để gánh, bao kín để vây, đổi màu hết quân đối thủ là thắng.',
+        tags: ['Dân gian', 'Đấu máy', '2 người'],
+        note: 'Lần đầu chơi có hướng dẫn',
+        icon: svgIcon,
+      },
+      {
         id: 'tranhan',
         name: 'Tranh Ẩn',
         en: 'Nonogram',
@@ -849,6 +915,79 @@
         note: 'Vuốt hoặc dùng phím mũi tên',
         icon: svgIcon,
       },
+      {
+        id: 'covua',
+        name: 'Cờ Vua',
+        en: 'Chess',
+        dir: 'covua/',
+        cat: 'versus',
+        isNew: true,
+        desc: 'Cờ quốc tế luật đầy đủ: nhập thành, bắt tốt qua đường, phong cấp. Đấu máy 3 mức hoặc hai người trên cùng máy.',
+        tags: ['Chiến thuật', 'Đấu máy', '2 người'],
+        note: 'Chạm hoặc kéo thả quân · có hướng dẫn',
+        icon: svgIcon,
+      },
+      {
+        id: 'colat',
+        name: 'Cờ Lật',
+        en: 'Reversi',
+        dir: 'colat/',
+        cat: 'versus',
+        isNew: true,
+        desc: 'Đặt quân kẹp quân đối thủ để lật sang màu mình, bàn 8x8. Đấu máy 3 mức hoặc hai người trên cùng máy.',
+        tags: ['Chiến thuật', 'Đấu máy', '2 người'],
+        note: 'Lần đầu chơi có hướng dẫn',
+        icon: svgIcon,
+      },
+      {
+        id: 'codam',
+        name: 'Cờ Đam',
+        en: 'Checkers',
+        dir: 'codam/',
+        cat: 'versus',
+        isNew: true,
+        desc: 'Cờ đam 8x8 bắt buộc ăn quân, ăn liên tiếp, lên vua. Chọn luật Quốc tế vua bay hoặc kiểu Mỹ/Anh, đấu máy 3 mức hoặc hai người.',
+        tags: ['Chiến thuật', 'Đấu máy', '2 người'],
+        note: 'Lần đầu chơi có hướng dẫn',
+        icon: svgIcon,
+      },
+      {
+        id: 'bonlientiep',
+        name: 'Bốn Liên Tiếp',
+        en: 'Four in a Row',
+        dir: 'bonlientiep/',
+        cat: 'versus',
+        isNew: true,
+        desc: 'Thả quân vào bàn 7 cột, ai xếp được 4 quân liền hàng ngang, dọc hoặc chéo trước là thắng. Đấu máy 3 mức hoặc hai người.',
+        tags: ['Đối kháng', 'Đấu máy', '2 người'],
+        note: 'Ván nhanh chừng vài phút',
+        icon: svgIcon,
+      },
+      {
+        id: 'xepbai',
+        name: 'Xếp Bài',
+        en: 'Solitaire',
+        dir: 'xepbai/',
+        cat: 'puzzle',
+        isNew: true,
+        desc: 'Xếp 52 lá lên bốn ô đích từ A đến K. Rút 1 hoặc 3 lá, kéo thả hoặc chạm để đi, đi lại không giới hạn.',
+        tags: ['Giải đố', '1 người', 'Ván hằng ngày'],
+        note: 'Chạm một lá để nó tự tìm chỗ',
+        daily: 'Một ván chia chung cho mọi người',
+        icon: svgIcon,
+      },
+      {
+        id: 'phagach',
+        name: 'Phá Gạch',
+        en: 'Brick Breaker',
+        dir: 'phagach/',
+        cat: 'arcade',
+        isNew: true,
+        desc: 'Đỡ bóng bằng thanh trượt, phá hết tường gạch qua 10 màn. Có gạch cứng, gạch thép và 5 loại vật phẩm.',
+        tags: ['Phản xạ', '1 người', 'Kỷ lục'],
+        note: 'Đập gạch liên tiếp để nhân điểm',
+        icon: svgIcon,
+      },
     ];
 
     const THEME_KEY = 'game-portal-theme-v1';
@@ -858,6 +997,13 @@
 
     const FILTER_KEY = 'game-portal-filter-v1';
     const baseOf = (g) => (onPages && g.pages ? g.pages : g.dir);
+    // Huy hiệu trạng thái ở góc icon game trong các thẻ "Hôm nay" (SVG thay emoji để đồng nhất mọi hệ điều hành)
+    const TILE_BADGES = {
+      play: '<svg viewBox="0 0 12 12" fill="currentColor"><path d="M3.5 1.8v8.4c0 .5.5.8.9.5l6.3-4.2a.6.6 0 0 0 0-1L4.4 1.3c-.4-.3-.9 0-.9.5z"/></svg>',
+      daily: '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="1.5" y="2.5" width="9" height="8" rx="1.6"/><path d="M1.5 5.2h9M4 1v2.4M8 1v2.4"/></svg>',
+      done: '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.3 6.3l2.4 2.4 5-5"/></svg>',
+      new: '<svg viewBox="0 0 12 12" fill="currentColor"><path d="M6 .8l1.3 3.4a.8.8 0 0 0 .5.5L11.2 6l-3.4 1.3a.8.8 0 0 0-.5.5L6 11.2 4.7 7.8a.8.8 0 0 0-.5-.5L.8 6l3.4-1.3a.8.8 0 0 0 .5-.5z"/></svg>',
+    };
     const hrefOf = (g) => (onPages && g.pages ? g.pages : g.dir + 'index.html'); // địa chỉ thật của game
     const playHref = (g) => '#/play/' + g.id; // mở game bên trong cổng
     const $ = (id) => document.getElementById(id);
@@ -1036,7 +1182,7 @@
       const sdDone = sd.today.time !== null;
       (sdDone ? done : todo).push({
         game: gameById('sudoku'),
-        icon: sdDone ? '✅' : '📅',
+        badge: sdDone ? 'done' : 'daily',
         kicker: 'Sudoku hằng ngày · ' + weekday,
         title: sdDone ? 'Xong trong ' + fmtDuration(sd.today.time) : 'Độ khó ' + SUDOKU_DIFF[sd.today.diff],
         meta: streakHtml(sd.streak),
@@ -1047,7 +1193,7 @@
         resumes.push({
           at: rec.sudoku || 0,
           game: gameById('sudoku'),
-          icon: '▶️',
+          badge: 'play',
           kicker: 'Tiếp tục Sudoku',
           title: sd.current.label + ' · đã điền ' + pct + '%',
           meta: '⏱ ' + fmtDuration(sd.current.seconds) + ' · ' + sd.current.mistakes + '/3 lỗi',
@@ -1061,7 +1207,7 @@
           resumes.push({
             at: s.updatedAt,
             game: g,
-            icon: '▶️',
+            badge: 'play',
             kicker: 'Tiếp tục ' + g.name,
             title: esc(s.resume.title),
             meta: esc(s.resume.detail || ''),
@@ -1071,7 +1217,7 @@
         if (s.daily && s.daily.date === todayKey) {
           (s.daily.done ? done : todo).push({
             game: g,
-            icon: s.daily.done ? '✅' : '📅',
+            badge: s.daily.done ? 'done' : 'daily',
             kicker: g.name + ' hằng ngày · ' + weekday,
             title: s.daily.done ? 'Đã xong hôm nay' : esc(s.daily.title || 'Đề hôm nay'),
             meta: streakHtml(Number(s.daily.streak) || 0),
@@ -1079,18 +1225,18 @@
         } else if (g.daily) {
           // Game có đề hằng ngày nhưng hôm nay chưa mở lần nào
           const streak = s.daily ? Number(s.daily.streak) || 0 : 0;
-          todo.push({ game: g, icon: '📅', kicker: g.name + ' hằng ngày · ' + weekday, title: g.daily, meta: streakHtml(streak) });
+          todo.push({ game: g, badge: 'daily', kicker: g.name + ' hằng ngày · ' + weekday, title: g.daily, meta: streakHtml(streak) });
         }
       });
 
       const tried = GAMES.filter((g) => g.isNew && !rec[g.id]);
       if (tried.length) {
         const g = tried[0];
-        extras.push({ game: g, icon: '✨', kicker: 'Game mới', title: 'Thử ' + g.name, meta: esc(g.note) });
+        extras.push({ game: g, badge: 'new', kicker: 'Game mới', title: 'Thử ' + g.name, meta: esc(g.note) });
       }
       extras.push({
         game: gameById('xiangqi'),
-        icon: '♟️',
+        badge: 'play',
         kicker: 'Cờ Tướng',
         title: xq.level ? 'Phục thù máy mức ' + XQ_LEVEL[xq.level] : 'Thử sức với máy',
         meta: rec.xiangqi ? 'Lần chơi gần nhất: ' + fmtAgo(rec.xiangqi) : 'Bạn cầm quân Đỏ, đi trước',
@@ -1107,7 +1253,8 @@
         a.style.setProperty('--i', 2 + i * 0.6);
         a.href = playHref(t.game);
         a.innerHTML =
-          '<span class="tile-icon" aria-hidden="true">' + t.icon + '</span>' +
+          '<span class="tile-icon" aria-hidden="true">' + t.game.icon(baseOf(t.game)) +
+            '<span class="tile-badge">' + TILE_BADGES[t.badge] + '</span></span>' +
           '<span class="tile-body">' +
             '<p class="tile-kicker">' + t.kicker + '</p>' +
             '<p class="tile-title">' + t.title + '</p>' +
@@ -1766,6 +1913,477 @@
             return;
           }
           pause = 4; // hết nước
+        });
+      },
+
+      /** Trượt quân / lá bài trong SVG tới (x, y). Dùng animate thay transition để vẫn trượt khi vừa đưa phần tử lên trên cùng. */
+      slide(el, x, y) {
+        const to = 'translate(' + x + 'px,' + y + 'px)';
+        const from = el.style.transform;
+        el.style.transform = to;
+        if (!reduceMotion && from && from !== to) el.animate([{ transform: from }, { transform: to }], { duration: 560, easing: 'cubic-bezier(.3, 1.2, .4, 1)' });
+      },
+      /** Lật quân / lá bài: co ngang về 0 rồi mở ra, màu mới đổi ở giữa nhờ transition trễ trong CSS. */
+      flip(el) {
+        if (!reduceMotion) el.animate([{ transform: 'scaleX(1)' }, { transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: 420, easing: 'ease-in-out' });
+      },
+
+      // Cờ Gánh: vài nước đi đúng luật, nước cuối chen vào giữa hai quân Đỏ nên gánh đổi màu cả hai
+      pv_coganh(host) {
+        const S = 30, P = 14, W = P * 2 + S * 4;
+        const q = (k) => P + k * S;
+        // [hàng, cột]: Đen ở trên, Đỏ ở dưới, Đỏ đi trước
+        const DARK = [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [1, 0], [1, 4], [2, 0]];
+        const RED = [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [3, 0], [3, 4], [2, 4]];
+        const MOVES = [[[4, 1], [3, 1]], [[1, 0], [1, 1]], [[2, 4], [1, 3]], [[0, 2], [1, 2]], [[4, 3], [3, 3]], [[1, 1], [2, 2]]];
+        let lines = '';
+        for (let i = 0; i < 5; i++) lines += 'M' + q(0) + ' ' + q(i) + 'H' + q(4) + 'M' + q(i) + ' ' + q(0) + 'V' + q(4);
+        // Đường chéo chỉ đi qua các điểm có hàng + cột chẵn
+        lines += 'M' + q(0) + ' ' + q(0) + 'L' + q(4) + ' ' + q(4) + 'M' + q(4) + ' ' + q(0) + 'L' + q(0) + ' ' + q(4) +
+          'M' + q(2) + ' ' + q(0) + 'L' + q(4) + ' ' + q(2) + 'L' + q(2) + ' ' + q(4) + 'L' + q(0) + ' ' + q(2) + 'Z';
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 ' + W + ' ' + W);
+        svg.setAttribute('class', 'mini-cg');
+        svg.innerHTML = '<rect width="' + W + '" height="' + W + '" rx="8" fill="#d9b77a" stroke="#6b4a1f" stroke-width="2"/>' +
+          '<path d="' + lines + '" fill="none" stroke="#6b4a1f" stroke-width="1.6"/><g class="pieces"></g>';
+        host.appendChild(svg);
+        const layer = svg.querySelector('.pieces');
+        let pieces, k, caught, pause = 0;
+        const at = (r, c) => pieces.find((p) => p.r === r && p.c === c);
+        const paint = (p) => p.el.setAttribute('class', 'pc ' + (p.red ? 'r' : 'd'));
+        const reset = () => {
+          layer.innerHTML = '';
+          pieces = DARK.map(([r, c]) => ({ r, c, red: false })).concat(RED.map(([r, c]) => ({ r, c, red: true })));
+          pieces.forEach((p) => {
+            p.el = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            p.el.innerHTML = '<circle r="10"/>';
+            paint(p);
+            this.slide(p.el, q(p.c), q(p.r));
+            layer.appendChild(p.el);
+          });
+          k = 0;
+          caught = null;
+        };
+        // Quân vừa đi đứng giữa hai quân đối phương trên cùng một đường thì gánh cả hai
+        const ganh = (p) => {
+          const out = [];
+          [[0, 1], [1, 0]].concat((p.r + p.c) % 2 ? [] : [[1, 1], [1, -1]]).forEach(([dr, dc]) => {
+            const a = at(p.r - dr, p.c - dc), b = at(p.r + dr, p.c + dc);
+            if (a && b && a.red !== p.red && b.red !== p.red) out.push(a, b);
+          });
+          return out.length ? out : null;
+        };
+        const step = () => {
+          if (caught) {
+            caught.forEach((p) => { p.red = !p.red; paint(p); this.flip(p.el.firstChild); });
+            caught = null;
+            return true;
+          }
+          const [[fr, fc], [tr, tc]] = MOVES[k++];
+          const p = at(fr, fc);
+          pieces.forEach((x) => x.el.classList.remove('moving'));
+          p.r = tr; p.c = tc;
+          layer.appendChild(p.el); // đưa lên trên cùng khi di chuyển
+          p.el.classList.add('moving');
+          this.slide(p.el, q(tc), q(tr));
+          caught = ganh(p);
+          return k >= MOVES.length && !caught;
+        };
+        reset();
+        if (reduceMotion) { while (!step()); return; }
+        this.loop(host, 900, () => {
+          if (pause > 0) { if (--pause === 0) reset(); return; }
+          if (step()) pause = 5;
+        });
+      },
+
+      // Cờ Vua: thế chiếu hết bốn nước, quân trượt trên bàn, nước vừa đi được tô sáng
+      pv_covua(host) {
+        const S = 20, P = 4, W = P * 2 + S * 8;
+        // Hình quân rút gọn từ covua/index.html (khung 100 x 100, bỏ nét chi tiết)
+        const SHAPE = {
+          p: '<path d="M41 50c-.5 11-5 20-13 28h44c-8-8-12.5-17-13-28z"/><path d="M36 48c0-3.6 6-6.5 14-6.5s14 2.9 14 6.5-6 4.5-14 4.5-14-.9-14-4.5z"/><circle cx="50" cy="28" r="12"/>',
+          r: '<path d="M31 77l3-8V42h32v27l3 8z"/><path d="M26 16h10v7h9v-7h10v7h9v-7h10v17l-6 7H32l-6-7z"/>',
+          n: '<path d="M34 78c-1-13 3-21 11-28 4-3.6 6-7.6 6-12-3.6 3.4-8 5.2-13 5.6l-6 6.6c-2.6 1.6-5 1-6.8-.8l-3-3c-1.4-1.6-1.6-3.6-.4-5.4L36 26c2-3 3-5.6 3-9l4-5 3.4 6.6c2.6-.6 5-.6 7.6 0l2.6-7 4.4 7.6C73 25 80 39 79 56c-.4 8-1.6 15-3 22z"/>',
+          b: '<path d="M36 63h28l-2.5 7h-23z"/><path d="M50 22c11 6.5 18 16 18 27 0 6.6-2.6 11-5.6 14H37.6C34.6 60 32 55.6 32 49c0-11 7-20.5 18-27z"/><circle cx="50" cy="16.5" r="5"/>',
+          q: '<path d="M32 70L21 35l13 19 2-25 9 23 5-27 5 27 9-23 2 25 13-19-11 35 2 7H30z"/><circle cx="21" cy="31" r="4.4"/><circle cx="36" cy="25" r="4.4"/><circle cx="50" cy="20" r="4.4"/><circle cx="64" cy="25" r="4.4"/><circle cx="79" cy="31" r="4.4"/>',
+          k: '<path d="M32 70c-7-6-11-12.5-11-20 0-8.6 6.6-14.6 15.6-14.6 5.6 0 10.4 2.4 14.4 7.6 4-5.2 8.8-7.6 14.4-7.6C74.4 35.4 79 41.4 79 50c0 7.5-4 14-11 20z"/><path d="M47 9h6v8h8v6h-8v15h-6V23h-8v-6h8z"/><path d="M32 70h36l2 7H30z"/>',
+        };
+        const BASE = '<rect x="22" y="77" width="56" height="12" rx="4"/>';
+        const START = [];
+        for (let x = 0; x < 8; x++) START.push([x, 0, 'rnbqkbnr'[x], 0], [x, 1, 'p', 0], [x, 6, 'p', 1], [x, 7, 'rnbqkbnr'[x], 1]);
+        // Ván mẫu [cột, hàng], hàng 0 là hàng 8 bên Đen: e4 e5 Bc4 Nc6 Qh5 Nf6 Qxf7#
+        const MOVES = [[[4, 6], [4, 4]], [[4, 1], [4, 3]], [[5, 7], [2, 4]], [[1, 0], [2, 2]], [[3, 7], [7, 3]], [[6, 0], [5, 2]], [[7, 3], [5, 1]]];
+        let dark = '';
+        for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) if ((x + y) % 2) dark += 'M' + (P + x * S) + ' ' + (P + y * S) + 'h' + S + 'v' + S + 'h-' + S + 'z';
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 ' + W + ' ' + W);
+        svg.setAttribute('class', 'mini-cv');
+        svg.innerHTML = '<rect width="' + W + '" height="' + W + '" rx="6" fill="#6b4a1f"/>' +
+          '<rect x="' + P + '" y="' + P + '" width="' + S * 8 + '" height="' + S * 8 + '" fill="#f3e6c8"/><path d="' + dark + '" fill="#c9a061"/>' +
+          '<g class="hl"></g><g class="pieces"></g>';
+        host.appendChild(svg);
+        const hl = svg.querySelector('.hl'), layer = svg.querySelector('.pieces');
+        const box = (x, y, cls) => '<rect class="' + cls + '" x="' + (P + x * S) + '" y="' + (P + y * S) + '" width="' + S + '" height="' + S + '"/>';
+        let pieces, k, pause = 0;
+        const reset = () => {
+          layer.innerHTML = '';
+          hl.innerHTML = '';
+          k = 0;
+          pieces = START.map(([x, y, t, white]) => {
+            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            g.setAttribute('class', 'pc');
+            g.innerHTML = '<g transform="translate(1 1) scale(.18)" fill="' + (white ? '#fffaf0' : '#2a1f16') + '" stroke="' + (white ? '#2a1f16' : '#0e0b09') +
+              '" stroke-width="5" stroke-linejoin="round">' + SHAPE[t] + BASE + '</g>';
+            this.slide(g, P + x * S, P + y * S);
+            layer.appendChild(g);
+            return { x, y, el: g };
+          });
+        };
+        const step = () => {
+          const [[fx, fy], [tx, ty]] = MOVES[k++];
+          const victim = pieces.find((p) => p.x === tx && p.y === ty);
+          if (victim) { victim.el.style.opacity = '0'; pieces = pieces.filter((p) => p !== victim); }
+          const mover = pieces.find((p) => p.x === fx && p.y === fy);
+          mover.x = tx; mover.y = ty;
+          layer.appendChild(mover.el);
+          this.slide(mover.el, P + tx * S, P + ty * S);
+          const done = k >= MOVES.length;
+          hl.innerHTML = box(fx, fy, 'last') + box(tx, ty, 'last') + (done ? box(4, 0, 'mate') : ''); // hết nước: tô đỏ ô Vua Đen
+          return done;
+        };
+        reset();
+        if (reduceMotion) { while (!step()); return; }
+        this.loop(host, 1000, () => {
+          if (pause > 0) { if (--pause === 0) reset(); return; }
+          if (step()) pause = 5;
+        });
+      },
+
+      // Cờ Lật: hai bên đặt quân ngẫu nhiên đúng luật, quân bị kẹp lật sang màu bên vừa đi
+      pv_colat(host) {
+        const N = 8, S = 19, P = 5, W = P * 2 + S * N;
+        const DIRS = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+        let grid = '', dots = '';
+        for (let i = 1; i < N; i++) grid += 'M' + (P + i * S) + ' ' + P + 'v' + S * N + 'M' + P + ' ' + (P + i * S) + 'h' + S * N;
+        [2, 6].forEach((a) => [2, 6].forEach((b) => { dots += '<circle cx="' + (P + a * S) + '" cy="' + (P + b * S) + '" r="1.8" fill="#6b4a1f"/>'; }));
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 ' + W + ' ' + W);
+        svg.setAttribute('class', 'mini-rv');
+        svg.innerHTML = '<rect width="' + W + '" height="' + W + '" rx="8" fill="#c9a061" stroke="#6b4a1f" stroke-width="2"/>' +
+          '<path d="' + grid + '" stroke="#6b4a1f" stroke-width=".8"/>' + dots + '<g class="discs"></g>';
+        host.appendChild(svg);
+        const layer = svg.querySelector('.discs');
+        let b, discs, turn, pause = 0;
+        // Các quân bị lật nếu `who` đặt vào ô i (rỗng nghĩa là không đặt được)
+        const flipsOf = (i, who) => {
+          if (b[i]) return [];
+          const r = Math.floor(i / N), c = i % N, out = [];
+          for (const [dr, dc] of DIRS) {
+            const run = [];
+            let rr = r + dr, cc = c + dc;
+            while (rr >= 0 && rr < N && cc >= 0 && cc < N && b[rr * N + cc] === 3 - who) { run.push(rr * N + cc); rr += dr; cc += dc; }
+            if (run.length && rr >= 0 && rr < N && cc >= 0 && cc < N && b[rr * N + cc] === who) out.push(...run);
+          }
+          return out;
+        };
+        const paint = (i) => discs[i].setAttribute('class', b[i] === 1 ? 'k' : 'w');
+        const put = (i, who) => {
+          b[i] = who;
+          const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          c.setAttribute('cx', P + (i % N) * S + S / 2);
+          c.setAttribute('cy', P + Math.floor(i / N) * S + S / 2);
+          c.setAttribute('r', 7.6);
+          discs[i] = c;
+          paint(i);
+          layer.appendChild(c);
+          return c;
+        };
+        const reset = () => { b = new Array(N * N).fill(0); discs = []; layer.innerHTML = ''; turn = 1; put(27, 2); put(28, 1); put(35, 1); put(36, 2); };
+        const movesOf = (who) => b.map((_, i) => i).filter((i) => flipsOf(i, who).length);
+        const step = () => {
+          let moves = movesOf(turn);
+          if (!moves.length) { turn = 3 - turn; moves = movesOf(turn); } // mất lượt
+          if (!moves.length || b.filter(Boolean).length >= 54) return true;
+          const i = moves[Math.floor(Math.random() * moves.length)];
+          const flips = flipsOf(i, turn);
+          const c = put(i, turn);
+          if (!reduceMotion) c.animate([{ transform: 'scale(.2)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }], { duration: 280, easing: 'cubic-bezier(.2, 1.4, .4, 1)' });
+          flips.forEach((j) => { b[j] = turn; paint(j); this.flip(discs[j]); });
+          turn = 3 - turn;
+          return false;
+        };
+        reset();
+        if (reduceMotion) { for (let n = 0; n < 24; n++) step(); return; }
+        this.loop(host, 650, () => {
+          if (pause > 0) { if (--pause === 0) reset(); return; }
+          if (step()) pause = 6;
+        });
+      },
+
+      // Cờ Đam: Đỏ dụ được quân rồi ăn liên tiếp hai quân, chạm cuối bàn thì lên vua
+      pv_codam(host) {
+        const S = 20, P = 4, W = P * 2 + S * 8;
+        // [hàng, cột] trên các ô tối; Đỏ đi lên, Kem đi xuống
+        const RED = [[5, 0], [5, 2], [6, 3], [7, 4], [5, 6], [6, 7]];
+        const CREAM = [[0, 1], [1, 2], [2, 3], [1, 4], [1, 6], [2, 5]];
+        // Mỗi nước là các điểm dừng; nhảy hai ô là ăn quân ở giữa
+        const MOVES = [[[5, 2], [4, 3]], [[1, 6], [2, 7]], [[6, 3], [5, 2]], [[2, 5], [3, 4]], [[4, 3], [2, 5], [0, 3]]];
+        let dark = '';
+        for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) if ((r + c) % 2) dark += 'M' + (P + c * S) + ' ' + (P + r * S) + 'h' + S + 'v' + S + 'h-' + S + 'z';
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 ' + W + ' ' + W);
+        svg.setAttribute('class', 'mini-cd');
+        svg.innerHTML = '<rect width="' + W + '" height="' + W + '" rx="6" fill="#6b4a1f"/>' +
+          '<rect x="' + P + '" y="' + P + '" width="' + S * 8 + '" height="' + S * 8 + '" fill="#f3e6c8"/><path d="' + dark + '" fill="#8a5a2b"/><g class="pieces"></g>';
+        host.appendChild(svg);
+        const layer = svg.querySelector('.pieces');
+        const at = (r, c) => [P + c * S + S / 2, P + r * S + S / 2];
+        let pieces, k, h, pause = 0;
+        const reset = () => {
+          layer.innerHTML = '';
+          k = h = 0;
+          pieces = RED.map(([r, c]) => ({ r, c, red: true })).concat(CREAM.map(([r, c]) => ({ r, c, red: false })));
+          pieces.forEach((p) => {
+            p.el = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            p.el.setAttribute('class', 'pc');
+            const edge = p.red ? '#f3e6c8' : '#8a7350';
+            p.el.innerHTML = '<circle r="8.2" fill="' + (p.red ? '#b3261e' : '#f3e6c8') + '" stroke="' + (p.red ? '#5c120e' : '#8a7350') + '" stroke-width="1"/>' +
+              '<circle r="5" fill="none" stroke="' + edge + '" stroke-width=".9" opacity=".6"/>' +
+              '<path class="crown" d="M-4.5 2.5l-.8-5.5 2.7 2.4L0-4l2.6 3.4 2.7-2.4-.8 5.5z" fill="#e0b964" stroke="#6b4a1f" stroke-width=".5"/>';
+            this.slide(p.el, ...at(p.r, p.c));
+            layer.appendChild(p.el);
+          });
+        };
+        // Mỗi nhịp đi một chặng, ăn liên tiếp thì thành nhiều nhịp
+        const step = () => {
+          const path = MOVES[k];
+          const [fr, fc] = path[h], [tr, tc] = path[h + 1];
+          const p = pieces.find((x) => x.r === fr && x.c === fc);
+          if (Math.abs(tr - fr) === 2) {
+            const v = pieces.find((x) => x.r === (fr + tr) / 2 && x.c === (fc + tc) / 2);
+            v.el.classList.add('gone');
+            pieces = pieces.filter((x) => x !== v);
+          }
+          p.r = tr; p.c = tc;
+          layer.appendChild(p.el);
+          this.slide(p.el, ...at(tr, tc));
+          if (tr === (p.red ? 0 : 7)) p.el.classList.add('king');
+          if (++h >= path.length - 1) { k++; h = 0; }
+          return k >= MOVES.length;
+        };
+        reset();
+        if (reduceMotion) { while (!step()); return; }
+        this.loop(host, 800, () => {
+          if (pause > 0) { if (--pause === 0) reset(); return; }
+          if (step()) pause = 6;
+        });
+      },
+
+      // Bốn Liên Tiếp: quân rơi xuống cột theo một ván mẫu, Đỏ thắng bằng bốn quân chéo
+      pv_bonlientiep(host) {
+        const C = 7, R = 6, S = 20, P = 6, TOP = 22;
+        const W = P * 2 + C * S, H = TOP + P * 2 + R * S;
+        const MOVES = [3, 4, 4, 5, 6, 5, 5, 6, 2, 6, 6]; // cột, Đỏ đi trước
+        const cx = (c) => P + c * S + S / 2, cy = (r) => TOP + P + (R - 1 - r) * S + S / 2; // hàng tính từ đáy
+        let holes = '';
+        for (let c = 0; c < C; c++) for (let r = 0; r < R; r++) holes += 'M' + (cx(c) - 7.5) + ' ' + cy(r) + 'a7.5 7.5 0 1 0 15 0a7.5 7.5 0 1 0-15 0z';
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+        svg.setAttribute('class', 'mini-c4');
+        svg.innerHTML = '<rect y="' + TOP + '" width="' + W + '" height="' + (H - TOP) + '" rx="8" fill="rgba(0, 0, 0, .4)"/><g class="discs"></g>' +
+          '<path d="M0 ' + (TOP + 8) + 'a8 8 0 0 1 8-8h' + (W - 16) + 'a8 8 0 0 1 8 8v' + (H - TOP - 8) + 'h-' + W + 'z' + holes + '" fill="#b07d1f" fill-rule="evenodd" stroke="#6b4a1f" stroke-width="1.2"/>' +
+          '<g class="fx"></g>';
+        host.appendChild(svg);
+        const layer = svg.querySelector('.discs'), fx = svg.querySelector('.fx');
+        let h, cell, k, pause = 0;
+        const reset = () => { h = new Array(C).fill(0); cell = {}; k = 0; layer.innerHTML = ''; fx.innerHTML = ''; };
+        const four = (c, r, who) => {
+          for (const [dc, dr] of [[1, 0], [0, 1], [1, 1], [1, -1]]) {
+            const run = [[c, r]];
+            for (let s = 1; cell[(c + dc * s) + ',' + (r + dr * s)] === who; s++) run.push([c + dc * s, r + dr * s]);
+            for (let s = 1; cell[(c - dc * s) + ',' + (r - dr * s)] === who; s++) run.unshift([c - dc * s, r - dr * s]);
+            if (run.length >= 4) return run;
+          }
+          return null;
+        };
+        const step = () => {
+          const c = MOVES[k], who = k % 2 ? 2 : 1, r = h[c]++;
+          k++;
+          cell[c + ',' + r] = who;
+          const d = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          d.setAttribute('cx', cx(c));
+          d.setAttribute('cy', cy(r));
+          d.setAttribute('r', 8.2);
+          d.setAttribute('fill', who === 1 ? '#b3261e' : '#e0b964');
+          layer.appendChild(d);
+          // Rơi nhanh dần từ trên khung xuống rồi nảy nhẹ
+          if (!reduceMotion) {
+            d.animate([
+              { transform: 'translateY(' + (TOP / 2 - cy(r)) + 'px)', easing: 'cubic-bezier(.5, 0, 1, .5)' },
+              { transform: 'none', offset: 0.8, easing: 'ease-out' },
+              { transform: 'translateY(-3px)', offset: 0.9, easing: 'ease-in' },
+              { transform: 'none' },
+            ], { duration: 300 + (R - r) * 60 });
+          }
+          const run = four(c, r, who);
+          if (run) {
+            const a = run[0], b = run[run.length - 1];
+            fx.innerHTML = '<line class="win" x1="' + cx(a[0]) + '" y1="' + cy(a[1]) + '" x2="' + cx(b[0]) + '" y2="' + cy(b[1]) + '"/>';
+            return true;
+          }
+          return k >= MOVES.length;
+        };
+        reset();
+        if (reduceMotion) { while (!step()); return; }
+        this.loop(host, 750, () => {
+          if (pause > 0) { if (--pause === 0) reset(); return; }
+          if (step()) pause = 6;
+        });
+      },
+
+      // Xếp Bài: lá đỏ đặt lên lá đen, lật lá úp, đưa Át và 2 lên ô đích
+      pv_xepbai(host) {
+        // Chất bài vẽ bằng path khung 10 x 10: bích, cơ, rô, chuồn
+        const SUIT = [
+          'M5 0C3 2.6 0 4 0 6.2a2.4 2.4 0 0 0 4.2 1.6L3.6 10h2.8l-.6-2.2A2.4 2.4 0 0 0 10 6.2C10 4 7 2.6 5 0z',
+          'M5 9.6C2 7.2 0 5.4 0 3.2a2.6 2.6 0 0 1 5-1 2.6 2.6 0 0 1 5 1c0 2.2-2 4-5 6.4z',
+          'M5 0l4 5-4 5-4-5z',
+          'M5 .2a2.2 2.2 0 1 0 0 4.4 2.2 2.2 0 1 0 0-4.4zM2.6 3.8a2.2 2.2 0 1 0 0 4.4 2.2 2.2 0 1 0 0-4.4zM7.4 3.8a2.2 2.2 0 1 0 0 4.4 2.2 2.2 0 1 0 0-4.4zM4.5 5.5h1l1 4.5h-3z',
+        ];
+        const DECK = { ks: ['K', 0], c7: ['7', 3], h6: ['6', 1], da: ['A', 2], d2: ['2', 2], s5: ['5', 0], hq: ['Q', 1], cj: ['J', 3], d9: ['9', 2] };
+        // [cột lấy, cột đặt]; chỉ có cột lấy nghĩa là lật lá trên cùng
+        const STEPS = [['t2', 't1'], ['t2'], ['t2', 'f'], ['w', 'f'], ['t3', 't1'], ['t3'], ['t3', 't0'], ['t3'], ['t3', 't0']];
+        const TX = (i) => 13 + i * 46, FX = (i) => 95 + i * 34;
+        const BACK = '<g class="bk"><rect width="30" height="42" rx="3" fill="#b3261e" stroke="#fffaf0" stroke-width="1.2"/>' +
+          '<rect x="3.5" y="3.5" width="23" height="35" rx="2" fill="none" stroke="#e0b964" stroke-width=".8"/></g>';
+        const face = (id) => {
+          const d = DECK[id];
+          const col = d && d[1] % 3 ? '#b3261e' : '#1d1711';
+          return '<g class="in"><rect width="30" height="42" rx="3" fill="#fffaf0" stroke="rgba(20, 16, 13, .3)" stroke-width=".6"/>' +
+            (d ? '<text x="3.2" y="10" font-size="9" font-weight="800" fill="' + col + '">' + d[0] + '</text>' +
+              '<path d="' + SUIT[d[1]] + '" fill="' + col + '" transform="translate(3.6 12.4) scale(.5)"/>' +
+              '<path d="' + SUIT[d[1]] + '" fill="' + col + '" transform="translate(8 18.5) scale(1.4)"/>' : '') +
+            BACK + '</g>';
+        };
+        let slots = '<rect x="13" y="6" width="30" height="42" rx="3"/>';
+        for (let i = 0; i < 4; i++) slots += '<rect x="' + FX(i) + '" y="6" width="30" height="42" rx="3"/>';
+        for (let i = 0; i < 5; i++) slots += '<rect x="' + TX(i) + '" y="58" width="30" height="42" rx="3"/>';
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 240 150');
+        svg.setAttribute('class', 'mini-sol');
+        svg.innerHTML = '<g fill="rgba(255, 255, 255, .05)" stroke="rgba(255, 255, 255, .22)" stroke-width=".8">' + slots + '</g>' +
+          '<g transform="translate(13 6)">' + BACK + '</g><g class="cards"></g>';
+        host.appendChild(svg);
+        const layer = svg.querySelector('.cards');
+        let piles, up, cards, k, pause = 0;
+        const layout = () => {
+          Object.keys(piles).forEach((key) => {
+            const x = key === 'w' ? 49 : key === 'f' ? FX(0) : TX(+key[1]);
+            let y = key[0] === 't' ? 58 : 6;
+            piles[key].forEach((id) => {
+              cards[id].classList.toggle('up', up.has(id));
+              this.slide(cards[id], x, y);
+              if (key[0] === 't') y += up.has(id) ? 11 : 5; // lá úp xếp sát, lá ngửa so le để thấy số
+            });
+          });
+        };
+        const reset = () => {
+          piles = { w: ['d2'], f: [], t0: ['ks'], t1: ['x1', 'c7'], t2: ['x2', 'da', 'h6'], t3: ['cj', 'hq', 's5'], t4: ['x3', 'x4', 'd9'] };
+          up = new Set(['d2', 'ks', 'c7', 'h6', 's5', 'd9']);
+          layer.innerHTML = '';
+          cards = {};
+          k = 0;
+          Object.values(piles).forEach((ids) => ids.forEach((id) => {
+            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            g.setAttribute('class', 'cd');
+            g.innerHTML = face(id);
+            cards[id] = g;
+            layer.appendChild(g);
+          }));
+          layout();
+        };
+        const step = () => {
+          const [from, to] = STEPS[k++];
+          const id = piles[from][piles[from].length - 1];
+          if (to) { piles[from].pop(); piles[to].push(id); layer.appendChild(cards[id]); }
+          else { up.add(id); this.flip(cards[id].firstChild); }
+          layout();
+          return k >= STEPS.length;
+        };
+        reset();
+        if (reduceMotion) { while (!step()); return; }
+        this.loop(host, 950, () => {
+          if (pause > 0) { if (--pause === 0) reset(); return; }
+          if (step()) pause = 5;
+        });
+      },
+
+      // Phá Gạch: bóng nảy phá tường gạch, thanh trượt tự đỡ bóng, phá hết thì xây lại
+      pv_phagach(host) {
+        const W = 180, H = 150, COLS = 8, ROWS = 4, BW = 19, BH = 8, GAP = 2, PW = 34, PY = H - 14, R = 3.2;
+        const X0 = (W - COLS * (BW + GAP) + GAP) / 2, Y0 = 16;
+        const COLORS = ['#b3261e', '#e8622c', '#e0b964', '#f3e6c8'];
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+        svg.setAttribute('class', 'mini-bk');
+        svg.innerHTML = '<rect x=".5" y=".5" width="' + (W - 1) + '" height="' + (H - 1) + '" rx="8" fill="rgba(0, 0, 0, .35)" stroke="rgba(255, 255, 255, .14)"/>' +
+          '<g class="bricks"></g><rect class="pad" y="' + PY + '" width="' + PW + '" height="5" rx="2.5" fill="#e0b964"/><circle class="ball" r="' + R + '" fill="#fffaf0"/>';
+        host.appendChild(svg);
+        const wall = svg.querySelector('.bricks'), pad = svg.querySelector('.pad'), ball = svg.querySelector('.ball');
+        let bricks, b, px, aim, pause = 0;
+        const reset = () => {
+          wall.innerHTML = '';
+          bricks = [];
+          for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+            const el = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            const x = X0 + c * (BW + GAP), y = Y0 + r * (BH + GAP);
+            el.setAttribute('class', 'br');
+            el.setAttribute('x', x); el.setAttribute('y', y);
+            el.setAttribute('width', BW); el.setAttribute('height', BH);
+            el.setAttribute('rx', 1.5); el.setAttribute('fill', COLORS[r]);
+            wall.appendChild(el);
+            bricks.push({ x, y, el, alive: true });
+          }
+          b = { x: W / 2, y: PY - 20, vx: 1.1, vy: -1.6 };
+          px = (W - PW) / 2;
+          aim = 0;
+        };
+        const paint = () => { ball.setAttribute('cx', b.x); ball.setAttribute('cy', b.y); pad.setAttribute('x', px); };
+        // Một bước bóng; trả về false khi lọt xuống đáy
+        const move = () => {
+          const oy = b.y;
+          b.x += b.vx; b.y += b.vy;
+          if (b.x < R || b.x > W - R) { b.vx = -b.vx; b.x = Math.max(R, Math.min(W - R, b.x)); }
+          if (b.y < R) b.vy = Math.abs(b.vy);
+          // Chạm thanh trượt: nảy lên, góc lệch theo chỗ chạm
+          if (b.vy > 0 && b.y + R >= PY && oy + R <= PY + 1 && b.x > px - R && b.x < px + PW + R) {
+            b.vx = Math.max(-1.6, Math.min(1.6, ((b.x - px - PW / 2) / (PW / 2)) * 1.6));
+            b.vy = -Math.sqrt(4.2 - b.vx * b.vx);
+            aim = (Math.random() - 0.5) * PW * 0.8; // lần sau đỡ lệch chỗ khác để bóng đổi hướng
+          }
+          for (const k of bricks) {
+            if (!k.alive || b.x < k.x - R || b.x > k.x + BW + R || b.y < k.y - R || b.y > k.y + BH + R) continue;
+            k.alive = false;
+            k.el.classList.add('hit');
+            if (oy < k.y - R || oy > k.y + BH + R) b.vy = -b.vy; else b.vx = -b.vx;
+            break;
+          }
+          return b.y < H + R;
+        };
+        reset();
+        paint();
+        if (reduceMotion) {
+          bricks.forEach((k, i) => { if (i % 3 === 1 || i > 25) k.el.classList.add('hit'); });
+          b.x = 70; b.y = 80; paint();
+          return;
+        }
+        this.loop(host, 30, () => {
+          if (pause > 0) { if (--pause === 0) { reset(); paint(); } return; }
+          if (!move()) { pause = 10; return; }
+          px = Math.max(0, Math.min(W - PW, px + Math.max(-2.4, Math.min(2.4, b.x - PW / 2 + aim - px))));
+          paint();
+          if (bricks.every((k) => !k.alive)) pause = 40;
         });
       },
 

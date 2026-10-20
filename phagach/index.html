@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#f6f2ea">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Phá Gạch">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="Phá Gạch: đỡ bóng bằng thanh trượt, phá hết tường gạch qua 10 màn. Gạch cứng, gạch thép, 5 loại vật phẩm, kéo ngang hoặc dùng chuột / bàn phím, tự lưu ván chơi.">
+  <title>Phá Gạch</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <script>
+    // Áp giao diện sáng/tối đã chọn trước khi vẽ trang để tránh nháy màu
+    try {
+      var t = JSON.parse(localStorage.getItem('playnine-phagach-settings-v1') || '{}').theme;
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="style.css?v=1.0.0">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-mark" src="icon.svg" alt="" width="34" height="34">
+        <h1 class="logo">Phá Gạch</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" id="btn-help" type="button" aria-label="Cách chơi" title="Cách chơi (H)">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 16.2a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm1.4-5.1c-.6.4-.7.6-.7 1.2v.4h-2.3v-.5c0-1.3.4-2 1.5-2.7.9-.6 1.3-1 1.3-1.7 0-.8-.6-1.3-1.5-1.3-.9 0-1.6.6-1.7 1.6H7.7C7.8 7.8 9.5 6.3 12 6.3c2.4 0 4 1.3 4 3.3 0 1.4-.8 2.3-2.6 3.5z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-stats" type="button" aria-label="Thống kê" title="Thống kê">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-settings" type="button" aria-label="Cài đặt" title="Cài đặt">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+        </button>
+        <button class="btn btn-primary btn-new" id="btn-new" type="button" title="Ván mới (N)" aria-label="Ván mới">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>
+          <span>Ván mới</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="hud" aria-label="Điểm số">
+      <div class="score-box" id="score-box">
+        <span class="score-label">Điểm</span>
+        <span class="score-value" id="score">0</span>
+      </div>
+      <div class="score-box">
+        <span class="score-label">Cao nhất</span>
+        <span class="score-value" id="best">0</span>
+      </div>
+      <div class="score-box score-small">
+        <span class="score-label">Màn</span>
+        <span class="score-value" id="level">1</span>
+      </div>
+      <button class="btn btn-pause" id="btn-pause" type="button" aria-label="Tạm dừng" title="Tạm dừng (P)" disabled>
+        <svg class="icon icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+        <svg class="icon icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5L8 5.5z"/></svg>
+      </button>
+    </section>
+
+    <main class="board-area" id="board-area">
+      <div class="board" id="board" tabindex="0" role="application" aria-roledescription="bàn chơi phá gạch"
+           aria-label="Bàn chơi Phá Gạch. Phím mũi tên trái phải hoặc A D để di chuyển thanh, Space để phóng bóng, P để tạm dừng." aria-describedby="board-desc">
+        <canvas class="canvas" id="canvas" aria-hidden="true"></canvas>
+
+        <p class="ready-hint" id="ready-hint" hidden>
+          <span class="help-touch">Chạm để phóng bóng</span>
+          <span class="help-keys"><kbd>Space</kbd> hoặc nhấp chuột để phóng bóng</span>
+        </p>
+
+        <div class="banner" id="banner" aria-hidden="true" hidden>
+          <span class="banner-title" id="banner-title"></span>
+          <span class="banner-sub" id="banner-sub"></span>
+        </div>
+
+        <!-- Lớp phủ: bắt đầu / tạm dừng / kết thúc -->
+        <div class="overlay" id="overlay-start">
+          <div class="overlay-card">
+            <p class="overlay-title">Phá Gạch</p>
+            <p class="overlay-sub">Đỡ bóng bằng thanh trượt, phá hết gạch để qua màn. 10 màn, gạch cứng, gạch thép và 5 loại vật phẩm.</p>
+            <p class="start-best" id="start-best" hidden></p>
+            <button class="btn btn-primary btn-wide" type="button" id="btn-start">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5L8 5.5z"/></svg>
+              <span>Bắt đầu</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="overlay" id="overlay-pause" hidden>
+          <div class="overlay-card">
+            <p class="overlay-title">Tạm dừng</p>
+            <p class="overlay-sub" id="pause-sub">Màn 1 · 0 điểm</p>
+            <div class="overlay-actions">
+              <button class="btn btn-ghost" type="button" id="btn-pause-new">Ván mới</button>
+              <button class="btn btn-primary" type="button" id="btn-resume">Tiếp tục</button>
+            </div>
+            <p class="overlay-hint help-keys">Nhấn <kbd>P</kbd> hoặc <kbd>Space</kbd> để chơi tiếp</p>
+          </div>
+        </div>
+
+        <div class="overlay" id="overlay-over" hidden>
+          <div class="overlay-card">
+            <p class="overlay-title" id="over-title">Hết mạng</p>
+            <p class="new-best" id="over-new-best" hidden>Kỷ lục mới!</p>
+            <dl class="over-stats">
+              <div><dt>Điểm</dt><dd id="over-score">0</dd></div>
+              <div><dt>Tới màn</dt><dd id="over-level">1</dd></div>
+              <div><dt>Gạch phá</dt><dd id="over-bricks">0</dd></div>
+            </dl>
+            <div class="overlay-actions">
+              <button class="btn btn-primary btn-wide" type="button" id="btn-again">Chơi lại</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <p class="help" id="board-desc">
+      <span class="help-touch">Kéo ngang ở bất kỳ đâu để di chuyển thanh · chạm để phóng bóng</span>
+      <span class="help-keys">Chuột hoặc <kbd>←</kbd><kbd>→</kbd> / <kbd>A</kbd><kbd>D</kbd> di chuyển · <kbd>Space</kbd> phóng bóng · <kbd>P</kbd> tạm dừng</span>
+    </p>
+  </div>
+
+  <div class="sr-only" id="announcer" aria-live="polite"></div>
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <!-- Cách chơi -->
+  <div class="modal" id="modal-help" hidden>
+    <div class="modal-backdrop" data-close="modal-help"></div>
+    <div class="modal-card modal-help" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <div class="help-head">
+        <h2 id="help-title">Cách chơi</h2>
+        <button class="btn-icon" type="button" data-close="modal-help" aria-label="Đóng">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>
+        </button>
+      </div>
+      <div class="help-body">
+        <p>Đỡ bóng bằng thanh trượt ở đáy, đập vỡ <b>hết gạch</b> để qua màn. Bóng rơi khỏi đáy là mất một mạng; ván có <b>3 mạng</b>.</p>
+
+        <h3>Điều khiển</h3>
+        <ul class="help-list">
+          <li><b>Điện thoại:</b> kéo ngang ở bất kỳ đâu trên bàn chơi, thanh đi theo khoảng kéo (không cần chạm đúng thanh). Chạm nhẹ để phóng bóng.</li>
+          <li><b>Máy tính:</b> rê chuột, hoặc <kbd>←</kbd><kbd>→</kbd> / <kbd>A</kbd><kbd>D</kbd>. <kbd>Space</kbd> hoặc nhấp chuột để phóng bóng, <kbd>P</kbd> / <kbd>Esc</kbd> tạm dừng.</li>
+          <li>Bóng chạm <b>giữa thanh</b> thì bay thẳng lên, chạm <b>gần mép</b> thì nảy xiên. Dùng mép thanh để lái bóng.</li>
+        </ul>
+
+        <h3>Các loại gạch</h3>
+        <ul class="help-items">
+          <li><span class="hi hi-brick" aria-hidden="true"><svg viewBox="0 0 32 16"><rect x="1" y="1" width="30" height="14" rx="3" style="fill: var(--b-r)"/><rect x="3" y="3" width="26" height="3" rx="1.5" fill="#fff" opacity=".3"/></svg></span><span><b>Gạch thường</b>: vỡ sau 1 lần đập.</span></li>
+          <li><span class="hi hi-brick" aria-hidden="true"><svg viewBox="0 0 32 16"><rect x="1" y="1" width="30" height="14" rx="3" style="fill: var(--b-strong)"/><path d="M12 2l3 5-2 3 3 5" stroke="rgba(0,0,0,.45)" stroke-width="1.3" fill="none"/></svg></span><span><b>Gạch cứng</b>: cần 2 hoặc 3 lần đập, nứt dần sau mỗi lần.</span></li>
+          <li><span class="hi hi-brick" aria-hidden="true"><svg viewBox="0 0 32 16"><rect x="1" y="1" width="30" height="14" rx="3" style="fill: var(--b-steel)"/><circle cx="5" cy="5" r="1.3" fill="rgba(0,0,0,.35)"/><circle cx="27" cy="5" r="1.3" fill="rgba(0,0,0,.35)"/><circle cx="5" cy="11" r="1.3" fill="rgba(0,0,0,.35)"/><circle cx="27" cy="11" r="1.3" fill="rgba(0,0,0,.35)"/><path d="M10 14L18 2h4l-8 12z" fill="#fff" opacity=".25"/></svg></span><span><b>Gạch thép</b>: không vỡ, không cần phá để qua màn.</span></li>
+        </ul>
+
+        <h3>Vật phẩm</h3>
+        <p>Một số viên gạch vỡ ra rơi vật phẩm. Đỡ bằng thanh để nhận; thời gian còn lại hiện ở góc trên phải.</p>
+        <ul class="help-items">
+          <li><span class="hi" aria-hidden="true"><svg viewBox="0 0 32 16"><rect x="1" y="1" width="30" height="14" rx="7" style="fill: var(--pw-wide)"/><path d="M9 8h14M12 5l-3 3 3 3M20 5l3 3-3 3" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><b>Mở rộng thanh</b>: thanh dài hơn trong 15 giây.</span></li>
+          <li><span class="hi" aria-hidden="true"><svg viewBox="0 0 32 16"><rect x="1" y="1" width="30" height="14" rx="7" style="fill: var(--pw-multi)"/><circle cx="11" cy="8" r="2.2" fill="#fff"/><circle cx="16" cy="8" r="2.2" fill="#fff"/><circle cx="21" cy="8" r="2.2" fill="#fff"/></svg></span><span><b>Nhiều bóng</b>: mỗi quả bóng tách thành ba. Còn một quả trên sân là chưa mất mạng.</span></li>
+          <li><span class="hi" aria-hidden="true"><svg viewBox="0 0 32 16"><rect x="1" y="1" width="30" height="14" rx="7" style="fill: var(--pw-slow)"/><circle cx="16" cy="8" r="4.2" stroke="#fff" stroke-width="1.6" fill="none"/><path d="M16 5.6V8l1.8 1.2" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span><span><b>Bóng chậm</b>: bóng chậm lại trong 12 giây.</span></li>
+          <li><span class="hi" aria-hidden="true"><svg viewBox="0 0 32 16"><rect x="1" y="1" width="30" height="14" rx="7" style="fill: var(--pw-fire)"/><path d="M16 3.2c2.6 2.4 3.9 4.2 3.9 6.2a3.9 3.9 0 0 1-7.8 0c0-1.3.6-2.3 1.5-3.2.1 1.1.6 1.8 1.3 2.1-.3-1.8.1-3.4 1.1-5.1z" fill="#fff"/></svg></span><span><b>Bóng xuyên</b>: trong 8 giây bóng phá ngay mọi gạch (kể cả gạch cứng) và xuyên qua, chỉ nảy ở thép.</span></li>
+          <li><span class="hi" aria-hidden="true"><svg viewBox="0 0 32 16"><rect x="1" y="1" width="30" height="14" rx="7" style="fill: var(--pw-life)"/><path d="M16 12.2l-4-3.9a2.4 2.4 0 0 1 4-2.7 2.4 2.4 0 0 1 4 2.7z" fill="#fff"/></svg></span><span><b>Thêm mạng</b>: +1 mạng (tối đa 5).</span></li>
+        </ul>
+
+        <h3>Điểm</h3>
+        <ul class="help-list">
+          <li>Gạch thường 10 điểm, gạch cứng 30 / 50 điểm, đỡ được vật phẩm 25 điểm. Qua màn thưởng 100 x số màn.</li>
+          <li><b>Chuỗi:</b> đập gạch liên tiếp mà bóng chưa về thanh thì điểm nhân x2 từ viên thứ 5, x3 từ viên thứ 9... tối đa x5.</li>
+          <li>Qua hết 10 màn là <b>phá đảo</b>; trò chơi quay lại màn 1 với bóng nhanh hơn.</li>
+        </ul>
+      </div>
+      <button class="btn btn-primary btn-block" type="button" data-close="modal-help" id="btn-help-ok">Chơi thôi!</button>
+    </div>
+  </div>
+
+  <!-- Cài đặt -->
+  <div class="modal" id="modal-settings" hidden>
+    <div class="modal-backdrop" data-close="modal-settings"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h2 id="settings-title">Cài đặt</h2>
+      <div class="settings-list">
+        <div class="setting">
+          <span class="setting-name" id="lbl-theme">Giao diện</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="lbl-theme" data-setting="theme">
+            <button type="button" role="radio" data-value="auto">Tự động</button>
+            <button type="button" role="radio" data-value="light">Sáng</button>
+            <button type="button" role="radio" data-value="dark">Tối</button>
+          </div>
+        </div>
+        <div class="setting">
+          <span class="setting-text">
+            <span class="setting-name" id="lbl-sens">Độ nhạy khi kéo</span>
+            <span class="setting-desc">Kéo ngón tay một đoạn thì thanh đi xa bao nhiêu (trên màn hình cảm ứng).</span>
+          </span>
+          <div class="segmented" role="radiogroup" aria-labelledby="lbl-sens" data-setting="sens">
+            <button type="button" role="radio" data-value="low">Chậm</button>
+            <button type="button" role="radio" data-value="normal">Vừa</button>
+            <button type="button" role="radio" data-value="high">Nhanh</button>
+          </div>
+        </div>
+        <label class="setting setting-row">
+          <span class="setting-text">
+            <span class="setting-name">Rung</span>
+            <span class="setting-desc">Rung nhẹ khi đỡ vật phẩm, qua màn và mất mạng (nếu máy hỗ trợ).</span>
+          </span>
+          <input type="checkbox" class="switch" data-setting="vibrate">
+        </label>
+      </div>
+      <button class="btn btn-ghost btn-block" type="button" id="btn-settings-help">Xem lại cách chơi</button>
+      <button class="btn btn-primary btn-block" type="button" data-close="modal-settings">Xong</button>
+      <p class="app-version">Phá Gạch · phiên bản <span id="app-version">—</span></p>
+    </div>
+  </div>
+
+  <!-- Thống kê -->
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-backdrop" data-close="modal-stats"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
+      <h2 id="stats-title">Thống kê</h2>
+      <dl class="stat-grid">
+        <div><dt>Ván đã chơi</dt><dd id="st-played">0</dd></div>
+        <div><dt>Điểm cao nhất</dt><dd id="st-best">0</dd></div>
+        <div><dt>Màn cao nhất</dt><dd id="st-level">—</dd></div>
+        <div><dt>Gạch đã phá</dt><dd id="st-bricks">0</dd></div>
+        <div><dt>Chuỗi dài nhất</dt><dd id="st-chain">0</dd></div>
+        <div><dt>Lần phá đảo</dt><dd id="st-won">0</dd></div>
+      </dl>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" id="btn-stats-reset">Đặt lại</button>
+        <button class="btn btn-primary" type="button" data-close="modal-stats">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Xác nhận -->
+  <div class="modal" id="modal-confirm" hidden>
+    <div class="modal-backdrop" data-close="modal-confirm"></div>
+    <div class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+      <h2 id="confirm-title">Bắt đầu ván mới?</h2>
+      <p class="modal-text" id="confirm-text">Ván đang chơi sẽ bị bỏ.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" data-close="modal-confirm">Hủy</button>
+        <button class="btn btn-primary" type="button" id="btn-confirm-ok">Ván mới</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="engine.js?v=1.0.0"></script>
+  <script src="app.js?v=1.0.0"></script>
+</body>
+</html>
