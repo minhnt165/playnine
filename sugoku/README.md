@@ -13,14 +13,14 @@ Game Sudoku chạy trên web, viết bằng HTML + CSS + JavaScript thuần. Kh�
 - Timer, tạm dừng (che bàn cờ), tự tạm dừng khi chuyển tab.
 - Ghi chú (bút chì): số nhỏ trong ô, tự xóa ghi chú liên quan khi điền đúng vào hàng / cột / vùng.
 - Hoàn tác, Xóa.
-- Gợi ý có giải thích (1 lượt mỗi ván): chạy solver kỹ thuật tới bước điền số đầu tiên, giải thích bằng tiếng Việt và đánh dấu ô cần điền, ô liên quan, ô bị loại ứng viên. Thứ tự: chỉ ra ô đang sai → single tại ô đang chọn → single bất kỳ → bước loại trừ (cặp chỉ hướng, cặp trần/ẩn, bộ ba, X-Wing, XY-Wing, Swordfish) dẫn tới một single → nếu bế tắc thì cho đáp án của ô đang chọn. "Điền số" cũng xóa các ghi chú đã bị loại trong lập luận.
+- Gợi ý có giải thích (1 lượt mỗi ván): chạy solver kỹ thuật tới bước điền số đầu tiên, giải thích bằng ngôn ngữ đang chọn và đánh dấu ô cần điền, ô liên quan, ô bị loại ứng viên. Thứ tự: chỉ ra ô đang sai → single tại ô đang chọn → single bất kỳ → bước loại trừ (cặp chỉ hướng, cặp trần/ẩn, bộ ba, X-Wing, XY-Wing, Swordfish) dẫn tới một single → nếu bế tắc thì cho đáp án của ô đang chọn. "Điền số" cũng xóa các ghi chú đã bị loại trong lập luận.
 - Cài đặt: giao diện Tự động / Sáng / Tối; cách nhập "chọn ô trước" hoặc "chọn số trước" (nhấn số rồi chạm nhiều ô); bật/tắt báo lỗi ngay (tắt thì tự kiểm tra, không đếm lỗi, được ghi đè ô đã điền, báo khi bàn cờ đầy mà còn sai); bật/tắt giới hạn 3 lỗi.
 - Thống kê: số ván thắng / thua, thời gian tốt nhất và trung bình theo độ khó; chuỗi ngày, số ngày và thời gian tốt nhất của ván hằng ngày. Có nút đặt lại.
 - Bàn phím số 1–9 hiện số lượng còn lại, ẩn khi đã đủ 9.
 - Nhấp ô: tô sáng hàng, cột, vùng 3x3 và các ô cùng số.
 - Tự lưu ván đang chơi vào `localStorage`, mở lại trang thì tiếp tục.
 - Màn hình thắng (thời gian, độ khó, lỗi, thông báo mở khóa) và màn hình thua (chơi lại / ván mới).
-- Giao diện tiếng Việt, responsive trên điện thoại, dark mode theo hệ thống hoặc chọn thủ công. Cho phép zoom trang; bàn cờ điều hướng bằng phím mũi tên với một điểm dừng Tab duy nhất.
+- Giao diện English / Tiếng Việt (xem mục "Ngôn ngữ / Language"), responsive trên điện thoại, dark mode theo hệ thống hoặc chọn thủ công. Cho phép zoom trang; bàn cờ điều hướng bằng phím mũi tên với một điểm dừng Tab duy nhất.
 - Tối ưu mobile: bàn cờ tự co theo chiều cao màn hình để không phải cuộn khi chơi, cỡ số tính theo bề rộng bàn cờ, modal dạng bottom sheet, layout riêng khi xoay ngang (bàn cờ trái, điều khiển phải), tôn trọng safe-area (tai thỏ), không "dính" hover sau khi chạm, thêm được vào màn hình chính như app.
 
 ## Phím tắt
@@ -40,14 +40,21 @@ Game Sudoku chạy trên web, viết bằng HTML + CSS + JavaScript thuần. Kh�
 ```
 index.html      Khung trang, modal
 style.css       Giao diện, dark mode, responsive
+i18n.js         Từ điển English / Tiếng Việt và hàm I18N.t, I18N.apply (nạp trước engine.js)
 engine.js       Engine: sinh đề, solver backtracking, solver theo kỹ thuật, chấm độ khó, PRNG có seed
 app.js          Logic game + render (cần engine.js nạp trước)
 sudoku-test.js  Test engine chạy bằng Node
 ```
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html` để trình duyệt tải file mới thay vì dùng bản cache.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html` để trình duyệt tải file mới thay vì dùng bản cache.
 
 Số ván cần thắng để mở khóa mỗi độ khó nằm trong hằng `DIFFICULTIES` (trường `unlockWins`), mức kỹ thuật yêu cầu của từng độ khó (`minLevel` / `maxLevel`), số lượt gợi ý mỗi ván (`MAX_HINTS`) và lịch độ khó ván hằng ngày theo thứ (`DAILY_BY_WEEKDAY`) đều ở đầu `app.js`. Danh sách kỹ thuật và mức của chúng nằm trong `TECHNIQUES` ở `engine.js`.
+
+## Ngôn ngữ / Language
+
+Game có hai ngôn ngữ: English (mặc định) và Tiếng Việt. Toàn bộ chữ hiển thị nằm trong `i18n.js` (đối tượng `I18N`, từ điển `{ en, vi }`): chữ tĩnh trong `index.html` gắn `data-i18n` / `data-i18n-html` / `data-i18n-attr` và được `I18N.apply()` điền khi khởi động, chữ do JS sinh ra (trạng thái, gợi ý, modal, thống kê) gọi `I18N.t(key, params)`. Engine không chứa chữ hiển thị; tên kỹ thuật lấy theo key `tech.<id>`.
+
+Ngôn ngữ lưu ở khóa `localStorage['playnine-lang']` (`'en'` hoặc `'vi'`), dùng chung với cổng PlayNine và các game khác. Đổi ở mục Ngôn ngữ trong Cài đặt: game lưu ván rồi tải lại trang. Khi ngôn ngữ đổi ở trang khác (cổng, tab khác), game cũng tự tải lại theo.
 
 ## Cách chấm độ khó
 

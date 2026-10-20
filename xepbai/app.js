@@ -10,7 +10,7 @@
   'use strict';
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.0.1';
   const KEYS = {
     settings: 'playnine-xepbai-settings-v1',
     save: 'playnine-xepbai-save-v1',
@@ -18,6 +18,10 @@
     summary: 'playnine-xepbai-summary-v1',
   };
   const X = window.XepBai;
+  const I18N = window.I18N;
+  const t = I18N.t;
+  // Chữ tĩnh trong trang theo ngôn ngữ đã chọn, trước khi vẽ nội dung động
+  I18N.apply();
   // Thời gian một lá bay tới chỗ mới (ms) và nhịp mỗi nước khi tự xếp
   const SPEED = { slow: 340, medium: 210, fast: 120, off: 0 };
   const AUTO_STEP = { slow: 190, medium: 120, fast: 65, off: 0 };
@@ -26,7 +30,8 @@
   const AUTOSAVE_MS = 5000;
   const MAX_CW = 104; // bề rộng lá lớn nhất (px)
   const BUCKETS = ['draw1', 'draw3', 'daily'];
-  const BUCKET_LABEL = { draw1: 'Rút 1 lá', draw3: 'Rút 3 lá', daily: 'Hằng ngày' };
+  const bucketLabel = (k) => t('bucket.' + k);
+  const drawText = (n) => t('draw.n', { n });
 
   const $ = (id) => document.getElementById(id);
   const reduceMotion = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
@@ -54,9 +59,13 @@
     return h ? `${h}:${pad2(m)}:${pad2(s)}` : `${pad2(m)}:${pad2(s)}`;
   }
   function formatDate(key) {
-    const [, m, d] = key.split('-');
-    return `${d}/${m}`;
+    const [y, m, d] = key.split('-');
+    // vi: 20/10 như cũ; en: Oct 20
+    if (I18N.lang === 'vi') return `${d}/${m}`;
+    return I18N.fmtDate(new Date(+y, m - 1, +d), { month: 'short', day: 'numeric' });
   }
+  /** Tên lá đọc cho trình đọc màn hình theo ngôn ngữ (vi: Át bích, en: Ace of spades). */
+  const cardName = (c) => t('card', { rank: t('rank.' + X.rankOf(c)), suit: t('suit.' + X.suitOf(c)) });
 
   /* ---------------- Cài đặt ---------------- */
   const DEFAULT_SETTINGS = { theme: 'auto', draw: 1, tap: 'auto', speed: 'medium', guideSeen: false };
@@ -220,8 +229,8 @@
     startClock();
     if (res.points) bump('score');
     if (!(opts && opts.quiet)) {
-      if (m.t === 'draw') announce(res.redeal ? 'Chia lại chồng rút' : `Rút ${res.drawn} lá: ${X.cardName(s.waste[s.waste.length - 1])}`);
-      else announce(desc + (res.flipped ? '. Lật lá mới' : ''));
+      if (m.t === 'draw') announce(res.redeal ? t('say.redeal') : t('say.drew', { n: res.drawn, card: cardName(s.waste[s.waste.length - 1]) }));
+      else announce(desc + (res.flipped ? t('say.flipped') : ''));
     }
     held = null;
     render();
@@ -238,20 +247,20 @@
   function describeMove(s, m) {
     const src = X.pile(s, m.from);
     const card = src[src.length - m.n];
-    return `${X.cardName(card)}${m.n > 1 ? ` (${m.n} lá)` : ''} → ${pileName(m.to)}`;
+    return t('move.desc', { card: cardName(card), count: m.n > 1 ? t('move.count', { n: m.n }) : '', to: pileName(m.to) });
   }
   function pileName(id) {
-    if (id === 'stock') return 'chồng rút';
-    if (id === 'waste') return 'chồng thải';
-    if (id[0] === 'f') return 'ô đích ' + (+id[1] + 1);
-    return 'cột ' + (+id[1] + 1);
+    if (id === 'stock') return t('pile.stock');
+    if (id === 'waste') return t('pile.waste');
+    if (id[0] === 'f') return t('pile.found', { n: +id[1] + 1 });
+    return t('pile.col', { n: +id[1] + 1 });
   }
 
   function drawCard() {
     if (!isPlaying() || auto.busy) return;
     lastTap = null;
     if (!X.isLegal(session.state, { t: 'draw' })) {
-      toast('Chồng rút và chồng thải đều trống');
+      toast(t('toast.empty'));
       return;
     }
     doMove({ t: 'draw' });
@@ -275,7 +284,7 @@
     render();
     persist();
     writeSummary();
-    announce('Đã đi lại');
+    announce(t('say.undone'));
     checkAfterMove();
   }
 
@@ -286,12 +295,12 @@
     autoAvail = X.canAutoComplete(s);
     renderControls();
     if (autoAvail && !wasAvail) {
-      toast('Mọi lá đã ngửa · bấm Tự xếp để xếp nốt');
+      toast(t('toast.autoReady'));
       return;
     }
     if (!autoAvail && !X.hint(s) && stuckShownAt !== session.moves.length) {
       stuckShownAt = session.moves.length;
-      toast('Hết nước đi có ích · thử Đi lại hoặc Ván mới');
+      toast(t('toast.stuck'));
     }
   }
 
@@ -359,7 +368,7 @@
     persist();
     writeSummary();
     render();
-    announce('Thắng rồi! Đã xếp đủ 52 lá lên ô đích');
+    announce(t('say.win'));
     stopWinFx();
     const delay = celebrate();
     winFx.result = { sec, score, record: recordTime && b.won > 1 };
@@ -375,24 +384,24 @@
     const streak = dailyStreak();
     const today = todayKey();
     let note;
-    if (!played) note = 'Chưa chơi ván nào · thử ván hằng ngày nhé';
-    else if (!won) note = `${played} ván đã chơi · chưa thắng ván nào`;
-    else note = `${won} ván thắng · nhanh nhất ${formatTime(bestTime)}`;
+    if (!played) note = t('sum.none');
+    else if (!won) note = t('sum.noWin', { n: played });
+    else note = t('sum.won', { n: won, time: formatTime(bestTime) });
 
     const headline = [];
     if (played) {
-      headline.push({ value: String(won), label: 'Ván thắng' });
-      headline.push({ value: Math.round((won / played) * 100) + '%', label: 'Tỉ lệ thắng' });
-      if (bestTime !== null) headline.push({ value: formatTime(bestTime), label: 'Nhanh nhất' });
-      else if (streak) headline.push({ value: String(streak), label: 'Chuỗi ngày' });
+      headline.push({ value: String(won), label: t('sum.wins') });
+      headline.push({ value: Math.round((won / played) * 100) + '%', label: t('sum.rate') });
+      if (bestTime !== null) headline.push({ value: formatTime(bestTime), label: t('sum.fastest') });
+      else if (streak) headline.push({ value: String(streak), label: t('sum.dailyStreak') });
     }
 
     let resume = null;
     if (session && session.counted && !session.won) {
       const n = X.foundCount(session.state);
       resume = {
-        title: session.kind === 'daily' ? 'Xếp Bài hằng ngày' : `Xếp Bài · rút ${session.draw} lá`,
-        detail: `${n}/52 lá lên đích · ${session.state.score} điểm · ${formatTime(elapsedMs() / 1000)}`,
+        title: session.kind === 'daily' ? t('sum.resumeDaily') : t('sum.resumeRandom', { draw: drawText(session.draw) }),
+        detail: t('sum.detail', { n, score: session.state.score, time: formatTime(elapsedMs() / 1000) }),
         pct: Math.round((n / 52) * 1000) / 1000,
       };
     }
@@ -407,7 +416,7 @@
       resume,
       daily: {
         date: today,
-        title: 'Ván chia hôm nay · rút 1 lá',
+        title: t('sum.dailyTitle', { draw: drawText(X.DAILY_DRAW) }),
         done: dailyTime(today) !== null,
         streak,
       },
@@ -670,24 +679,24 @@
     const st = slotEls.stock;
     st.classList.toggle('can-redeal', !s.stock.length && s.waste.length > 0);
     st.setAttribute('aria-label', s.stock.length
-      ? `Chồng rút: còn ${s.stock.length} lá. Enter để rút ${s.draw} lá`
-      : s.waste.length ? `Hết chồng rút. Enter để chia lại ${s.waste.length} lá` : 'Chồng rút trống');
+      ? t('slot.stock', { n: s.stock.length, d: s.draw })
+      : s.waste.length ? t('slot.stockRedeal', { n: s.waste.length }) : t('slot.stockEmpty'));
     stockCountEl.hidden = !s.stock.length;
     stockCountEl.textContent = s.stock.length;
     stockCountEl.style.transform = `translate(${colX(0)}px, 0)`;
     const wTop = s.waste[s.waste.length - 1];
-    slotEls.waste.setAttribute('aria-label', 'Chồng thải: ' + (s.waste.length ? `${X.cardName(wTop)} trên cùng, ${s.waste.length} lá` : 'trống'));
+    slotEls.waste.setAttribute('aria-label', s.waste.length ? t('slot.waste', { card: cardName(wTop), n: s.waste.length }) : t('slot.wasteEmpty'));
     X.FOUND.forEach((id, f) => {
       const F = s.found[f];
-      slotEls[id].setAttribute('aria-label', `Ô đích ${f + 1}: ` + (F.length ? `đã tới ${X.cardName(F[F.length - 1])}` : 'trống'));
+      slotEls[id].setAttribute('aria-label', F.length ? t('slot.found', { f: f + 1, card: cardName(F[F.length - 1]) }) : t('slot.foundEmpty', { f: f + 1 }));
     });
     X.TAB.forEach((id, c) => {
-      const t = s.tab[c];
-      let label = `Cột ${c + 1}: `;
-      if (!t.length) label += 'trống';
+      const col = s.tab[c];
+      let label;
+      if (!col.length) label = t('slot.colEmpty', { c: c + 1 });
       else {
-        if (s.down[c]) label += `${s.down[c]} lá úp, `;
-        label += t.slice(s.down[c]).map(X.cardName).join(', ');
+        const cards = col.slice(s.down[c]).map(cardName).join(', ');
+        label = s.down[c] ? t('slot.colDown', { c: c + 1, down: s.down[c], cards }) : t('slot.col', { c: c + 1, cards });
       }
       slotEls[id].setAttribute('aria-label', label);
     });
@@ -705,7 +714,7 @@
     $('score').textContent = s.score;
     $('moves').textContent = s.moveCount;
     renderTimer();
-    $('mode-label').textContent = (session.kind === 'daily' ? `Hằng ngày ${formatDate(session.daily)}` : 'Ván ngẫu nhiên') + ` · rút ${session.draw} lá`;
+    $('mode-label').textContent = (session.kind === 'daily' ? t('mode.daily', { date: formatDate(session.daily) }) : t('mode.random')) + ' · ' + drawText(session.draw);
   }
   function bump(id) {
     const el = $(id);
@@ -761,20 +770,20 @@
     const s = session.state;
     const m = X.hint(s);
     if (!m) {
-      toast('Hết nước đi có ích · thử Đi lại hoặc Ván mới');
+      toast(t('toast.stuck'));
       return;
     }
     const mark = (el) => { el.classList.remove('hint'); void el.offsetWidth; el.classList.add('hint'); };
     if (m.t === 'draw') {
       if (s.stock.length) mark(cardEls[s.stock[s.stock.length - 1]]);
       else mark(slotEls.stock);
-      toast(s.stock.length ? 'Gợi ý: rút bài' : 'Gợi ý: chia lại chồng rút');
+      toast(s.stock.length ? t('hint.draw') : t('hint.redeal'));
     } else {
       const src = X.pile(s, m.from);
       src.slice(src.length - m.n).forEach((c) => mark(cardEls[c]));
       const dst = X.pile(s, m.to);
       mark(dst.length ? cardEls[dst[dst.length - 1]] : slotEls[m.to]);
-      toast('Gợi ý: ' + describeMove(s, m));
+      toast(t('hint.move', { move: describeMove(s, m) }));
     }
     hintTimer = setTimeout(clearHint, 2200);
   }
@@ -1033,7 +1042,7 @@
     }
     held = { from: pk.from, n: pk.n };
     render();
-    announce(`Đang cầm ${X.cardName(pk.c)}${pk.n > 1 ? ` và ${pk.n - 1} lá trên` : ''}`);
+    announce(t('say.held', { card: cardName(pk.c) }) + (pk.n > 1 ? t('say.heldMore', { n: pk.n - 1 }) : ''));
   }
 
   function placeHeld(to) {
@@ -1048,7 +1057,7 @@
       return;
     }
     nope(heldCards());
-    toast('Không đặt được ở đây');
+    toast(t('toast.cantPlace'));
   }
 
   /* ---------------- Bàn phím trên bàn ---------------- */
@@ -1087,16 +1096,16 @@
       if (!held && kbd.depth < maxDepth(id)) {
         kbd.depth++;
         updateCursor();
-        const t = session.state.tab[col];
-        announce(`Chọn ${kbd.depth} lá, từ ${X.cardName(t[t.length - kbd.depth])}`);
+        const tc = session.state.tab[col];
+        announce(t('say.select', { n: kbd.depth, card: cardName(tc[tc.length - kbd.depth]) }));
       } else {
         focusPile(TOP_ROW[col] || 'waste');
       }
     } else if (key === 'ArrowDown' && kbd.depth > 1) {
       kbd.depth--;
       updateCursor();
-      const t = session.state.tab[col];
-      announce(`Chọn ${kbd.depth} lá, từ ${X.cardName(t[t.length - kbd.depth])}`);
+      const tc = session.state.tab[col];
+      announce(t('say.select', { n: kbd.depth, card: cardName(tc[tc.length - kbd.depth]) }));
     }
   }
 
@@ -1109,13 +1118,13 @@
     if (!X.movable(s, id, n)) {
       const src = X.pile(s, id);
       if (src.length) nope([src[src.length - 1]]);
-      announce('Không cầm được lá ở đây');
+      announce(t('say.cantPick'));
       return;
     }
     held = { from: id, n };
     render();
     const src = X.pile(s, id);
-    announce(`Đang cầm ${X.cardName(src[src.length - n])}${n > 1 ? ` và ${n - 1} lá trên` : ''}. Chọn chỗ đặt rồi nhấn Enter`);
+    announce(t('say.held', { card: cardName(src[src.length - n]) }) + (n > 1 ? t('say.heldMore', { n: n - 1 }) : '') + t('say.heldPlace'));
   }
 
   /** Vẽ khung con trỏ quanh vùng đang chọn (chỉ khi đang điều khiển bằng bàn phím). */
@@ -1246,7 +1255,7 @@
       if (k === 'z') { e.preventDefault(); undo(); }
       return;
     }
-    if (e.key === 'Escape' && held) { e.preventDefault(); held = null; render(); announce('Bỏ cầm'); return; }
+    if (e.key === 'Escape' && held) { e.preventDefault(); held = null; render(); announce(t('say.released')); return; }
     // Space: rút bài (trừ khi tiêu điểm đang ở một nút ngoài bàn)
     if (e.key === ' ') {
       const btn = e.target.closest && e.target.closest('button');
@@ -1321,18 +1330,18 @@
     const streak = dailyStreak();
     const daily = newOption(
       'daily' + (session && session.kind === 'daily' && session.daily === today && !session.won ? ' current' : ''),
-      'Ván hằng ngày',
-      `${formatDate(today)} · rút 1 lá · chung cho mọi người${streak ? ` · chuỗi ${streak} ngày` : ''}`,
-      done !== null ? '✓ ' + formatTime(done) : 'Mới',
+      t('new.daily'),
+      t('new.dailyDesc', { date: formatDate(today), draw: drawText(X.DAILY_DRAW) }) + (streak ? t('new.dailyStreak', { n: streak }) : ''),
+      done !== null ? '✓ ' + formatTime(done) : t('new.badgeNew'),
       done !== null,
       OPTION_ICONS.daily,
       () => startGame('daily', { date: todayKey() }),
     );
     list.appendChild(daily);
-    list.appendChild(newOption('', 'Ván ngẫu nhiên', `Chia bộ bài mới · rút ${settings.draw} lá`, '', false, OPTION_ICONS.random,
+    list.appendChild(newOption('', t('new.random'), t('new.randomDesc', { draw: drawText(settings.draw) }), '', false, OPTION_ICONS.random,
       () => startGame('random', { draw: settings.draw })));
     if (session && session.moves.length) {
-      list.appendChild(newOption('', 'Chơi lại ván này', `Chia lại đúng bộ bài đang chơi · rút ${session.draw} lá`, '', false, OPTION_ICONS.restart, restartSame));
+      list.appendChild(newOption('', t('new.restart'), t('new.restartDesc', { draw: drawText(session.draw) }), '', false, OPTION_ICONS.restart, restartSame));
     }
   }
 
@@ -1355,16 +1364,16 @@
     if (!session || !session.won || !r || topModal()) return;
     const { sec, score, record } = r;
     const daily = session.kind === 'daily';
-    $('result-title').textContent = record ? 'Kỷ lục mới!' : 'Bạn thắng!';
-    $('result-sub').textContent = daily ? `Bạn đã xếp xong ván hằng ngày ${formatDate(session.daily)}.` : `Đã xếp đủ 52 lá lên ô đích · rút ${session.draw} lá.`;
+    $('result-title').textContent = record ? t('result.record') : t('result.win');
+    $('result-sub').textContent = daily ? t('result.subDaily', { date: formatDate(session.daily) }) : t('result.sub', { draw: drawText(session.draw) });
     $('result-time').textContent = formatTime(sec);
     $('result-score').textContent = score;
     $('result-moves').textContent = session.state.moveCount;
-    const t = totals();
+    const tot = totals();
     $('result-line').innerHTML = daily
-      ? `Chuỗi <b>${dailyStreak()}</b> ngày · quay lại vào ngày mai nhé!`
-      : `Chuỗi thắng <b>${stats.streak}</b> · đã thắng ${t.won}/${t.played} ván`;
-    $('btn-result-new').textContent = daily ? 'Ván ngẫu nhiên' : 'Ván mới';
+      ? t('result.lineDaily', { n: dailyStreak() })
+      : t('result.line', { s: stats.streak, w: tot.won, p: tot.played });
+    $('btn-result-new').textContent = daily ? t('new.random') : t('btn.new');
     const conf = $('confetti');
     conf.innerHTML = '';
     if (!reduceMotion.matches) {
@@ -1386,19 +1395,19 @@
 
   /* ---------------- Thống kê ---------------- */
   function renderStats() {
-    const t = totals();
-    $('stats-played').textContent = t.played;
-    $('stats-won').textContent = t.won;
-    $('stats-rate').textContent = t.played ? Math.round((t.won / t.played) * 100) + '%' : '—';
-    $('stats-time').textContent = t.bestTime !== null ? formatTime(t.bestTime) : '—';
-    $('stats-score').textContent = t.bestScore !== null ? t.bestScore : '—';
+    const tot = totals();
+    $('stats-played').textContent = tot.played;
+    $('stats-won').textContent = tot.won;
+    $('stats-rate').textContent = tot.played ? Math.round((tot.won / tot.played) * 100) + '%' : '—';
+    $('stats-time').textContent = tot.bestTime !== null ? formatTime(tot.bestTime) : '—';
+    $('stats-score').textContent = tot.bestScore !== null ? tot.bestScore : '—';
     $('stats-daily').textContent = dailyStreak();
     $('stats-streak').textContent = stats.streak;
     $('stats-best-streak').textContent = stats.bestStreak;
     $('stats-daily-total').textContent = Object.keys(stats.daily.completed).length;
     $('stats-body').innerHTML = BUCKETS.map((k) => {
       const b = stats.modes[k];
-      return `<tr><td>${BUCKET_LABEL[k]}</td><td>${b.played}</td><td>${b.won}</td>` +
+      return `<tr><td>${bucketLabel(k)}</td><td>${b.played}</td><td>${b.won}</td>` +
         `<td>${b.bestTime !== null ? formatTime(b.bestTime) : '—'}</td><td>${b.bestScore !== null ? b.bestScore : '—'}</td></tr>`;
     }).join('');
     resetConfirm(false);
@@ -1407,7 +1416,7 @@
   function resetConfirm(on) {
     const btn = $('btn-stats-reset');
     btn.classList.toggle('confirm', on);
-    btn.textContent = on ? 'Bấm lần nữa để xóa' : 'Đặt lại';
+    btn.textContent = on ? t('stats.resetConfirm') : t('stats.reset');
     clearTimeout(resetTimer);
     if (on) resetTimer = setTimeout(() => resetConfirm(false), 3500);
   }
@@ -1420,7 +1429,7 @@
     saveStats();
     writeSummary();
     renderStats();
-    toast('Đã đặt lại thống kê');
+    toast(t('toast.statsReset'));
   });
 
   /* ---------------- Cài đặt + giao diện ---------------- */
@@ -1432,8 +1441,8 @@
     if (bg) $('theme-color').setAttribute('content', bg);
   }
   const TAP_DESC = {
-    auto: 'Chạm một lá để nó tự tới chỗ tốt nhất (ô đích trước), chạm lại để đổi chỗ. Kéo thả vẫn dùng được.',
-    select: 'Chạm một lá để cầm, rồi chạm chỗ muốn đặt. Chạm đúp để đưa lá lên ô đích.',
+    auto: t('settings.tapAutoDesc'),
+    select: t('settings.tapSelectDesc'),
   };
   const settingGroup = (name) => document.querySelector(`#modal-settings [data-setting="${name}"]`);
   bindSegmented(settingGroup('theme'), (v) => { settings.theme = v; saveSettings(); applyTheme(); });
@@ -1455,16 +1464,24 @@
       session.state = X.deal(session.deck, session.draw);
       persist();
       render(true);
-      toast('Đã áp dụng cho ván này');
+      toast(t('toast.appliedNow'));
     } else if (session && session.draw !== settings.draw) {
-      toast('Áp dụng từ ván ngẫu nhiên sau');
+      toast(t('toast.appliedNext'));
     }
   });
+  // Ngôn ngữ: lưu ván rồi tải lại trang theo ngôn ngữ mới
+  bindSegmented(settingGroup('lang'), (v) => I18N.set(v));
+  I18N.onBeforeReload = () => {
+    if (!session) return;
+    persist();
+    writeSummary();
+  };
   $('btn-settings').addEventListener('click', () => {
     setSegmented(settingGroup('theme'), settings.theme);
     setSegmented(settingGroup('tap'), settings.tap);
     setSegmented(settingGroup('speed'), settings.speed);
     setSegmented(settingGroup('draw'), settings.draw);
+    setSegmented(settingGroup('lang'), I18N.lang);
     $('tap-desc').textContent = TAP_DESC[settings.tap];
     openModal('modal-settings');
   });
@@ -1522,54 +1539,54 @@
 
   const HELP = [
     {
-      title: 'Mục tiêu: đưa 52 lá lên 4 ô đích',
-      text: 'Mỗi ô đích xếp <b>một chất</b>, từ <b>A lên K</b> (A, 2, 3 … 10, J, Q, K). Đưa đủ 52 lá lên ô đích là <b>thắng</b>.',
-      fig: () => figure('Bốn ô đích: bích đã tới 3, cơ có Át, một ô trống, nhép tới 2; lá 2 cơ đang được đưa lên ô cơ', (u) =>
+      title: t('help.1.title'),
+      text: t('help.1.text'),
+      fig: () => figure(t('help.1.alt'), (u) =>
         fCard(22, 6, '3s') + fCard(46, 6, 'Ah') + fSlot(70, 6, 'A') + fCard(94, 6, '2c') +
-        fCard(52, 42, '2h', 'd-hl') + fArrow(u, [[60, 41], [55, 34]]) + fTag(84, 52, 'lên ô đích') +
-        fTag(66, 3, '4 ô đích')),
+        fCard(52, 42, '2h', 'd-hl') + fArrow(u, [[60, 41], [55, 34]]) + fTag(84, 52, t('help.1.tagUp')) +
+        fTag(66, 3, t('help.1.tagFour'))),
     },
     {
-      title: 'Xếp cột: giảm dần, xen kẽ đỏ đen',
-      text: 'Trên 7 cột, đặt lá <b>nhỏ hơn 1 bậc</b> và <b>khác màu</b> lên lá trên cùng: 9 đen lên 10 đỏ, 8 đỏ lên 9 đen…',
-      fig: () => figure('Cột K bích, Q cơ, J nhép, 10 rô; lá 9 bích đặt được, lá 9 cơ cùng màu đỏ thì không', (u) =>
+      title: t('help.2.title'),
+      text: t('help.2.text'),
+      fig: () => figure(t('help.2.alt'), (u) =>
         fColumn(24, 4, ['Ks', 'Qh', 'Jc', '10d'], 7) +
-        fCard(72, 28, '9s', 'd-hl') + fArrow(u, [[71, 36], [56, 38], [43, 33]]) + fTag(80, 58, 'đặt được') +
-        fCard(110, 28, '9h', 'd-bad') + fTag(118, 58, 'cùng màu', 'bad')),
+        fCard(72, 28, '9s', 'd-hl') + fArrow(u, [[71, 36], [56, 38], [43, 33]]) + fTag(80, 58, t('help.2.tagOk')) +
+        fCard(110, 28, '9h', 'd-bad') + fTag(118, 58, t('help.2.tagBad'), 'bad')),
     },
     {
-      title: 'Lá úp tự lật · cột trống chỉ nhận K',
-      text: 'Chuyển hết lá ngửa đi thì lá úp bên dưới <b>tự lật lên</b>. Được chuyển <b>cả dãy</b> đã xếp đúng. Cột trống chỉ đặt được <b>K</b> (hoặc dãy bắt đầu bằng K).',
-      fig: () => figure('Dãy 7 cơ, 6 nhép chuyển sang lá 8 bích để lật lá úp; lá K rô đặt vào cột trống', (u) =>
+      title: t('help.3.title'),
+      text: t('help.3.text'),
+      fig: () => figure(t('help.3.alt'), (u) =>
         fColumn(10, 4, ['#', '#', '7h', '6c'], 7, [null, null, 'd-hl', 'd-hl']) +
-        fCard(44, 4, '8s') + fArrow(u, [[27, 20], [36, 22], [44, 18]]) + fTag(26, 46, 'tự lật') +
-        fSlot(96, 12, 'K') + fCard(124, 40, 'Kd', 'd-hl') + fArrow(u, [[123, 46], [116, 40], [112, 35]]) + fTag(104, 64, 'chỉ K')),
+        fCard(44, 4, '8s') + fArrow(u, [[27, 20], [36, 22], [44, 18]]) + fTag(26, 46, t('help.3.tagFlip')) +
+        fSlot(96, 12, 'K') + fCard(124, 40, 'Kd', 'd-hl') + fArrow(u, [[123, 46], [116, 40], [112, 35]]) + fTag(104, 64, t('help.3.tagK'))),
     },
     {
-      title: 'Chồng rút: chạm để lật bài',
-      text: 'Chạm chồng úp ở góc trái để lật <b>1 lá</b> (hoặc <b>3 lá</b>, đổi trong Cài đặt) sang chồng thải. Chỉ dùng được <b>lá trên cùng</b>. Hết chồng thì chạm lần nữa để <b>chia lại</b>, không giới hạn số vòng.',
-      fig: () => figure('Chồng rút úp bên trái, ba lá vừa rút xòe sang phải, lá trên cùng dùng được', (u) =>
+      title: t('help.4.title'),
+      text: t('help.4.text'),
+      fig: () => figure(t('help.4.alt'), (u) =>
         fCard(16, 18, '#') + fCard(18, 16, '#') + fCard(20, 14, '#') +
         fArrow(u, [[38, 25], [48, 25], [54, 25]]) +
         fCard(58, 14, '4c') + fCard(66, 14, 'Jd') + fCard(74, 14, '5h', 'd-hl') +
-        fTag(28, 48, 'chạm để rút') + fTag(82, 48, 'lá dùng được') + fCard(112, 14, '#') + fTag(120, 48, 'chia lại')),
+        fTag(28, 48, t('help.4.tagDraw')) + fTag(82, 48, t('help.4.tagUse')) + fCard(112, 14, '#') + fTag(120, 48, t('help.4.tagRedeal'))),
     },
     {
-      title: 'Chạm, kéo thả, đi lại, gợi ý',
-      text: '<b>Chạm</b> một lá: lá tự tới chỗ hợp lệ tốt nhất (ô đích trước), <b>chạm lại</b> để đổi sang chỗ khác. Hoặc <b>kéo thả</b>. Có <b>Đi lại</b> không giới hạn, <b>Gợi ý</b>, và <b>Tự xếp</b> khi mọi lá đã ngửa.',
-      fig: () => figure('Chạm lá Át bích, lá tự bay lên ô đích', (u) =>
+      title: t('help.5.title'),
+      text: t('help.5.text'),
+      fig: () => figure(t('help.5.alt'), (u) =>
         fSlot(100, 4, 'A') + fColumn(30, 8, ['#', '9d', 'As'], 7, [null, null, 'd-hl']) +
         `<circle cx="38" cy="38" r="5" fill="none" stroke="var(--accent)" stroke-width="1.2"/><circle cx="38" cy="38" r="9" fill="none" stroke="var(--accent)" stroke-width="0.8" opacity="0.5"/>` +
-        fArrow(u, [[50, 22], [74, 4, 98, 14]]) + fTag(38, 64, 'chạm một lá') + fTag(108, 40, 'tự lên đích')),
+        fArrow(u, [[50, 22], [74, 4, 98, 14]]) + fTag(38, 64, t('help.5.tagTap')) + fTag(108, 40, t('help.5.tagUp'))),
     },
     {
-      title: 'Điểm, ván hằng ngày, thống kê',
-      text: 'Thải xuống cột <b>+5</b>, lên ô đích <b>+10</b>, lật lá <b>+5</b>, từ ô đích xuống cột <b>−15</b>. Mỗi ngày có một <b>ván hằng ngày</b> chung cho mọi người. Ván chỉ tính là đã chơi từ nước đi đầu tiên.',
-      fig: () => figure('Điểm: thải xuống cột cộng 5, lên ô đích cộng 10, lật lá cộng 5', (u) =>
+      title: t('help.6.title'),
+      text: t('help.6.text'),
+      fig: () => figure(t('help.6.alt'), (u) =>
         fCard(14, 8, '6h') + fArrow(u, [[31, 19], [42, 19]]) + fCard(46, 8, '7c') + `<text class="d-plus" x="38" y="44">+5</text>` +
         fCard(66, 8, '2s') + fArrow(u, [[83, 19], [94, 19]]) + fCard(98, 8, 'As') + `<text class="d-plus" x="90" y="44">+10</text>` +
         fCard(122, 8, '#') + `<text class="d-plus" x="130" y="44">+5</text>` +
-        fTag(30, 60, 'thải → cột') + fTag(82, 60, 'lên ô đích') + fTag(130, 60, 'lật lá')),
+        fTag(30, 60, t('help.6.tagWaste')) + fTag(82, 60, t('help.6.tagUp')) + fTag(130, 60, t('help.6.tagFlip'))),
     },
   ];
   let helpIdx = 0;
@@ -1579,7 +1596,7 @@
     const h = HELP[helpIdx];
     $('help-body').innerHTML =
       `<div class="help-figure">${h.fig()}</div>` +
-      `<p class="help-step">Bước ${helpIdx + 1}/${HELP.length}</p>` +
+      `<p class="help-step">${t('help.step', { i: helpIdx + 1, n: HELP.length })}</p>` +
       `<h3>${h.title}</h3><p>${h.text}</p>`;
     const dots = $('help-dots');
     if (!dots.children.length) {
@@ -1587,7 +1604,7 @@
         const d = document.createElement('button');
         d.type = 'button';
         d.setAttribute('role', 'tab');
-        d.setAttribute('aria-label', `Bước ${k + 1}`);
+        d.setAttribute('aria-label', t('help.dot', { i: k + 1 }));
         d.addEventListener('click', () => showHelp(k));
         dots.appendChild(d);
       });
@@ -1597,7 +1614,7 @@
       d.tabIndex = k === helpIdx ? 0 : -1;
     });
     $('btn-help-prev').disabled = helpIdx === 0;
-    $('btn-help-next').textContent = helpIdx === HELP.length - 1 ? 'Chơi thôi!' : 'Tiếp';
+    $('btn-help-next').textContent = helpIdx === HELP.length - 1 ? t('help.play') : t('help.next');
   }
   function openHelp() {
     if (topModal() === 'modal-help') return;

@@ -9,7 +9,7 @@
   'use strict';
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.0.1';
   const KEYS = {
     settings: 'playnine-co9o-settings-v1',
     save: 'playnine-co9o-save-v1',
@@ -19,13 +19,16 @@
   const { X, O, DRAW } = Co9o;
   const LEVELS = Co9o.LEVELS;
   const LEVEL_ORDER = ['easy', 'medium', 'hard'];
+  // Chuỗi giao diện lấy từ i18n.js (ngôn ngữ cố định trong một lần tải trang)
+  const tr = (key, params) => I18N.t(key, params);
+  const levelLabel = (lv) => tr('level.' + lv);
   const LEVEL_DESC = {
-    easy: 'Máy nghĩ nhanh và thỉnh thoảng đi hớ. Hợp để làm quen luật.',
-    medium: 'Máy nghĩ khoảng 1 giây mỗi nước, đối thủ vững để luyện tập.',
-    hard: 'Máy nghĩ khoảng 2 giây mỗi nước và rất khó thắng.',
+    easy: tr('levelDesc.easy'),
+    medium: tr('levelDesc.medium'),
+    hard: tr('levelDesc.hard'),
   };
   // Tên vị trí trong lưới 3x3 (dùng cho cả ô và bàn nhỏ)
-  const POS = ['trên trái', 'trên giữa', 'trên phải', 'giữa trái', 'chính giữa', 'giữa phải', 'dưới trái', 'dưới giữa', 'dưới phải'];
+  const POS = [0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => tr('pos.' + i));
   const MARK = { 1: 'X', 2: 'O' };
   const MIN_THINK_MS = 420; // máy luôn "nghĩ" tối thiểu chừng này để người chơi kịp thấy nước của mình
 
@@ -209,12 +212,12 @@
 
   function handleCell(m) {
     if (!game || game.state.winner) return;
-    if (thinking) { toast('Máy đang nghĩ, chờ chút nhé'); return; }
+    if (thinking) { toast(tr('toast.thinking')); return; }
     if (!humanCanPlay()) return;
     const s = game.state;
     if (s.cells[m]) return;
     if (!Co9o.isLegal(s, m)) {
-      toast(s.forced >= 0 ? `Phải đánh vào bàn ${POS[s.forced]} đang sáng` : 'Bàn này đã xong, chọn bàn khác đang sáng');
+      toast(s.forced >= 0 ? tr('toast.forced', { pos: POS[s.forced] }) : tr('toast.closed'));
       nudgePlayable();
       return;
     }
@@ -287,7 +290,7 @@
     saveGame();
     render();
     writeSummary();
-    toast(`Bạn chuyển sang cầm ${MARK[human]}`);
+    toast(tr('toast.swap', { mark: MARK[human] }));
     scheduleAi();
   }
 
@@ -323,28 +326,28 @@
     const ai = aiTotals();
     const played = ai.played + stats.pvp.played;
     const level = game && game.mode === 'ai' ? game.level : settings.level;
-    const lvLabel = LEVELS[level].label;
+    const lvLabel = levelLabel(level);
     let note;
-    if (ai.played) note = `Thắng máy ${ai.won}/${ai.played} ván · mức ${lvLabel}`;
-    else if (stats.pvp.played) note = `${stats.pvp.played} ván hai người · chưa đấu máy`;
-    else note = 'Chưa chơi ván nào · thử đấu máy nhé';
+    if (ai.played) note = tr('summary.note', { won: ai.won, n: ai.played, level: lvLabel });
+    else if (stats.pvp.played) note = tr('summary.notePvp', { n: stats.pvp.played });
+    else note = tr('summary.noteNone');
     const list = [];
     if (played) {
-      list.push({ value: String(ai.won), label: 'Thắng máy' });
-      list.push({ value: String(played), label: 'Ván đã chơi' });
-      list.push({ value: String(stats.best), label: 'Chuỗi thắng dài nhất' });
+      list.push({ value: String(ai.won), label: tr('summary.won') });
+      list.push({ value: String(played), label: tr('summary.played') });
+      list.push({ value: String(stats.best), label: tr('summary.best') });
     }
     let resume = null;
     if (game && game.moves.length > 0 && !game.state.winner) {
       const s = game.state;
       const cnt = Co9o.countBoards(s);
       let boardsText;
-      if (cnt.x && cnt.o) boardsText = `X thắng ${cnt.x}, O thắng ${cnt.o} bàn nhỏ`;
-      else if (cnt.x || cnt.o) boardsText = `${cnt.x ? 'X' : 'O'} đã thắng ${cnt.x || cnt.o} bàn nhỏ`;
-      else boardsText = `Đã đi ${s.ply} nước`;
-      const turnText = game.mode === 'ai' ? (s.turn === game.human ? 'đến lượt bạn' : 'đến lượt máy') : `đến lượt ${MARK[s.turn]}`;
+      if (cnt.x && cnt.o) boardsText = tr('summary.boardsBoth', { x: cnt.x, o: cnt.o });
+      else if (cnt.x || cnt.o) boardsText = tr('summary.boardsOne', { mark: cnt.x ? 'X' : 'O', n: cnt.x || cnt.o });
+      else boardsText = tr('summary.moves', { n: s.ply });
+      const turnText = game.mode === 'ai' ? (s.turn === game.human ? tr('summary.yourTurn') : tr('summary.aiTurn')) : tr('summary.markTurn', { mark: MARK[s.turn] });
       resume = {
-        title: game.mode === 'ai' ? `Cờ 9 Ô với máy · ${LEVELS[game.level].label}` : 'Cờ 9 Ô hai người',
+        title: game.mode === 'ai' ? tr('summary.titleAi', { level: levelLabel(game.level) }) : tr('summary.titlePvp'),
         detail: `${boardsText} · ${turnText}`,
         pct: null,
       };
@@ -390,11 +393,11 @@
   function cellLabel(m, s, playable) {
     const b = (m / 9) | 0, c = m % 9;
     const v = s.cells[m];
-    let t = `Bàn ${POS[b]}, ô ${POS[c]}: ${v ? MARK[v] : 'trống'}`;
-    if (s.boards[b] === X || s.boards[b] === O) t += `. Bàn của ${MARK[s.boards[b]]}`;
-    else if (s.boards[b] === DRAW) t += '. Bàn hòa';
-    else if (!v && playable) t += '. Đánh được';
-    if (m === s.last) t += '. Nước vừa đi';
+    let t = tr('cell.label', { board: POS[b], cell: POS[c], value: v ? MARK[v] : tr('cell.empty') });
+    if (s.boards[b] === X || s.boards[b] === O) t += tr('cell.boardOf', { mark: MARK[s.boards[b]] });
+    else if (s.boards[b] === DRAW) t += tr('cell.boardDrawn');
+    else if (!v && playable) t += tr('cell.playable');
+    if (m === s.last) t += tr('cell.last');
     return t;
   }
 
@@ -422,7 +425,7 @@
           const el = document.createElement('div');
           if (s.boards[b] === DRAW) {
             el.className = 'sb-mark draw-label';
-            el.innerHTML = '<span>Hòa</span>';
+            el.innerHTML = `<span>${tr('board.drawn')}</span>`;
           } else {
             el.className = 'sb-mark ' + (s.boards[b] === X ? 'x' : 'o') + (fx.closed.includes(b) ? ' new' : '');
             el.innerHTML = markSvg(s.boards[b]);
@@ -477,27 +480,27 @@
   function renderInfo() {
     const s = game.state;
     const ai = game.mode === 'ai';
-    const lvLabel = LEVELS[game.level].label;
+    const lvLabel = levelLabel(game.level);
     const cnt = Co9o.countBoards(s);
-    $('mode-label').textContent = ai ? `Đấu máy · ${lvLabel}` : 'Hai người';
+    $('mode-label').textContent = ai ? tr('mode.aiLevel', { level: lvLabel }) : tr('mode.pvp');
     for (const p of [X, O]) {
       const k = p === X ? 'x' : 'o';
       const card = $('player-' + k);
       const isHuman = !ai || game.human === p;
       let name, sub;
       if (ai) {
-        name = isHuman ? 'Bạn' : 'Máy';
-        sub = isHuman ? (p === X ? 'Đi trước' : 'Đi sau') : `Mức ${lvLabel}`;
+        name = isHuman ? tr('player.you') : tr('player.ai');
+        sub = isHuman ? (p === X ? tr('player.first') : tr('player.second')) : tr('player.level', { level: lvLabel });
       } else {
-        name = p === X ? 'Người 1' : 'Người 2';
-        sub = p === X ? 'Đi trước' : 'Đi sau';
+        name = p === X ? tr('player.p1') : tr('player.p2');
+        sub = p === X ? tr('player.first') : tr('player.second');
       }
       const isThinking = thinking && !isHuman && s.turn === p;
-      if (isThinking) sub = 'Đang nghĩ…';
+      if (isThinking) sub = tr('player.thinking');
       $('name-' + k).textContent = name;
       $('sub-' + k).textContent = sub;
       $('score-' + k).textContent = p === X ? cnt.x : cnt.o;
-      $('score-' + k).setAttribute('aria-label', `${p === X ? cnt.x : cnt.o} bàn nhỏ đã thắng`);
+      $('score-' + k).setAttribute('aria-label', tr('info.boardsWonN', { n: p === X ? cnt.x : cnt.o }));
       card.classList.toggle('active', !s.winner && s.turn === p);
       card.classList.toggle('thinking', isThinking);
     }
@@ -507,27 +510,27 @@
     turn.classList.toggle('thinking', thinking);
     let color = s.turn === X ? 'var(--x)' : 'var(--o)';
     if (s.winner) {
-      if (s.winner === DRAW) { color = 'var(--muted)'; txt.innerHTML = '<b>Hòa.</b> Hết nước đi mà không ai có 3 bàn thẳng hàng'; }
+      if (s.winner === DRAW) { color = 'var(--muted)'; txt.innerHTML = tr('status.draw'); }
       else {
         color = s.winner === X ? 'var(--x)' : 'var(--o)';
-        if (ai) txt.innerHTML = s.winner === game.human ? '<b>Bạn thắng!</b> 3 bàn nhỏ thẳng hàng' : '<b>Máy thắng.</b> Thử lại nhé';
-        else txt.innerHTML = `<b>${MARK[s.winner]} thắng!</b> 3 bàn nhỏ thẳng hàng`;
+        if (ai) txt.innerHTML = s.winner === game.human ? tr('status.youWin') : tr('status.aiWins');
+        else txt.innerHTML = tr('status.markWins', { mark: MARK[s.winner] });
       }
     } else if (thinking) {
-      txt.innerHTML = '<span class="dots">Máy đang nghĩ</span>';
+      txt.innerHTML = `<span class="dots">${tr('status.thinking')}</span>`;
     } else {
-      const who = ai ? 'Lượt của bạn' : `Lượt của <b>${MARK[s.turn]}</b>`;
+      const who = ai ? tr('status.yourTurn') : tr('status.markTurn', { mark: MARK[s.turn] });
       let where;
-      if (s.ply === 0) where = 'đánh ô bất kỳ';
-      else if (s.forced >= 0) where = `đánh vào bàn <b>${POS[s.forced]}</b>`;
-      else where = 'chọn bàn bất kỳ đang sáng';
+      if (s.ply === 0) where = tr('status.anyCell');
+      else if (s.forced >= 0) where = tr('status.forced', { pos: POS[s.forced] });
+      else where = tr('status.anyBoard');
       txt.innerHTML = `${ai ? '<b>' + who + '</b>' : who} · ${where}`;
     }
     turn.style.setProperty('--turn-c', color);
 
     $('btn-undo').disabled = !canUndo();
     $('btn-swap').disabled = !ai;
-    $('btn-swap').title = ai ? 'Đổi bên (S)' : 'Chỉ dùng khi đấu máy';
+    $('btn-swap').title = ai ? tr('controls.swapKey') : tr('controls.swapAiOnly');
   }
 
   function nudgePlayable() {
@@ -727,12 +730,12 @@
     if (!game || !game.state.winner) return;
     const w = game.state.winner;
     const ai = game.mode === 'ai';
-    const lv = LEVELS[game.level].label;
+    const lv = levelLabel(game.level);
     const markEl = $('result-mark');
     let title, sub, celebrate = false;
     if (w === DRAW) {
-      title = 'Hòa';
-      sub = 'Hết nước đi mà không ai chiếm được 3 bàn nhỏ thẳng hàng.';
+      title = tr('result.draw');
+      sub = tr('result.drawSub');
       markEl.className = 'result-mark';
       markEl.innerHTML = '<svg viewBox="0 0 40 40"><path class="draw-eq" d="M11 16H29M11 24H29"/></svg>';
     } else {
@@ -740,12 +743,12 @@
       markEl.innerHTML = markSvg(w);
       if (ai) {
         const youWin = w === game.human;
-        title = youWin ? 'Bạn thắng!' : 'Máy thắng';
-        sub = youWin ? `Bạn chiếm 3 bàn nhỏ thẳng hàng trước máy mức ${lv}.` : 'Máy chiếm 3 bàn nhỏ thẳng hàng. Thử lại nhé!';
+        title = youWin ? tr('result.youWin') : tr('result.aiWins');
+        sub = youWin ? tr('result.youWinSub', { level: lv }) : tr('result.aiWinsSub');
         celebrate = youWin;
       } else {
-        title = `${MARK[w]} thắng!`;
-        sub = `${w === X ? 'Người 1' : 'Người 2'} chiếm 3 bàn nhỏ thẳng hàng.`;
+        title = tr('result.markWins', { mark: MARK[w] });
+        sub = tr('result.pvpSub', { player: w === X ? tr('player.p1') : tr('player.p2') });
         celebrate = true;
       }
     }
@@ -753,13 +756,13 @@
     $('result-sub').textContent = sub;
     if (ai) {
       const st = stats.levels[game.level];
-      $('result-line').textContent = `Mức ${lv}: thắng ${st.won} · thua ${st.lost} · hòa ${st.drawn}` + (stats.streak > 1 ? ` · chuỗi ${stats.streak} ván thắng` : '');
+      $('result-line').textContent = tr('result.lineAi', { level: lv, won: st.won, lost: st.lost, drawn: st.drawn }) + (stats.streak > 1 ? tr('result.lineStreak', { n: stats.streak }) : '');
     } else {
-      $('result-line').textContent = `Hai người: X thắng ${stats.pvp.x} · O thắng ${stats.pvp.o} · hòa ${stats.pvp.drawn}`;
+      $('result-line').textContent = tr('result.linePvp', { x: stats.pvp.x, o: stats.pvp.o, d: stats.pvp.drawn });
     }
     $('btn-result-swap').hidden = !ai;
     document.querySelector('#modal-result .modal-actions').classList.toggle('three', ai);
-    $('btn-result-new').textContent = ai ? 'Chơi tiếp' : 'Ván mới';
+    $('btn-result-new').textContent = ai ? tr('result.playAgain') : tr('controls.new');
     const conf = $('confetti');
     conf.innerHTML = '';
     if (celebrate && !reduceMotion.matches) {
@@ -781,22 +784,23 @@
   /* ---------------- Thống kê ---------------- */
   function renderStats() {
     const ai = aiTotals();
-    $('stats-won').textContent = ai.won;
-    $('stats-streak').textContent = stats.streak;
-    $('stats-best').textContent = stats.best;
+    const num = I18N.fmtNumber;
+    $('stats-won').textContent = num(ai.won);
+    $('stats-streak').textContent = num(stats.streak);
+    $('stats-best').textContent = num(stats.best);
     $('stats-body').innerHTML = LEVEL_ORDER.map((k) => {
       const r = stats.levels[k];
-      return `<tr><td>${LEVELS[k].label}</td><td>${r.played}</td><td>${r.won}</td><td>${r.lost}</td><td>${r.drawn}</td></tr>`;
+      return `<tr><td>${levelLabel(k)}</td><td>${num(r.played)}</td><td>${num(r.won)}</td><td>${num(r.lost)}</td><td>${num(r.drawn)}</td></tr>`;
     }).join('');
     const p = stats.pvp;
-    $('stats-pvp').textContent = p.played ? `${p.played} ván · X thắng ${p.x} · O thắng ${p.o} · hòa ${p.drawn}` : 'Chưa có ván nào.';
+    $('stats-pvp').textContent = p.played ? tr('stats.pvpLine', { n: num(p.played), x: num(p.x), o: num(p.o), d: num(p.drawn) }) : tr('stats.none');
     resetConfirm(false);
   }
   let resetTimer = 0;
   function resetConfirm(on) {
     const btn = $('btn-stats-reset');
     btn.classList.toggle('confirm', on);
-    btn.textContent = on ? 'Bấm lần nữa để xóa' : 'Đặt lại';
+    btn.textContent = on ? tr('stats.resetConfirm') : tr('stats.reset');
     clearTimeout(resetTimer);
     if (on) resetTimer = setTimeout(() => resetConfirm(false), 3500);
   }
@@ -807,7 +811,7 @@
     saveStats();
     writeSummary();
     renderStats();
-    toast('Đã đặt lại thống kê');
+    toast(tr('toast.statsReset'));
   });
 
   /* ---------------- Cài đặt + giao diện ---------------- */
@@ -820,7 +824,10 @@
   }
   const themeGroup = document.querySelector('#modal-settings [data-setting="theme"]');
   bindSegmented(themeGroup, (v) => { settings.theme = v; saveSettings(); applyTheme(); });
-  $('btn-settings').addEventListener('click', () => { setSegmented(themeGroup, settings.theme); openModal('modal-settings'); });
+  // Ngôn ngữ: lưu ván rồi lưu khóa chung 'playnine-lang' và tải lại trang
+  const langGroup = document.querySelector('#modal-settings [data-setting="lang"]');
+  bindSegmented(langGroup, (v) => { saveGame(); I18N.set(v); });
+  $('btn-settings').addEventListener('click', () => { setSegmented(themeGroup, settings.theme); setSegmented(langGroup, I18N.lang); openModal('modal-settings'); });
   $('btn-settings-help').addEventListener('click', () => { closeModal('modal-settings'); openHelp(); });
   if (window.matchMedia) {
     const mq = matchMedia('(prefers-color-scheme: dark)');
@@ -843,7 +850,7 @@
     const won = cfg.won || {};
     const drawn = cfg.drawn || [];
     const glow = cfg.glow || [];
-    let s = `<svg viewBox="0 0 119 119" role="img" aria-label="${cfg.alt}">`;
+    let s = `<svg viewBox="0 0 119 119" role="img" aria-label="${tr(cfg.alt)}">`;
     s += `<defs><marker id="ah${uid}" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto"><path class="d-arrow-head" d="M0 0L10 5L0 10z"/></marker></defs>`;
     s += '<rect class="d-board" x="0.5" y="0.5" width="118" height="118" rx="7"/>';
     for (let b = 0; b < 9; b++) {
@@ -864,7 +871,7 @@
       const cx = sbX(b) + 18, cy = sbY(b) + 18;
       if (won[b] === X) s += `<path class="d-x" stroke-width="4.4" d="M${cx - 10} ${cy - 10}L${cx + 10} ${cy + 10}M${cx + 10} ${cy - 10}L${cx - 10} ${cy + 10}"/>`;
       else if (won[b] === O) s += `<circle class="d-o" stroke-width="4.2" cx="${cx}" cy="${cy}" r="10.5"/>`;
-      else if (drawn.includes(b)) s += `<rect x="${cx - 11}" y="${cy - 5}" width="22" height="10" rx="5" class="d-board"/><text class="d-label" x="${cx}" y="${cy + 2.1}">HÒA</text>`;
+      else if (drawn.includes(b)) s += `<rect x="${cx - 11}" y="${cy - 5}" width="22" height="10" rx="5" class="d-board"/><text class="d-label" x="${cx}" y="${cy + 2.1}">${tr('fig.drawn')}</text>`;
     }
     if (cfg.line) {
       const p = (b) => [sbX(b) + 18, sbY(b) + 18];
@@ -889,37 +896,37 @@
   const M = (b, c) => b * 9 + c;
   const HELP = [
     {
-      title: '9 bàn ca-rô trong một bàn lớn',
-      text: 'Bàn lớn gồm <b>9 bàn nhỏ</b>, mỗi bàn là một lưới 3×3. Hai bên lần lượt đánh X và O vào các ô. <b>X đi trước</b> và được đánh ở bất kỳ ô nào.',
-      fig: { alt: 'Bàn lớn gồm 9 bàn nhỏ, tất cả đang sáng vì X được đánh bất kỳ đâu', glow: [0, 1, 2, 3, 4, 5, 6, 7, 8], glowColor: 'x' },
+      title: 'help.s1.title',
+      text: 'help.s1.text',
+      fig: { alt: 'help.s1.alt', glow: [0, 1, 2, 3, 4, 5, 6, 7, 8], glowColor: 'x' },
     },
     {
-      title: 'Ô bạn đánh chỉ đường cho đối thủ',
-      text: 'X đánh vào ô <b>trên phải</b> của bàn giữa, nên O <b>bắt buộc</b> đánh tiếp trong bàn <b>trên phải</b> của bàn lớn. Bàn phải đánh luôn được làm sáng.',
-      fig: { alt: 'X đánh ô trên phải của bàn giữa, mũi tên chỉ sang bàn trên phải đang sáng', cells: { [M(4, 2)]: X }, hl: M(4, 2), glow: [2], glowColor: 'o', dim: true, arrow: { from: M(4, 2), to: 2 } },
+      title: 'help.s2.title',
+      text: 'help.s2.text',
+      fig: { alt: 'help.s2.alt', cells: { [M(4, 2)]: X }, hl: M(4, 2), glow: [2], glowColor: 'o', dim: true, arrow: { from: M(4, 2), to: 2 } },
     },
     {
-      title: 'Thắng bàn nhỏ để chiếm bàn đó',
-      text: 'Có <b>3 quân thẳng hàng</b> trong một bàn nhỏ là chiếm được bàn đó, bàn hiện dấu lớn của bạn. Bàn đầy mà không ai thắng là <b>bàn hòa</b>, không tính cho ai.',
+      title: 'help.s3.title',
+      text: 'help.s3.text',
       fig: {
-        alt: 'Bàn trên trái thuộc về X, bàn dưới phải hòa',
+        alt: 'help.s3.alt',
         cells: { [M(0, 0)]: X, [M(0, 4)]: X, [M(0, 8)]: X, [M(0, 1)]: O, [M(0, 3)]: O, [M(8, 0)]: X, [M(8, 1)]: O, [M(8, 2)]: X, [M(8, 3)]: X, [M(8, 4)]: O, [M(8, 5)]: O, [M(8, 6)]: O, [M(8, 7)]: X, [M(8, 8)]: X, [M(4, 4)]: O, [M(2, 6)]: X, [M(6, 2)]: O },
         won: { 0: X }, drawn: [8],
       },
     },
     {
-      title: 'Bị gửi tới bàn đã xong? Chọn tự do',
-      text: 'Nếu bàn bạn bị gửi tới <b>đã có người thắng hoặc đã đầy</b>, bạn được đánh vào <b>bất kỳ bàn nào còn mở</b>. Các bàn đó cùng sáng lên.',
+      title: 'help.s4.title',
+      text: 'help.s4.text',
       fig: {
-        alt: 'O đánh ô trên trái, gửi X tới bàn trên trái đã xong nên X được chọn mọi bàn còn mở',
+        alt: 'help.s4.alt',
         cells: { [M(0, 0)]: X, [M(0, 4)]: X, [M(0, 8)]: X, [M(0, 1)]: O, [M(0, 3)]: O, [M(5, 0)]: O, [M(4, 5)]: X, [M(7, 4)]: O },
         won: { 0: X }, hl: M(5, 0), glow: [1, 2, 3, 4, 5, 6, 7, 8], glowColor: 'x', arrow: { from: M(5, 0), to: 0 },
       },
     },
     {
-      title: 'Chiếm 3 bàn thẳng hàng để thắng',
-      text: 'Ai chiếm được <b>3 bàn nhỏ thẳng hàng</b> (ngang, dọc hoặc chéo) trên bàn lớn thì thắng. Hết nước đi mà không ai làm được thì <b>hòa</b>.<br><b>Mẹo:</b> trước khi đánh, hãy xem ô đó sẽ gửi đối thủ tới bàn nào.',
-      fig: { alt: 'O chiếm ba bàn chéo từ trên phải xuống dưới trái và thắng', won: { 2: O, 4: O, 6: O, 0: X, 7: X }, line: [2, 6], lineColor: O },
+      title: 'help.s5.title',
+      text: 'help.s5.text',
+      fig: { alt: 'help.s5.alt', won: { 2: O, 4: O, 6: O, 0: X, 7: X }, line: [2, 6], lineColor: O },
     },
   ];
   let helpIdx = 0;
@@ -929,15 +936,15 @@
     const h = HELP[helpIdx];
     $('help-body').innerHTML =
       `<div class="help-figure">${figure(h.fig)}</div>` +
-      `<p class="help-step">Bước ${helpIdx + 1}/${HELP.length}</p>` +
-      `<h3>${h.title}</h3><p>${h.text}</p>`;
+      `<p class="help-step">${tr('help.step', { i: helpIdx + 1, n: HELP.length })}</p>` +
+      `<h3>${tr(h.title)}</h3><p>${tr(h.text)}</p>`;
     const dots = $('help-dots');
     if (!dots.children.length) {
       HELP.forEach((_, k) => {
         const d = document.createElement('button');
         d.type = 'button';
         d.setAttribute('role', 'tab');
-        d.setAttribute('aria-label', `Bước ${k + 1}`);
+        d.setAttribute('aria-label', tr('help.dot', { i: k + 1 }));
         d.addEventListener('click', () => showHelp(k));
         dots.appendChild(d);
       });
@@ -947,7 +954,7 @@
       d.tabIndex = k === helpIdx ? 0 : -1;
     });
     $('btn-help-prev').disabled = helpIdx === 0;
-    $('btn-help-next').textContent = helpIdx === HELP.length - 1 ? 'Chơi thôi!' : 'Tiếp';
+    $('btn-help-next').textContent = helpIdx === HELP.length - 1 ? tr('help.play') : tr('help.next');
   }
   function openHelp() {
     showHelp(0);
@@ -969,6 +976,8 @@
   $('btn-new').addEventListener('click', openNewGame);
 
   /* ================= Khởi động ================= */
+  I18N.apply();
+  I18N.beforeReload = saveGame; // đổi ngôn ngữ ở trang khác: lưu ván trước khi tải lại
   $('app-version').textContent = APP_VERSION;
   applyTheme();
   buildBoard();

@@ -31,9 +31,9 @@ function Co9oFactory() {
 
   // Cấu hình các mức máy. timeMs: thời gian nghĩ; mistake: xác suất đi bừa
   const LEVELS = {
-    easy: { label: 'Dễ', timeMs: 200, mistake: 0.3 },
-    medium: { label: 'Vừa', timeMs: 800, mistake: 0 },
-    hard: { label: 'Khó', timeMs: 2000, mistake: 0 },
+    easy: { timeMs: 200, mistake: 0.3 },
+    medium: { timeMs: 800, mistake: 0 },
+    hard: { timeMs: 2000, mistake: 0 },
   };
 
   /* ---------------- Trạng thái ván ---------------- */

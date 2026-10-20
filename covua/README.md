@@ -31,7 +31,7 @@ Game dùng luật FIDE đầy đủ:
 - Quân cờ vẽ bằng SVG (symbol trong `index.html`), hiển thị giống nhau trên mọi hệ điều hành. Bàn có tọa độ a–h / 1–8, tự xoay khi bạn cầm Đen; nút Xoay bàn (phím `F`) đảo lại bất cứ lúc nào. Khi chơi hai người có thể bật "Xoay bàn theo lượt" trong Cài đặt.
 - Chạm quân để thấy các ô đi được (chấm tròn; vòng tròn là ăn được) rồi chạm ô đích, hoặc kéo thả quân. Nước vừa đi được tô sáng, Vua bị chiếu có quầng đỏ.
 - Thẻ người chơi hiện quân đã ăn được (xếp theo loại) và chênh lệch quân theo thang 1-3-3-5-9 (ví dụ "+3"), báo "Đang bị chiếu!".
-- Biên bản ghi theo ký hiệu quốc tế SAN (`e4`, `Nf3`, `exd5`, `O-O`, `e8=Q+`, `Qh4#`), kết quả `1–0` / `0–1` / `½–½`; di chuột vào nước đi để xem diễn giải tiếng Việt ("Trắng: Mã g1 → f3, chiếu"). Trên điện thoại biên bản nối thành dòng, trên màn rộng thành bảng ba cột.
+- Biên bản ghi theo ký hiệu quốc tế SAN (`e4`, `Nf3`, `exd5`, `O-O`, `e8=Q+`, `Qh4#`), kết quả `1–0` / `0–1` / `½–½`; di chuột vào nước đi để xem diễn giải bằng lời theo ngôn ngữ đang chọn ("Trắng: Mã g1 → f3, chiếu" / "White: Knight g1 → f3, check"). Trên điện thoại biên bản nối thành dòng, trên màn rộng thành bảng ba cột.
 - Đi lại: khi đấu máy thì gỡ nước của bạn cùng nước đáp của máy (kể cả khi máy đang nghĩ). Ván mới chọn chế độ, mức máy, màu quân.
 - Hướng dẫn "Cách chơi" 7 bước có hình bàn cờ minh họa vẽ bằng SVG, tự mở ở lần đầu vào game, sau đó mở bằng nút "?" (hoặc phím `H`).
 - Thống kê theo mức máy: số ván, thắng, thua, hòa; chuỗi thắng hiện tại và dài nhất; số ván hai người (Trắng thắng / Đen thắng / hòa). Có nút đặt lại (bấm hai lần để xác nhận). Ván bỏ dở không tính.
@@ -52,13 +52,23 @@ Game dùng luật FIDE đầy đủ:
 | `N` | Ván mới |
 | `H` / `?` | Cách chơi |
 
+## Ngôn ngữ / Language
+
+Game có hai ngôn ngữ: tiếng Anh (mặc định) và tiếng Việt, đổi ở dòng "Language / Ngôn ngữ" trong Cài đặt. Toàn bộ chữ hiển thị (nút, modal, dòng trạng thái, thông báo, hướng dẫn, nhãn cho trình đọc màn hình, tóm tắt cho cổng PlayNine) nằm trong từ điển `{ en, vi }` của `i18n.js`; app.js không còn chữ giao diện viết cứng.
+
+- Ngôn ngữ lưu ở khóa `localStorage` dùng chung `playnine-lang` (`en` / `vi`), cổng PlayNine và mọi game cùng đọc. Thiếu hoặc sai thì dùng tiếng Anh, không tự đoán theo trình duyệt.
+- `I18N.t(key, params)` tra chuỗi (thiếu thì lấy bản `en`), thay `{tên}` bằng tham số, hỗ trợ số ít / số nhiều tiếng Anh (`{ one, other }`). `I18N.apply()` điền các phần tử có `data-i18n`, `data-i18n-html`, `data-i18n-attr` và đổi `<title>`, mô tả trang. HTML gốc viết sẵn tiếng Anh nên không bị nháy chữ khi tải.
+- Đổi ngôn ngữ (trong game, hoặc từ trang khác qua sự kiện `storage`): game lưu ván và cài đặt rồi tải lại trang, ván đang chơi giữ nguyên. Tóm tắt cho cổng được ghi lại khi mở game nên đi theo ngôn ngữ mới.
+- Ký hiệu SAN trong biên bản (`Nf3`, `O-O`, `e8=Q+`) giữ nguyên chữ cái quốc tế ở cả hai ngôn ngữ; tên quân, hộp phong cấp, diễn giải nước đi và lý do kết thúc ván (chiếu hết, pat, lặp lại 3 lần, luật 50 nước, không đủ quân) được dịch.
+
 ## Cấu trúc
 
 ```
 index.html  Khung trang, hình các quân cờ (SVG symbol), modal
 style.css   Giao diện, màu PlayNine, bàn cờ, dark mode, responsive
+i18n.js     Từ điển tiếng Anh / tiếng Việt và hàm dịch I18N (nạp trước engine.js)
 engine.js   Luật chơi + AI alpha-beta, không đụng DOM (chạy trong trình duyệt, Node và Web Worker)
-app.js      Logic game, kéo thả, hiệu ứng, render (cần engine.js nạp trước)
+app.js      Logic game, kéo thả, hiệu ứng, render (cần i18n.js và engine.js nạp trước)
 test.js     Test engine và AI chạy bằng Node
 icon.svg    Icon app, dùng làm favicon
 ```
@@ -67,7 +77,7 @@ Toàn bộ engine nằm trong hàm `CoVuaFactory`. `app.js` dựng Web Worker t�
 
 Engine dùng bàn 0x88 (ô = hàng * 16 + cột). `CoVua.play(state, move)` đi một nước hợp lệ và trả về bản ghi (`uci`, `san`, quân đi, quân bị ăn, chiếu, chiếu hết); trạng thái ván (`over`, `winner`, `reason`) được cập nhật ngay. Ván được lưu dưới dạng danh sách nước UCI (`e2e4`, `e7e8q`) và dựng lại bằng `fromMoves`, nên Đi lại và khôi phục ván luôn khớp luật.
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html`. Độ sâu, nhiễu, thời gian nghĩ và sách khai cuộc của từng mức máy nằm trong `LEVELS` và `BOOK_LINES` ở `engine.js`.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html`. Độ sâu, nhiễu, thời gian nghĩ và sách khai cuộc của từng mức máy nằm trong `LEVELS` và `BOOK_LINES` ở `engine.js`.
 
 ## Dữ liệu lưu trong trình duyệt
 

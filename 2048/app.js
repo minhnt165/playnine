@@ -3,12 +3,17 @@
  *   - Render theo id ô: ô trượt bằng transform, ô gộp / ô mới có hiệu ứng nảy
  *   - Bàn phím (mũi tên, WASD), vuốt (pointer events)
  *   - Lưu ván, cài đặt, thống kê vào localStorage; ghi tóm tắt cho cổng PlayNine
+ *   - Chữ hiển thị đi qua I18N.t (i18n.js nạp trước)
  * ===================================================================== */
 (function () {
   'use strict';
 
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.0.1';
   const G = window.Game2048;
+  const t = I18N.t;
+
+  // Điền chữ tĩnh theo ngôn ngữ trước khi vẽ phần động
+  I18N.apply();
 
   // Mọi khóa localStorage đều có tiền tố playnine-2048-
   const KEYS = {
@@ -24,7 +29,7 @@
   const $ = (id) => document.getElementById(id);
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const slideMs = () => (reduceMotion.matches ? 0 : SLIDE_MS);
-  const fmt = (n) => Number(n || 0).toLocaleString('vi-VN');
+  const fmt = (n) => I18N.fmtNumber(n);
 
   /* ---------------- localStorage (mọi truy cập đều bọc try/catch) ---------------- */
   function readJSON(key) {
@@ -98,19 +103,19 @@
   function writeSummary() {
     const best = bestOverall();
     const list = [];
-    if (best > 0) list.push({ value: fmt(best), label: 'Điểm cao nhất' });
-    if (stats.bestTile > 0) list.push({ value: String(stats.bestTile), label: 'Ô lớn nhất' });
-    if (stats.won > 0) list.push({ value: fmt(stats.won), label: 'Lần đạt 2048' });
+    if (best > 0) list.push({ value: fmt(best), label: t('stats.bestScore') });
+    if (stats.bestTile > 0) list.push({ value: String(stats.bestTile), label: t('stats.bestTile') });
+    if (stats.won > 0) list.push({ value: fmt(stats.won), label: t('stats.won') });
 
-    let note = 'Vuốt để ghép các ô cùng số, chạm tới ô 2048';
-    if (best > 0) note = 'Điểm cao nhất ' + fmt(best) + ' · ô lớn nhất ' + stats.bestTile;
+    let note = t('summary.note');
+    if (best > 0) note = t('summary.noteBest', { score: fmt(best), tile: stats.bestTile });
 
     let resume = null;
     if (game && game.moves > 0 && !game.over) {
       const sizeTxt = game.size !== G.DEFAULT_SIZE ? game.size + 'x' + game.size + ' · ' : '';
       resume = {
-        title: 'Tiếp tục 2048',
-        detail: sizeTxt + 'Điểm ' + fmt(game.score) + ' · ô lớn nhất ' + G.maxTile(game),
+        title: t('summary.resume'),
+        detail: sizeTxt + t('game.scoreTile', { score: fmt(game.score), tile: G.maxTile(game) }),
         pct: null,
       };
     }
@@ -250,7 +255,7 @@
     undoBtn.disabled = !can;
     undoBtn.setAttribute(
       'aria-label',
-      'Hoàn tác, còn ' + game.undoLeft + ' lượt' + (can ? '' : game.undoLeft ? ', chưa có nước để hoàn tác' : '')
+      t('hud.undoAria', { n: game.undoLeft }) + (can ? '' : game.undoLeft ? t('hud.undoNone') : '')
     );
     $('size-badge').textContent = game.size + 'x' + game.size;
     $('btn-over-undo').hidden = !can;
@@ -288,8 +293,8 @@
     const showOver = game.over;
     overlayWin.hidden = !showWin;
     overlayOver.hidden = !showOver;
-    if (showWin) $('win-sub').textContent = 'Điểm ' + fmt(game.score) + ' · ' + game.moves + ' nước';
-    if (showOver) $('over-sub').textContent = 'Điểm ' + fmt(game.score) + ' · ô lớn nhất ' + G.maxTile(game);
+    if (showWin) $('win-sub').textContent = t('win.sub', { score: fmt(game.score), n: game.moves });
+    if (showOver) $('over-sub').textContent = t('game.scoreTile', { score: fmt(game.score), tile: G.maxTile(game) });
     if (focus) {
       if (showWin) $('btn-continue').focus();
       else if (showOver) (G.canUndo(game) ? $('btn-over-undo') : $('btn-over-new')).focus();
@@ -328,7 +333,7 @@
     updateHud();
     if (res.reached || game.over) {
       syncOverlays(true);
-      announce(game.over ? 'Hết nước đi. Điểm ' + fmt(game.score) : 'Bạn đã đạt ô 2048!');
+      announce(game.over ? t('announce.over', { score: fmt(game.score) }) : t('announce.won'));
     }
     persist();
   }
@@ -337,14 +342,14 @@
     if (!game || modalOpen()) return;
     const prev = G.undo(game);
     if (!prev) {
-      toast(game.undoLeft ? 'Chưa có nước để hoàn tác' : 'Đã hết lượt hoàn tác');
+      toast(game.undoLeft ? t('toast.nothingToUndo') : t('toast.noUndosLeft'));
       return;
     }
     game = prev;
     reconcile('restored');
     updateHud();
     syncOverlays(false);
-    announce('Đã hoàn tác. Còn ' + game.undoLeft + ' lượt hoàn tác');
+    announce(t('announce.undone', { n: game.undoLeft }));
     if (document.activeElement && document.activeElement.closest('.overlay')) boardEl.focus();
     persist();
   }
@@ -374,9 +379,8 @@
       go();
       return;
     }
-    $('confirm-title').textContent = target !== game.size ? 'Đổi sang lưới ' + target + 'x' + target + '?' : 'Bắt đầu ván mới?';
-    $('confirm-text').textContent =
-      'Ván đang chơi (điểm ' + fmt(game.score) + ') sẽ bị bỏ và bắt đầu ván mới ' + target + 'x' + target + '.';
+    $('confirm-title').textContent = target !== game.size ? t('confirm.sizeTitle', { n: target }) : t('confirm.newTitle');
+    $('confirm-text').textContent = t('confirm.text', { score: fmt(game.score), n: target });
     confirmAction = go;
     openModal('modal-confirm', $('btn-confirm-ok'));
   }
@@ -435,7 +439,7 @@
   /* ---------------- Cài đặt (nút chọn dạng segmented) ---------------- */
   function syncSegmented() {
     document.querySelectorAll('.segmented').forEach((group) => {
-      const cur = String(settings[group.dataset.setting]);
+      const cur = group.dataset.setting === 'lang' ? I18N.lang : String(settings[group.dataset.setting]);
       group.querySelectorAll('button').forEach((b) => {
         const on = b.dataset.value === cur;
         b.setAttribute('aria-checked', on ? 'true' : 'false');
@@ -459,6 +463,11 @@
         return;
       }
       requestNewGame(size);
+    } else if (key === 'lang') {
+      // Lưu ván rồi tải lại trang theo ngôn ngữ mới
+      if (value === I18N.lang) return;
+      persist();
+      I18N.set(value);
     }
   }
 
@@ -493,10 +502,10 @@
     G.SIZES.forEach((k) => {
       const row = document.createElement('div');
       const dt = document.createElement('dt');
-      dt.textContent = 'Lưới ' + k + 'x' + k;
+      dt.textContent = t('stats.grid', { n: k });
       if (game && game.size === k) {
         const tag = document.createElement('small');
-        tag.textContent = 'đang chơi';
+        tag.textContent = t('stats.current');
         dt.appendChild(tag);
       }
       const dd = document.createElement('dd');
@@ -512,14 +521,14 @@
   function disarmReset() {
     resetArmed = false;
     clearTimeout(resetTimer);
-    resetBtn.textContent = 'Đặt lại';
+    resetBtn.textContent = t('stats.reset');
     resetBtn.classList.remove('btn-danger');
   }
   resetBtn.addEventListener('click', () => {
     if (!resetArmed) {
       // Bấm hai lần để tránh xóa nhầm
       resetArmed = true;
-      resetBtn.textContent = 'Bấm lần nữa để xóa';
+      resetBtn.textContent = t('stats.resetConfirm');
       resetBtn.classList.add('btn-danger');
       resetTimer = setTimeout(disarmReset, 3500);
       return;
@@ -530,7 +539,7 @@
     persist();
     renderStats();
     updateHud();
-    toast('Đã đặt lại thống kê');
+    toast(t('toast.statsReset'));
   });
 
   /* ---------------- Nút bấm ---------------- */
@@ -616,6 +625,7 @@
 
   /* ---------------- Lưu khi rời trang ---------------- */
   window.addEventListener('pagehide', persist);
+  I18N.onBeforeReload(persist);
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') persist();
   });

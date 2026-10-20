@@ -37,9 +37,9 @@ function BonLienTiepFactory() {
   //   shallow: ở lá không xét đe dọa trước mắt; noise: nhiễu cộng vào điểm từng nước ở gốc
   //   timeMs: trần thời gian (đào sâu dần)
   const LEVELS = {
-    easy: { label: 'Dễ', depthMin: 1, depth: 2, missRate: 0.5, missNoise: 70, shallow: true, noise: 18 },
-    medium: { label: 'Vừa', depth: 6, noise: 2 },
-    hard: { label: 'Khó', depth: CELLS, noise: 0, timeMs: 1500 },
+    easy: { depthMin: 1, depth: 2, missRate: 0.5, missNoise: 70, shallow: true, noise: 18 },
+    medium: { depth: 6, noise: 2 },
+    hard: { depth: CELLS, noise: 0, timeMs: 1500 },
   };
 
   const idxOf = (row, col) => row * COLS + col;

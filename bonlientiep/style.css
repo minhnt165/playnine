@@ -230,6 +230,12 @@ button { font: inherit; color: inherit; }
   font-variant-numeric: tabular-nums;
 }
 .pleft b { font-weight: 800; color: var(--text); min-width: 2ch; text-align: right; }
+/* Màn hẹp: thu gọn thẻ người chơi để tên / dòng phụ (nhất là tiếng Anh) không bị cắt */
+@media (max-width: 400px) {
+  .player { gap: 6px; padding-left: 5px; padding-right: 6px; }
+  .pavatar { width: 28px; height: 28px; }
+  .pleft { gap: 3px; }
+}
 .mini-disc {
   width: 16px;
   height: 16px;

@@ -71,6 +71,7 @@ Game dùng luật Klondike chuẩn:
 
 ```
 index.html  Khung trang, modal, bốn chất SVG dùng chung
+i18n.js     Từ điển tiếng Anh / tiếng Việt và đối tượng I18N (nạp trước engine.js)
 style.css   Giao diện, màu PlayNine, lá bài, dark mode, responsive
 engine.js   Luật Klondike, xáo bài có seed, gợi ý, tự xếp; không đụng DOM (chạy trong trình duyệt và Node)
 app.js      Logic game, bố cục bàn, kéo thả, bàn phím, hiệu ứng, render (cần engine.js nạp trước)
@@ -82,7 +83,13 @@ icon.svg    Icon app 64x64, dùng làm favicon
 
 `app.js` dựng sẵn 52 phần tử lá bài và 13 ô chồng; mỗi lần render chỉ đổi `transform` của lá, transition CSS lo phần lá bay. Lá đang bay được nâng tầng tạm thời; bàn dùng `isolation: isolate` để tầng của lá không đè lên modal.
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html`. Tốc độ hiệu ứng (`SPEED`, `AUTO_STEP`), ngưỡng kéo (`DRAG_START`), thời gian chạm đúp (`DOUBLE_TAP_MS`) và cỡ lá tối đa (`MAX_CW`) ở đầu `app.js`. Điểm từng loại nước nằm trong `SCORE` ở `engine.js`.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html`. Tốc độ hiệu ứng (`SPEED`, `AUTO_STEP`), ngưỡng kéo (`DRAG_START`), thời gian chạm đúp (`DOUBLE_TAP_MS`) và cỡ lá tối đa (`MAX_CW`) ở đầu `app.js`. Điểm từng loại nước nằm trong `SCORE` ở `engine.js`.
+
+## Ngôn ngữ / Language
+
+Game có tiếng Anh (mặc định) và tiếng Việt. Toàn bộ chữ hiển thị nằm trong `i18n.js` (nạp trước `engine.js` và `app.js`), dạng từ điển `{ en: {...}, vi: {...} }` với key ngắn kiểu `settings.theme`, `say.drew`. `i18n.js` tạo đối tượng `I18N`: `I18N.t(key, params)` (thiếu key ở `vi` thì lấy `en`, thay `{tên}` bằng `params`, số nhiều tiếng Anh dạng `{ one, other }` theo `params.n`), `I18N.apply()` điền chữ cho `[data-i18n]`, `[data-i18n-html]`, `[data-i18n-attr]` và cập nhật `<title>` / meta description, `I18N.set(lang)` lưu ngôn ngữ rồi tải lại trang, `I18N.fmtDate` / `I18N.fmtNumber` theo `en-US` / `vi-VN`.
+
+Ngôn ngữ lưu ở khóa dùng chung `playnine-lang` (`'en'` hoặc `'vi'`, thiếu / sai thì là `'en'`), chung cho cổng PlayNine và mọi game. Đổi trong Cài đặt (hàng "Language", hai lựa chọn English / Tiếng Việt) thì game lưu ván rồi tải lại; đổi ở cổng hoặc trang khác thì game nhận sự kiện `storage` và tự tải lại theo. Tóm tắt cho cổng (`note`, nhãn thống kê, `resume`, `daily.title`) được ghi theo ngôn ngữ hiện tại và ghi lại mỗi lần mở game. `engine.js` không dùng tới phần chữ này; tên lá đọc cho trình đọc màn hình lấy từ `i18n.js` (`card`, `rank.*`, `suit.*`).
 
 ## Ván hằng ngày
 

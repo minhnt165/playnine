@@ -47,13 +47,23 @@ Game dùng luật chuẩn của cờ lật quân 8 x 8:
 | `H` / `?` | Cách chơi |
 | `Esc` | Đóng hộp thoại |
 
+## Ngôn ngữ / Language
+
+Game có hai ngôn ngữ: tiếng Anh (mặc định) và tiếng Việt, đổi ở dòng "Language / Ngôn ngữ" trong Cài đặt. Toàn bộ chữ hiển thị (nút, modal, dòng trạng thái, thông báo, hướng dẫn, nhãn cho trình đọc màn hình, tóm tắt cho cổng PlayNine) nằm trong từ điển `{ en, vi }` của `i18n.js`; app.js không còn chữ giao diện viết cứng.
+
+- Ngôn ngữ lưu ở khóa `localStorage` dùng chung `playnine-lang` (`en` / `vi`), cổng PlayNine và mọi game cùng đọc. Thiếu hoặc sai thì dùng tiếng Anh, không tự đoán theo trình duyệt.
+- `I18N.t(key, params)` tra chuỗi (thiếu thì lấy bản `en`), thay `{tên}` bằng tham số, hỗ trợ số ít / số nhiều tiếng Anh (`{ one, other }`). `I18N.apply()` điền các phần tử có `data-i18n`, `data-i18n-html`, `data-i18n-attr` và đổi `<title>`, mô tả trang. HTML gốc viết sẵn tiếng Anh nên không bị nháy chữ khi tải.
+- Đổi ngôn ngữ (trong game, hoặc từ trang khác qua sự kiện `storage`): game lưu ván và cài đặt rồi tải lại trang, ván đang chơi giữ nguyên. Tóm tắt cho cổng được ghi lại khi mở game nên đi theo ngôn ngữ mới.
+- Tên bên (Đen / Trắng), nhật ký nước đi, thông báo mất lượt, điểm số và kết quả ván đều được dịch. Nhật ký được dựng lại từ danh sách nước khi mở game, nên đổi ngôn ngữ giữa ván thì cả các dòng cũ cũng hiện theo ngôn ngữ mới.
+
 ## Cấu trúc
 
 ```
 index.html  Khung trang, modal
 style.css   Giao diện, màu PlayNine, bàn gỗ, quân lật 3D, dark mode, responsive
+i18n.js     Từ điển tiếng Anh / tiếng Việt và hàm dịch I18N (nạp trước engine.js)
 engine.js   Luật chơi + AI alpha-beta, không đụng DOM (chạy trong trình duyệt, Node và Web Worker)
-app.js      Logic game, hiệu ứng, render (cần engine.js nạp trước)
+app.js      Logic game, hiệu ứng, render (cần i18n.js và engine.js nạp trước)
 test.js     Test engine và AI chạy bằng Node
 icon.svg    Icon app, dùng làm favicon
 ```
@@ -62,7 +72,7 @@ Toàn bộ engine nằm trong hàm `CoLatFactory`. `app.js` dựng Web Worker t�
 
 `CoLat.play(state, move, events)` trả về diễn biến từng bước (`place`, `flip` với các ô bị lật sắp theo khoảng cách, `pass`, `over`) để giao diện vẽ lại hiệu ứng. Ván được lưu dưới dạng danh sách ô đã đặt và dựng lại bằng `fromMoves`, nên Đi lại và khôi phục ván luôn khớp luật. Khi tìm kiếm, AI đặt và gỡ quân tại chỗ trên một bản sao của bàn (không sao chép trạng thái ở mỗi nút).
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html`. Độ sâu, nhiễu, thời gian nghĩ và ngưỡng giải đúng cuối ván của từng mức máy nằm trong `LEVELS` ở `engine.js`; trọng số đánh giá là bảng `W` và các hằng `MOB_WEIGHT`, `STABLE_WEIGHT`.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html`. Độ sâu, nhiễu, thời gian nghĩ và ngưỡng giải đúng cuối ván của từng mức máy nằm trong `LEVELS` ở `engine.js`; trọng số đánh giá là bảng `W` và các hằng `MOB_WEIGHT`, `STABLE_WEIGHT`.
 
 ## Dữ liệu lưu trong trình duyệt
 

@@ -609,6 +609,8 @@ kbd {
 .modal-hint { font-size: 0.78rem; line-height: 1.5; }
 .modal-actions { display: flex; gap: 8px; }
 .modal-actions .btn { flex: 1; }
+/* Tiếng Anh: nhãn dài hơn, ba nút kết quả chia rộng theo chữ để không xuống dòng ở 360px */
+html:lang(en) .modal-result .modal-actions .btn { flex: 1 1 auto; padding-inline: 12px; }
 
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rise { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }

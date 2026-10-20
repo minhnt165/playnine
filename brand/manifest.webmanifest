@@ -1,7 +1,7 @@
 {
   "name": "PlayNine",
   "short_name": "PlayNine",
-  "description": "Chín ô, chín đường, một nước hay. Sudoku và Cờ Tướng trên trình duyệt.",
+  "description": "Nine cells, nine paths, one great move. Seventeen puzzle, strategy and arcade games in your browser.",
   "start_url": "../",
   "scope": "../",
   "display": "standalone",

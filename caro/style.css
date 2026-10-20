@@ -238,6 +238,13 @@ button:disabled { cursor: default; }
 .turn { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0; padding: 0 2px; }
 .turn-text { font-weight: 800; font-size: 0.92rem; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
 .turn-sub { font-size: 0.72rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+/* Màn hẹp: thu khoảng đệm thẻ người chơi để chữ tiếng Anh dài ("Computer", "Medium level") không bị cắt */
+@media (max-width: 399px) {
+  .status { gap: 4px; padding: 5px; }
+  .player { padding: 5px; gap: 6px; }
+}
+/* Tiếng Anh: "New game" dài hơn "Ván mới" nên bỏ dấu + để thanh trên không cắt tên game */
+html[lang="en"] .btn-new .icon { display: none; }
 .app.thinking .turn-text::before {
   content: "";
   width: 12px;
@@ -649,8 +656,8 @@ kbd {
   padding: 8px 0;
   cursor: pointer;
 }
-.setting:first-child { flex-direction: column; align-items: stretch; cursor: default; }
-.setting:first-child .segmented { width: 100%; }
+.setting:first-child, .setting-lang { flex-direction: column; align-items: stretch; cursor: default; }
+.setting:first-child .segmented, .setting-lang .segmented { width: 100%; }
 .setting-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .setting-name { font-weight: 700; font-size: 0.95rem; }
 .setting-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }

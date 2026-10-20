@@ -59,6 +59,7 @@ Game dùng bộ luật phổ biến hiện nay:
 
 ```
 index.html  Khung trang, modal
+i18n.js     Chuỗi giao diện tiếng Anh / tiếng Việt (nạp trước engine.js)
 style.css   Giao diện, màu PlayNine, bàn gỗ, dark mode, responsive
 engine.js   Luật chơi + AI minimax, không đụng DOM (chạy trong trình duyệt, Node và Web Worker)
 app.js      Logic game, hiệu ứng, render (cần engine.js nạp trước)
@@ -70,7 +71,7 @@ Toàn bộ engine nằm trong hàm `OanQuanFactory`. `app.js` dựng Web Worker 
 
 `OanQuan.play(state, move, events)` trả về diễn biến từng bước (`pick`, `drop`, `capture`, `stop`, `scatter`, `collect`, `over`) để giao diện vẽ lại hiệu ứng. Ván được lưu dưới dạng danh sách nước đi và dựng lại bằng `fromMoves`, nên Đi lại và khôi phục ván luôn khớp luật.
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html`. Độ sâu, nhiễu và thời gian nghĩ của từng mức máy nằm trong `LEVELS` ở `engine.js`.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html`. Độ sâu, nhiễu và thời gian nghĩ của từng mức máy nằm trong `LEVELS` ở `engine.js`.
 
 ## Dữ liệu lưu trong trình duyệt
 
@@ -80,6 +81,16 @@ Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị tr
 | `playnine-oanquan-save-v1` | Ván đang chơi (luật của ván + danh sách nước đi) |
 | `playnine-oanquan-stats-v1` | Thống kê theo mức, chuỗi thắng, điểm cao nhất, ván hai người |
 | `playnine-oanquan-summary-v1` | Tóm tắt cho thẻ game trên cổng PlayNine (`v`, `played`, `won`, `note`, `stats`, `resume`, `daily`) |
+| `playnine-lang` | Ngôn ngữ dùng chung với cổng PlayNine: `en` (mặc định) hoặc `vi` |
+
+## Ngôn ngữ / Language
+
+Game có tiếng Anh (mặc định) và tiếng Việt. `i18n.js` nạp trước các script khác, định nghĩa biến toàn cục `I18N` và chứa toàn bộ chuỗi giao diện của hai ngôn ngữ (`{ en: {...}, vi: {...} }`, khóa dạng `settings.theme`, `log.move`...):
+
+- `I18N.t(key, params)` tra chuỗi theo ngôn ngữ hiện tại, thiếu thì lấy bản tiếng Anh; `{tên}` được thay bằng `params`, số nhiều tiếng Anh viết dạng `{ one, other }`.
+- `I18N.apply()` điền chữ cho các phần tử có `data-i18n`, `data-i18n-html`, `data-i18n-attr` trong `index.html` (chữ gốc trong HTML là tiếng Anh).
+- Ngôn ngữ lưu ở khóa dùng chung `localStorage['playnine-lang']` (`en` / `vi`, thiếu thì `en`). Đổi ở dòng Ngôn ngữ trong modal Cài đặt: game lưu ván rồi tải lại trang. Khi cổng PlayNine hoặc tab khác đổi khóa này, game cũng tự tải lại để theo; tóm tắt cho cổng được ghi lại bằng ngôn ngữ mới.
+- `engine.js` không chứa chữ hiển thị; nhật ký nước đi, thông báo, hướng dẫn đều đi qua `I18N.t`.
 
 ## Kiểm tra engine
 

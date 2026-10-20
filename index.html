@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" id="theme-color" content="#0e0b09">
-  <meta name="description" content="PlayNine: chín ô, chín đường, một nước hay. Sudoku và Cờ Tướng chơi ngay trên trình duyệt, xem tiến độ và chuỗi ngày của bạn.">
+  <meta name="description" content="PlayNine: nine cells, nine paths, one great move. Seventeen puzzle, strategy and arcade games right in your browser, with your progress and daily streaks.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="PlayNine">
   <title>PlayNine</title>
@@ -22,6 +22,7 @@
     try {
       var t = localStorage.getItem('game-portal-theme-v1');
       if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      if (localStorage.getItem('playnine-lang') === 'vi') document.documentElement.lang = 'vi';
     } catch (e) {}
   </script>
   <style>
@@ -164,6 +165,8 @@
       font-weight: 600;
     }
     .theme-btn svg { width: 16px; height: 16px; }
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+    .lang-btn .code { letter-spacing: .04em; }
 
     /* ---------- Hero ---------- */
     .hero { margin-bottom: 28px; }
@@ -659,6 +662,7 @@
       .topbar { margin-bottom: 20px; }
       .theme-btn .label { display: none; }
       .theme-btn { width: 38px; padding: 0; justify-content: center; }
+      .lang-btn svg { display: none; } /* điện thoại: nút ngôn ngữ chỉ hiện mã EN / VI */
       .hero { margin-bottom: 20px; }
       .greet { font-size: 13px; }
       .tagline { margin-top: 8px; font-size: 14px; }
@@ -714,59 +718,62 @@
         </span>
         <span class="brand-name">Play<span>Nine</span></span>
       </div>
-      <button class="theme-btn" id="theme-btn" type="button"></button>
+      <div class="top-actions">
+        <button class="theme-btn lang-btn" id="lang-btn" type="button"></button>
+        <button class="theme-btn" id="theme-btn" type="button"></button>
+      </div>
     </header>
 
     <main>
       <section class="hero reveal" style="--i: 1">
         <p class="greet" id="greet"></p>
-        <h1>Hôm nay <span class="grad">chơi gì?</span></h1>
-        <p class="tagline">Chín ô, chín đường, một nước hay.</p>
+        <h1 data-i18n-html="hero.title">What to <span class="grad">play today?</span></h1>
+        <p class="tagline" data-i18n="hero.tagline">Nine cells, nine paths, one great move.</p>
       </section>
 
-      <section class="today" id="today" aria-label="Hôm nay"></section>
+      <section class="today" id="today" aria-label="Today" data-i18n-attr="aria-label:today.label"></section>
 
       <div class="section-head reveal" style="--i: 4">
-        <h2>Trò chơi</h2>
-        <div class="filters" id="filters" aria-label="Lọc theo thể loại"></div>
+        <h2 data-i18n="games.title">Games</h2>
+        <div class="filters" id="filters" aria-label="Filter by category" data-i18n-attr="aria-label:games.filter"></div>
       </div>
       <ul class="games" id="games"></ul>
 
       <div class="section-head reveal" style="--i: 7">
-        <h2>Thành tích</h2>
-        <span>Đọc từ dữ liệu game lưu trên trình duyệt này</span>
+        <h2 data-i18n="stats.title">Achievements</h2>
+        <span data-i18n="stats.source">Read from game data saved in this browser</span>
       </div>
       <div id="stats"></div>
     </main>
 
     <footer class="reveal" style="--i: 8">
       <div id="shortcut-hint"></div>
-      <div>PlayNine · Ván đang chơi và thống kê do từng game tự lưu trong trình duyệt.</div>
+      <div data-i18n="footer.note">PlayNine · Games in progress and stats are saved by each game in your browser.</div>
     </footer>
   </div>
 
   <div class="player" id="player">
     <div class="pbar">
-      <button class="pbtn back" id="p-back" type="button" aria-label="Về PlayNine" title="Về PlayNine">
+      <button class="pbtn back" id="p-back" type="button" aria-label="Back to PlayNine" title="Back to PlayNine" data-i18n-attr="aria-label:player.back;title:player.back">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.8 5.3 4.1 12l6.7 6.7 1.4-1.4L7.9 13H20v-2H7.9l4.3-4.3z"/></svg>
         <span class="label">PlayNine</span>
       </button>
       <div class="ptitle" id="p-title"></div>
       <span class="pchip" id="p-chip" hidden></span>
-      <div class="pswitch" id="p-switch" aria-label="Chuyển game"></div>
-      <button class="pbtn icon-only" id="p-menu" type="button" aria-label="Chọn game khác" title="Chọn game khác" aria-expanded="false" aria-controls="p-menu-list">
+      <div class="pswitch" id="p-switch" aria-label="Switch game" data-i18n-attr="aria-label:player.switch"></div>
+      <button class="pbtn icon-only" id="p-menu" type="button" aria-label="Choose another game" title="Choose another game" data-i18n-attr="aria-label:player.menu;title:player.menu" aria-expanded="false" aria-controls="p-menu-list">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z"/></svg>
       </button>
       <div class="pmenu" id="p-menu-list" hidden></div>
-      <a class="pbtn icon-only" id="p-newtab" target="_blank" rel="noopener" aria-label="Mở game ở tab riêng" title="Mở ở tab riêng">
+      <a class="pbtn icon-only" id="p-newtab" target="_blank" rel="noopener" aria-label="Open game in a new tab" title="Open in a new tab" data-i18n-attr="aria-label:player.newtab;title:player.newtabShort">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 3h7v7h-2V6.4l-8.3 8.3-1.4-1.4L17.6 5H14zM5 5h6v2H5v12h12v-6h2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg>
       </a>
-      <button class="pbtn icon-only" id="p-full" type="button" aria-label="Toàn màn hình" title="Toàn màn hình">
+      <button class="pbtn icon-only" id="p-full" type="button" aria-label="Full screen" title="Full screen" data-i18n-attr="aria-label:player.full;title:player.full">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 3h7v2H5v5H3zm11 0h7v7h-2V5h-5zM3 14h2v5h5v2H3zm16 0h2v7h-7v-2h5z"/></svg>
       </button>
     </div>
     <div class="frames" id="frames">
-      <div class="loading" id="p-loading"><div><i></i>Đang tải game…</div></div>
+      <div class="loading" id="p-loading"><div><i></i><span data-i18n="player.loading">Loading game…</span></div></div>
     </div>
   </div>
 
@@ -774,218 +781,483 @@
   (function () {
     'use strict';
 
+    /* ---------------- Ngôn ngữ ---------------- */
+    // Khóa chung với mọi game: localStorage['playnine-lang'] = 'en' | 'vi', mặc định 'en'.
+    // Chuỗi giao diện của cổng nằm trong DICT; tên, mô tả, thẻ của từng game nằm trong GAMES dạng { en, vi }.
+    const LANG_KEY = 'playnine-lang';
+    const DICT = {
+      en: {
+        'meta.description': 'PlayNine: nine cells, nine paths, one great move. Seventeen puzzle, strategy and arcade games right in your browser, with your progress and daily streaks.',
+        'lang.label': 'Language: English. Switch to Tiếng Việt',
+        'theme.auto': 'Auto',
+        'theme.light': 'Light',
+        'theme.dark': 'Dark',
+        'theme.label': 'Theme: {label}. Click to change',
+        'greet.late': 'Up late',
+        'greet.morning': 'Good morning',
+        'greet.noon': 'Good afternoon',
+        'greet.afternoon': 'Good afternoon',
+        'greet.evening': 'Good evening',
+        'ago.now': 'just now',
+        'ago.min': { one: '1 minute ago', other: '{n} minutes ago' },
+        'ago.hour': { one: '1 hour ago', other: '{n} hours ago' },
+        'ago.yesterday': 'yesterday',
+        'ago.day': '{n} days ago',
+        'hero.title': 'What to <span class="grad">play today?</span>',
+        'hero.tagline': 'Nine cells, nine paths, one great move.',
+        'today.label': 'Today',
+        'today.daily': 'Daily {game} · {day}',
+        'today.doneIn': 'Done in {time}',
+        'today.difficulty': 'Difficulty: {diff}',
+        'today.dailyLabel': 'Daily puzzle',
+        'today.filled': '{label} · {pct}% filled',
+        'today.mistakes': '{n}/3 mistakes',
+        'today.continue': 'Continue {game}',
+        'today.doneToday': 'Done for today',
+        'today.todayPuzzle': 'Today’s puzzle',
+        'today.newGame': 'Something new',
+        'today.try': 'Try {game}',
+        'today.xqRematch': 'Rematch the computer · {level}',
+        'today.xqTry': 'Take on the computer',
+        'today.xqLast': 'Last played {ago}',
+        'today.xqRed': 'You play Red and move first',
+        'streak.days': { one: '🔥 1-day streak', other: '🔥 {n}-day streak' },
+        'streak.start': 'Start your first streak',
+        'games.title': 'Games',
+        'games.filter': 'Filter by category',
+        'cat.all': 'All',
+        'cat.puzzle': 'Puzzle',
+        'cat.versus': 'Versus',
+        'cat.arcade': 'Arcade',
+        'card.play': 'Play',
+        'card.playGame': 'Play {game}',
+        'ribbon.open': 'Game in progress · jump back in',
+        'ribbon.openShort': 'In progress',
+        'ribbon.last': 'Last played · {ago}',
+        'ribbon.lastShort': 'Recent',
+        'ribbon.new': 'New',
+        'note.sudokuWins': { one: '1 win', other: '{n} wins' },
+        'note.sudokuBest': ' · best {time}',
+        'note.sudokuNone': 'No wins yet',
+        'note.xqLevel': 'Computer level: {level}',
+        'note.xqAi': 'The AI runs right on your device',
+        'sudoku.easy': 'Easy',
+        'sudoku.medium': 'Medium',
+        'sudoku.hard': 'Hard',
+        'sudoku.expert': 'Expert',
+        'sudoku.extreme': 'Extreme',
+        'xq.easy': 'Easy',
+        'xq.medium': 'Medium',
+        'xq.hard': 'Hard',
+        'stats.title': 'Achievements',
+        'stats.source': 'Read from game data saved in this browser',
+        'stats.played': 'Games played',
+        'stats.won': 'Games won',
+        'stats.sudokuStreak': 'Sudoku daily streak',
+        'stats.sudokuBest': 'Sudoku best · {diff}',
+        'stats.sudokuRate': 'Sudoku win rate',
+        'stats.empty': 'No achievements yet. Play a few games and your stats will show up here.',
+        'footer.note': 'PlayNine · Games in progress and stats are saved by each game in your browser.',
+        'footer.shortcuts': 'Shortcuts: <kbd>1</kbd>–<kbd>{max}</kbd> open games in order · <kbd>T</kbd> change theme · <kbd>L</kbd> change language',
+        'player.back': 'Back to PlayNine',
+        'player.switch': 'Switch game',
+        'player.switchTo': 'Switch to {game}',
+        'player.menu': 'Choose another game',
+        'player.newtab': 'Open game in a new tab',
+        'player.newtabShort': 'Open in a new tab',
+        'player.full': 'Full screen',
+        'player.loading': 'Loading game…',
+        'player.streak': { one: '🔥 1 day', other: '🔥 {n} days' },
+      },
+      vi: {
+        'meta.description': 'PlayNine: chín ô, chín đường, một nước hay. Sudoku và Cờ Tướng chơi ngay trên trình duyệt, xem tiến độ và chuỗi ngày của bạn.',
+        'lang.label': 'Ngôn ngữ: Tiếng Việt. Chuyển sang English',
+        'theme.auto': 'Tự động',
+        'theme.light': 'Sáng',
+        'theme.dark': 'Tối',
+        'theme.label': 'Giao diện: {label}. Bấm để đổi',
+        'greet.late': 'Khuya rồi',
+        'greet.morning': 'Chào buổi sáng',
+        'greet.noon': 'Chào buổi trưa',
+        'greet.afternoon': 'Chào buổi chiều',
+        'greet.evening': 'Chào buổi tối',
+        'ago.now': 'vừa xong',
+        'ago.min': '{n} phút trước',
+        'ago.hour': '{n} giờ trước',
+        'ago.yesterday': 'hôm qua',
+        'ago.day': '{n} ngày trước',
+        'hero.title': 'Hôm nay <span class="grad">chơi gì?</span>',
+        'hero.tagline': 'Chín ô, chín đường, một nước hay.',
+        'today.label': 'Hôm nay',
+        'today.daily': '{game} hằng ngày · {day}',
+        'today.doneIn': 'Xong trong {time}',
+        'today.difficulty': 'Độ khó {diff}',
+        'today.dailyLabel': 'Ván hằng ngày',
+        'today.filled': '{label} · đã điền {pct}%',
+        'today.mistakes': '{n}/3 lỗi',
+        'today.continue': 'Tiếp tục {game}',
+        'today.doneToday': 'Đã xong hôm nay',
+        'today.todayPuzzle': 'Đề hôm nay',
+        'today.newGame': 'Game mới',
+        'today.try': 'Thử {game}',
+        'today.xqRematch': 'Phục thù máy mức {level}',
+        'today.xqTry': 'Thử sức với máy',
+        'today.xqLast': 'Lần chơi gần nhất: {ago}',
+        'today.xqRed': 'Bạn cầm quân Đỏ, đi trước',
+        'streak.days': '🔥 Chuỗi {n} ngày',
+        'streak.start': 'Bắt đầu chuỗi ngày đầu tiên',
+        'games.title': 'Trò chơi',
+        'games.filter': 'Lọc theo thể loại',
+        'cat.all': 'Tất cả',
+        'cat.puzzle': 'Giải đố',
+        'cat.versus': 'Đối kháng',
+        'cat.arcade': 'Phản xạ',
+        'card.play': 'Chơi',
+        'card.playGame': 'Chơi {game}',
+        'ribbon.open': 'Ván đang mở · quay lại chơi tiếp',
+        'ribbon.openShort': 'Đang mở',
+        'ribbon.last': 'Chơi gần nhất · {ago}',
+        'ribbon.lastShort': 'Gần nhất',
+        'ribbon.new': 'Mới',
+        'note.sudokuWins': '{n} ván thắng',
+        'note.sudokuBest': ' · kỷ lục {time}',
+        'note.sudokuNone': 'Chưa có ván thắng nào',
+        'note.xqLevel': 'Mức máy đang chọn: {level}',
+        'note.xqAi': 'AI chạy ngay trên máy bạn',
+        'sudoku.easy': 'Dễ',
+        'sudoku.medium': 'Trung bình',
+        'sudoku.hard': 'Khó',
+        'sudoku.expert': 'Chuyên gia',
+        'sudoku.extreme': 'Cực khó',
+        'xq.easy': 'Dễ',
+        'xq.medium': 'Vừa',
+        'xq.hard': 'Khó',
+        'stats.title': 'Thành tích',
+        'stats.source': 'Đọc từ dữ liệu game lưu trên trình duyệt này',
+        'stats.played': 'Tổng ván đã chơi',
+        'stats.won': 'Tổng ván thắng',
+        'stats.sudokuStreak': 'Chuỗi ngày Sudoku',
+        'stats.sudokuBest': 'Kỷ lục Sudoku · {diff}',
+        'stats.sudokuRate': 'Tỉ lệ thắng Sudoku',
+        'stats.empty': 'Chưa có thành tích nào. Chơi vài ván là chỗ này sẽ có số liệu.',
+        'footer.note': 'PlayNine · Ván đang chơi và thống kê do từng game tự lưu trong trình duyệt.',
+        'footer.shortcuts': 'Phím tắt: <kbd>1</kbd>–<kbd>{max}</kbd> mở game theo thứ tự · <kbd>T</kbd> đổi giao diện · <kbd>L</kbd> đổi ngôn ngữ',
+        'player.back': 'Về PlayNine',
+        'player.switch': 'Chuyển game',
+        'player.switchTo': 'Chuyển sang {game}',
+        'player.menu': 'Chọn game khác',
+        'player.newtab': 'Mở game ở tab riêng',
+        'player.newtabShort': 'Mở ở tab riêng',
+        'player.full': 'Toàn màn hình',
+        'player.loading': 'Đang tải game…',
+        'player.streak': '🔥 {n} ngày',
+      },
+    };
+    const normLang = (v) => (v === 'vi' ? 'vi' : 'en');
+    const I18N = {
+      lang: normLang(readRaw(LANG_KEY)),
+      locale() { return this.lang === 'vi' ? 'vi-VN' : 'en-US'; },
+      /** Tra chuỗi theo ngôn ngữ hiện tại, thiếu thì lấy tiếng Anh, rồi đến chính khóa; {x} thay bằng params.x. */
+      t(key, params) {
+        let s = DICT[this.lang][key];
+        if (s === undefined) s = DICT.en[key];
+        if (s === undefined) return key;
+        if (typeof s === 'object') s = params && params.n === 1 && s.one ? s.one : s.other;
+        return params ? s.replace(/\{(\w+)\}/g, (m, k) => (params[k] !== undefined ? params[k] : m)) : s;
+      },
+      apply(root = document) {
+        root.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = this.t(el.dataset.i18n); });
+        root.querySelectorAll('[data-i18n-html]').forEach((el) => { el.innerHTML = this.t(el.dataset.i18nHtml); }); // chỉ chuỗi tin cậy trong DICT
+        root.querySelectorAll('[data-i18n-attr]').forEach((el) => {
+          el.dataset.i18nAttr.split(';').forEach((pair) => {
+            const [attr, key] = pair.split(':');
+            if (attr && key) el.setAttribute(attr.trim(), this.t(key.trim()));
+          });
+        });
+        if (root === document) {
+          document.documentElement.lang = this.lang;
+          const meta = document.querySelector('meta[name="description"]');
+          if (meta) meta.content = this.t('meta.description');
+        }
+      },
+      /** Đổi ngôn ngữ: lưu khóa chung rồi vẽ lại cổng tại chỗ (iframe game nhận sự kiện storage và tự tải lại). */
+      set(lang) {
+        lang = normLang(lang);
+        write(LANG_KEY, lang);
+        this.lang = lang;
+        relocalize();
+      },
+      fmtNumber(n) { return new Intl.NumberFormat(this.locale()).format(n); },
+      fmtDate(d, opts) { return new Intl.DateTimeFormat(this.locale(), opts).format(d); },
+    };
+    const t = (key, params) => I18N.t(key, params);
+    // Trường dạng { en, vi } của GAMES: lấy theo ngôn ngữ hiện tại (giá trị thường thì trả nguyên)
+    const loc = (v) => (v && typeof v === 'object' && !Array.isArray(v) ? (v[I18N.lang] !== undefined ? v[I18N.lang] : v.en) : v);
+
     /* ---------------- Cấu hình ---------------- */
     // `dir`: thư mục của game (tương đối với cổng). `pages`: địa chỉ GitHub Pages riêng nếu game
     // nằm ở repo khác. `cat`: thể loại để lọc. `note`: dòng mô tả mặc định khi game chưa có dữ liệu.
     // Game mới ghi tóm tắt cho cổng vào localStorage['playnine-<id>-summary-v1'] (xem readSummary).
-    const CATS = { puzzle: 'Giải đố', versus: 'Đối kháng', arcade: 'Phản xạ' };
+    // `name`, `sub` (dòng phụ dưới tên), `desc`, `tags`, `note`, `daily` có dạng { en, vi }, đọc qua loc().
+    const CATS = { puzzle: 'cat.puzzle', versus: 'cat.versus', arcade: 'cat.arcade' }; // khóa DICT
     const svgIcon = (base) => '<img src="' + base + 'icon.svg" alt="">';
     const GAMES = [
       {
         id: 'co9o',
-        name: 'Cờ 9 Ô',
-        en: 'Ultimate Tic-Tac-Toe',
+        name: { en: 'Ultimate Tic-Tac-Toe', vi: 'Cờ 9 Ô' },
+        sub: { en: 'Nine boards in one', vi: 'Ultimate Tic-Tac-Toe' },
         dir: 'co9o/',
         cat: 'versus',
         isNew: true,
-        desc: 'Chín bàn ca-rô 3x3 lồng trong một bàn lớn. Ô bạn đánh quyết định bàn nào đối thủ phải đi tiếp.',
-        tags: ['Đặc sản PlayNine', 'Đấu máy', '2 người'],
-        note: 'Lần đầu chơi có hướng dẫn',
+        desc: {
+          en: 'Nine 3x3 tic-tac-toe boards inside one big board. The cell you play decides which board your opponent must play next.',
+          vi: 'Chín bàn ca-rô 3x3 lồng trong một bàn lớn. Ô bạn đánh quyết định bàn nào đối thủ phải đi tiếp.',
+        },
+        tags: { en: ['PlayNine original', 'Vs computer', '2 players'], vi: ['Đặc sản PlayNine', 'Đấu máy', '2 người'] },
+        note: { en: 'Guided tutorial on your first game', vi: 'Lần đầu chơi có hướng dẫn' },
         icon: svgIcon,
       },
       {
         id: 'sudoku',
         cat: 'puzzle',
-        name: 'Sudoku',
-        en: 'Sudoku',
+        name: { en: 'Sudoku', vi: 'Sudoku' },
+        sub: { en: 'Number puzzle', vi: 'Sudoku' },
         dir: 'sugoku/',
         pages: 'https://minhnt165.github.io/sudoku/',
         keepAlive: false, // game tự lưu ván, rời đi thì gỡ iframe (tránh đồng hồ chạy ngầm)
-        desc: 'Điền số 1–9 vào lưới 9x9. Đề luôn có một nghiệm, chấm độ khó theo kỹ thuật suy luận, gợi ý có giải thích.',
-        tags: ['Giải đố', '1 người', '5 độ khó', 'Ván hằng ngày'],
+        desc: {
+          en: 'Fill the 9x9 grid with 1–9. Every puzzle has exactly one solution, rated by solving technique, with hints that explain themselves.',
+          vi: 'Điền số 1–9 vào lưới 9x9. Đề luôn có một nghiệm, chấm độ khó theo kỹ thuật suy luận, gợi ý có giải thích.',
+        },
+        tags: { en: ['Puzzle', '1 player', '5 difficulties', 'Daily puzzle'], vi: ['Giải đố', '1 người', '5 độ khó', 'Ván hằng ngày'] },
         icon: () => '<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#3b6cf6"/><path d="M12 12h40v40H12z" fill="none" stroke="#fff" stroke-width="3"/><path d="M25.3 12v40M38.7 12v40M12 25.3h40M12 38.7h40" stroke="#fff" stroke-width="2" opacity=".8"/></svg>',
       },
       {
         id: 'xiangqi',
-        name: 'Cờ Tướng',
-        en: 'Xiangqi',
+        name: { en: 'Xiangqi', vi: 'Cờ Tướng' },
+        sub: { en: 'Chinese chess', vi: 'Xiangqi' },
         dir: 'xiangqi/',
         pages: 'https://minhnt165.github.io/xiangqi/',
         keepAlive: true, // game không tự lưu ván, giữ iframe để về cổng rồi quay lại vẫn còn ván
         cat: 'versus',
-        desc: 'Cờ tướng luật đầy đủ, kể cả chiếu mãi và lặp thế. Đấu máy 3 mức hoặc hai người trên cùng máy, xem lại ván.',
-        tags: ['Chiến thuật', 'Đấu máy', '2 người'],
+        desc: {
+          en: 'Chinese chess with full rules, including perpetual check and repetition. Play the computer at 3 levels or two players on one device, and replay your games.',
+          vi: 'Cờ tướng luật đầy đủ, kể cả chiếu mãi và lặp thế. Đấu máy 3 mức hoặc hai người trên cùng máy, xem lại ván.',
+        },
+        tags: { en: ['Strategy', 'Vs computer', '2 players'], vi: ['Chiến thuật', 'Đấu máy', '2 người'] },
         icon: (base) => '<img src="' + base + 'icon-192.png" alt="">',
       },
       {
         id: 'minesweeper',
-        name: 'Dò Mìn',
-        en: 'Minesweeper',
+        name: { en: 'Minesweeper', vi: 'Dò Mìn' },
+        sub: { en: 'Classic puzzle', vi: 'Minesweeper' },
         dir: 'minesweeper/',
         cat: 'puzzle',
         isNew: true,
-        desc: 'Mở hết ô an toàn mà không đạp mìn. Nước đầu luôn an toàn, nhấn giữ để cắm cờ, có ván hằng ngày.',
-        tags: ['Giải đố', '1 người', 'Ván hằng ngày'],
-        note: 'Bàn Dễ 9x9 chỉ có 10 quả mìn',
-        daily: 'Một bàn chung cho mọi người', // có đề hằng ngày: hiện ô gợi ý khi hôm nay chưa chơi
+        desc: {
+          en: 'Open every safe cell without hitting a mine. The first move is always safe, long-press to flag, and there is a daily board.',
+          vi: 'Mở hết ô an toàn mà không đạp mìn. Nước đầu luôn an toàn, nhấn giữ để cắm cờ, có ván hằng ngày.',
+        },
+        tags: { en: ['Puzzle', '1 player', 'Daily puzzle'], vi: ['Giải đố', '1 người', 'Ván hằng ngày'] },
+        note: { en: 'The Easy 9x9 board has only 10 mines', vi: 'Bàn Dễ 9x9 chỉ có 10 quả mìn' },
+        daily: { en: 'One shared board for everyone', vi: 'Một bàn chung cho mọi người' }, // có đề hằng ngày: hiện ô gợi ý khi hôm nay chưa chơi
         icon: svgIcon,
       },
       {
         id: 'caro',
-        name: 'Cờ Caro',
-        en: 'Gomoku',
+        name: { en: 'Gomoku', vi: 'Cờ Caro' },
+        sub: { en: 'Five in a row', vi: 'Gomoku' },
         dir: 'caro/',
         cat: 'versus',
         isNew: true,
-        desc: 'Năm quân liền hàng là thắng, có luật chặn hai đầu. Đấu máy 3 mức hoặc hai người trên cùng máy.',
-        tags: ['Đối kháng', 'Đấu máy', '2 người'],
-        note: 'Bàn 15x15 · luật chặn hai đầu',
+        desc: {
+          en: 'Get five in a row to win, with the blocked-ends rule. Play the computer at 3 levels or two players on one device.',
+          vi: 'Năm quân liền hàng là thắng, có luật chặn hai đầu. Đấu máy 3 mức hoặc hai người trên cùng máy.',
+        },
+        tags: { en: ['Versus', 'Vs computer', '2 players'], vi: ['Đối kháng', 'Đấu máy', '2 người'] },
+        note: { en: '15x15 board · blocked-ends rule', vi: 'Bàn 15x15 · luật chặn hai đầu' },
         icon: svgIcon,
       },
       {
         id: '2048',
-        name: '2048',
-        en: 'Gộp số',
+        name: { en: '2048', vi: '2048' },
+        sub: { en: 'Merge the tiles', vi: 'Gộp số' },
         dir: '2048/',
         cat: 'puzzle',
         isNew: true,
-        desc: 'Vuốt để gộp các ô cùng số, chạm tới ô 2048. Có hoàn tác và chọn cỡ bàn từ 3x3 đến 5x5.',
-        tags: ['Giải đố', '1 người', 'Chơi nhanh'],
-        note: 'Vuốt hoặc dùng phím mũi tên',
+        desc: {
+          en: 'Swipe to merge matching tiles and reach the 2048 tile. With undo and board sizes from 3x3 to 5x5.',
+          vi: 'Vuốt để gộp các ô cùng số, chạm tới ô 2048. Có hoàn tác và chọn cỡ bàn từ 3x3 đến 5x5.',
+        },
+        tags: { en: ['Puzzle', '1 player', 'Quick play'], vi: ['Giải đố', '1 người', 'Chơi nhanh'] },
+        note: { en: 'Swipe or use the arrow keys', vi: 'Vuốt hoặc dùng phím mũi tên' },
         icon: svgIcon,
       },
       {
         id: 'oanquan',
-        name: 'Ô Ăn Quan',
-        en: 'Trò chơi dân gian',
+        name: { en: 'O An Quan', vi: 'Ô Ăn Quan' },
+        sub: { en: 'Vietnamese mancala', vi: 'Trò chơi dân gian' },
         dir: 'oanquan/',
         cat: 'versus',
         isNew: true,
-        desc: 'Trò dân gian Việt: rải quân theo vòng, ăn dân, ăn quan. Đấu máy 3 mức hoặc hai người trên cùng máy.',
-        tags: ['Dân gian', 'Đấu máy', '2 người'],
-        note: 'Lần đầu chơi có hướng dẫn',
+        desc: {
+          en: 'A Vietnamese folk game: sow stones around the board, capture the citizens and the mandarins. Play the computer at 3 levels or two players on one device.',
+          vi: 'Trò dân gian Việt: rải quân theo vòng, ăn dân, ăn quan. Đấu máy 3 mức hoặc hai người trên cùng máy.',
+        },
+        tags: { en: ['Folk game', 'Vs computer', '2 players'], vi: ['Dân gian', 'Đấu máy', '2 người'] },
+        note: { en: 'Guided tutorial on your first game', vi: 'Lần đầu chơi có hướng dẫn' },
         icon: svgIcon,
       },
       {
         id: 'coganh',
-        name: 'Cờ Gánh',
-        en: 'Trò chơi dân gian',
+        name: { en: 'Co Ganh', vi: 'Cờ Gánh' },
+        sub: { en: 'Vietnamese folk strategy', vi: 'Trò chơi dân gian' },
         dir: 'coganh/',
         cat: 'versus',
         isNew: true,
-        desc: 'Cờ dân gian Việt trên bàn 5x5: chen vào giữa để gánh, bao kín để vây, đổi màu hết quân đối thủ là thắng.',
-        tags: ['Dân gian', 'Đấu máy', '2 người'],
-        note: 'Lần đầu chơi có hướng dẫn',
+        desc: {
+          en: 'A Vietnamese folk game on a 5x5 board: slip between two pieces to carry them, surround to trap, and win by converting every enemy piece.',
+          vi: 'Cờ dân gian Việt trên bàn 5x5: chen vào giữa để gánh, bao kín để vây, đổi màu hết quân đối thủ là thắng.',
+        },
+        tags: { en: ['Folk game', 'Vs computer', '2 players'], vi: ['Dân gian', 'Đấu máy', '2 người'] },
+        note: { en: 'Guided tutorial on your first game', vi: 'Lần đầu chơi có hướng dẫn' },
         icon: svgIcon,
       },
       {
         id: 'tranhan',
-        name: 'Tranh Ẩn',
-        en: 'Nonogram',
+        name: { en: 'Nonogram', vi: 'Tranh Ẩn' },
+        sub: { en: 'Picture logic puzzle', vi: 'Nonogram' },
         dir: 'tranhan/',
         cat: 'puzzle',
         isNew: true,
-        desc: 'Tô ô theo gợi ý số ở hàng và cột để lộ ra bức tranh. Có bộ tranh vẽ sẵn, tranh ngẫu nhiên và tranh hằng ngày.',
-        tags: ['Giải đố', '1 người', 'Tranh hằng ngày'],
-        note: 'Giải xong mới biết tranh gì',
-        daily: 'Mỗi ngày một bức tranh mới',
+        desc: {
+          en: 'Fill cells by the number clues on each row and column to reveal a picture. Hand-made sets, random pictures and a daily picture.',
+          vi: 'Tô ô theo gợi ý số ở hàng và cột để lộ ra bức tranh. Có bộ tranh vẽ sẵn, tranh ngẫu nhiên và tranh hằng ngày.',
+        },
+        tags: { en: ['Puzzle', '1 player', 'Daily picture'], vi: ['Giải đố', '1 người', 'Tranh hằng ngày'] },
+        note: { en: 'Solve it to see what the picture is', vi: 'Giải xong mới biết tranh gì' },
+        daily: { en: 'A new picture every day', vi: 'Mỗi ngày một bức tranh mới' },
         icon: svgIcon,
       },
       {
         id: 'xepgach',
-        name: 'Xếp Gạch',
-        en: 'Falling Blocks',
+        name: { en: 'Falling Blocks', vi: 'Xếp Gạch' },
+        sub: { en: 'Clear the lines', vi: 'Falling Blocks' },
         dir: 'xepgach/',
         cat: 'arcade',
         isNew: true,
-        desc: 'Xoay và thả khối cho kín hàng. Có giữ khối, bóng rơi, xem trước 3 khối và nút bấm cảm ứng.',
-        tags: ['Phản xạ', '1 người', 'Kỷ lục'],
-        note: 'Xếp kín 4 hàng một lúc để ăn đậm',
+        desc: {
+          en: 'Rotate and drop blocks to complete lines. With hold, ghost piece, a 3-piece preview and touch controls.',
+          vi: 'Xoay và thả khối cho kín hàng. Có giữ khối, bóng rơi, xem trước 3 khối và nút bấm cảm ứng.',
+        },
+        tags: { en: ['Arcade', '1 player', 'High score'], vi: ['Phản xạ', '1 người', 'Kỷ lục'] },
+        note: { en: 'Clear 4 lines at once for a big score', vi: 'Xếp kín 4 hàng một lúc để ăn đậm' },
         icon: svgIcon,
       },
       {
         id: 'ran',
-        name: 'Rắn Săn Mồi',
-        en: 'Snake',
+        name: { en: 'Snake', vi: 'Rắn Săn Mồi' },
+        sub: { en: 'Classic arcade', vi: 'Snake' },
         dir: 'ran/',
         cat: 'arcade',
         isNew: true,
-        desc: 'Điều khiển rắn ăn mồi, càng ăn càng dài và càng nhanh. Ba chế độ: Cổ điển, Xuyên tường, Mê cung.',
-        tags: ['Phản xạ', '1 người', 'Vuốt để chơi'],
-        note: 'Vuốt hoặc dùng phím mũi tên',
+        desc: {
+          en: 'Steer the snake to eat; the more it eats, the longer and faster it gets. Three modes: Classic, Wrap, Maze.',
+          vi: 'Điều khiển rắn ăn mồi, càng ăn càng dài và càng nhanh. Ba chế độ: Cổ điển, Xuyên tường, Mê cung.',
+        },
+        tags: { en: ['Arcade', '1 player', 'Swipe to play'], vi: ['Phản xạ', '1 người', 'Vuốt để chơi'] },
+        note: { en: 'Swipe or use the arrow keys', vi: 'Vuốt hoặc dùng phím mũi tên' },
         icon: svgIcon,
       },
       {
         id: 'covua',
-        name: 'Cờ Vua',
-        en: 'Chess',
+        name: { en: 'Chess', vi: 'Cờ Vua' },
+        sub: { en: 'Classic strategy', vi: 'Chess' },
         dir: 'covua/',
         cat: 'versus',
         isNew: true,
-        desc: 'Cờ quốc tế luật đầy đủ: nhập thành, bắt tốt qua đường, phong cấp. Đấu máy 3 mức hoặc hai người trên cùng máy.',
-        tags: ['Chiến thuật', 'Đấu máy', '2 người'],
-        note: 'Chạm hoặc kéo thả quân · có hướng dẫn',
+        desc: {
+          en: 'Chess with full rules: castling, en passant, promotion. Play the computer at 3 levels or two players on one device.',
+          vi: 'Cờ quốc tế luật đầy đủ: nhập thành, bắt tốt qua đường, phong cấp. Đấu máy 3 mức hoặc hai người trên cùng máy.',
+        },
+        tags: { en: ['Strategy', 'Vs computer', '2 players'], vi: ['Chiến thuật', 'Đấu máy', '2 người'] },
+        note: { en: 'Tap or drag pieces · tutorial included', vi: 'Chạm hoặc kéo thả quân · có hướng dẫn' },
         icon: svgIcon,
       },
       {
         id: 'colat',
-        name: 'Cờ Lật',
-        en: 'Reversi',
+        name: { en: 'Reversi', vi: 'Cờ Lật' },
+        sub: { en: 'Flip to win', vi: 'Reversi' },
         dir: 'colat/',
         cat: 'versus',
         isNew: true,
-        desc: 'Đặt quân kẹp quân đối thủ để lật sang màu mình, bàn 8x8. Đấu máy 3 mức hoặc hai người trên cùng máy.',
-        tags: ['Chiến thuật', 'Đấu máy', '2 người'],
-        note: 'Lần đầu chơi có hướng dẫn',
+        desc: {
+          en: 'Place a disc to sandwich your opponent’s discs and flip them to your color, on an 8x8 board. Play the computer at 3 levels or two players on one device.',
+          vi: 'Đặt quân kẹp quân đối thủ để lật sang màu mình, bàn 8x8. Đấu máy 3 mức hoặc hai người trên cùng máy.',
+        },
+        tags: { en: ['Strategy', 'Vs computer', '2 players'], vi: ['Chiến thuật', 'Đấu máy', '2 người'] },
+        note: { en: 'Guided tutorial on your first game', vi: 'Lần đầu chơi có hướng dẫn' },
         icon: svgIcon,
       },
       {
         id: 'codam',
-        name: 'Cờ Đam',
-        en: 'Checkers',
+        name: { en: 'Checkers', vi: 'Cờ Đam' },
+        sub: { en: 'Draughts', vi: 'Checkers' },
         dir: 'codam/',
         cat: 'versus',
         isNew: true,
-        desc: 'Cờ đam 8x8 bắt buộc ăn quân, ăn liên tiếp, lên vua. Chọn luật Quốc tế vua bay hoặc kiểu Mỹ/Anh, đấu máy 3 mức hoặc hai người.',
-        tags: ['Chiến thuật', 'Đấu máy', '2 người'],
-        note: 'Lần đầu chơi có hướng dẫn',
+        desc: {
+          en: '8x8 checkers with forced captures, multi-jumps and kings. Choose International flying kings or American/English rules; play the computer at 3 levels or two players.',
+          vi: 'Cờ đam 8x8 bắt buộc ăn quân, ăn liên tiếp, lên vua. Chọn luật Quốc tế vua bay hoặc kiểu Mỹ/Anh, đấu máy 3 mức hoặc hai người.',
+        },
+        tags: { en: ['Strategy', 'Vs computer', '2 players'], vi: ['Chiến thuật', 'Đấu máy', '2 người'] },
+        note: { en: 'Guided tutorial on your first game', vi: 'Lần đầu chơi có hướng dẫn' },
         icon: svgIcon,
       },
       {
         id: 'bonlientiep',
-        name: 'Bốn Liên Tiếp',
-        en: 'Four in a Row',
+        name: { en: 'Four in a Row', vi: 'Bốn Liên Tiếp' },
+        sub: { en: 'Drop and connect', vi: 'Four in a Row' },
         dir: 'bonlientiep/',
         cat: 'versus',
         isNew: true,
-        desc: 'Thả quân vào bàn 7 cột, ai xếp được 4 quân liền hàng ngang, dọc hoặc chéo trước là thắng. Đấu máy 3 mức hoặc hai người.',
-        tags: ['Đối kháng', 'Đấu máy', '2 người'],
-        note: 'Ván nhanh chừng vài phút',
+        desc: {
+          en: 'Drop discs into a 7-column board; the first to line up 4 horizontally, vertically or diagonally wins. Play the computer at 3 levels or two players.',
+          vi: 'Thả quân vào bàn 7 cột, ai xếp được 4 quân liền hàng ngang, dọc hoặc chéo trước là thắng. Đấu máy 3 mức hoặc hai người.',
+        },
+        tags: { en: ['Versus', 'Vs computer', '2 players'], vi: ['Đối kháng', 'Đấu máy', '2 người'] },
+        note: { en: 'A game takes just a few minutes', vi: 'Ván nhanh chừng vài phút' },
         icon: svgIcon,
       },
       {
         id: 'xepbai',
-        name: 'Xếp Bài',
-        en: 'Solitaire',
+        name: { en: 'Solitaire', vi: 'Xếp Bài' },
+        sub: { en: 'Klondike', vi: 'Solitaire' },
         dir: 'xepbai/',
         cat: 'puzzle',
         isNew: true,
-        desc: 'Xếp 52 lá lên bốn ô đích từ A đến K. Rút 1 hoặc 3 lá, kéo thả hoặc chạm để đi, đi lại không giới hạn.',
-        tags: ['Giải đố', '1 người', 'Ván hằng ngày'],
-        note: 'Chạm một lá để nó tự tìm chỗ',
-        daily: 'Một ván chia chung cho mọi người',
+        desc: {
+          en: 'Build all 52 cards onto the four foundations from A to K. Draw 1 or 3, drag or tap to move, unlimited undo.',
+          vi: 'Xếp 52 lá lên bốn ô đích từ A đến K. Rút 1 hoặc 3 lá, kéo thả hoặc chạm để đi, đi lại không giới hạn.',
+        },
+        tags: { en: ['Puzzle', '1 player', 'Daily deal'], vi: ['Giải đố', '1 người', 'Ván hằng ngày'] },
+        note: { en: 'Tap a card and it finds its own spot', vi: 'Chạm một lá để nó tự tìm chỗ' },
+        daily: { en: 'One shared deal for everyone', vi: 'Một ván chia chung cho mọi người' },
         icon: svgIcon,
       },
       {
         id: 'phagach',
-        name: 'Phá Gạch',
-        en: 'Brick Breaker',
+        name: { en: 'Brick Breaker', vi: 'Phá Gạch' },
+        sub: { en: 'Arcade', vi: 'Brick Breaker' },
         dir: 'phagach/',
         cat: 'arcade',
         isNew: true,
-        desc: 'Đỡ bóng bằng thanh trượt, phá hết tường gạch qua 10 màn. Có gạch cứng, gạch thép và 5 loại vật phẩm.',
-        tags: ['Phản xạ', '1 người', 'Kỷ lục'],
-        note: 'Đập gạch liên tiếp để nhân điểm',
+        desc: {
+          en: 'Bounce the ball off the paddle and break every wall of bricks across 10 levels. With tough bricks, steel bricks and 5 power-ups.',
+          vi: 'Đỡ bóng bằng thanh trượt, phá hết tường gạch qua 10 màn. Có gạch cứng, gạch thép và 5 loại vật phẩm.',
+        },
+        tags: { en: ['Arcade', '1 player', 'High score'], vi: ['Phản xạ', '1 người', 'Kỷ lục'] },
+        note: { en: 'Break bricks back to back to multiply your score', vi: 'Đập gạch liên tiếp để nhân điểm' },
         icon: svgIcon,
       },
     ];
@@ -1020,9 +1292,9 @@
 
     /* ---------------- Giao diện sáng / tối ---------------- */
     const THEMES = {
-      auto: { label: 'Tự động', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2v16a8 8 0 0 1 0-16z"/></svg>' },
-      light: { label: 'Sáng', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM11 1h2v3h-2zm0 19h2v3h-2zM1 11h3v2H1zm19 0h3v2h-3zM4.2 5.6l1.4-1.4 2.1 2.1-1.4 1.4zm12.1 12.1 1.4-1.4 2.1 2.1-1.4 1.4zM4.2 18.4l2.1-2.1 1.4 1.4-2.1 2.1zM16.3 6.3l2.1-2.1 1.4 1.4-2.1 2.1z"/></svg>' },
-      dark: { label: 'Tối', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.7 14.6A8.5 8.5 0 0 1 9.4 3.3a8.5 8.5 0 1 0 11.3 11.3z"/></svg>' },
+      auto: { label: 'theme.auto', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2v16a8 8 0 0 1 0-16z"/></svg>' },
+      light: { label: 'theme.light', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM11 1h2v3h-2zm0 19h2v3h-2zM1 11h3v2H1zm19 0h3v2h-3zM4.2 5.6l1.4-1.4 2.1 2.1-1.4 1.4zm12.1 12.1 1.4-1.4 2.1 2.1-1.4 1.4zM4.2 18.4l2.1-2.1 1.4 1.4-2.1 2.1zM16.3 6.3l2.1-2.1 1.4 1.4-2.1 2.1z"/></svg>' },
+      dark: { label: 'theme.dark', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.7 14.6A8.5 8.5 0 0 1 9.4 3.3a8.5 8.5 0 1 0 11.3 11.3z"/></svg>' },
     };
     const THEME_ORDER = ['auto', 'light', 'dark'];
     let theme = readRaw(THEME_KEY);
@@ -1033,8 +1305,8 @@
       if (theme === 'auto') root.removeAttribute('data-theme');
       else root.setAttribute('data-theme', theme);
       const btn = $('theme-btn');
-      btn.innerHTML = THEMES[theme].icon + '<span class="label">' + THEMES[theme].label + '</span>';
-      btn.setAttribute('aria-label', 'Giao diện: ' + THEMES[theme].label + '. Bấm để đổi');
+      btn.innerHTML = THEMES[theme].icon + '<span class="label">' + t(THEMES[theme].label) + '</span>';
+      btn.setAttribute('aria-label', t('theme.label', { label: t(THEMES[theme].label) }));
       requestAnimationFrame(() => {
         $('theme-color').content = getComputedStyle(root).getPropertyValue('--bg').trim();
         Glyphs.recolor();
@@ -1046,6 +1318,16 @@
       applyTheme();
     });
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (theme === 'auto') applyTheme(); });
+
+    /* ---------------- Nút ngôn ngữ (EN / VI) ---------------- */
+    const GLOBE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17M12 3c-2.4 2.6-3.6 5.6-3.6 9s1.2 6.4 3.6 9c2.4-2.6 3.6-5.6 3.6-9S14.4 5.6 12 3z"/></svg>';
+    function applyLang() {
+      const btn = $('lang-btn');
+      btn.innerHTML = GLOBE + '<span class="code">' + I18N.lang.toUpperCase() + '</span>';
+      btn.setAttribute('aria-label', t('lang.label'));
+      btn.title = t('lang.label');
+    }
+    $('lang-btn').addEventListener('click', () => I18N.set(I18N.lang === 'vi' ? 'en' : 'vi'));
 
     /* ---------------- Tiện ích thời gian ---------------- */
     const WEEKDAYS = ['Chủ nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
@@ -1060,28 +1342,30 @@
     }
     function fmtAgo(ts) {
       const min = Math.floor((Date.now() - ts) / 60000);
-      if (min < 1) return 'vừa xong';
-      if (min < 60) return min + ' phút trước';
+      if (min < 1) return t('ago.now');
+      if (min < 60) return t('ago.min', { n: min });
       const h = Math.floor(min / 60);
-      if (h < 24) return h + ' giờ trước';
+      if (h < 24) return t('ago.hour', { n: h });
       const d = Math.floor(h / 24);
-      return d === 1 ? 'hôm qua' : d + ' ngày trước';
+      return d === 1 ? t('ago.yesterday') : t('ago.day', { n: d });
     }
     function greeting(d) {
       const h = d.getHours();
-      if (h < 5) return 'Khuya rồi';
-      if (h < 11) return 'Chào buổi sáng';
-      if (h < 13) return 'Chào buổi trưa';
-      if (h < 18) return 'Chào buổi chiều';
-      return 'Chào buổi tối';
+      if (h < 5) return t('greet.late');
+      if (h < 11) return t('greet.morning');
+      if (h < 13) return t('greet.noon');
+      if (h < 18) return t('greet.afternoon');
+      return t('greet.evening');
     }
+    // Tên thứ: tiếng Việt giữ bảng WEEKDAYS cũ, tiếng Anh lấy từ Intl
+    const weekdayOf = (d) => (I18N.lang === 'vi' ? WEEKDAYS[d.getDay()] : I18N.fmtDate(d, { weekday: 'long' }));
 
     /* ---------------- Dữ liệu đọc từ các game ---------------- */
     // Khóa và định dạng lấy theo sugoku/app.js và xiangqi/index.html.
-    const SUDOKU_DIFF = { easy: 'Dễ', medium: 'Trung bình', hard: 'Khó', expert: 'Chuyên gia', extreme: 'Cực khó' };
+    const SUDOKU_DIFF = { easy: 'sudoku.easy', medium: 'sudoku.medium', hard: 'sudoku.hard', expert: 'sudoku.expert', extreme: 'sudoku.extreme' }; // khóa DICT
     const SUDOKU_DIFF_ORDER = ['easy', 'medium', 'hard', 'expert', 'extreme'];
     const SUDOKU_DAILY_BY_WEEKDAY = ['extreme', 'easy', 'medium', 'medium', 'hard', 'hard', 'expert'];
-    const XQ_LEVEL = { easy: 'Dễ', medium: 'Vừa', hard: 'Khó' };
+    const XQ_LEVEL = { easy: 'xq.easy', medium: 'xq.medium', hard: 'xq.hard' }; // khóa DICT
 
     function sudokuData() {
       const stats = readJSON('sudoku-vn-stats-v1') || {};
@@ -1116,7 +1400,7 @@
           if (save.board[i] === save.solution[i]) right++;
         }
         current = {
-          label: typeof save.daily === 'string' ? 'Ván hằng ngày' : (SUDOKU_DIFF[save.difficulty] || ''),
+          label: typeof save.daily === 'string' ? t('today.dailyLabel') : (SUDOKU_DIFF[save.difficulty] ? t(SUDOKU_DIFF[save.difficulty]) : ''),
           pct: empty ? right / empty : 0,
           seconds: save.seconds || 0,
           mistakes: save.mistakes || 0,
@@ -1171,20 +1455,20 @@
     /* ---------------- Ô "Hôm nay" ---------------- */
     const MAX_TODAY = 3;
     const gameById = (id) => GAMES.find((g) => g.id === id);
-    const streakHtml = (n) => (n ? '<span class="streak">🔥 Chuỗi ' + n + ' ngày</span>' : 'Bắt đầu chuỗi ngày đầu tiên');
+    const streakHtml = (n) => (n ? '<span class="streak">' + t('streak.days', { n }) + '</span>' : t('streak.start'));
 
     function renderToday(sd, xq, rec, sums) {
       // Thứ tự ưu tiên: ván đang dở (mới nhất trước) → đề hằng ngày chưa làm → đề đã xong → gợi ý khác
       const resumes = [], todo = [], done = [], extras = [];
       const todayKey = dateKeyOf(new Date());
-      const weekday = WEEKDAYS[new Date().getDay()];
+      const weekday = weekdayOf(new Date());
 
       const sdDone = sd.today.time !== null;
       (sdDone ? done : todo).push({
         game: gameById('sudoku'),
         badge: sdDone ? 'done' : 'daily',
-        kicker: 'Sudoku hằng ngày · ' + weekday,
-        title: sdDone ? 'Xong trong ' + fmtDuration(sd.today.time) : 'Độ khó ' + SUDOKU_DIFF[sd.today.diff],
+        kicker: t('today.daily', { game: loc(gameById('sudoku').name), day: weekday }),
+        title: sdDone ? t('today.doneIn', { time: fmtDuration(sd.today.time) }) : t('today.difficulty', { diff: t(SUDOKU_DIFF[sd.today.diff]) }),
         meta: streakHtml(sd.streak),
       });
 
@@ -1194,9 +1478,9 @@
           at: rec.sudoku || 0,
           game: gameById('sudoku'),
           badge: 'play',
-          kicker: 'Tiếp tục Sudoku',
-          title: sd.current.label + ' · đã điền ' + pct + '%',
-          meta: '⏱ ' + fmtDuration(sd.current.seconds) + ' · ' + sd.current.mistakes + '/3 lỗi',
+          kicker: t('today.continue', { game: loc(gameById('sudoku').name) }),
+          title: t('today.filled', { label: sd.current.label, pct }),
+          meta: '⏱ ' + fmtDuration(sd.current.seconds) + ' · ' + t('today.mistakes', { n: sd.current.mistakes }),
           bar: sd.current.pct,
         });
       }
@@ -1208,7 +1492,7 @@
             at: s.updatedAt,
             game: g,
             badge: 'play',
-            kicker: 'Tiếp tục ' + g.name,
+            kicker: t('today.continue', { game: loc(g.name) }),
             title: esc(s.resume.title),
             meta: esc(s.resume.detail || ''),
             bar: typeof s.resume.pct === 'number' ? Math.max(0, Math.min(1, s.resume.pct)) : undefined,
@@ -1218,28 +1502,28 @@
           (s.daily.done ? done : todo).push({
             game: g,
             badge: s.daily.done ? 'done' : 'daily',
-            kicker: g.name + ' hằng ngày · ' + weekday,
-            title: s.daily.done ? 'Đã xong hôm nay' : esc(s.daily.title || 'Đề hôm nay'),
+            kicker: t('today.daily', { game: loc(g.name), day: weekday }),
+            title: s.daily.done ? t('today.doneToday') : esc(s.daily.title || t('today.todayPuzzle')),
             meta: streakHtml(Number(s.daily.streak) || 0),
           });
         } else if (g.daily) {
           // Game có đề hằng ngày nhưng hôm nay chưa mở lần nào
           const streak = s.daily ? Number(s.daily.streak) || 0 : 0;
-          todo.push({ game: g, badge: 'daily', kicker: g.name + ' hằng ngày · ' + weekday, title: g.daily, meta: streakHtml(streak) });
+          todo.push({ game: g, badge: 'daily', kicker: t('today.daily', { game: loc(g.name), day: weekday }), title: loc(g.daily), meta: streakHtml(streak) });
         }
       });
 
       const tried = GAMES.filter((g) => g.isNew && !rec[g.id]);
       if (tried.length) {
         const g = tried[0];
-        extras.push({ game: g, badge: 'new', kicker: 'Game mới', title: 'Thử ' + g.name, meta: esc(g.note) });
+        extras.push({ game: g, badge: 'new', kicker: t('today.newGame'), title: t('today.try', { game: loc(g.name) }), meta: esc(loc(g.note)) });
       }
       extras.push({
         game: gameById('xiangqi'),
         badge: 'play',
-        kicker: 'Cờ Tướng',
-        title: xq.level ? 'Phục thù máy mức ' + XQ_LEVEL[xq.level] : 'Thử sức với máy',
-        meta: rec.xiangqi ? 'Lần chơi gần nhất: ' + fmtAgo(rec.xiangqi) : 'Bạn cầm quân Đỏ, đi trước',
+        kicker: loc(gameById('xiangqi').name),
+        title: xq.level ? t('today.xqRematch', { level: t(XQ_LEVEL[xq.level]) }) : t('today.xqTry'),
+        meta: rec.xiangqi ? t('today.xqLast', { ago: fmtAgo(rec.xiangqi) }) : t('today.xqRed'),
       });
 
       resumes.sort((a, b) => b.at - a.at);
@@ -1276,12 +1560,12 @@
     function renderFilters() {
       const box = $('filters');
       box.innerHTML = '';
-      [['all', 'Tất cả']].concat(Object.entries(CATS)).forEach(([key, label]) => {
+      [['all', 'cat.all']].concat(Object.entries(CATS)).forEach(([key, label]) => {
         const n = key === 'all' ? GAMES.length : GAMES.filter((g) => g.cat === key).length;
         const b = document.createElement('button');
         b.type = 'button';
         b.setAttribute('aria-pressed', String(filter === key));
-        b.innerHTML = label + '<b>' + n + '</b>';
+        b.innerHTML = t(label) + '<b>' + n + '</b>';
         b.addEventListener('click', () => {
           filter = key;
           write(FILTER_KEY, key);
@@ -1300,8 +1584,8 @@
     function renderGames(sd, xq, rec, sums) {
       const lastId = Object.keys(rec).sort((a, b) => rec[b] - rec[a])[0];
       const notes = {
-        sudoku: sd.won ? sd.won + ' ván thắng' + (sd.best ? ' · kỷ lục ' + fmtDuration(sd.best.time) : '') : 'Chưa có ván thắng nào',
-        xiangqi: xq.level ? 'Mức máy đang chọn: ' + XQ_LEVEL[xq.level] : 'AI chạy ngay trên máy bạn',
+        sudoku: sd.won ? t('note.sudokuWins', { n: sd.won }) + (sd.best ? t('note.sudokuBest', { time: fmtDuration(sd.best.time) }) : '') : t('note.sudokuNone'),
+        xiangqi: xq.level ? t('note.xqLevel', { level: t(XQ_LEVEL[xq.level]) }) : t('note.xqAi'),
       };
       const list = $('games');
       list.innerHTML = '';
@@ -1313,12 +1597,12 @@
         const a = document.createElement('a');
         a.className = 'card';
         a.href = playHref(g);
-        a.setAttribute('aria-label', 'Chơi ' + g.name);
+        a.setAttribute('aria-label', t('card.playGame', { game: loc(g.name) }));
         // [bản đầy đủ, bản ngắn cho thẻ hẹp trên điện thoại]
-        const ribbon = Player.frames[g.id] ? ['Ván đang mở · quay lại chơi tiếp', 'Đang mở']
-          : g.id === lastId ? ['Chơi gần nhất · ' + fmtAgo(rec[g.id]), 'Gần nhất']
-          : g.isNew && !rec[g.id] ? ['Mới', 'Mới'] : null;
-        const note = notes[g.id] || (sums[g.id] && sums[g.id].note ? esc(sums[g.id].note) : g.note);
+        const ribbon = Player.frames[g.id] ? [t('ribbon.open'), t('ribbon.openShort')]
+          : g.id === lastId ? [t('ribbon.last', { ago: fmtAgo(rec[g.id]) }), t('ribbon.lastShort')]
+          : g.isNew && !rec[g.id] ? [t('ribbon.new'), t('ribbon.new')] : null;
+        const note = notes[g.id] || (sums[g.id] && sums[g.id].note ? esc(sums[g.id].note) : loc(g.note));
         a.innerHTML =
           '<div class="preview pv-' + g.id + '" data-game="' + g.id + '" aria-hidden="true">' +
             (ribbon ? '<span class="ribbon"><span class="r-long">' + ribbon[0] + '</span><span class="r-short">' + ribbon[1] + '</span></span>' : '') +
@@ -1327,13 +1611,13 @@
           '<div class="card-body">' +
             '<div class="card-head">' +
               '<div class="card-icon">' + g.icon(baseOf(g)) + '</div>' +
-              '<div><h3>' + g.name + '</h3><p class="en">' + g.en + '</p></div>' +
+              '<div><h3>' + loc(g.name) + '</h3><p class="en">' + loc(g.sub) + '</p></div>' +
             '</div>' +
-            '<p class="desc">' + g.desc + '</p>' +
-            '<ul class="tags">' + g.tags.map((t) => '<li>' + t + '</li>').join('') + '</ul>' +
+            '<p class="desc">' + loc(g.desc) + '</p>' +
+            '<ul class="tags">' + loc(g.tags).map((t) => '<li>' + t + '</li>').join('') + '</ul>' +
             '<div class="card-foot">' +
               '<span class="card-note">' + note + '</span>' +
-              '<span class="play">Chơi <span aria-hidden="true">→</span></span>' +
+              '<span class="play">' + t('card.play') + ' <span aria-hidden="true">→</span></span>' +
             '</div>' +
           '</div>';
         li.appendChild(a);
@@ -1371,21 +1655,21 @@
       const list = GAMES.filter((g) => sums[g.id]);
       const played = sd.won + sd.lost + list.reduce((n, g) => n + sums[g.id].played, 0);
       const won = sd.won + list.reduce((n, g) => n + sums[g.id].won, 0);
-      if (played) items.push({ n: played, label: 'Tổng ván đã chơi' });
-      if (won) items.push({ n: won, label: 'Tổng ván thắng' });
-      if (sd.totalDaily) items.push({ n: sd.streak, suffix: ' 🔥', label: 'Chuỗi ngày Sudoku' });
-      if (sd.best) items.push({ text: fmtDuration(sd.best.time), label: 'Kỷ lục Sudoku · ' + SUDOKU_DIFF[sd.best.key] });
-      if (sd.won + sd.lost) items.push({ n: Math.round((sd.won / (sd.won + sd.lost)) * 100), suffix: '%', label: 'Tỉ lệ thắng Sudoku' });
+      if (played) items.push({ n: played, label: t('stats.played') });
+      if (won) items.push({ n: won, label: t('stats.won') });
+      if (sd.totalDaily) items.push({ n: sd.streak, suffix: ' 🔥', label: t('stats.sudokuStreak') });
+      if (sd.best) items.push({ text: fmtDuration(sd.best.time), label: t('stats.sudokuBest', { diff: t(SUDOKU_DIFF[sd.best.key]) }) });
+      if (sd.won + sd.lost) items.push({ n: Math.round((sd.won / (sd.won + sd.lost)) * 100), suffix: '%', label: t('stats.sudokuRate') });
       // Mỗi game mới góp tối đa 2 chỉ số, game chơi gần nhất đứng trước
       list.sort((a, b) => sums[b.id].updatedAt - sums[a.id].updatedAt).forEach((g) => {
-        sums[g.id].stats.slice(0, 2).forEach((s) => items.push({ text: String(s.value), label: s.label + ' · ' + g.name }));
+        sums[g.id].stats.slice(0, 2).forEach((s) => items.push({ text: String(s.value), label: s.label + ' · ' + loc(g.name) }));
       });
       items.splice(MAX_STATS);
 
       if (!items.length) {
         box.className = 'empty reveal';
         box.style.setProperty('--i', 7.5);
-        box.textContent = 'Chưa có thành tích nào. Chơi vài ván là chỗ này sẽ có số liệu.';
+        box.textContent = t('stats.empty');
         return;
       }
       box.className = 'stats';
@@ -2585,7 +2869,7 @@
         let frame = this.frames[g.id];
         if (!frame) {
           frame = document.createElement('iframe');
-          frame.title = g.name;
+          frame.title = loc(g.name);
           frame.allow = 'fullscreen';
           frame.src = hrefOf(g);
           frame.addEventListener('load', () => {
@@ -2600,7 +2884,7 @@
         if (frame.dataset.ready) frame.focus();
 
         this.renderBar(g);
-        document.title = g.name + ' · PlayNine';
+        document.title = loc(g.name) + ' · PlayNine';
         document.body.classList.add('playing');
       },
 
@@ -2622,12 +2906,12 @@
       },
 
       renderBar(g) {
-        $('p-title').innerHTML = '<span class="card-icon">' + g.icon(baseOf(g)) + '</span><span class="name">' + g.name + '</span>';
+        $('p-title').innerHTML = '<span class="card-icon">' + g.icon(baseOf(g)) + '</span><span class="name">' + loc(g.name) + '</span>';
         const chip = $('p-chip');
         const s = g.id === 'sudoku' ? null : readSummary(g.id);
         const streak = g.id === 'sudoku' ? sudokuData().streak : s && s.daily ? Number(s.daily.streak) || 0 : 0;
         chip.hidden = !streak;
-        if (streak) chip.textContent = '🔥 ' + streak + ' ngày';
+        if (streak) chip.textContent = t('player.streak', { n: streak });
         $('p-newtab').href = hrefOf(g);
         // replace: chuyển game không thêm lịch sử, Back vẫn về thẳng cổng
         const go = (x) => { this.toggleMenu(false); if (x !== g) location.replace(playHref(x)); };
@@ -2638,8 +2922,8 @@
         GAMES.forEach((x) => {
           const b = document.createElement('button');
           b.type = 'button';
-          b.title = x.name;
-          b.setAttribute('aria-label', 'Chuyển sang ' + x.name);
+          b.title = loc(x.name);
+          b.setAttribute('aria-label', t('player.switchTo', { game: loc(x.name) }));
           b.setAttribute('aria-current', String(x === g));
           b.innerHTML = x.icon(baseOf(x));
           b.addEventListener('click', () => go(x));
@@ -2648,7 +2932,7 @@
           const m = document.createElement('button');
           m.type = 'button';
           m.setAttribute('aria-current', String(x === g));
-          m.innerHTML = '<span class="card-icon">' + x.icon(baseOf(x)) + '</span>' + x.name;
+          m.innerHTML = '<span class="card-icon">' + x.icon(baseOf(x)) + '</span>' + loc(x.name);
           m.addEventListener('click', () => go(x));
           menu.appendChild(m);
         });
@@ -2692,6 +2976,8 @@
         location.hash = playHref(GAMES[n - 1]);
       } else if (e.key === 't' || e.key === 'T') {
         $('theme-btn').click();
+      } else if (e.key === 'l' || e.key === 'L') {
+        $('lang-btn').click();
       }
     });
 
@@ -2702,7 +2988,9 @@
       if (rendered) document.body.classList.add('revealed');
       rendered = true;
       const now = new Date();
-      $('greet').textContent = greeting(now) + ' · ' + WEEKDAYS[now.getDay()] + ', ' + pad2(now.getDate()) + '/' + pad2(now.getMonth() + 1) + '/' + now.getFullYear();
+      $('greet').textContent = greeting(now) + ' · ' + (I18N.lang === 'vi'
+        ? WEEKDAYS[now.getDay()] + ', ' + pad2(now.getDate()) + '/' + pad2(now.getMonth() + 1) + '/' + now.getFullYear()
+        : I18N.fmtDate(now, { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' }));
       const sd = sudokuData();
       const xq = xiangqiData();
       const rec = recent();
@@ -2711,12 +2999,33 @@
       renderGames(sd, xq, rec, sums);
       renderStats(sd, sums);
       if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
-        $('shortcut-hint').innerHTML = 'Phím tắt: <kbd>1</kbd>–<kbd>' + Math.min(9, GAMES.length) + '</kbd> mở game theo thứ tự · <kbd>T</kbd> đổi giao diện';
+        $('shortcut-hint').innerHTML = t('footer.shortcuts', { max: Math.min(9, GAMES.length) });
       }
     }
 
+    // Vẽ lại mọi chữ theo ngôn ngữ hiện tại (sau khi đổi ở cổng hoặc trong một game)
+    function relocalize() {
+      I18N.apply();
+      applyTheme();
+      applyLang();
+      render();
+      Object.keys(Player.frames).forEach((id) => { Player.frames[id].title = loc(gameById(id).name); });
+      if (Player.current) {
+        Player.renderBar(Player.current);
+        document.title = loc(Player.current.name) + ' · PlayNine';
+      }
+    }
+    // Game trong iframe (hoặc tab khác) đổi ngôn ngữ: cổng đổi theo tại chỗ, không tải lại để giữ iframe đang mở
+    addEventListener('storage', (e) => {
+      if (e.key !== LANG_KEY || normLang(e.newValue) === I18N.lang) return;
+      I18N.lang = normLang(e.newValue);
+      relocalize();
+    });
+
+    I18N.apply();
     Glyphs.init();
     applyTheme();
+    applyLang();
     render();
     route();
     // Quay lại bằng nút Back (bfcache) thì đọc lại tiến độ mới nhất

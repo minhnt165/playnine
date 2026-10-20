@@ -11,15 +11,13 @@
   'use strict';
 
   const MODES = ['classic', 'wrap', 'maze'];
-  const MODE_NAMES = { classic: 'Cổ điển', wrap: 'Xuyên tường', maze: 'Mê cung' };
   const SPEEDS = ['slow', 'normal', 'fast'];
-  const SPEED_NAMES = { slow: 'Chậm', normal: 'Vừa', fast: 'Nhanh' };
   const BASE_MS = { slow: 170, normal: 125, fast: 88 }; // độ dài một tick ở đầu ván
   const ACCEL_STEP = 0.018; // mỗi mồi ăn được rút ngắn tick 1,8%...
   const ACCEL_MIN = 0.55; // ...nhưng không nhanh hơn 55% tốc độ ban đầu
   const SIZES = [15, 20, 25];
   const DEFAULT_SIZE = 20;
-  const MAPS = ['Bốn góc', 'Hành lang', 'Cột đôi', 'Pháo đài'];
+  const MAPS = ['corners', 'corridor', 'pillars', 'fortress']; // mã bản đồ; tên hiển thị nằm trong i18n.js
   const DIRS = ['up', 'down', 'left', 'right'];
   const VEC = { up: [-1, 0], down: [1, 0], left: [0, -1], right: [0, 1] }; // [dHàng, dCột]
   const OPPOSITE = { up: 'down', down: 'up', left: 'right', right: 'left' };
@@ -366,9 +364,7 @@
 
   const api = {
     MODES,
-    MODE_NAMES,
     SPEEDS,
-    SPEED_NAMES,
     BASE_MS,
     ACCEL_STEP,
     ACCEL_MIN,

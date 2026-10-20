@@ -770,6 +770,7 @@ kbd {
 /* ===================== Màn hình hẹp / thấp ===================== */
 @media (max-width: 380px) {
   .logo { font-size: 1.22rem; }
+  .logo { white-space: normal; } /* tên dài (Brick Breaker) xuống 2 dòng thay vì bị cắt */
   .btn-new span { display: none; }
   .btn-new { width: 42px; padding: 0; }
   .score-box { padding: 6px 9px 7px; }

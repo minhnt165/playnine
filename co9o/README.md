@@ -42,6 +42,7 @@ Game Cờ 9 Ô chạy trên web, viết bằng HTML + CSS + JavaScript thuần. 
 ```
 index.html  Khung trang, modal
 style.css   Giao diện, màu PlayNine, dark mode, responsive
+i18n.js     Chuỗi giao diện tiếng Anh / tiếng Việt và hàm I18N (nạp trước engine.js)
 engine.js   Luật chơi + AI MCTS, không đụng DOM (chạy trong trình duyệt, Node và Web Worker)
 app.js      Logic game + render (cần engine.js nạp trước)
 test.js     Test engine và AI chạy bằng Node
@@ -50,7 +51,17 @@ icon.svg    Icon app, dùng làm favicon
 
 Toàn bộ engine nằm trong hàm `Co9oFactory`. `app.js` dựng Web Worker từ Blob chứa `Co9o.factory.toString()`, nên máy vẫn nghĩ trong worker khi mở game bằng `file://`. Nếu trình duyệt không tạo được worker, máy tính trên luồng chính.
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html`. Thời gian nghĩ và xác suất đi bừa của từng mức máy nằm trong `LEVELS` ở `engine.js`.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html`. Thời gian nghĩ và xác suất đi bừa của từng mức máy nằm trong `LEVELS` ở `engine.js`.
+
+## Ngôn ngữ / Language
+
+Giao diện có tiếng Anh (mặc định) và tiếng Việt. Toàn bộ chuỗi hiển thị nằm trong từ điển `{ en, vi }` của `i18n.js`; `engine.js` không chứa chữ hiển thị. `i18n.js` tạo đối tượng toàn cục `I18N`:
+
+- `I18N.t(key, params)` tra chuỗi theo ngôn ngữ hiện tại (thiếu thì lấy tiếng Anh), thay `{tên}` bằng `params`, hỗ trợ số ít / số nhiều tiếng Anh dạng `{ one, other }` theo `params.n`.
+- `I18N.apply()` điền chữ cho phần tử có `data-i18n`, `data-i18n-html`, `data-i18n-attr` trong `index.html`, cùng tiêu đề và mô tả trang. Chữ gốc trong `index.html` là tiếng Anh.
+- `I18N.set(lang)` lưu ngôn ngữ rồi tải lại trang (ván đã được lưu trước đó). Đổi trong Cài đặt, dòng "Language / Ngôn ngữ".
+
+Ngôn ngữ lưu ở khóa dùng chung `playnine-lang` (`'en'` hoặc `'vi'`, thiếu thì là `'en'`), chung với cổng PlayNine và các game khác. Khi trang khác (cổng hoặc iframe) đổi khóa này, game tự lưu ván và tải lại theo ngôn ngữ mới. Tóm tắt cho cổng được ghi lại bằng ngôn ngữ hiện tại mỗi lần mở game.
 
 ## Dữ liệu lưu trong trình duyệt
 
@@ -59,6 +70,7 @@ Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị tr
 | `playnine-co9o-settings-v1` | Giao diện, chế độ, mức máy, bên cầm, đã xem hướng dẫn chưa |
 | `playnine-co9o-save-v1` | Ván đang chơi (danh sách nước đi) |
 | `playnine-co9o-stats-v1` | Thống kê theo mức và ván hai người |
+| `playnine-lang` | Ngôn ngữ giao diện dùng chung với cổng PlayNine (`en` / `vi`) |
 | `playnine-co9o-summary-v1` | Tóm tắt cho thẻ game trên cổng PlayNine (`v`, `played`, `won`, `note`, `stats`, `resume`, `daily`) |
 
 ## Kiểm tra engine

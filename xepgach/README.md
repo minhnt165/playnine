@@ -19,7 +19,7 @@ Game xếp khối rơi chạy trên web, viết bằng HTML + CSS + JavaScript t
 - Tự lưu ván (bàn, khối đang rơi, túi khối, khối giữ, điểm, trạng thái trễ khóa, seed) khi tạm dừng, khi rời trang và mỗi 5 giây; mở lại trang thì ván hiện lại ở trạng thái tạm dừng.
 - Thống kê: số ván đã chơi, điểm cao nhất, hàng nhiều nhất, cấp cao nhất, tổng số hàng, số lần xếp 4 hàng. Nút "Đặt lại" phải bấm hai lần để tránh xóa nhầm.
 - Màu khối tông ấm hợp bảng màu PlayNine, mỗi khối một màu, có bộ màu riêng cho giao diện tối: I xanh ngọc, O vàng nghệ, T tím mận, S xanh ô liu, Z đỏ gạch, J xanh chàm, L cam.
-- Giao diện tiếng Việt, dark mode theo hệ thống hoặc chọn thủ công (Tự động / Sáng / Tối, áp trước khi vẽ trang để không nháy màu).
+- Giao diện tiếng Anh (mặc định) / tiếng Việt (xem mục Ngôn ngữ), dark mode theo hệ thống hoặc chọn thủ công (Tự động / Sáng / Tối, áp trước khi vẽ trang để không nháy màu).
 - Tối ưu mobile: bàn chơi chiếm hết phần còn lại giữa thanh điểm và cụm nút bấm (`100dvh`, cỡ ô tính lại khi đổi kích thước), không cuộn trang khi chơi, chạy được ở bề rộng 360px, tôn trọng safe-area (tai thỏ). Xoay ngang hoặc màn hình rộng: bàn chơi ở giữa, hai bên là ô giữ / điểm / phím tắt và khối kế tiếp; nút bấm tách thành hai cụm hai bên. Modal dạng bottom sheet trên màn hình hẹp.
 - Truy cập bằng bàn phím: mọi nút đều Tab tới được, viền focus rõ ràng, modal giữ focus bên trong và đóng bằng `Esc`, thông báo xếp 4 hàng / lên cấp / kết thúc qua vùng `aria-live`. Tôn trọng `prefers-reduced-motion` (tắt nháy / sập hàng, vệt rơi, điểm bay, chữ hiện tĩnh).
 
@@ -42,6 +42,7 @@ Game xếp khối rơi chạy trên web, viết bằng HTML + CSS + JavaScript t
 ## Cấu trúc
 
 ```
+i18n.js      Từ điển tiếng Anh / tiếng Việt và hàm I18N (nạp trước các file JS khác)
 index.html   Khung trang, lớp phủ bắt đầu / tạm dừng / kết thúc, nút bấm cảm ứng, modal Cài đặt / Thống kê / Xác nhận
 style.css    Giao diện, bảng màu PlayNine, màu khối, dark mode, bố cục dọc / ngang, hiệu ứng
 engine.js    Engine thuần (không đụng DOM): túi 7, xoay SRS, va chạm, trọng lực, trễ khóa, xóa hàng, điểm, giữ khối, khôi phục state
@@ -102,6 +103,12 @@ Tóm tắt cho cổng được ghi lại khi mở trang, khi bắt đầu ván, 
   icon: svgIcon,
 },
 ```
+
+## Ngôn ngữ / Language
+
+Giao diện có tiếng Anh (mặc định) và tiếng Việt. Toàn bộ chữ hiển thị nằm trong `i18n.js` (nạp trước `engine.js` và `app.js`), là global `I18N` gồm từ điển `{ en, vi }`, `I18N.t(key, params)` (thiếu bản dịch thì dùng tiếng Anh; `{ one, other }` cho số nhiều tiếng Anh), `I18N.apply()` điền các phần tử có `data-i18n` / `data-i18n-attr`, `I18N.fmtNumber()` định dạng số theo `en-US` / `vi-VN`. Chữ tĩnh trong `index.html` viết sẵn bằng tiếng Anh nên không nháy chữ khi chưa chạy JS. `engine.js` không chứa chữ hiển thị.
+
+Ngôn ngữ lưu ở khóa dùng chung cho cả cổng PlayNine `localStorage['playnine-lang']` (`'en'` | `'vi'`, thiếu hoặc sai thì là `'en'`, không tự đoán theo trình duyệt). Đổi ngôn ngữ trong Cài đặt (hàng "Language" / "Ngôn ngữ") hoặc ở cổng (sự kiện `storage`) thì game tạm dừng, lưu ván rồi tải lại trang; ván đang dở hiện lại ở trạng thái tạm dừng. Tóm tắt cho cổng (`note`, nhãn `stats`, `resume`) được ghi lại theo ngôn ngữ hiện tại mỗi lần mở trang.
 
 ## Kiểm tra engine
 

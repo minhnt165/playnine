@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -7,9 +7,9 @@
   <meta name="theme-color" id="theme-color" content="#f6f2ea">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Cờ Caro">
-  <meta name="description" content="Cờ Caro 15x15 tiếng Việt: đấu máy 3 mức hoặc hai người trên một máy, luật chặn hai đầu, đi lại, thống kê, tự lưu ván.">
-  <title>Cờ Caro</title>
+  <meta name="apple-mobile-web-app-title" content="Gomoku">
+  <meta name="description" content="Gomoku on a 15x15 board: play the computer at 3 levels or a friend on one device, with the blocked-ends rule, undo, statistics and autosave.">
+  <title>Gomoku</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
   <script>
@@ -22,74 +22,74 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
-  <link rel="stylesheet" href="style.css?v=1.0.0">
+  <link rel="stylesheet" href="style.css?v=1.0.1">
 </head>
 <body>
   <div class="app" id="app">
     <header class="topbar">
       <div class="brand">
         <img class="brand-mark" src="icon.svg" alt="" width="34" height="34">
-        <h1 class="logo">Cờ Caro</h1>
+        <h1 class="logo" data-i18n="game.name">Gomoku</h1>
       </div>
       <div class="topbar-actions">
-        <button class="btn-icon" id="btn-stats" type="button" aria-label="Thống kê" title="Thống kê">
+        <button class="btn-icon" id="btn-stats" type="button" aria-label="Statistics" title="Statistics" data-i18n-attr="aria-label:top.stats;title:top.stats">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
         </button>
-        <button class="btn-icon" id="btn-settings" type="button" aria-label="Cài đặt" title="Cài đặt">
+        <button class="btn-icon" id="btn-settings" type="button" aria-label="Settings" title="Settings" data-i18n-attr="aria-label:top.settings;title:top.settings">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
         </button>
         <button class="btn btn-primary btn-new" id="btn-new" type="button">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>
-          <span>Ván mới</span>
+          <span data-i18n="top.new">New game</span>
         </button>
       </div>
     </header>
 
-    <section class="status card" aria-label="Trạng thái ván">
+    <section class="status card" aria-label="Game status" data-i18n-attr="aria-label:status.label">
       <div class="player" id="player-1">
         <span class="badge x" aria-hidden="true"></span>
-        <span class="pinfo"><span class="pname" id="pname-1">Bạn</span><span class="psub" id="psub-1">Đi trước</span></span>
+        <span class="pinfo"><span class="pname" id="pname-1">You</span><span class="psub" id="psub-1">Goes first</span></span>
       </div>
       <div class="turn">
-        <span class="turn-text" id="turn-text" aria-live="polite">Đến lượt bạn</span>
-        <span class="turn-sub" id="turn-sub">Nước 1</span>
+        <span class="turn-text" id="turn-text" aria-live="polite">Your turn</span>
+        <span class="turn-sub" id="turn-sub">Move 1</span>
       </div>
       <div class="player right" id="player-2">
         <span class="badge o" aria-hidden="true"></span>
-        <span class="pinfo"><span class="pname" id="pname-2">Máy</span><span class="psub" id="psub-2">Mức Vừa</span></span>
+        <span class="pinfo"><span class="pname" id="pname-2">Computer</span><span class="psub" id="psub-2">Medium level</span></span>
       </div>
     </section>
 
     <main class="board-area" id="board-area">
       <div class="board-viewport" id="board-viewport">
         <div class="board" id="board">
-          <div class="grid" id="grid" role="grid" aria-label="Bàn cờ caro 15 x 15. Dùng phím mũi tên để di chuyển, Enter để đặt quân."></div>
+          <div class="grid" id="grid" role="grid" aria-label="Gomoku board, 15 x 15. Use the arrow keys to move and Enter to place a piece." data-i18n-attr="aria-label:board.label"></div>
         </div>
       </div>
     </main>
 
-    <section class="tools" aria-label="Công cụ">
-      <button class="tool" id="btn-undo" type="button" title="Đi lại (Z)">
+    <section class="tools" aria-label="Tools" data-i18n-attr="aria-label:tools.label">
+      <button class="tool" id="btn-undo" type="button" title="Undo (Z)" data-i18n-attr="title:tools.undoKey">
         <span class="tool-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg></span>
-        <span class="tool-label">Đi lại</span>
+        <span class="tool-label" data-i18n="tools.undo">Undo</span>
       </button>
-      <button class="tool" id="btn-swap" type="button" title="Đổi bên (S)">
+      <button class="tool" id="btn-swap" type="button" title="Swap sides (S)">
         <span class="tool-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4 3 8l4 4V9h11V7H7V4zm10 8v3H6v2h11v3l4-4-4-4z"/></svg></span>
-        <span class="tool-label">Đổi bên</span>
+        <span class="tool-label" data-i18n="tools.swap">Swap sides</span>
       </button>
-      <button class="tool" id="btn-numbers" type="button" aria-pressed="false" title="Hiện số nước (M)">
+      <button class="tool" id="btn-numbers" type="button" aria-pressed="false" title="Show move numbers (M)" data-i18n-attr="title:tools.numbersKey">
         <span class="tool-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h3v16H5.5v-12.6L3.6 8.6 3 6.4zM11 8.2C11.4 5.7 13.1 4 15.6 4 18.2 4 20 5.6 20 8c0 1.7-.9 3-2.6 4.6L14.6 15.3H20V20h-9v-2.3l5-5c1.3-1.3 1.8-2.2 1.8-3.4 0-1.2-.8-2-2-2-1.3 0-2 .9-2.3 2.3z"/></svg></span>
-        <span class="tool-label">Số nước</span>
+        <span class="tool-label" data-i18n="tools.numbers">Numbers</span>
       </button>
-      <button class="tool" id="btn-zoom" type="button" aria-pressed="false" title="Phóng to bàn cờ">
+      <button class="tool" id="btn-zoom" type="button" aria-pressed="false" title="Zoom the board" data-i18n-attr="title:tools.zoomTitle">
         <span class="tool-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm.5-7H9v2H7v1h2v2h1v-2h2V9h-2z"/></svg></span>
-        <span class="tool-label" id="zoom-label">Phóng to</span>
+        <span class="tool-label" id="zoom-label">Zoom in</span>
       </button>
     </section>
 
     <aside class="help card" id="help">
-      <p class="help-rules" id="help-rules">Năm quân liên tiếp theo hàng, cột hoặc đường chéo là thắng.</p>
-      <p class="help-keys">Phím tắt: <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> di chuyển · <kbd>Enter</kbd> đặt quân · <kbd>Z</kbd> đi lại · <kbd>N</kbd> ván mới · <kbd>M</kbd> số nước · <kbd>S</kbd> đổi bên</p>
+      <p class="help-rules" id="help-rules">Five in a row horizontally, vertically or diagonally wins.</p>
+      <p class="help-keys" data-i18n-html="help.keys">Shortcuts: <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> move · <kbd>Enter</kbd> place · <kbd>Z</kbd> undo · <kbd>N</kbd> new game · <kbd>M</kbd> move numbers · <kbd>S</kbd> swap sides</p>
     </aside>
   </div>
 
@@ -100,34 +100,34 @@
   <div class="modal" id="modal-new" hidden>
     <div class="modal-backdrop" data-close="modal-new"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="new-title">
-      <h2 id="new-title">Ván mới</h2>
+      <h2 id="new-title" data-i18n="new.title">New game</h2>
       <div class="field">
-        <span class="field-label" id="lbl-mode">Chế độ</span>
+        <span class="field-label" id="lbl-mode" data-i18n="new.mode">Mode</span>
         <div class="segmented" role="radiogroup" aria-labelledby="lbl-mode" data-field="mode">
-          <button type="button" role="radio" data-value="ai">Người vs Máy</button>
-          <button type="button" role="radio" data-value="pvp">Hai người</button>
+          <button type="button" role="radio" data-value="ai" data-i18n="mode.ai">vs Computer</button>
+          <button type="button" role="radio" data-value="pvp" data-i18n="mode.pvp">Two players</button>
         </div>
       </div>
       <div class="field" id="field-level">
-        <span class="field-label" id="lbl-level">Mức máy</span>
+        <span class="field-label" id="lbl-level" data-i18n="new.level">Computer level</span>
         <div class="segmented" role="radiogroup" aria-labelledby="lbl-level" data-field="level">
-          <button type="button" role="radio" data-value="easy">Dễ</button>
-          <button type="button" role="radio" data-value="medium">Vừa</button>
-          <button type="button" role="radio" data-value="hard">Khó</button>
+          <button type="button" role="radio" data-value="easy" data-i18n="level.easy">Easy</button>
+          <button type="button" role="radio" data-value="medium" data-i18n="level.medium">Medium</button>
+          <button type="button" role="radio" data-value="hard" data-i18n="level.hard">Hard</button>
         </div>
       </div>
       <div class="field" id="field-side">
-        <span class="field-label" id="lbl-side">Bạn cầm quân</span>
+        <span class="field-label" id="lbl-side" data-i18n="new.side">You play</span>
         <div class="segmented" role="radiogroup" aria-labelledby="lbl-side" data-field="human">
-          <button type="button" role="radio" data-value="1">X · đi trước</button>
-          <button type="button" role="radio" data-value="2">O · đi sau</button>
+          <button type="button" role="radio" data-value="1" data-i18n="new.sideX">X · goes first</button>
+          <button type="button" role="radio" data-value="2" data-i18n="new.sideO">O · goes second</button>
         </div>
       </div>
       <p class="modal-hint" id="new-rules"></p>
-      <p class="modal-note" id="new-warning" hidden>Ván đang chơi với máy sẽ bị tính là thua.</p>
+      <p class="modal-note" id="new-warning" data-i18n="new.warning" hidden>The current game against the computer will count as a loss.</p>
       <div class="modal-actions">
-        <button class="btn btn-ghost" type="button" data-close="modal-new">Hủy</button>
-        <button class="btn btn-primary" type="button" id="btn-start">Bắt đầu</button>
+        <button class="btn btn-ghost" type="button" data-close="modal-new" data-i18n="common.cancel">Cancel</button>
+        <button class="btn btn-primary" type="button" id="btn-start" data-i18n="new.start">Start</button>
       </div>
     </div>
   </div>
@@ -136,42 +136,49 @@
   <div class="modal" id="modal-settings" hidden>
     <div class="modal-backdrop" data-close="modal-settings"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-      <h2 id="settings-title">Cài đặt</h2>
+      <h2 id="settings-title" data-i18n="settings.title">Settings</h2>
       <div class="settings-list">
         <div class="setting">
-          <div class="setting-text"><span class="setting-name" id="lbl-theme">Giao diện</span></div>
+          <div class="setting-text"><span class="setting-name" id="lbl-theme" data-i18n="settings.theme">Theme</span></div>
           <div class="segmented" role="radiogroup" aria-labelledby="lbl-theme" data-setting="theme">
-            <button type="button" role="radio" data-value="auto">Tự động</button>
-            <button type="button" role="radio" data-value="light">Sáng</button>
-            <button type="button" role="radio" data-value="dark">Tối</button>
+            <button type="button" role="radio" data-value="auto" data-i18n="theme.auto">Auto</button>
+            <button type="button" role="radio" data-value="light" data-i18n="theme.light">Light</button>
+            <button type="button" role="radio" data-value="dark" data-i18n="theme.dark">Dark</button>
           </div>
         </div>
-        <p class="settings-section">Luật chơi · áp dụng từ ván mới</p>
+        <div class="setting setting-lang">
+          <div class="setting-text"><span class="setting-name" id="lbl-lang" data-i18n="settings.language">Language</span></div>
+          <div class="segmented" role="radiogroup" aria-labelledby="lbl-lang" data-setting="lang">
+            <button type="button" role="radio" data-value="en" lang="en">English</button>
+            <button type="button" role="radio" data-value="vi" lang="vi">Tiếng Việt</button>
+          </div>
+        </div>
+        <p class="settings-section" data-i18n="settings.rules">Rules · apply from the next game</p>
         <label class="setting">
           <span class="setting-text">
-            <span class="setting-name">Chặn hai đầu</span>
-            <span class="setting-desc">Dãy quân bị quân đối phương chặn cả hai đầu thì không tính thắng. Mép bàn không tính là chặn.</span>
+            <span class="setting-name" data-i18n="settings.blocked">Block both ends</span>
+            <span class="setting-desc" data-i18n="settings.blockedDesc">A line blocked by the opponent at both ends doesn't win. The board edge doesn't count as a block.</span>
           </span>
           <input type="checkbox" class="switch" data-setting="blockedBoth">
         </label>
         <label class="setting">
           <span class="setting-text">
-            <span class="setting-name">Sáu quân trở lên vẫn thắng</span>
-            <span class="setting-desc">Tắt thì chỉ đúng 5 quân liên tiếp mới thắng.</span>
+            <span class="setting-name" data-i18n="settings.overline">Six or more in a row also wins</span>
+            <span class="setting-desc" data-i18n="settings.overlineDesc">When off, only exactly 5 in a row wins.</span>
           </span>
           <input type="checkbox" class="switch" data-setting="overline">
         </label>
-        <p class="settings-section">Hiển thị</p>
+        <p class="settings-section" data-i18n="settings.display">Display</p>
         <label class="setting">
           <span class="setting-text">
-            <span class="setting-name">Hiện số thứ tự nước đi</span>
-            <span class="setting-desc">Trên máy tính, rê chuột lên quân cờ cũng thấy số nước.</span>
+            <span class="setting-name" data-i18n="settings.numbers">Show move numbers</span>
+            <span class="setting-desc" data-i18n="settings.numbersDesc">On a computer, hovering over a piece also shows its move number.</span>
           </span>
           <input type="checkbox" class="switch" data-setting="showNumbers">
         </label>
       </div>
-      <button class="btn btn-primary" type="button" data-close="modal-settings">Xong</button>
-      <p class="app-version">Cờ Caro · phiên bản <span id="app-version">—</span></p>
+      <button class="btn btn-primary" type="button" data-close="modal-settings" data-i18n="common.done">Done</button>
+      <p class="app-version"><span data-i18n="settings.version">Gomoku · version</span> <span id="app-version">—</span></p>
     </div>
   </div>
 
@@ -179,15 +186,15 @@
   <div class="modal" id="modal-stats" hidden>
     <div class="modal-backdrop" data-close="modal-stats"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
-      <h2 id="stats-title">Thống kê</h2>
-      <p class="modal-hint">Các ván đấu với máy. Ván bỏ dở giữa chừng tính là thua.</p>
+      <h2 id="stats-title" data-i18n="stats.title">Statistics</h2>
+      <p class="modal-hint" data-i18n="stats.hint">Games against the computer. Abandoned games count as losses.</p>
       <table class="stats-table">
-        <thead><tr><th scope="col">Mức</th><th scope="col">Ván</th><th scope="col">Thắng</th><th scope="col">Thua</th><th scope="col">Hòa</th></tr></thead>
+        <thead><tr><th scope="col" data-i18n="stats.level">Level</th><th scope="col" data-i18n="stats.played">Games</th><th scope="col" data-i18n="stats.wins">Won</th><th scope="col" data-i18n="stats.lost">Lost</th><th scope="col" data-i18n="stats.drawn">Draws</th></tr></thead>
         <tbody id="stats-body"></tbody>
       </table>
       <div class="modal-actions">
-        <button class="btn btn-ghost" type="button" id="btn-stats-reset">Đặt lại</button>
-        <button class="btn btn-primary" type="button" data-close="modal-stats">Đóng</button>
+        <button class="btn btn-ghost" type="button" id="btn-stats-reset">Reset</button>
+        <button class="btn btn-primary" type="button" data-close="modal-stats" data-i18n="common.close">Close</button>
       </div>
     </div>
   </div>
@@ -196,11 +203,11 @@
   <div class="modal" id="modal-confirm" hidden>
     <div class="modal-backdrop" data-close="modal-confirm"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
-      <h2 id="confirm-title">Đổi bên?</h2>
-      <p id="confirm-text">Đổi bên sẽ bắt đầu ván mới.</p>
+      <h2 id="confirm-title">Swap sides?</h2>
+      <p id="confirm-text">Swapping sides starts a new game.</p>
       <div class="modal-actions">
-        <button class="btn btn-ghost" type="button" data-close="modal-confirm">Hủy</button>
-        <button class="btn btn-primary" type="button" id="btn-confirm-ok">Đồng ý</button>
+        <button class="btn btn-ghost" type="button" data-close="modal-confirm" data-i18n="common.cancel">Cancel</button>
+        <button class="btn btn-primary" type="button" id="btn-confirm-ok" data-i18n="common.ok">OK</button>
       </div>
     </div>
   </div>
@@ -210,21 +217,22 @@
     <div class="modal-backdrop" data-close="modal-result"></div>
     <div class="modal-card modal-result" role="dialog" aria-modal="true" aria-labelledby="result-title">
       <div class="result-badge" id="result-badge" aria-hidden="true"></div>
-      <h2 id="result-title">Bạn thắng!</h2>
-      <p id="result-text">Bạn đã thắng máy.</p>
+      <h2 id="result-title">You win!</h2>
+      <p id="result-text">You beat the computer.</p>
       <dl class="result-stats">
-        <div><dt>Số nước</dt><dd id="result-moves">0</dd></div>
-        <div><dt id="result-mid-label">Mức</dt><dd id="result-mid">Vừa</dd></div>
-        <div><dt id="result-rec-label">Thắng máy</dt><dd id="result-rec">0/0</dd></div>
+        <div><dt data-i18n="result.moves">Moves</dt><dd id="result-moves">0</dd></div>
+        <div><dt id="result-mid-label">Level</dt><dd id="result-mid">Medium</dd></div>
+        <div><dt id="result-rec-label">Wins vs computer</dt><dd id="result-rec">0/0</dd></div>
       </dl>
       <div class="modal-actions">
-        <button class="btn btn-ghost" type="button" data-close="modal-result">Xem bàn cờ</button>
-        <button class="btn btn-primary" type="button" id="btn-result-new">Ván mới</button>
+        <button class="btn btn-ghost" type="button" data-close="modal-result" data-i18n="result.viewBoard">View board</button>
+        <button class="btn btn-primary" type="button" id="btn-result-new" data-i18n="top.new">New game</button>
       </div>
     </div>
   </div>
 
+  <script src="i18n.js?v=1.0.1"></script>
   <script src="engine.js?v=1.0.0"></script>
-  <script src="app.js?v=1.0.0"></script>
+  <script src="app.js?v=1.0.1"></script>
 </body>
 </html>

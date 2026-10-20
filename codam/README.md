@@ -65,6 +65,7 @@ Có hai bộ luật, chọn trong hộp thoại **Ván mới** và được lưu
 
 ```
 index.html  Khung trang, modal
+i18n.js     Từ điển tiếng Anh / tiếng Việt và hàm I18N (nạp trước engine.js)
 style.css   Giao diện, màu PlayNine, bàn gỗ, quân cờ, dark mode, responsive
 engine.js   Luật chơi + AI alpha-beta, không đụng DOM (chạy trong trình duyệt, Node và Web Worker)
 app.js      Logic game, chọn / kéo thả quân, hiệu ứng, render (cần engine.js nạp trước)
@@ -76,12 +77,21 @@ Toàn bộ engine nằm trong hàm `CoDamFactory`. `app.js` dựng Web Worker t�
 
 Nước đi là object `{ from, to, path, caps, capVals, piece, promoteAt }`, trong đó `path` là dãy ô đi qua (ô xuất phát rồi từng ô đáp) và xác định duy nhất một nước. Ván được lưu dưới dạng danh sách `path` và dựng lại bằng `fromMoves`, nên Đi lại và khôi phục ván luôn khớp luật. `CoDam.play(state, move, events)` trả về diễn biến từng bước (`step`, `remove`, `over`) để giao diện vẽ hiệu ứng.
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html`. Độ sâu, nhiễu và thời gian nghĩ của từng mức máy nằm trong `LEVELS`, giá trị quân thường / vua của từng bộ luật nằm trong `RULES` ở `engine.js`.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html`. Độ sâu, nhiễu và thời gian nghĩ của từng mức máy nằm trong `LEVELS`, giá trị quân thường / vua của từng bộ luật nằm trong `RULES` ở `engine.js`.
+
+## Ngôn ngữ / Language
+
+Game có tiếng Anh (mặc định) và tiếng Việt. Toàn bộ chữ hiển thị nằm trong `i18n.js` (từ điển `en` / `vi` + đối tượng toàn cục `I18N`), nạp trước `engine.js` và `app.js`; `engine.js` không chứa chữ hiển thị.
+
+- Ngôn ngữ lưu ở khóa dùng chung `playnine-lang` (`'en'` hoặc `'vi'`, thiếu hay sai thì là `'en'`, không tự đoán theo trình duyệt), chung cho cổng PlayNine và mọi game.
+- Chữ tĩnh trong `index.html` viết sẵn bằng tiếng Anh, gắn `data-i18n` (textContent), `data-i18n-html` (chuỗi có `<b>` / `<kbd>`) hoặc `data-i18n-attr="aria-label:key;title:key"`; `I18N.apply()` chạy đầu phần khởi động của `app.js`. Chữ sinh từ JS đi qua `I18N.t(key, params)` (hỗ trợ `{tên}` và số ít / số nhiều tiếng Anh).
+- Đổi ngôn ngữ ở modal Cài đặt: lưu ván rồi tải lại trang. Trang khác (cổng, iframe) đổi khóa `playnine-lang` thì game nhận sự kiện `storage` và tự tải lại theo. Tóm tắt cho cổng được ghi lại mỗi lần mở game nên chữ luôn theo ngôn ngữ đang chọn.
 
 ## Dữ liệu lưu trong trình duyệt
 
 | Khóa `localStorage` | Nội dung |
 | --- | --- |
+| `playnine-lang` | Ngôn ngữ dùng chung cả PlayNine (`en` / `vi`) |
 | `playnine-codam-settings-v1` | Giao diện, tốc độ hiệu ứng, hiện tọa độ, chế độ, luật, mức máy, bên bạn cầm, đã xem hướng dẫn chưa |
 | `playnine-codam-save-v1` | Ván đang chơi (chế độ, luật, mức máy, bên bạn cầm + danh sách nước đi) |
 | `playnine-codam-stats-v1` | Thống kê theo bộ luật và mức máy, ván hai người, chuỗi thắng |

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -7,9 +7,9 @@
   <meta name="theme-color" id="theme-color" content="#f6f2ea">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Dò Mìn">
-  <meta name="description" content="Dò Mìn tiếng Việt: 3 mức chơi và Tùy chỉnh, ván hằng ngày, cú mở đầu luôn an toàn, cắm cờ bằng nhấn giữ, mở nhanh, thống kê, tự lưu ván.">
-  <title>Dò Mìn</title>
+  <meta name="apple-mobile-web-app-title" content="Minesweeper">
+  <meta name="description" content="Minesweeper: three levels plus Custom, a daily board, a safe first click, long-press to flag, chording, statistics and autosave.">
+  <title>Minesweeper</title>
   <link rel="icon" type="image/svg+xml" href="icon.svg">
   <link rel="apple-touch-icon" href="icon.svg">
   <script>
@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
-  <link rel="stylesheet" href="style.css?v=1.0.0">
+  <link rel="stylesheet" href="style.css?v=1.0.1">
 </head>
 <body>
   <!-- Biểu tượng dùng chung cho ô cờ / mìn -->
@@ -50,52 +50,52 @@
     <header class="topbar">
       <div class="brand">
         <img class="brand-mark" src="icon.svg" alt="" width="30" height="30">
-        <h1 class="logo">Dò Mìn</h1>
+        <h1 class="logo" data-i18n="app.name">Minesweeper</h1>
       </div>
       <div class="topbar-actions">
-        <button class="btn-icon" id="btn-stats" type="button" aria-label="Thống kê" title="Thống kê">
+        <button class="btn-icon" id="btn-stats" type="button" aria-label="Statistics" title="Statistics" data-i18n-attr="aria-label:top.stats;title:top.stats">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
         </button>
-        <button class="btn-icon" id="btn-settings" type="button" aria-label="Cài đặt" title="Cài đặt">
+        <button class="btn-icon" id="btn-settings" type="button" aria-label="Settings" title="Settings" data-i18n-attr="aria-label:top.settings;title:top.settings">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
         </button>
       </div>
     </header>
 
-    <section class="hud card" aria-label="Trạng thái ván">
+    <section class="hud card" aria-label="Game status" data-i18n-attr="aria-label:hud.label">
       <div class="hud-item">
-        <span class="hud-label">Mìn còn</span>
+        <span class="hud-label" data-i18n="hud.minesLeft">Mines left</span>
         <span class="hud-value" id="mines-left" aria-live="off">10</span>
       </div>
-      <button class="face" id="btn-restart" type="button" aria-label="Chơi lại ván mới cùng mức" title="Ván mới cùng mức (N)">
+      <button class="face" id="btn-restart" type="button" aria-label="Restart at the same level" title="New game, same level (N)" data-i18n-attr="aria-label:hud.restart;title:hud.restartTitle">
         <svg viewBox="0 0 40 40" aria-hidden="true" id="face-svg"></svg>
       </button>
       <div class="hud-item hud-right">
-        <span class="hud-label" id="level-label">Dễ</span>
+        <span class="hud-label" id="level-label">Easy</span>
         <span class="hud-value" id="timer">00:00</span>
       </div>
     </section>
 
     <main class="board-wrap" id="board-wrap">
-      <div class="board" id="board" role="grid" tabindex="0" aria-label="Bàn mìn. Dùng phím mũi tên để di chuyển, Space hoặc Enter để mở, F để cắm cờ."></div>
+      <div class="board" id="board" role="grid" tabindex="0" aria-label="Minefield. Use the arrow keys to move, Space or Enter to open, F to flag." data-i18n-attr="aria-label:board.label"></div>
     </main>
 
     <section class="toolbar">
-      <button class="tool tool-flag" id="btn-flag-mode" type="button" aria-pressed="false" title="Chạm để cắm cờ thay vì mở ô">
+      <button class="tool tool-flag" id="btn-flag-mode" type="button" aria-pressed="false" title="Tap to flag instead of opening cells" data-i18n-attr="title:tool.flagTitle">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-flag"/></svg>
-        <span>Cắm cờ</span>
-        <span class="tool-state" id="flag-mode-state">Tắt</span>
+        <span data-i18n="tool.flag">Flag</span>
+        <span class="tool-state" id="flag-mode-state">Off</span>
       </button>
-      <button class="tool" id="btn-new" type="button" title="Chọn ván chơi">
+      <button class="tool" id="btn-new" type="button" title="Choose a game" data-i18n-attr="title:tool.newTitle">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>
-        <span>Ván mới</span>
+        <span data-i18n="tool.new">New game</span>
       </button>
-      <button class="tool tool-zoom" id="btn-zoom" type="button" aria-pressed="false" hidden aria-label="Phóng to bàn mìn" title="Phóng to / thu nhỏ">
+      <button class="tool tool-zoom" id="btn-zoom" type="button" aria-pressed="false" hidden aria-label="Zoom in on the board" title="Zoom in / out" data-i18n-attr="title:tool.zoomTitle">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5 20 20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path id="zoom-plus" d="M10.5 7.5v6M7.5 10.5h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
     </section>
 
-    <p class="kbd-hint">Phím tắt: <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> di chuyển · <kbd>Space</kbd>/<kbd>Enter</kbd> mở · <kbd>F</kbd> cắm cờ · <kbd>N</kbd> ván mới · Chuột phải cắm cờ, nhấn vào số để mở nhanh</p>
+    <p class="kbd-hint" data-i18n-html="hint.keys">Shortcuts: <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> move · <kbd>Space</kbd>/<kbd>Enter</kbd> open · <kbd>F</kbd> flag · <kbd>N</kbd> new game · Right-click to flag, click a number to chord</p>
   </div>
 
   <div class="toast" id="toast" role="status" hidden></div>
@@ -104,17 +104,17 @@
   <div class="modal" id="modal-new" hidden>
     <div class="modal-backdrop" data-close="modal-new"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="new-title">
-      <h2 id="new-title">Chọn ván chơi</h2>
-      <p class="modal-note" id="new-warning" hidden>Ván đang chơi sẽ bị bỏ.</p>
+      <h2 id="new-title" data-i18n="new.title">Choose a game</h2>
+      <p class="modal-note" id="new-warning" hidden data-i18n="new.warning">The current game will be lost.</p>
       <div class="level-list" id="level-list"></div>
       <form class="custom-form" id="custom-form" hidden novalidate>
-        <label><span>Rộng</span><input type="number" id="custom-w" inputmode="numeric" min="5" max="40" required></label>
-        <label><span>Cao</span><input type="number" id="custom-h" inputmode="numeric" min="5" max="40" required></label>
-        <label><span>Số mìn</span><input type="number" id="custom-mines" inputmode="numeric" min="1" required></label>
+        <label><span data-i18n="new.width">Width</span><input type="number" id="custom-w" inputmode="numeric" min="5" max="40" required></label>
+        <label><span data-i18n="new.height">Height</span><input type="number" id="custom-h" inputmode="numeric" min="5" max="40" required></label>
+        <label><span data-i18n="new.mines">Mines</span><input type="number" id="custom-mines" inputmode="numeric" min="1" required></label>
         <p class="custom-hint" id="custom-hint"></p>
-        <button class="btn btn-primary" type="submit">Bắt đầu</button>
+        <button class="btn btn-primary" type="submit" data-i18n="new.start">Start</button>
       </form>
-      <button class="btn btn-ghost" type="button" data-close="modal-new">Hủy</button>
+      <button class="btn btn-ghost" type="button" data-close="modal-new" data-i18n="new.cancel">Cancel</button>
     </div>
   </div>
 
@@ -122,36 +122,45 @@
   <div class="modal" id="modal-settings" hidden>
     <div class="modal-backdrop" data-close="modal-settings"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-      <h2 id="settings-title">Cài đặt</h2>
+      <h2 id="settings-title" data-i18n="settings.title">Settings</h2>
       <div class="settings-list">
         <div class="setting">
           <div class="setting-text">
-            <span class="setting-name">Giao diện</span>
+            <span class="setting-name" data-i18n="settings.theme">Theme</span>
           </div>
-          <div class="segmented" role="radiogroup" aria-label="Giao diện" data-setting="theme">
-            <button type="button" role="radio" data-value="auto">Tự động</button>
-            <button type="button" role="radio" data-value="light">Sáng</button>
-            <button type="button" role="radio" data-value="dark">Tối</button>
+          <div class="segmented" role="radiogroup" aria-label="Theme" data-i18n-attr="aria-label:settings.theme" data-setting="theme">
+            <button type="button" role="radio" data-value="auto" data-i18n="settings.themeAuto">Auto</button>
+            <button type="button" role="radio" data-value="light" data-i18n="settings.themeLight">Light</button>
+            <button type="button" role="radio" data-value="dark" data-i18n="settings.themeDark">Dark</button>
+          </div>
+        </div>
+        <div class="setting">
+          <div class="setting-text">
+            <span class="setting-name" data-i18n="settings.language">Language</span>
+          </div>
+          <div class="segmented" role="radiogroup" aria-label="Language" data-i18n-attr="aria-label:settings.language" data-setting="lang">
+            <button type="button" role="radio" data-value="en">English</button>
+            <button type="button" role="radio" data-value="vi">Tiếng Việt</button>
           </div>
         </div>
         <label class="setting">
           <div class="setting-text">
-            <span class="setting-name">Dấu "?"</span>
-            <span class="setting-desc">Cắm cờ lần nữa trên ô có cờ để đổi thành dấu "?" (ô nghi ngờ).</span>
+            <span class="setting-name" data-i18n="settings.question">"?" marks</span>
+            <span class="setting-desc" data-i18n="settings.questionDesc">Flag a flagged cell again to turn it into a "?" (unsure).</span>
           </div>
           <input type="checkbox" class="switch" data-setting="question">
         </label>
         <label class="setting">
           <div class="setting-text">
-            <span class="setting-name">Rung khi cắm cờ</span>
-            <span class="setting-desc">Rung nhẹ khi nhấn giữ để cắm cờ (nếu máy hỗ trợ).</span>
+            <span class="setting-name" data-i18n="settings.vibrate">Vibrate on flag</span>
+            <span class="setting-desc" data-i18n="settings.vibrateDesc">Vibrate briefly when long-pressing to flag (if supported).</span>
           </div>
           <input type="checkbox" class="switch" data-setting="vibrate">
         </label>
       </div>
-      <p class="modal-hint">Chạm để mở ô, nhấn giữ để cắm cờ. Chạm vào ô số đã đủ cờ xung quanh để mở nhanh các ô còn lại.</p>
-      <button class="btn btn-primary" type="button" data-close="modal-settings">Xong</button>
-      <p class="app-version">Dò Mìn · phiên bản <span id="app-version">—</span></p>
+      <p class="modal-hint" data-i18n="settings.hint">Tap to open a cell, long-press to flag. Tap a number whose flags are all placed to open the remaining cells around it.</p>
+      <button class="btn btn-primary" type="button" data-close="modal-settings" data-i18n="settings.done">Done</button>
+      <p class="app-version"><span data-i18n="app.name">Minesweeper</span> · <span data-i18n="settings.version">version</span> <span id="app-version">—</span></p>
     </div>
   </div>
 
@@ -159,22 +168,22 @@
   <div class="modal" id="modal-stats" hidden>
     <div class="modal-backdrop" data-close="modal-stats"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
-      <h2 id="stats-title">Thống kê</h2>
-      <p class="stats-section">Ván hằng ngày</p>
+      <h2 id="stats-title" data-i18n="stats.title">Statistics</h2>
+      <p class="stats-section" data-i18n="stats.daily">Daily board</p>
       <dl class="result-stats">
-        <div><dt>Chuỗi ngày</dt><dd id="stats-streak">0</dd></div>
-        <div><dt>Đã thắng</dt><dd id="stats-daily-total">0</dd></div>
-        <div><dt>Tốt nhất</dt><dd id="stats-daily-best">—</dd></div>
+        <div><dt data-i18n="stats.streak">Day streak</dt><dd id="stats-streak">0</dd></div>
+        <div><dt data-i18n="stats.dailyWon">Won</dt><dd id="stats-daily-total">0</dd></div>
+        <div><dt data-i18n="stats.best">Best</dt><dd id="stats-daily-best">—</dd></div>
       </dl>
-      <p class="stats-section">Theo mức chơi</p>
+      <p class="stats-section" data-i18n="stats.byLevel">By level</p>
       <table class="stats-table">
-        <thead><tr><th>Mức</th><th>Chơi</th><th>Thắng</th><th>Tốt nhất</th><th>TB</th></tr></thead>
+        <thead><tr><th data-i18n="stats.colLevel">Level</th><th data-i18n="stats.colPlayed">Played</th><th data-i18n="stats.colWon">Won</th><th data-i18n="stats.colBest">Best</th><th data-i18n="stats.colAvg">Avg</th></tr></thead>
         <tbody id="stats-body"></tbody>
       </table>
-      <p class="modal-hint">TB: thời gian trung bình của các ván thắng.</p>
+      <p class="modal-hint" data-i18n="stats.avgHint">Avg: average time of won games.</p>
       <div class="modal-actions">
-        <button class="btn btn-ghost" type="button" id="btn-stats-reset">Đặt lại</button>
-        <button class="btn btn-primary" type="button" data-close="modal-stats">Đóng</button>
+        <button class="btn btn-ghost" type="button" id="btn-stats-reset" data-i18n="stats.reset">Reset</button>
+        <button class="btn btn-primary" type="button" data-close="modal-stats" data-i18n="stats.close">Close</button>
       </div>
     </div>
   </div>
@@ -184,23 +193,24 @@
     <div class="modal-backdrop" data-close="modal-result"></div>
     <div class="modal-card modal-result" role="dialog" aria-modal="true" aria-labelledby="result-title">
       <div class="result-badge" id="result-badge" aria-hidden="true"></div>
-      <h2 id="result-title">Bạn thắng!</h2>
+      <h2 id="result-title">You win!</h2>
       <p id="result-text"></p>
       <dl class="result-stats">
-        <div><dt>Mức</dt><dd id="result-level">Dễ</dd></div>
-        <div><dt>Thời gian</dt><dd id="result-time">00:00</dd></div>
-        <div><dt id="result-extra-label">Kỷ lục</dt><dd id="result-extra">—</dd></div>
+        <div><dt data-i18n="result.level">Level</dt><dd id="result-level">Easy</dd></div>
+        <div><dt data-i18n="result.time">Time</dt><dd id="result-time">00:00</dd></div>
+        <div><dt id="result-extra-label">Best</dt><dd id="result-extra">—</dd></div>
       </dl>
       <p class="unlock-note" id="result-note" hidden></p>
       <div class="modal-actions">
-        <button class="btn btn-ghost" type="button" data-close="modal-result">Xem bàn</button>
-        <button class="btn btn-ghost" type="button" id="btn-result-retry" hidden>Thử lại</button>
-        <button class="btn btn-primary" type="button" id="btn-result-new">Ván mới</button>
+        <button class="btn btn-ghost" type="button" data-close="modal-result" data-i18n="result.view">View board</button>
+        <button class="btn btn-ghost" type="button" id="btn-result-retry" hidden data-i18n="result.retry">Retry</button>
+        <button class="btn btn-primary" type="button" id="btn-result-new">New game</button>
       </div>
     </div>
   </div>
 
-  <script src="engine.js?v=1.0.0"></script>
-  <script src="app.js?v=1.0.0"></script>
+  <script src="i18n.js?v=1.0.1"></script>
+  <script src="engine.js?v=1.0.1"></script>
+  <script src="app.js?v=1.0.1"></script>
 </body>
 </html>

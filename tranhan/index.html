@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -7,9 +7,9 @@
   <meta name="theme-color" id="theme-color" content="#f6f2ea">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Tranh Ẩn">
-  <meta name="description" content="Tranh Ẩn (Nonogram) tiếng Việt: tô ô theo gợi ý số để lộ bức tranh. Bộ tranh vẽ sẵn chủ đề Việt Nam, tranh ngẫu nhiên, tranh hằng ngày, gợi ý, hoàn tác, thống kê, tự lưu ván.">
-  <title>Tranh Ẩn</title>
+  <meta name="apple-mobile-web-app-title" content="Nonogram">
+  <meta name="description" content="Nonogram: fill cells by the number clues to reveal the hidden picture. Hand-drawn picture packs with Vietnamese themes, random puzzles, a daily picture, hints, undo, statistics and autosave.">
+  <title>Nonogram</title>
   <link rel="icon" type="image/svg+xml" href="icon.svg">
   <link rel="apple-touch-icon" href="icon.svg">
   <script>
@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
-  <link rel="stylesheet" href="style.css?v=1.0.0">
+  <link rel="stylesheet" href="style.css?v=1.0.1">
 </head>
 <body>
   <!-- Biểu tượng dùng chung -->
@@ -53,65 +53,65 @@
     <header class="topbar">
       <div class="brand">
         <img class="brand-mark" src="icon.svg" alt="" width="30" height="30">
-        <h1 class="logo">Tranh Ẩn</h1>
+        <h1 class="logo" data-i18n="app.name">Nonogram</h1>
       </div>
       <div class="topbar-actions">
-        <button class="btn-icon" id="btn-new" type="button" aria-label="Chọn tranh" title="Chọn tranh (N)">
+        <button class="btn-icon" id="btn-new" type="button" aria-label="Choose picture" title="Choose picture (N)" data-i18n-attr="aria-label:top.new;title:top.newTitle">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm12 0h2v3h3v2h-3v3h-2v-3h-3v-2h3v-3z"/></svg>
         </button>
-        <button class="btn-icon" id="btn-stats" type="button" aria-label="Thống kê" title="Thống kê">
+        <button class="btn-icon" id="btn-stats" type="button" aria-label="Statistics" title="Statistics" data-i18n-attr="aria-label:top.stats;title:top.stats">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
         </button>
-        <button class="btn-icon" id="btn-settings" type="button" aria-label="Cài đặt" title="Cài đặt">
+        <button class="btn-icon" id="btn-settings" type="button" aria-label="Settings" title="Settings" data-i18n-attr="aria-label:top.settings;title:top.settings">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
         </button>
       </div>
     </header>
 
-    <section class="hud card" aria-label="Trạng thái tranh">
+    <section class="hud card" aria-label="Puzzle status" data-i18n-attr="aria-label:hud.aria">
       <div class="hud-item">
-        <span class="hud-label" id="kind-label">Bộ tranh</span>
+        <span class="hud-label" id="kind-label" data-i18n="hud.pack">Picture pack</span>
         <span class="hud-value" id="puzzle-label">#1</span>
       </div>
       <div class="hud-item hud-mid" id="hud-mid">
-        <span class="hud-label" id="mid-label">Đã tô</span>
+        <span class="hud-label" id="mid-label" data-i18n="hud.filled">Filled</span>
         <span class="hud-value" id="mid-value">0%</span>
       </div>
       <div class="hud-item hud-right">
-        <span class="hud-label">Thời gian</span>
+        <span class="hud-label" data-i18n="hud.time">Time</span>
         <span class="hud-value" id="timer">00:00</span>
       </div>
     </section>
 
     <main class="board-wrap" id="board-wrap">
-      <div class="board" id="board" role="grid" tabindex="0" aria-label="Lưới tranh. Phím mũi tên để di chuyển, Space để tô, X để đánh dấu X."></div>
+      <div class="board" id="board" role="grid" tabindex="0" aria-label="Picture grid. Arrow keys to move, Space to fill, X to mark X." data-i18n-attr="aria-label:board.aria"></div>
     </main>
 
-    <section class="toolbar" aria-label="Công cụ">
-      <div class="mode" role="radiogroup" aria-label="Chế độ chạm" id="mode">
-        <button type="button" role="radio" data-mode="fill" title="Chạm để tô (M để đổi)">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-fill"/></svg><span>Tô</span>
+    <section class="toolbar" aria-label="Tools" data-i18n-attr="aria-label:tools.aria">
+      <div class="mode" role="radiogroup" aria-label="Tap mode" id="mode" data-i18n-attr="aria-label:mode.aria">
+        <button type="button" role="radio" data-mode="fill" title="Tap to fill (M to switch)" data-i18n-attr="title:mode.fillTitle">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-fill"/></svg><span data-i18n="mode.fill">Fill</span>
         </button>
-        <button type="button" role="radio" data-mode="cross" title="Chạm để đánh dấu X (M để đổi)">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-cross"/></svg><span class="lg">Đánh dấu X</span><span class="sm">Dấu X</span>
+        <button type="button" role="radio" data-mode="cross" title="Tap to mark X (M to switch)" data-i18n-attr="title:mode.crossTitle">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-cross"/></svg><span class="lg" data-i18n="mode.cross">Mark X</span><span class="sm" data-i18n="mode.crossShort">Mark X</span>
         </button>
       </div>
-      <button class="tool" id="btn-undo" type="button" aria-label="Hoàn tác" title="Hoàn tác (Z)">
+      <button class="tool" id="btn-undo" type="button" aria-label="Undo" title="Undo (Z)" data-i18n-attr="aria-label:tool.undo;title:tool.undoTitle">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-undo"/></svg>
       </button>
-      <button class="tool" id="btn-redo" type="button" aria-label="Làm lại" title="Làm lại (Y)">
+      <button class="tool" id="btn-redo" type="button" aria-label="Redo" title="Redo (Y)" data-i18n-attr="aria-label:tool.redo;title:tool.redoTitle">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-redo"/></svg>
       </button>
-      <button class="tool tool-hint" id="btn-hint" type="button" aria-label="Gợi ý" title="Gợi ý (H)">
+      <button class="tool tool-hint" id="btn-hint" type="button" aria-label="Hint" title="Hint (H)" data-i18n-attr="aria-label:tool.hint;title:tool.hintTitle">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bulb"/></svg>
         <span class="badge" id="hint-count">3</span>
       </button>
-      <button class="tool tool-zoom" id="btn-zoom" type="button" aria-pressed="false" hidden aria-label="Phóng to lưới" title="Phóng to / thu nhỏ">
+      <button class="tool tool-zoom" id="btn-zoom" type="button" aria-pressed="false" hidden aria-label="Zoom in grid" title="Zoom in / out" data-i18n-attr="aria-label:tool.zoomIn;title:tool.zoomTitle">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5 20 20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path id="zoom-plus" d="M10.5 7.5v6M7.5 10.5h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
     </section>
 
-    <p class="kbd-hint">Phím tắt: <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> di chuyển · <kbd>Space</kbd> tô · <kbd>X</kbd> đánh dấu · <kbd>Z</kbd>/<kbd>Y</kbd> hoàn tác/làm lại · <kbd>H</kbd> gợi ý · <kbd>N</kbd> chọn tranh · Kéo để tô cả dòng, chuột phải để đánh dấu X</p>
+    <p class="kbd-hint" data-i18n-html="kbd.hint">Shortcuts: <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> move · <kbd>Space</kbd> fill · <kbd>X</kbd> mark · <kbd>Z</kbd>/<kbd>Y</kbd> undo/redo · <kbd>H</kbd> hint · <kbd>N</kbd> choose picture · Drag to fill a whole line, right-click to mark X</p>
   </div>
 
   <div class="toast" id="toast" role="status" hidden></div>
@@ -120,14 +120,14 @@
   <div class="modal" id="modal-new" hidden>
     <div class="modal-backdrop" data-close="modal-new"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="new-title">
-      <h2 id="new-title">Chọn tranh</h2>
-      <p class="modal-note" id="new-warning" hidden>Tranh đang giải dở sẽ bị bỏ.</p>
+      <h2 id="new-title" data-i18n="new.title">Choose a picture</h2>
+      <p class="modal-note" id="new-warning" hidden data-i18n="new.warning">The picture in progress will be discarded.</p>
       <div class="level-list" id="daily-list"></div>
-      <p class="stats-section">Bộ tranh</p>
+      <p class="stats-section" data-i18n="new.packs">Picture packs</p>
       <div class="level-list" id="pack-list"></div>
-      <p class="stats-section">Ngẫu nhiên</p>
+      <p class="stats-section" data-i18n="new.random">Random</p>
       <div class="random-row" id="random-list"></div>
-      <button class="btn btn-ghost" type="button" data-close="modal-new">Hủy</button>
+      <button class="btn btn-ghost" type="button" data-close="modal-new" data-i18n="common.cancel">Cancel</button>
     </div>
   </div>
 
@@ -135,12 +135,12 @@
   <div class="modal" id="modal-pack" hidden>
     <div class="modal-backdrop" data-close="modal-pack"></div>
     <div class="modal-card modal-wide" role="dialog" aria-modal="true" aria-labelledby="pack-title">
-      <h2 id="pack-title">Bộ tranh</h2>
-      <div class="segmented pack-tabs" role="tablist" aria-label="Cỡ tranh" id="pack-tabs"></div>
+      <h2 id="pack-title" data-i18n="new.packs">Picture packs</h2>
+      <div class="segmented pack-tabs" role="tablist" aria-label="Picture size" id="pack-tabs" data-i18n-attr="aria-label:pack.tabsAria"></div>
       <p class="pack-progress" id="pack-progress"></p>
       <div class="pack-grid" id="pack-grid" role="tabpanel"></div>
-      <p class="modal-note" id="pack-warning" hidden>Tranh đang giải dở sẽ bị bỏ.</p>
-      <button class="btn btn-ghost" type="button" data-close="modal-pack">Đóng</button>
+      <p class="modal-note" id="pack-warning" hidden data-i18n="new.warning">The picture in progress will be discarded.</p>
+      <button class="btn btn-ghost" type="button" data-close="modal-pack" data-i18n="common.close">Close</button>
     </div>
   </div>
 
@@ -148,43 +148,52 @@
   <div class="modal" id="modal-settings" hidden>
     <div class="modal-backdrop" data-close="modal-settings"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-      <h2 id="settings-title">Cài đặt</h2>
+      <h2 id="settings-title" data-i18n="settings.title">Settings</h2>
       <div class="settings-list">
         <div class="setting">
           <div class="setting-text">
-            <span class="setting-name">Giao diện</span>
+            <span class="setting-name" data-i18n="settings.theme">Theme</span>
           </div>
-          <div class="segmented" role="radiogroup" aria-label="Giao diện" data-setting="theme">
-            <button type="button" role="radio" data-value="auto">Tự động</button>
-            <button type="button" role="radio" data-value="light">Sáng</button>
-            <button type="button" role="radio" data-value="dark">Tối</button>
+          <div class="segmented" role="radiogroup" aria-label="Theme" data-i18n-attr="aria-label:settings.theme" data-setting="theme">
+            <button type="button" role="radio" data-value="auto" data-i18n="theme.auto">Auto</button>
+            <button type="button" role="radio" data-value="light" data-i18n="theme.light">Light</button>
+            <button type="button" role="radio" data-value="dark" data-i18n="theme.dark">Dark</button>
+          </div>
+        </div>
+        <div class="setting">
+          <div class="setting-text">
+            <span class="setting-name" data-i18n="settings.lang">Language</span>
+          </div>
+          <div class="segmented" role="radiogroup" aria-label="Language" data-i18n-attr="aria-label:settings.lang" id="lang-seg">
+            <button type="button" role="radio" data-lang="en">English</button>
+            <button type="button" role="radio" data-lang="vi">Tiếng Việt</button>
           </div>
         </div>
         <label class="setting">
           <div class="setting-text">
-            <span class="setting-name">Kiểm tra lỗi</span>
-            <span class="setting-desc">Tô nhầm ô trống thì báo ngay (ô hiện X đỏ) và tính một lỗi.</span>
+            <span class="setting-name" data-i18n="settings.check">Check mistakes</span>
+            <span class="setting-desc" data-i18n="settings.checkDesc">Filling an empty cell by mistake is flagged at once (red X) and counts as a mistake.</span>
           </div>
           <input type="checkbox" class="switch" data-setting="check">
         </label>
         <label class="setting">
           <div class="setting-text">
-            <span class="setting-name">Tự đánh dấu X</span>
-            <span class="setting-desc">Khi một hàng / cột đủ số, tự đánh dấu X các ô còn trống của dòng đó.</span>
+            <span class="setting-name" data-i18n="settings.autoX">Auto-mark X</span>
+            <span class="setting-desc" data-i18n="settings.autoXDesc">When a row / column matches its clue, its remaining empty cells are marked X.</span>
           </div>
           <input type="checkbox" class="switch" data-setting="autoX">
         </label>
         <label class="setting">
           <div class="setting-text">
-            <span class="setting-name">Rung khi nhấn giữ</span>
-            <span class="setting-desc">Rung nhẹ khi nhấn giữ để đánh dấu X (nếu máy hỗ trợ).</span>
+            <span class="setting-name" data-i18n="settings.vibrate">Vibrate on long press</span>
+            <span class="setting-desc" data-i18n="settings.vibrateDesc">Vibrate lightly when you long-press to mark X (if supported).</span>
           </div>
           <input type="checkbox" class="switch" data-setting="vibrate">
         </label>
       </div>
-      <p class="modal-hint">Mỗi số là độ dài một đoạn ô tô liền nhau trên hàng / cột, theo đúng thứ tự, giữa các đoạn có ít nhất một ô trống. Chạm để tô, nhấn giữ để đánh dấu X, kéo để tô cả dòng.</p>
-      <button class="btn btn-primary" type="button" data-close="modal-settings">Xong</button>
-      <p class="app-version">Tranh Ẩn · phiên bản <span id="app-version">—</span></p>
+      <p class="modal-hint" data-i18n="settings.rules">Each number is the length of a run of filled cells in that row / column, in order, with at least one empty cell between runs. Tap to fill, long-press to mark X, drag to fill a whole line.</p>
+      <button class="btn btn-primary" type="button" data-close="modal-settings" data-i18n="common.done">Done</button>
+      <p class="app-version"><span data-i18n="settings.version">Nonogram · version</span> <span id="app-version">—</span></p>
     </div>
   </div>
 
@@ -192,22 +201,22 @@
   <div class="modal" id="modal-stats" hidden>
     <div class="modal-backdrop" data-close="modal-stats"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
-      <h2 id="stats-title">Thống kê</h2>
-      <p class="stats-section">Tranh hằng ngày</p>
+      <h2 id="stats-title" data-i18n="stats.title">Statistics</h2>
+      <p class="stats-section" data-i18n="stats.daily">Daily picture</p>
       <dl class="result-stats">
-        <div><dt>Chuỗi ngày</dt><dd id="stats-streak">0</dd></div>
-        <div><dt>Đã giải</dt><dd id="stats-daily-total">0</dd></div>
-        <div><dt>Tốt nhất</dt><dd id="stats-daily-best">—</dd></div>
+        <div><dt data-i18n="stats.streak">Day streak</dt><dd id="stats-streak">0</dd></div>
+        <div><dt data-i18n="stats.solved">Solved</dt><dd id="stats-daily-total">0</dd></div>
+        <div><dt data-i18n="stats.best">Best</dt><dd id="stats-daily-best">—</dd></div>
       </dl>
-      <p class="stats-section">Theo cỡ tranh</p>
+      <p class="stats-section" data-i18n="stats.bySize">By size</p>
       <table class="stats-table">
-        <thead><tr><th>Cỡ</th><th>Chơi</th><th>Đã giải</th><th>Tốt nhất</th><th>TB</th></tr></thead>
+        <thead><tr><th data-i18n="stats.size">Size</th><th data-i18n="stats.played">Played</th><th data-i18n="stats.solved">Solved</th><th data-i18n="stats.best">Best</th><th data-i18n="stats.avg">Avg</th></tr></thead>
         <tbody id="stats-body"></tbody>
       </table>
-      <p class="modal-hint" id="stats-pack-note">TB: thời gian trung bình của các tranh đã giải.</p>
+      <p class="modal-hint" id="stats-pack-note" data-i18n="stats.avgNote">Avg: average time of solved pictures.</p>
       <div class="modal-actions">
-        <button class="btn btn-ghost" type="button" id="btn-stats-reset">Đặt lại</button>
-        <button class="btn btn-primary" type="button" data-close="modal-stats">Đóng</button>
+        <button class="btn btn-ghost" type="button" id="btn-stats-reset" data-i18n="stats.reset">Reset</button>
+        <button class="btn btn-primary" type="button" data-close="modal-stats" data-i18n="common.close">Close</button>
       </div>
     </div>
   </div>
@@ -217,23 +226,24 @@
     <div class="modal-backdrop" data-close="modal-result"></div>
     <div class="modal-card modal-result" role="dialog" aria-modal="true" aria-labelledby="result-title">
       <canvas class="result-pic" id="result-pic" width="128" height="128" aria-hidden="true"></canvas>
-      <p class="result-kicker" id="result-kicker">Bạn đã giải xong</p>
-      <h2 id="result-title">Nón lá</h2>
+      <p class="result-kicker" id="result-kicker" data-i18n="result.kicker">You solved</p>
+      <h2 id="result-title" data-i18n="pic.non-la">Conical hat</h2>
       <p id="result-text"></p>
       <dl class="result-stats">
-        <div><dt>Thời gian</dt><dd id="result-time">00:00</dd></div>
-        <div><dt id="result-extra-label">Kỷ lục</dt><dd id="result-extra">—</dd></div>
-        <div><dt id="result-third-label">Gợi ý</dt><dd id="result-third">0</dd></div>
+        <div><dt data-i18n="result.time">Time</dt><dd id="result-time">00:00</dd></div>
+        <div><dt id="result-extra-label" data-i18n="result.best">Best</dt><dd id="result-extra">—</dd></div>
+        <div><dt id="result-third-label" data-i18n="result.hints">Hints</dt><dd id="result-third">0</dd></div>
       </dl>
       <p class="unlock-note" id="result-note" hidden></p>
       <div class="modal-actions">
-        <button class="btn btn-ghost" type="button" data-close="modal-result">Xem tranh</button>
-        <button class="btn btn-primary" type="button" id="btn-result-next">Tranh tiếp</button>
+        <button class="btn btn-ghost" type="button" data-close="modal-result" data-i18n="result.view">View picture</button>
+        <button class="btn btn-primary" type="button" id="btn-result-next" data-i18n="result.next">Next picture</button>
       </div>
     </div>
   </div>
 
+  <script src="i18n.js?v=1.0.1"></script>
   <script src="engine.js?v=1.0.0"></script>
-  <script src="app.js?v=1.0.0"></script>
+  <script src="app.js?v=1.0.1"></script>
 </body>
 </html>

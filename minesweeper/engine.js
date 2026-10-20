@@ -15,10 +15,11 @@ const Minesweeper = (() => {
   const FLAG = 2;
   const QUESTION = 3;
 
+  // Tên hiển thị của từng mức nằm ở i18n.js (khóa level.<key>)
   const LEVELS = {
-    easy: { key: 'easy', label: 'Dễ', w: 9, h: 9, mines: 10 },
-    medium: { key: 'medium', label: 'Vừa', w: 16, h: 16, mines: 40 },
-    hard: { key: 'hard', label: 'Khó', w: 30, h: 16, mines: 99 },
+    easy: { key: 'easy', w: 9, h: 9, mines: 10 },
+    medium: { key: 'medium', w: 16, h: 16, mines: 40 },
+    hard: { key: 'hard', w: 30, h: 16, mines: 99 },
   };
   /** Ván hằng ngày luôn chơi ở mức Vừa. */
   const DAILY_LEVEL = 'medium';

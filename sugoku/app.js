@@ -7,7 +7,7 @@
  * ===================================================================== */
 (() => {
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html để trình duyệt tải file mới
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '1.1.1';
   const STORAGE_KEY = 'sudoku-vn-save-v1';
   const PROGRESS_KEY = 'sudoku-vn-progress-v1';
   const SETTINGS_KEY = 'sudoku-vn-settings-v1';
@@ -19,12 +19,14 @@
   // Thứ tự độ khó tăng dần. `unlockWins`: số ván phải thắng ở độ khó liền
   // trước để mở khóa. `minLevel`/`maxLevel`: mức kỹ thuật engine phải dùng để giải.
   const DIFFICULTY_ORDER = ['easy', 'medium', 'hard', 'expert', 'extreme'];
+  // Chữ hiển thị lấy từ i18n.js (ngôn ngữ cố định trong một lần tải trang)
+  const t = I18N.t;
   const DIFFICULTIES = {
-    easy: { label: 'Dễ', givens: 40, minLevel: 1, maxLevel: 1, level: 1, unlockWins: 0, desc: 'Nhiều ô cho trước, chỉ cần đếm số còn thiếu' },
-    medium: { label: 'Trung bình', givens: 34, minLevel: 1, maxLevel: 1, level: 2, unlockWins: 3, desc: 'Tìm vị trí duy nhất của mỗi số' },
-    hard: { label: 'Khó', givens: 29, minLevel: 2, maxLevel: 2, level: 3, unlockWins: 3, desc: 'Cần cặp chỉ hướng, cặp trần; nên dùng ghi chú' },
-    expert: { label: 'Chuyên gia', givens: 25, minLevel: 3, maxLevel: 3, level: 4, unlockWins: 3, desc: 'Cần cặp ẩn, bộ ba, X-Wing, XY-Wing' },
-    extreme: { label: 'Cực khó', givens: 17, minLevel: 4, maxLevel: 4, level: 5, unlockWins: 3, desc: 'Vượt ngoài các kỹ thuật cơ bản, thử thách tối đa' },
+    easy: { label: t('diff.easy'), givens: 40, minLevel: 1, maxLevel: 1, level: 1, unlockWins: 0, desc: t('diff.easy.desc') },
+    medium: { label: t('diff.medium'), givens: 34, minLevel: 1, maxLevel: 1, level: 2, unlockWins: 3, desc: t('diff.medium.desc') },
+    hard: { label: t('diff.hard'), givens: 29, minLevel: 2, maxLevel: 2, level: 3, unlockWins: 3, desc: t('diff.hard.desc') },
+    expert: { label: t('diff.expert'), givens: 25, minLevel: 3, maxLevel: 3, level: 4, unlockWins: 3, desc: t('diff.expert.desc') },
+    extreme: { label: t('diff.extreme'), givens: 17, minLevel: 4, maxLevel: 4, level: 5, unlockWins: 3, desc: t('diff.extreme.desc') },
   };
   // Độ khó ván hằng ngày theo thứ trong tuần (0 = Chủ nhật)
   const DAILY_BY_WEEKDAY = ['extreme', 'easy', 'medium', 'medium', 'hard', 'hard', 'expert'];
@@ -109,6 +111,7 @@
   }
   function formatDate(dateKey) {
     const [y, m, d] = dateKey.split('-');
+    if (I18N.lang !== 'vi') return I18N.fmtDate(new Date(Number(y), Number(m) - 1, Number(d)), { month: 'short', day: 'numeric', year: 'numeric' });
     return `${d}/${m}/${y}`;
   }
   /** Thời gian hoàn thành ván hằng ngày của ngày `key` (giây), hoặc null nếu chưa xong. */
@@ -307,7 +310,7 @@
       cell.dataset.idx = String(i);
       cell.tabIndex = i === 0 ? 0 : -1;
       cell.setAttribute('role', 'gridcell');
-      cell.setAttribute('aria-label', `Hàng ${Sudoku.ROW[i] + 1}, cột ${Sudoku.COL[i] + 1}`);
+      cell.setAttribute('aria-label', t('cell.aria', { r: Sudoku.ROW[i] + 1, c: Sudoku.COL[i] + 1 }));
       if (Sudoku.COL[i] % 3 === 2 && Sudoku.COL[i] !== 8) cell.classList.add('box-right');
       if (Sudoku.ROW[i] % 3 === 2 && Sudoku.ROW[i] !== 8) cell.classList.add('box-bottom');
 
@@ -340,7 +343,7 @@
       b.type = 'button';
       b.className = 'num';
       b.dataset.num = String(d);
-      b.setAttribute('aria-label', `Số ${d}`);
+      b.setAttribute('aria-label', t('num.aria', { d }));
       const label = document.createElement('span');
       label.textContent = String(d);
       const count = document.createElement('span');
@@ -377,11 +380,11 @@
 
   function difficultyName(s) {
     const label = DIFFICULTIES[s.difficulty].label;
-    return s.daily ? `Hằng ngày · ${label}` : label;
+    return s.daily ? t('status.dailyName', { label }) : label;
   }
 
   function renderStatus() {
-    difficultyLabel.textContent = state.daily ? 'Hằng ngày' : DIFFICULTIES[state.difficulty].label;
+    difficultyLabel.textContent = state.daily ? t('status.daily') : DIFFICULTIES[state.difficulty].label;
     difficultyLabel.title = difficultyName(state);
     if (settings.checkErrors) {
       mistakesCount.textContent = String(state.mistakes);
@@ -400,8 +403,8 @@
     const paused = state.status === 'paused';
     appEl.classList.toggle('is-paused', paused);
     pauseOverlay.hidden = !paused;
-    btnPause.setAttribute('aria-label', paused ? 'Tiếp tục' : 'Tạm dừng');
-    btnPause.title = paused ? 'Tiếp tục' : 'Tạm dừng';
+    btnPause.setAttribute('aria-label', paused ? t('game.resume') : t('game.pause'));
+    btnPause.title = paused ? t('game.resume') : t('game.pause');
   }
 
   function renderBoard() {
@@ -465,11 +468,11 @@
     const hintsLeft = state ? Math.max(0, MAX_HINTS - state.hintsUsed) : 0;
     btnHint.disabled = !playing || hintsLeft <= 0;
     hintBadge.textContent = String(hintsLeft);
-    btnHint.title = hintsLeft > 0 ? `Còn ${hintsLeft} lượt gợi ý` : 'Đã hết lượt gợi ý';
+    btnHint.title = hintsLeft > 0 ? t('tool.hintsLeft', { n: hintsLeft }) : t('tool.noHints');
     btnNotes.disabled = !playing;
     btnNotes.classList.toggle('active', notesMode);
     btnNotes.setAttribute('aria-pressed', String(notesMode));
-    notesBadge.textContent = notesMode ? 'Bật' : 'Tắt';
+    notesBadge.textContent = notesMode ? t('tool.on') : t('tool.off');
     appEl.classList.toggle('notes-mode', notesMode);
     appEl.classList.toggle('number-first', settings.inputMode === 'number');
   }
@@ -623,7 +626,7 @@
       return;
     }
     if (!settings.checkErrors && state.board.every((v) => v !== 0)) {
-      toast('Bàn cờ đã đầy nhưng vẫn còn số sai. Hãy kiểm tra lại.');
+      toast(t('game.boardFullWrong'));
     }
     save();
     renderAll();
@@ -661,20 +664,20 @@
 
   /* ---------------- Gợi ý có giải thích ---------------- */
   function unitName(unit) {
-    if (unit.type === 'row') return `hàng ${unit.index + 1}`;
-    if (unit.type === 'col') return `cột ${unit.index + 1}`;
+    if (unit.type === 'row') return t('hint.unitRow', { n: unit.index + 1 });
+    if (unit.type === 'col') return t('hint.unitCol', { n: unit.index + 1 });
     const br = Math.floor(unit.index / 3) * 3;
     const bc = (unit.index % 3) * 3;
-    return `vùng 3x3 (hàng ${br + 1}–${br + 3}, cột ${bc + 1}–${bc + 3})`;
+    return t('hint.unitBox', { r1: br + 1, r2: br + 3, c1: bc + 1, c2: bc + 3 });
   }
 
   function cellName(idx) {
-    return `hàng ${Sudoku.ROW[idx] + 1}, cột ${Sudoku.COL[idx] + 1}`;
+    return t('cell.name', { r: Sudoku.ROW[idx] + 1, c: Sudoku.COL[idx] + 1 });
   }
 
-  /** Tên ngắn "H3C5" (hàng 3, cột 5) dùng khi liệt kê nhiều ô. */
+  /** Tên ngắn "H3C5" (hàng 3, cột 5; English "R3C5") dùng khi liệt kê nhiều ô. */
   function shortCell(idx) {
-    return `H${Sudoku.ROW[idx] + 1}C${Sudoku.COL[idx] + 1}`;
+    return t('cell.short', { r: Sudoku.ROW[idx] + 1, c: Sudoku.COL[idx] + 1 });
   }
 
   function listCells(idxs) {
@@ -686,7 +689,8 @@
   }
 
   function joinDigits(ds) {
-    return ds.length <= 2 ? ds.join(' và ') : `${ds.slice(0, -1).join(', ')} và ${ds[ds.length - 1]}`;
+    const and = t('hint.and');
+    return ds.length <= 2 ? ds.join(and) : `${ds.slice(0, -1).join(', ')}${and}${ds[ds.length - 1]}`;
   }
 
   /** Bàn cờ chỉ gồm các số đúng (số sai được coi như ô trống khi suy luận). */
@@ -694,81 +698,84 @@
     return state.board.map((v, i) => (v !== 0 && v === state.solution[i] ? v : 0));
   }
 
-  /** Diễn giải một bước suy luận của engine bằng tiếng Việt. */
+  /** Diễn giải một bước suy luận của engine (chữ theo ngôn ngữ đang chọn). */
   function describeStep(s) {
-    const t = s.technique;
-    if (t === 'naked-single') {
+    const tech = s.technique;
+    if (tech === 'naked-single') {
       const others = [];
       for (let e = 1; e <= 9; e++) if (e !== s.value) others.push(e);
-      return `Ô ${cellName(s.idx)} chỉ có thể là ${s.value}. Tám số còn lại (${others.join(', ')}) đều đã xuất hiện trong hàng, cột hoặc vùng 3x3 chứa ô này (các ô vàng).`;
+      return t('hint.nakedSingle', { cell: cellName(s.idx), v: s.value, others: others.join(', ') });
     }
-    if (t === 'hidden-single') {
+    if (tech === 'hidden-single') {
       const name = unitName(s.unitRef);
-      return `Trong ${name}, số ${s.value} chỉ có thể đặt vào ô ${cellName(s.idx)}. Mọi ô trống khác của ${name} đều nằm cùng hàng, cột hoặc vùng 3x3 với một số ${s.value} đã có (các ô vàng) hoặc đã bị loại ${s.value} ở bước trước.`;
+      return t('hint.hiddenSingle', { unit: name, v: s.value, cell: cellName(s.idx) });
     }
     const targets = listCells(uniqueIdx(s.eliminations));
-    if (t === 'pointing') {
+    const d = s.digit;
+    if (tech === 'pointing') {
       const box = unitName(s.boxUnit);
       const line = unitName(s.lineUnit);
-      return `Trong ${box}, số ${s.digit} chỉ có thể nằm ở các ô vàng, và chúng đều thuộc ${line}. Vì ${box} chắc chắn chứa ${s.digit} tại một trong các ô đó, phần còn lại của ${line} không thể là ${s.digit}: loại ${s.digit} khỏi ${targets}.`;
+      return t('hint.pointing', { box, line, d, targets });
     }
-    if (t === 'claiming') {
+    if (tech === 'claiming') {
       const box = unitName(s.boxUnit);
       const line = unitName(s.lineUnit);
-      return `Trong ${line}, số ${s.digit} chỉ có thể nằm ở các ô vàng, và chúng đều thuộc ${box}. Vì vậy các ô khác của ${box} không thể là ${s.digit}: loại ${s.digit} khỏi ${targets}.`;
+      return t('hint.claiming', { box, line, d, targets });
     }
-    if (t === 'naked-pair') {
+    if (tech === 'naked-pair') {
       const name = unitName(s.unitRef);
-      return `Hai ô ${listCells(s.cells)} trong ${name} chỉ có thể là ${joinDigits(s.digits)}. Hai số này chắc chắn chiếm hai ô đó, nên các ô khác trong ${name} không thể là ${joinDigits(s.digits)}: loại khỏi ${targets}.`;
+      return t('hint.nakedPair', { cells: listCells(s.cells), unit: name, digits: joinDigits(s.digits), targets });
     }
-    if (t === 'hidden-pair') {
-      const name = unitName(s.unitRef);
-      const removed = [...new Set(s.eliminations.map((e) => e.digit))];
-      return `Trong ${name}, hai số ${joinDigits(s.digits)} chỉ có thể nằm ở hai ô ${listCells(s.cells)}. Hai ô này vì thế không thể chứa số nào khác: loại ${joinDigits(removed)} khỏi ${targets}.`;
-    }
-    if (t === 'naked-triple') {
-      const name = unitName(s.unitRef);
-      return `Ba ô ${listCells(s.cells)} trong ${name} chỉ chứa các số ${joinDigits(s.digits)}. Ba số này chắc chắn chiếm ba ô đó, nên các ô khác trong ${name} không thể là chúng: loại khỏi ${targets}.`;
-    }
-    if (t === 'hidden-triple') {
+    if (tech === 'hidden-pair') {
       const name = unitName(s.unitRef);
       const removed = [...new Set(s.eliminations.map((e) => e.digit))];
-      return `Trong ${name}, ba số ${joinDigits(s.digits)} chỉ có thể nằm ở ba ô ${listCells(s.cells)}. Ba ô này vì thế không thể chứa số nào khác: loại ${joinDigits(removed)} khỏi ${targets}.`;
+      return t('hint.hiddenPair', { unit: name, digits: joinDigits(s.digits), cells: listCells(s.cells), removed: joinDigits(removed), targets });
     }
-    if (t === 'x-wing') {
+    if (tech === 'naked-triple') {
+      const name = unitName(s.unitRef);
+      return t('hint.nakedTriple', { cells: listCells(s.cells), unit: name, digits: joinDigits(s.digits), targets });
+    }
+    if (tech === 'hidden-triple') {
+      const name = unitName(s.unitRef);
+      const removed = [...new Set(s.eliminations.map((e) => e.digit))];
+      return t('hint.hiddenTriple', { unit: name, digits: joinDigits(s.digits), cells: listCells(s.cells), removed: joinDigits(removed), targets });
+    }
+    if (tech === 'x-wing') {
       const [l1, l2] = s.lines.map(unitName);
       const [c1, c2] = s.crossLines.map(unitName);
-      const crossType = s.crossLines[0].type === 'col' ? 'cột' : 'hàng';
-      return `Số ${s.digit} ở ${l1} và ${l2} đều chỉ có thể nằm ở ${c1} hoặc ${c2} (4 ô vàng). Dù xếp cách nào, ${s.digit} cũng chiếm một ô ở mỗi ${crossType} đó, nên các ô khác của ${c1} và ${c2} không thể là ${s.digit}: loại ${s.digit} khỏi ${targets}.`;
+      const cross = s.crossLines[0].type === 'col' ? t('hint.cols') : t('hint.rows');
+      return t('hint.xWing', { d, l1, l2, c1, c2, cross, targets });
     }
-    if (t === 'xy-wing') {
+    if (tech === 'xy-wing') {
       const [x, y] = s.pivotDigits;
-      return `Ô trụ ${shortCell(s.pivot)} chỉ có thể là ${x} hoặc ${y}. Hai ô cánh ${listCells(s.wings)} cùng nhìn thấy ô trụ, mỗi ô lấy một trong hai số đó kèm số ${s.digit}. Dù ô trụ là ${x} hay ${y}, một trong hai ô cánh chắc chắn là ${s.digit}, nên ô nhìn thấy cả hai cánh không thể là ${s.digit}: loại ${s.digit} khỏi ${targets}.`;
+      return t('hint.xyWing', { pivot: shortCell(s.pivot), x, y, wings: listCells(s.wings), d, targets });
     }
-    if (t === 'swordfish') {
+    if (tech === 'swordfish') {
       const lines = s.lines.map(unitName).join(', ');
       const cross = s.crossLines.map(unitName).join(', ');
-      return `Số ${s.digit} ở ${lines} chỉ có thể nằm trong ${cross} (các ô vàng). Ba ${s.lines[0].type === 'row' ? 'hàng' : 'cột'} này sẽ chiếm trọn ${s.digit} của ba ${s.crossLines[0].type === 'col' ? 'cột' : 'hàng'} đó, nên các ô khác của chúng không thể là ${s.digit}: loại ${s.digit} khỏi ${targets}.`;
+      const lineType = s.lines[0].type === 'row' ? t('hint.rows') : t('hint.cols');
+      const crossType = s.crossLines[0].type === 'col' ? t('hint.cols') : t('hint.rows');
+      return t('hint.swordfish', { d, lines, cross, lineType, crossType, targets });
     }
     return '';
   }
 
   function placeSummary(s) {
     if (s.technique === 'hidden-single') {
-      return `số ${s.value} chỉ còn một vị trí trong ${unitName(s.unitRef)} là ô ${cellName(s.idx)}.`;
+      return t('hint.placeHidden', { v: s.value, unit: unitName(s.unitRef), cell: cellName(s.idx) });
     }
-    return `ô ${cellName(s.idx)} chỉ còn số ${s.value}.`;
+    return t('hint.placeNaked', { cell: cellName(s.idx), v: s.value });
   }
 
   /** Gói bước điền (kèm các bước loại trừ dẫn tới nó) thành gợi ý hiển thị. */
   function buildHint(elimSteps, place) {
-    const label = (t) => Sudoku.TECHNIQUES[t].label;
+    const label = (tech) => t('tech.' + tech);
     if (!elimSteps.length) {
       return { idx: place.idx, value: place.value, technique: label(place.technique), text: describeStep(place), reason: place.reason, unit: place.unit, elimCells: [], elims: [] };
     }
     const first = elimSteps[0];
     const more = elimSteps.length - 1;
-    const bridge = more > 0 ? `Sau thêm ${more} bước loại trừ tương tự, ` : 'Sau bước này, ';
+    const bridge = more > 0 ? t('hint.bridgeMore', { n: more }) : t('hint.bridgeOne');
     const elims = [];
     for (const s of elimSteps) elims.push(...s.eliminations);
     return {
@@ -795,8 +802,8 @@
       return {
         idx,
         value: state.solution[idx],
-        technique: 'Có số sai',
-        text: `Số ${state.board[idx]} ở ô ${cellName(idx)} không đúng, đáp án của ô này là ${state.solution[idx]}. Hãy sửa ô sai trước khi suy luận tiếp.`,
+        technique: t('hint.wrongTitle'),
+        text: t('hint.wrongText', { wrong: state.board[idx], cell: cellName(idx), ans: state.solution[idx] }),
         reason: [],
         unit: [],
         elimCells: [],
@@ -826,8 +833,8 @@
     return {
       idx,
       value: state.solution[idx],
-      technique: 'Cần kỹ thuật nâng cao',
-      text: `Ở trạng thái hiện tại không có ô nào suy ra được bằng các kỹ thuật thông dụng (single, cặp, bộ ba, X-Wing, XY-Wing, Swordfish). Đáp án của ô ${cellName(idx)} là ${state.solution[idx]}.`,
+      technique: t('hint.advancedTitle'),
+      text: t('hint.advancedText', { cell: cellName(idx), ans: state.solution[idx] }),
       reason: [],
       unit: [],
       elimCells: [],
@@ -987,7 +994,7 @@
     if (state.daily) {
       const prev = dailyTime(state.daily);
       stats.daily.completed[state.daily] = prev === null ? state.seconds : Math.min(prev, state.seconds);
-      notes.push(`📅 Hoàn thành ván hằng ngày · chuỗi ${dailyStreak()} ngày`);
+      notes.push({ key: 'win.daily', n: dailyStreak() });
       state.unlocked = null;
     } else {
       const unlockedKey = recordWin(state.difficulty);
@@ -995,10 +1002,10 @@
       s.won++;
       s.totalWonTime += state.seconds;
       if (s.bestTime === null || state.seconds < s.bestTime) {
-        if (s.bestTime !== null) notes.push('🏆 Kỷ lục thời gian mới!');
+        if (s.bestTime !== null) notes.push({ key: 'win.record' });
         s.bestTime = state.seconds;
       }
-      if (unlockedKey) notes.unshift(`🔓 Đã mở khóa độ khó ${DIFFICULTIES[unlockedKey].label}!`);
+      if (unlockedKey) notes.unshift({ key: 'win.unlocked', diff: unlockedKey });
       state.unlocked = unlockedKey || null;
     }
     state.winNotes = notes;
@@ -1053,15 +1060,15 @@
     const badge =
       doneTime !== null
         ? `<span class="difficulty-badge done">✓ ${formatTime(doneTime)}</span>`
-        : `<span class="difficulty-badge wins">Hôm nay</span>`;
+        : `<span class="difficulty-badge wins">${t('picker.today')}</span>`;
     daily.innerHTML = `
       <span class="difficulty-cal" aria-hidden="true">${CAL_SVG}</span>
       <span class="difficulty-text">
-        <span class="difficulty-name">Ván hằng ngày</span>
-        <span class="difficulty-desc">${formatDate(dateKey)} · ${DIFFICULTIES[dKey].label}${streak ? ` · chuỗi ${streak} ngày` : ''}</span>
+        <span class="difficulty-name">${t('picker.daily')}</span>
+        <span class="difficulty-desc">${formatDate(dateKey)} · ${DIFFICULTIES[dKey].label}${streak ? t('picker.streak', { n: streak }) : ''}</span>
       </span>
       ${badge}`;
-    daily.setAttribute('aria-label', `Ván hằng ngày ${formatDate(dateKey)}, độ khó ${DIFFICULTIES[dKey].label}`);
+    daily.setAttribute('aria-label', t('picker.dailyAria', { date: formatDate(dateKey), label: DIFFICULTIES[dKey].label }));
     daily.addEventListener('click', () => startFromPicker(dKey, dateKey));
     difficultyList.appendChild(daily);
 
@@ -1081,10 +1088,10 @@
 
       const b = unlocked
         ? `<span class="difficulty-badge wins">${TROPHY_SVG}${winsOf(key)}</span>`
-        : `<span class="difficulty-badge locked">${LOCK_SVG}Khóa</span>`;
+        : `<span class="difficulty-badge locked">${LOCK_SVG}${t('picker.locked')}</span>`;
       const desc = unlocked
         ? info.desc
-        : `Thắng ${info.unlockWins} ván ${DIFFICULTIES[prev].label} để mở (${Math.min(winsOf(prev), info.unlockWins)}/${info.unlockWins})`;
+        : t('picker.unlockDesc', { n: info.unlockWins, label: DIFFICULTIES[prev].label, have: Math.min(winsOf(prev), info.unlockWins) });
 
       btn.innerHTML = `
         <span class="difficulty-dots" aria-hidden="true">${dots}</span>
@@ -1093,7 +1100,7 @@
           <span class="difficulty-desc">${desc}</span>
         </span>
         ${b}`;
-      btn.setAttribute('aria-label', unlocked ? info.label : `${info.label} (đang khóa)`);
+      btn.setAttribute('aria-label', unlocked ? info.label : t('picker.lockedAria', { label: info.label }));
       btn.addEventListener('click', () => {
         if (isUnlocked(key)) startFromPicker(key, null);
       });
@@ -1127,10 +1134,17 @@
     $('win-difficulty').textContent = difficultyName(state);
     $('win-time').textContent = formatTime(state.seconds);
     $('win-mistakes').textContent = settings.checkErrors ? String(state.mistakes) : '—';
-    const notes = state.winNotes || [];
+    const notes = (state.winNotes || []).map(winNoteText);
     winUnlock.hidden = notes.length === 0;
     winUnlock.textContent = notes.join(' · ');
     showModal(modalWin);
+  }
+
+  /** Ghi chú khi thắng lưu dạng { key, n, diff } để hiện theo ngôn ngữ đang chọn (bản lưu cũ là chuỗi). */
+  function winNoteText(n) {
+    if (typeof n === 'string') return n;
+    const label = n.diff && DIFFICULTIES[n.diff] ? DIFFICULTIES[n.diff].label : '';
+    return t(n.key, { n: n.n, label });
   }
 
   function showLose() {
@@ -1152,7 +1166,7 @@
 
   /* ---------------- Cài đặt ---------------- */
   function renderSettings() {
-    modalSettings.querySelectorAll('.segmented').forEach((seg) => {
+    modalSettings.querySelectorAll('.segmented[data-setting]').forEach((seg) => {
       const key = seg.dataset.setting;
       seg.querySelectorAll('button').forEach((b) => {
         const on = b.dataset.value === settings[key];
@@ -1162,6 +1176,11 @@
     });
     modalSettings.querySelectorAll('input[data-setting]').forEach((input) => {
       input.checked = !!settings[input.dataset.setting];
+    });
+    $('seg-lang').querySelectorAll('button').forEach((b) => {
+      const on = b.dataset.value === I18N.lang;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-checked', String(on));
     });
     const limit = modalSettings.querySelector('input[data-setting="mistakeLimit"]');
     limit.disabled = !settings.checkErrors;
@@ -1209,13 +1228,13 @@
   }
 
   function resetStats() {
-    if (!window.confirm('Xóa toàn bộ thống kê và tiến trình mở khóa?')) return;
+    if (!window.confirm(t('stats.resetConfirm'))) return;
     stats = { byDifficulty: {}, daily: { completed: {} } };
     progress = { wins: {} };
     saveStats();
     saveProgress();
     renderStats();
-    toast('Đã đặt lại thống kê.');
+    toast(t('stats.resetDone'));
   }
 
   /* ---------------- Events ---------------- */
@@ -1245,8 +1264,16 @@
     });
   });
 
-  modalSettings.querySelectorAll('.segmented button').forEach((b) => {
+  modalSettings.querySelectorAll('.segmented[data-setting] button').forEach((b) => {
     b.addEventListener('click', () => updateSetting(b.closest('.segmented').dataset.setting, b.dataset.value));
+  });
+  // Đổi ngôn ngữ: lưu ván rồi tải lại trang theo ngôn ngữ mới
+  $('seg-lang').querySelectorAll('button').forEach((b) => {
+    b.addEventListener('click', () => {
+      if (b.dataset.value === I18N.lang) return;
+      save();
+      I18N.set(b.dataset.value);
+    });
   });
   modalSettings.querySelectorAll('input[data-setting]').forEach((input) => {
     input.addEventListener('change', () => updateSetting(input.dataset.setting, input.checked));
@@ -1334,6 +1361,7 @@
 
   /* ---------------- Init ---------------- */
   function init() {
+    I18N.apply();
     applyTheme();
     buildBoard();
     buildNumpad();

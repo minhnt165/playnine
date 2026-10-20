@@ -48,6 +48,7 @@ Game Bốn Liên Tiếp (thả quân xếp bốn quân liền nhau) chạy trên
 
 ```
 index.html  Khung trang, modal
+i18n.js     Từ điển tiếng Anh / tiếng Việt và hàm I18N (nạp trước engine.js)
 style.css   Giao diện, màu PlayNine, khung gỗ khoét lỗ, dark mode, responsive
 engine.js   Luật chơi + AI negamax, không đụng DOM (chạy trong trình duyệt, Node và Web Worker)
 app.js      Logic game, hiệu ứng, render (cần engine.js nạp trước)
@@ -59,12 +60,21 @@ Toàn bộ engine nằm trong hàm `BonLienTiepFactory`. `app.js` dựng Web Wor
 
 Ô được đánh số `idx = hàng * 7 + cột`, hàng 0 ở dưới cùng; nước đi là số cột 0–6. `BonLienTiep.play(state, cột)` trả về ô quân vừa rơi vào; khi có người thắng, `state.win` chứa các ô thắng và các đoạn thẳng để vẽ. Ván được lưu dưới dạng danh sách cột và dựng lại bằng `fromMoves`, nên Đi lại và khôi phục ván luôn khớp luật.
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html`. Độ sâu, nhiễu, tỉ lệ bỏ sót và thời gian nghĩ của từng mức máy nằm trong `LEVELS` ở `engine.js`; trọng số đánh giá ở `W_OPEN`, `T_GOOD`, `T_BAD`. `chooseMove` nhận thêm `nodes` (trần số nút thay cho trần thời gian) để test cho kết quả lặp lại được.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html`. Độ sâu, nhiễu, tỉ lệ bỏ sót và thời gian nghĩ của từng mức máy nằm trong `LEVELS` ở `engine.js`; trọng số đánh giá ở `W_OPEN`, `T_GOOD`, `T_BAD`. `chooseMove` nhận thêm `nodes` (trần số nút thay cho trần thời gian) để test cho kết quả lặp lại được.
+
+## Ngôn ngữ / Language
+
+Game có tiếng Anh (mặc định) và tiếng Việt. Toàn bộ chữ hiển thị nằm trong `i18n.js` (từ điển `en` / `vi` + đối tượng toàn cục `I18N`), nạp trước `engine.js` và `app.js`; `engine.js` không chứa chữ hiển thị.
+
+- Ngôn ngữ lưu ở khóa dùng chung `playnine-lang` (`'en'` hoặc `'vi'`, thiếu hay sai thì là `'en'`, không tự đoán theo trình duyệt), chung cho cổng PlayNine và mọi game.
+- Chữ tĩnh trong `index.html` viết sẵn bằng tiếng Anh, gắn `data-i18n` (textContent), `data-i18n-html` (chuỗi có `<b>` / `<kbd>`) hoặc `data-i18n-attr="aria-label:key;title:key"`; `I18N.apply()` chạy đầu phần khởi động của `app.js`. Chữ sinh từ JS đi qua `I18N.t(key, params)` (hỗ trợ `{tên}` và số ít / số nhiều tiếng Anh).
+- Đổi ngôn ngữ ở modal Cài đặt: lưu ván rồi tải lại trang. Trang khác (cổng, iframe) đổi khóa `playnine-lang` thì game nhận sự kiện `storage` và tự tải lại theo. Tóm tắt cho cổng được ghi lại mỗi lần mở game nên chữ luôn theo ngôn ngữ đang chọn.
 
 ## Dữ liệu lưu trong trình duyệt
 
 | Khóa `localStorage` | Nội dung |
 | --- | --- |
+| `playnine-lang` | Ngôn ngữ dùng chung cả PlayNine (`en` / `vi`) |
 | `playnine-bonlientiep-settings-v1` | Giao diện, tốc độ quân rơi, chế độ, mức máy, lượt đi đầu, đã xem hướng dẫn chưa |
 | `playnine-bonlientiep-save-v1` | Ván đang chơi (chế độ, mức, lượt đi đầu + danh sách cột đã thả) |
 | `playnine-bonlientiep-stats-v1` | Thống kê theo mức (kể cả thắng nhanh nhất), chuỗi thắng, ván hai người |

@@ -15,6 +15,12 @@ Game cờ tướng chạy trên trình duyệt, gói gọn trong một file `ind
 - Responsive, chơi được trên điện thoại và máy tính.
 - Icon tab đổi theo trạng thái ván (đến lượt bạn, máy đang nghĩ, bị chiếu, thắng / thua / hòa), tiêu đề tab đổi theo. Có icon màn hình chính cho iOS (`icon-180.png`) và Android (`manifest.webmanifest`).
 
+## Ngôn ngữ / Language
+
+Game có hai ngôn ngữ: English (mặc định) và Tiếng Việt. Vì game là một file duy nhất, từ điển được viết thẳng trong khối `<script id="i18n">` ở `<head>` của `index.html` (đối tượng `I18N`, từ điển `{ en, vi }`) thay vì file `i18n.js` riêng. Chữ tĩnh gắn `data-i18n` / `data-i18n-attr` và được `I18N.apply()` điền khi khởi động; chữ do JS sinh ra (trạng thái, biên bản, lớp phủ kết thúc, tiêu đề tab) gọi `I18N.t(key, params)`. Hai khối `rules` và `ai` không chứa chữ hiển thị.
+
+Ngôn ngữ lưu ở khóa `localStorage['playnine-lang']` (`'en'` hoặc `'vi'`), dùng chung với cổng PlayNine và các game khác. Đổi ở mục Ngôn ngữ trong bảng điều khiển; vì ván cờ không được lưu nên game vẽ lại chữ tại chỗ thay vì tải lại trang, ván đang chơi giữ nguyên. Khi ngôn ngữ đổi ở trang khác (cổng, tab khác), game cũng đổi theo tại chỗ.
+
 ## Chạy
 
 Mở `index.html` bằng trình duyệt, hoặc bật GitHub Pages cho repo này (Settings → Pages → Deploy from branch `main`, folder `/`).
@@ -37,10 +43,11 @@ node tools/make-icons.js
 
 ## Cấu trúc mã
 
-`index.html` gồm ba khối `<script>` độc lập:
+`index.html` gồm bốn khối `<script>` độc lập:
 
 | Khối | Nội dung |
 | --- | --- |
+| `i18n` | Từ điển English / Tiếng Việt, đối tượng `I18N` (`t`, `apply`, `set`), nằm trong `<head>` |
 | `rules` | Biểu diễn bàn cờ, sinh nước đi, kiểm tra chiếu, nước hợp lệ, Zobrist hash, luật lặp / hòa, trạng thái ván |
 | `ai` | Lượng giá (bảng điểm vị trí), negamax alpha-beta, quiescence, tìm kiếm sâu dần có giới hạn thời gian, lọc nước thua theo luật ở gốc |
 | `ui` | Vẽ SVG, âm thanh, Web Worker (tạo từ Blob ghép hai khối trên), xử lý click, điều khiển ván, undo, xem lại ván, chế độ chơi |

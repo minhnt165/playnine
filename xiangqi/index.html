@@ -1,17 +1,210 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#14100d">
-<meta name="apple-mobile-web-app-title" content="Cờ Tướng">
-<title>Cờ Tướng - Xiangqi</title>
+<meta name="apple-mobile-web-app-title" content="Xiangqi">
+<title>Xiangqi - Chinese chess</title>
 <!-- Icon: file PNG tĩnh cho iOS / Android / Safari (xuất từ Favicon.svg bằng tools/make-icons.js);
      icon tab được JS (đối tượng Favicon, khối ui) thay bằng SVG có huy hiệu theo trạng thái ván -->
 <link rel="icon" id="favPng" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" id="favSvg" type="image/svg+xml">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
+<!-- ===================================================================== -->
+<!-- ĐA NGÔN NGỮ (I18N) - English mặc định + Tiếng Việt                    -->
+<!-- Ngôn ngữ lưu ở localStorage['playnine-lang'], dùng chung với cổng      -->
+<!-- PlayNine. Đổi ngôn ngữ thì vẽ lại tại chỗ (ván cờ không lưu nên không  -->
+<!-- tải lại trang).                                                         -->
+<!-- ===================================================================== -->
+<script id="i18n">
+'use strict';
+const I18N = (() => {
+  const LANG_KEY = 'playnine-lang';
+  const DICT = {
+    en: {
+      'meta.title': 'Xiangqi - Chinese chess',
+      'meta.name': 'Xiangqi',
+      'app.sub': 'Chinese chess · play the computer or a friend',
+      'app.footer': 'Tap a piece to see its legal moves. A side with no legal moves (checkmate or stalemate) or that gives perpetual check loses. Threefold repetition or 60 moves without a capture is a draw.',
+      'color.red': 'Red',
+      'color.black': 'Black',
+      'piece.king': 'King',
+      'piece.advisor': 'Advisor',
+      'piece.elephant': 'Elephant',
+      'piece.horse': 'Horse',
+      'piece.rook': 'Chariot',
+      'piece.cannon': 'Cannon',
+      'piece.pawnRed': 'Soldier',
+      'piece.pawnBlack': 'Soldier',
+      'player.computer': 'Computer',
+      'player.you': 'You',
+      'player.p1': 'Player 1',
+      'player.p2': 'Player 2',
+      'player.toMove': 'to move',
+      'game.new': 'New game',
+      'game.undo': 'Undo',
+      'game.review': 'Review',
+      'game.sound': 'Sound on/off',
+      'game.mode': 'Game mode',
+      'game.modeAi': 'vs Computer',
+      'game.modePvp': 'Two players',
+      'game.level': 'Computer level',
+      'level.easy': 'Easy',
+      'level.medium': 'Medium',
+      'level.hard': 'Hard',
+      'settings.language': 'Language',
+      'moves.title': 'Moves',
+      'moves.empty': 'No moves yet.',
+      'nav.first': 'Go to start',
+      'nav.firstTitle': 'Go to start (Home)',
+      'nav.prev': 'Back one move',
+      'nav.prevTitle': 'Back one move (←)',
+      'nav.next': 'Forward one move',
+      'nav.nextTitle': 'Forward one move (→)',
+      'nav.last': 'Back to current position',
+      'nav.lastTitle': 'Back to current position (End)',
+      'status.review': 'Review',
+      'status.move': 'move',
+      'status.check': 'Check!',
+      'status.draw': 'Draw',
+      'status.over': 'Game over',
+      'status.wins': '{color} wins',
+      'status.turn': 'Turn',
+      'status.thinking': 'Computer is thinking',
+      'status.aiInfo': 'Depth {depth} · {k}k nodes · {s}s',
+      'result.youWin': 'You win! 🎉',
+      'result.aiWins': 'Computer wins',
+      'result.colorWins': '{color} wins!',
+      'tab.youWin': 'You win',
+      'tab.aiThinking': 'Computer thinking',
+      'tab.yourTurn': 'Your turn',
+      'tab.inCheck': '{color} in check',
+      'tab.redTurn': 'Red to move',
+      'tab.blackTurn': 'Black to move',
+      'reason.checkmate': 'Checkmate',
+      'reason.stalemate': '{loser} has no legal moves',
+      'reason.perpetual': '{loser} gave perpetual check',
+      'reason.repetition': 'Threefold repetition',
+      'reason.noProgress': '60 moves without a capture',
+      'reason.material': 'Neither side has enough pieces to win',
+    },
+    vi: {
+      'meta.title': 'Cờ Tướng - Xiangqi',
+      'meta.name': 'Cờ Tướng',
+      'app.sub': 'Xiangqi · chơi với máy hoặc hai người',
+      'app.footer': 'Chạm vào quân để xem nước đi hợp lệ. Bên hết nước đi (chiếu bí hoặc bí nước) hoặc chiếu mãi là bên thua. Lặp thế cờ 3 lần hoặc 60 nước không ăn quân là hòa.',
+      'color.red': 'Đỏ',
+      'color.black': 'Đen',
+      'piece.king': 'Tướng',
+      'piece.advisor': 'Sĩ',
+      'piece.elephant': 'Tượng',
+      'piece.horse': 'Mã',
+      'piece.rook': 'Xe',
+      'piece.cannon': 'Pháo',
+      'piece.pawnRed': 'Binh',
+      'piece.pawnBlack': 'Tốt',
+      'player.computer': 'Máy',
+      'player.you': 'Bạn',
+      'player.p1': 'Người 1',
+      'player.p2': 'Người 2',
+      'player.toMove': 'đang đi',
+      'game.new': 'Ván mới',
+      'game.undo': 'Đi lại',
+      'game.review': 'Xem lại',
+      'game.sound': 'Bật/tắt âm thanh',
+      'game.mode': 'Chế độ chơi',
+      'game.modeAi': 'Người vs Máy',
+      'game.modePvp': 'Hai người',
+      'game.level': 'Độ khó của máy',
+      'level.easy': 'Dễ',
+      'level.medium': 'Vừa',
+      'level.hard': 'Khó',
+      'settings.language': 'Ngôn ngữ',
+      'moves.title': 'Biên bản',
+      'moves.empty': 'Chưa có nước đi nào.',
+      'nav.first': 'Về đầu ván',
+      'nav.firstTitle': 'Về đầu ván (Home)',
+      'nav.prev': 'Lùi một nước',
+      'nav.prevTitle': 'Lùi một nước (←)',
+      'nav.next': 'Tiến một nước',
+      'nav.nextTitle': 'Tiến một nước (→)',
+      'nav.last': 'Về thế hiện tại',
+      'nav.lastTitle': 'Về thế hiện tại (End)',
+      'status.review': 'Xem lại',
+      'status.move': 'nước',
+      'status.check': 'Chiếu tướng!',
+      'status.draw': 'Hòa',
+      'status.over': 'Kết thúc',
+      'status.wins': '{color} thắng',
+      'status.turn': 'Lượt đi',
+      'status.thinking': 'Máy đang suy nghĩ',
+      'status.aiInfo': 'Máy nghĩ sâu {depth} · {k}k nút · {s}s',
+      'result.youWin': 'Bạn thắng! 🎉',
+      'result.aiWins': 'Máy thắng',
+      'result.colorWins': '{color} thắng!',
+      'tab.youWin': 'Bạn thắng',
+      'tab.aiThinking': 'Máy đang nghĩ',
+      'tab.yourTurn': 'Đến lượt bạn',
+      'tab.inCheck': '{color} bị chiếu',
+      'tab.redTurn': 'Lượt Đỏ',
+      'tab.blackTurn': 'Lượt Đen',
+      'reason.checkmate': 'Chiếu bí',
+      'reason.stalemate': '{loser} hết nước đi',
+      'reason.perpetual': '{loser} chiếu mãi',
+      'reason.repetition': 'Lặp lại thế cờ 3 lần',
+      'reason.noProgress': '60 nước không ăn quân',
+      'reason.material': 'Hai bên không đủ quân để thắng',
+    },
+  };
+  const norm = v => (v === 'vi' ? 'vi' : 'en');
+  let lang = 'en';
+  try { lang = norm(localStorage.getItem(LANG_KEY)); } catch (e) { /* localStorage không khả dụng: dùng English */ }
+  document.documentElement.lang = lang;
+
+  const api = {
+    lang,
+    onChange: null, // khối ui gán hàm vẽ lại khi đổi ngôn ngữ
+    // Tra từ điển: thiếu thì lấy bản English, rồi tới chính key; {tên} thay bằng params
+    t(key, params) {
+      let s = DICT[api.lang][key];
+      if (s === undefined) s = DICT.en[key];
+      if (s === undefined) return key;
+      if (typeof s === 'object') s = params && params.n === 1 && s.one !== undefined ? s.one : s.other;
+      if (!params) return s;
+      return s.replace(/\{(\w+)\}/g, (m, k) => (Object.prototype.hasOwnProperty.call(params, k) ? String(params[k]) : m));
+    },
+    apply(root) {
+      root = root || document;
+      for (const el of root.querySelectorAll('[data-i18n]')) el.textContent = api.t(el.dataset.i18n);
+      for (const el of root.querySelectorAll('[data-i18n-html]')) el.innerHTML = api.t(el.dataset.i18nHtml);
+      for (const el of root.querySelectorAll('[data-i18n-attr]')) {
+        for (const pair of el.dataset.i18nAttr.split(';')) {
+          const i = pair.indexOf(':');
+          if (i > 0) el.setAttribute(pair.slice(0, i).trim(), api.t(pair.slice(i + 1).trim()));
+        }
+      }
+      if (root === document) document.title = api.t('meta.title');
+    },
+    // Đổi ngôn ngữ: lưu rồi vẽ lại tại chỗ (giữ nguyên ván đang chơi)
+    set(next, persist) {
+      next = norm(next);
+      if (persist !== false) { try { localStorage.setItem(LANG_KEY, next); } catch (e) { /* bỏ qua */ } }
+      if (next === api.lang) return;
+      api.lang = next;
+      document.documentElement.lang = next;
+      api.apply();
+      if (api.onChange) api.onChange();
+    },
+    fmtNumber: (n, opts) => Number(n).toLocaleString(api.lang === 'vi' ? 'vi-VN' : 'en-US', opts),
+    fmtDate: (d, opts) => new Date(d).toLocaleDateString(api.lang === 'vi' ? 'vi-VN' : 'en-US', opts),
+  };
+  // Ngôn ngữ đổi ở trang khác (cổng hoặc tab khác): đi theo, không ghi lại khóa
+  window.addEventListener('storage', e => { if (e.key === LANG_KEY) api.set(e.newValue, false); });
+  return api;
+})();
+</script>
 <style>
   :root {
     --bg1: #1d1711;
@@ -133,7 +326,7 @@
   .seg.disabled { opacity: .4; pointer-events: none; }
 
   .moves { font-size: .83rem; color: var(--muted); max-height: 170px; overflow: auto; line-height: 1.6; }
-  .moves:empty::before { content: "Chưa có nước đi nào."; }
+  .moves:empty::before { content: attr(data-empty); }
   .moves .no { color: var(--gold); font-weight: 700; display: inline-block; width: 2em; }
   .moves .mv { display: inline-block; min-width: 7.6em; cursor: pointer; border-radius: 4px; padding: 0 3px; }
   .moves .mv:hover { background: rgba(255, 255, 255, .07); }
@@ -173,8 +366,8 @@
 <body>
 <div class="app">
   <header>
-    <h1>Cờ Tướng</h1>
-    <span class="sub">Xiangqi · chơi với máy hoặc hai người</span>
+    <h1 data-i18n="meta.name">Xiangqi</h1>
+    <span class="sub" data-i18n="app.sub">Chinese chess · play the computer or a friend</span>
   </header>
 
   <div class="layout">
@@ -184,8 +377,8 @@
         <div class="overlay-card">
           <div class="ov-title" id="ovTitle"></div>
           <div class="ov-sub" id="ovSub"></div>
-          <button class="primary" id="btnOverlayNew">Ván mới</button>
-          <button id="btnOverlayReview" style="margin-left:8px">Xem lại</button>
+          <button class="primary" id="btnOverlayNew" data-i18n="game.new">New game</button>
+          <button id="btnOverlayReview" style="margin-left:8px" data-i18n="game.review">Review</button>
         </div>
       </div>
     </div>
@@ -195,14 +388,14 @@
         <div class="player black" id="pBlack">
           <div class="avatar black">將</div>
           <div class="info">
-            <div class="name">Đen <span class="tag" id="tagBlack">Máy</span><span class="tag turn" id="turnBlack" hidden>đang đi</span></div>
+            <div class="name"><span data-i18n="color.black">Black</span> <span class="tag" id="tagBlack">Computer</span><span class="tag turn" id="turnBlack" hidden data-i18n="player.toMove">to move</span></div>
             <div class="caps" id="capsBlack"></div>
           </div>
         </div>
         <div class="player red" id="pRed">
           <div class="avatar red">帥</div>
           <div class="info">
-            <div class="name">Đỏ <span class="tag" id="tagRed">Bạn</span><span class="tag turn" id="turnRed" hidden>đang đi</span></div>
+            <div class="name"><span data-i18n="color.red">Red</span> <span class="tag" id="tagRed">You</span><span class="tag turn" id="turnRed" hidden data-i18n="player.toMove">to move</span></div>
             <div class="caps" id="capsRed"></div>
           </div>
         </div>
@@ -214,42 +407,49 @@
 
       <div class="card">
         <div class="controls">
-          <button class="primary" id="btnNew" data-icon="new">Ván mới</button>
-          <button id="btnUndo" data-icon="undo">Đi lại</button>
-          <button id="btnSound" title="Bật/tắt âm thanh" aria-label="Bật/tắt âm thanh"></button>
+          <button class="primary" id="btnNew" data-icon="new"><span data-i18n="game.new">New game</span></button>
+          <button id="btnUndo" data-icon="undo"><span data-i18n="game.undo">Undo</span></button>
+          <button id="btnSound" title="Sound on/off" aria-label="Sound on/off" data-i18n-attr="title:game.sound;aria-label:game.sound"></button>
         </div>
         <div class="field" style="margin-top:12px">
-          <label>Chế độ chơi</label>
+          <label data-i18n="game.mode">Game mode</label>
           <div class="seg" id="segMode">
-            <button data-mode="ai">Người vs Máy</button>
-            <button data-mode="pvp">Hai người</button>
+            <button data-mode="ai" data-i18n="game.modeAi">vs Computer</button>
+            <button data-mode="pvp" data-i18n="game.modePvp">Two players</button>
           </div>
         </div>
         <div class="field">
-          <label>Độ khó của máy</label>
+          <label data-i18n="game.level">Computer level</label>
           <div class="seg" id="segLevel">
-            <button data-level="easy">Dễ</button>
-            <button data-level="medium">Vừa</button>
-            <button data-level="hard">Khó</button>
+            <button data-level="easy" data-i18n="level.easy">Easy</button>
+            <button data-level="medium" data-i18n="level.medium">Medium</button>
+            <button data-level="hard" data-i18n="level.hard">Hard</button>
+          </div>
+        </div>
+        <div class="field">
+          <label data-i18n="settings.language">Language</label>
+          <div class="seg" id="segLang">
+            <button data-lang="en">English</button>
+            <button data-lang="vi">Tiếng Việt</button>
           </div>
         </div>
       </div>
 
       <div class="card">
         <div class="field">
-          <label>Biên bản</label>
-          <div class="moves" id="moves"></div>
+          <label data-i18n="moves.title">Moves</label>
+          <div class="moves" id="moves" data-empty="No moves yet." data-i18n-attr="data-empty:moves.empty"></div>
           <div class="nav" id="nav">
-            <button data-nav="first" data-icon="first" title="Về đầu ván (Home)" aria-label="Về đầu ván"></button>
-            <button data-nav="prev" data-icon="prev" title="Lùi một nước (←)" aria-label="Lùi một nước"></button>
-            <button data-nav="next" data-icon="next" title="Tiến một nước (→)" aria-label="Tiến một nước"></button>
-            <button data-nav="last" data-icon="last" title="Về thế hiện tại (End)" aria-label="Về thế hiện tại"></button>
+            <button data-nav="first" data-icon="first" title="Go to start (Home)" aria-label="Go to start" data-i18n-attr="title:nav.firstTitle;aria-label:nav.first"></button>
+            <button data-nav="prev" data-icon="prev" title="Back one move (←)" aria-label="Back one move" data-i18n-attr="title:nav.prevTitle;aria-label:nav.prev"></button>
+            <button data-nav="next" data-icon="next" title="Forward one move (→)" aria-label="Forward one move" data-i18n-attr="title:nav.nextTitle;aria-label:nav.next"></button>
+            <button data-nav="last" data-icon="last" title="Back to current position (End)" aria-label="Back to current position" data-i18n-attr="title:nav.lastTitle;aria-label:nav.last"></button>
           </div>
         </div>
       </div>
     </aside>
   </div>
-  <footer>Chạm vào quân để xem nước đi hợp lệ. Bên hết nước đi (chiếu bí hoặc bí nước) hoặc chiếu mãi là bên thua. Lặp thế cờ 3 lần hoặc 60 nước không ăn quân là hòa.</footer>
+  <footer data-i18n="app.footer">Tap a piece to see its legal moves. A side with no legal moves (checkmate or stalemate) or that gives perpetual check loses. Threefold repetition or 60 moves without a capture is a draw.</footer>
 </div>
 
 <!-- ===================================================================== -->
@@ -861,6 +1061,8 @@ const DIFFICULTY = {
 <!-- ===================================================================== -->
 <script id="ui">
 'use strict';
+const t = (key, params) => I18N.t(key, params);
+I18N.apply(); // điền chữ tĩnh theo ngôn ngữ trước khi chèn icon và vẽ ván
 
 // ---- Hằng số hiển thị ------------------------------------------------------
 const CELL = 60, PAD = 40; // kích thước ô và lề trong viewBox 560x620
@@ -871,11 +1073,12 @@ const PIECE_CHAR = {
   [RED]:   { [KING]: '帥', [ADVISOR]: '仕', [ELEPHANT]: '相', [HORSE]: '馬', [ROOK]: '車', [CANNON]: '炮', [PAWN]: '兵' },
   [BLACK]: { [KING]: '將', [ADVISOR]: '士', [ELEPHANT]: '象', [HORSE]: '馬', [ROOK]: '車', [CANNON]: '砲', [PAWN]: '卒' },
 };
-const PIECE_NAME_VI = {
-  [RED]:   { [KING]: 'Tướng', [ADVISOR]: 'Sĩ', [ELEPHANT]: 'Tượng', [HORSE]: 'Mã', [ROOK]: 'Xe', [CANNON]: 'Pháo', [PAWN]: 'Binh' },
-  [BLACK]: { [KING]: 'Tướng', [ADVISOR]: 'Sĩ', [ELEPHANT]: 'Tượng', [HORSE]: 'Mã', [ROOK]: 'Xe', [CANNON]: 'Pháo', [PAWN]: 'Tốt' },
+// Tên quân / tên màu: key từ điển I18N (Binh Đỏ / Tốt Đen tách riêng như cách gọi tiếng Việt)
+const PIECE_NAME = {
+  [RED]:   { [KING]: 'piece.king', [ADVISOR]: 'piece.advisor', [ELEPHANT]: 'piece.elephant', [HORSE]: 'piece.horse', [ROOK]: 'piece.rook', [CANNON]: 'piece.cannon', [PAWN]: 'piece.pawnRed' },
+  [BLACK]: { [KING]: 'piece.king', [ADVISOR]: 'piece.advisor', [ELEPHANT]: 'piece.elephant', [HORSE]: 'piece.horse', [ROOK]: 'piece.rook', [CANNON]: 'piece.cannon', [PAWN]: 'piece.pawnBlack' },
 };
-const COLOR_NAME = { [RED]: 'Đỏ', [BLACK]: 'Đen' };
+const COLOR_NAME = { get [RED]() { return t('color.red'); }, get [BLACK]() { return t('color.black'); } };
 const COLOR_HEX = { [RED]: '#c62828', [BLACK]: '#1f1f1f' };
 
 // ---- Icon SVG cho nút --------------------------------------------------------
@@ -1011,7 +1214,7 @@ const Favicon = {
     img.src = this.dataUrl(svg);
   },
   set(key, label) {
-    document.title = (label ? label + ' · ' : '') + 'Cờ Tướng';
+    document.title = (label ? label + ' · ' : '') + t('meta.name');
     if (key === this.current) return;
     this.current = key;
     let e = this.cache[key];
@@ -1028,17 +1231,17 @@ const Favicon = {
 // Trạng thái để hiện trên favicon và tiêu đề tab
 function faviconState(st, isAi) {
   if (st.over) {
-    if (st.winner === null) return ['draw', 'Hòa'];
-    if (isAi) return st.winner === RED ? ['win', 'Bạn thắng'] : ['lose', 'Máy thắng'];
-    return ['win', COLOR_NAME[st.winner] + ' thắng'];
+    if (st.winner === null) return ['draw', t('status.draw')];
+    if (isAi) return st.winner === RED ? ['win', t('tab.youWin')] : ['lose', t('result.aiWins')];
+    return ['win', t('status.wins', { color: COLOR_NAME[st.winner] })];
   }
   if (isAi) {
-    if (game.thinking) return ['think', 'Máy đang nghĩ'];
-    if (st.inCheck) return ['check', 'Chiếu tướng!'];
-    return ['turn', 'Đến lượt bạn'];
+    if (game.thinking) return ['think', t('tab.aiThinking')];
+    if (st.inCheck) return ['check', t('status.check')];
+    return ['turn', t('tab.yourTurn')];
   }
-  if (st.inCheck) return ['check', COLOR_NAME[game.turn] + ' bị chiếu'];
-  return game.turn === RED ? ['red', 'Lượt Đỏ'] : ['black', 'Lượt Đen'];
+  if (st.inCheck) return ['check', t('tab.inCheck', { color: COLOR_NAME[game.turn] })];
+  return game.turn === RED ? ['red', t('tab.redTurn')] : ['black', t('tab.blackTurn')];
 }
 
 // ---- Trạng thái ván cờ ----------------------------------------------------
@@ -1286,12 +1489,12 @@ function render() {
 function reasonText(st) {
   const loser = st.winner === null ? null : COLOR_NAME[1 - st.winner];
   switch (st.reason) {
-    case 'checkmate': return 'Chiếu bí';
-    case 'stalemate': return `${loser} hết nước đi`;
-    case 'perpetual-check': return `${loser} chiếu mãi`;
-    case 'repetition': return 'Lặp lại thế cờ 3 lần';
-    case 'no-progress': return '60 nước không ăn quân';
-    case 'material': return 'Hai bên không đủ quân để thắng';
+    case 'checkmate': return t('reason.checkmate');
+    case 'stalemate': return t('reason.stalemate', { loser });
+    case 'perpetual-check': return t('reason.perpetual', { loser });
+    case 'repetition': return t('reason.repetition');
+    case 'no-progress': return t('reason.noProgress');
+    case 'material': return t('reason.material');
     default: return '';
   }
 }
@@ -1300,8 +1503,8 @@ function renderPanel(v) {
   const st = game.status;
   // Thẻ người chơi
   const isAi = game.mode === 'ai';
-  $('tagBlack').textContent = isAi ? 'Máy' : 'Người 2';
-  $('tagRed').textContent = isAi ? 'Bạn' : 'Người 1';
+  $('tagBlack').textContent = isAi ? t('player.computer') : t('player.p2');
+  $('tagRed').textContent = isAi ? t('player.you') : t('player.p1');
   for (const color of [RED, BLACK]) {
     const name = color === RED ? 'Red' : 'Black';
     const active = !st.over && game.turn === color;
@@ -1321,16 +1524,18 @@ function renderPanel(v) {
   // Dòng trạng thái
   const sEl = $('status');
   if (!v.live) {
-    sEl.innerHTML = `<span class="badge view">Xem lại</span> nước <b>${v.ply}</b> / ${game.history.length}`
-      + (v.inCheck ? ` <span class="badge check">Chiếu tướng!</span>` : '');
+    sEl.innerHTML = `<span class="badge view">${t('status.review')}</span> ${t('status.move')} <b>${v.ply}</b> / ${game.history.length}`
+      + (v.inCheck ? ` <span class="badge check">${t('status.check')}</span>` : '');
   } else if (st.over) {
-    const head = st.winner === null ? `<span class="badge draw">Hòa</span>` : `<span class="badge over">Kết thúc</span> ${COLOR_NAME[st.winner]} thắng ·`;
-    sEl.innerHTML = `${head} ${reasonText(st).toLowerCase()}`;
+    const head = st.winner === null ? `<span class="badge draw">${t('status.draw')}</span>` : `<span class="badge over">${t('status.over')}</span> ${t('status.wins', { color: COLOR_NAME[st.winner] })} ·`;
+    // Tiếng Việt viết thường cả lý do; English giữ chữ hoa của tên màu (Red / Black)
+    const reason = reasonText(st);
+    sEl.innerHTML = `${head} ${I18N.lang === 'vi' ? reason.toLowerCase() : reason}`;
   } else {
-    let html = `Lượt đi: <b>${COLOR_NAME[game.turn]}</b>`;
-    if (st.inCheck) html += ` <span class="badge check">Chiếu tướng!</span>`;
-    if (game.thinking) html += ` <span class="thinking">Máy đang suy nghĩ</span>`;
-    else if (isAi && game.aiInfo) html += ` <span class="ai-info">Máy nghĩ sâu ${game.aiInfo.depth} · ${Math.round(game.aiInfo.nodes / 1000)}k nút · ${(game.aiInfo.ms / 1000).toFixed(1)}s</span>`;
+    let html = `${t('status.turn')}: <b>${COLOR_NAME[game.turn]}</b>`;
+    if (st.inCheck) html += ` <span class="badge check">${t('status.check')}</span>`;
+    if (game.thinking) html += ` <span class="thinking">${t('status.thinking')}</span>`;
+    else if (isAi && game.aiInfo) html += ` <span class="ai-info">${t('status.aiInfo', { depth: game.aiInfo.depth, k: Math.round(game.aiInfo.nodes / 1000), s: (game.aiInfo.ms / 1000).toFixed(1) })}</span>`;
     sEl.innerHTML = html;
   }
   Favicon.set(...faviconState(st, isAi));
@@ -1339,7 +1544,7 @@ function renderPanel(v) {
   ov.hidden = !st.over || !v.live;
   if (st.over) {
     const youWin = isAi && st.winner === RED, youLose = isAi && st.winner === BLACK;
-    $('ovTitle').textContent = st.winner === null ? 'Hòa' : youWin ? 'Bạn thắng! 🎉' : youLose ? 'Máy thắng' : `${COLOR_NAME[st.winner]} thắng!`;
+    $('ovTitle').textContent = st.winner === null ? t('status.draw') : youWin ? t('result.youWin') : youLose ? t('result.aiWins') : t('result.colorWins', { color: COLOR_NAME[st.winner] });
     $('ovSub').textContent = reasonText(st);
   }
 
@@ -1351,6 +1556,7 @@ function renderPanel(v) {
   for (const b of $('segMode').children) b.classList.toggle('on', b.dataset.mode === game.mode);
   for (const b of $('segLevel').children) b.classList.toggle('on', b.dataset.level === game.level);
   $('segLevel').classList.toggle('disabled', !isAi);
+  for (const b of $('segLang').children) b.classList.toggle('on', b.dataset.lang === I18N.lang);
   const n = game.history.length;
   $('nav').querySelector('[data-nav="first"]').disabled = v.ply === 0;
   $('nav').querySelector('[data-nav="prev"]').disabled = v.ply === 0;
@@ -1362,7 +1568,7 @@ function renderPanel(v) {
   game.history.forEach((h, i) => {
     const color = colorOf(h.piece);
     const cur = i + 1 === v.ply ? ' cur' : '';
-    const txt = `<span class="mv ${color === RED ? 'red' : 'black'}${cur}" data-ply="${i + 1}">${PIECE_NAME_VI[color][typeOf(h.piece)]} ${coord(h.move.from)}–${coord(h.move.to)}${h.captured ? '×' : ''}</span>`;
+    const txt = `<span class="mv ${color === RED ? 'red' : 'black'}${cur}" data-ply="${i + 1}">${t(PIECE_NAME[color][typeOf(h.piece)])} ${coord(h.move.from)}–${coord(h.move.to)}${h.captured ? '×' : ''}</span>`;
     if (i % 2 === 0) parts.push(`<span class="no">${i / 2 + 1}.</span>${txt}`);
     else parts[parts.length - 1] += txt;
   });
@@ -1572,6 +1778,12 @@ $('segLevel').addEventListener('click', e => {
   try { localStorage.setItem('xiangqi.level', game.level); } catch (e2) { /* bỏ qua */ }
   renderPanel(viewState());
 });
+// Đổi ngôn ngữ: I18N điền lại chữ tĩnh, ở đây vẽ lại phần chữ do JS sinh (ván cờ giữ nguyên)
+$('segLang').addEventListener('click', e => {
+  const b = e.target.closest('[data-lang]');
+  if (b) I18N.set(b.dataset.lang);
+});
+I18N.onChange = () => renderPanel(viewState());
 
 // Khôi phục tuỳ chọn đã lưu (nếu có)
 try {

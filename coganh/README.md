@@ -56,6 +56,7 @@ Game Cờ Gánh (trò chơi dân gian Việt Nam, chơi trên bàn kiểu Alquer
 index.html  Khung trang, modal
 style.css   Giao diện, màu PlayNine, bàn gỗ, dark mode, responsive
 engine.js   Luật chơi + AI minimax, không đụng DOM (chạy trong trình duyệt, Node và Web Worker)
+i18n.js     Từ điển tiếng Anh / tiếng Việt và hàm I18N (nạp trước engine.js, app.js)
 app.js      Logic game, hiệu ứng, render (cần engine.js nạp trước)
 test.js     Test engine và AI chạy bằng Node
 icon.svg    Icon app, dùng làm favicon
@@ -65,7 +66,16 @@ Toàn bộ engine nằm trong hàm `CoGanhFactory`. `app.js` dựng Web Worker t
 
 Điểm được đánh số `i = hàng * 5 + cột` (hàng 0 ở trên cùng), nước đi mã hóa thành `từ * 25 + đến`. `CoGanh.play(state, move, events)` trả về diễn biến từng bước (`move`, `ganh`, `vay`, `over`) để giao diện vẽ lại hiệu ứng. Ván được lưu dưới dạng danh sách nước đi và dựng lại bằng `fromMoves`, nên Đi lại và khôi phục ván luôn khớp luật (kể cả đếm lặp thế).
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html`. Độ sâu, nhiễu và thời gian nghĩ của từng mức máy nằm trong `LEVELS` ở `engine.js`.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html`. Độ sâu, nhiễu và thời gian nghĩ của từng mức máy nằm trong `LEVELS` ở `engine.js`.
+
+## Ngôn ngữ / Language
+
+Giao diện có tiếng Anh (mặc định) và tiếng Việt. Toàn bộ chữ nằm trong từ điển `{ en, vi }` ở `i18n.js`; `engine.js` không chứa chữ hiển thị.
+
+- Ngôn ngữ lưu ở khóa dùng chung `localStorage['playnine-lang']` (`'en'` hoặc `'vi'`, thiếu hoặc sai thì là `'en'`), chung cho cổng PlayNine và mọi game.
+- `I18N.t(key, params)` tra chữ theo ngôn ngữ hiện tại (thiếu thì lấy tiếng Anh), thay `{tên}` bằng tham số, hỗ trợ số nhiều `{ one, other }` cho tiếng Anh. `I18N.apply()` điền chữ cho các phần tử có `data-i18n`, `data-i18n-html`, `data-i18n-attr` trong `index.html` (chữ gốc trong HTML là tiếng Anh).
+- Đổi ngôn ngữ ở Cài đặt → Ngôn ngữ: game lưu ván rồi tải lại trang, ván đang chơi giữ nguyên. Trang khác đổi khóa `playnine-lang` thì game nhận sự kiện `storage` và tự tải lại. Tóm tắt cho cổng được ghi lại bằng ngôn ngữ hiện tại mỗi lần mở game.
+- Thuật ngữ trong tiếng Anh giữ tên gốc không dấu: Ganh (carry), Vay (surround), Mo (open).
 
 ## Dữ liệu lưu trong trình duyệt
 

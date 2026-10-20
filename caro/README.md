@@ -65,6 +65,7 @@ Mọi khóa `localStorage` có tiền tố `playnine-caro-`, mọi truy cập đ
 | `playnine-caro-save-v1` | Ván đang chơi (chế độ, mức, quân, luật, danh sách nước). Xóa khi ván kết thúc |
 | `playnine-caro-stats-v1` | Thống kê theo mức: `played`, `won`, `lost`, `drawn` |
 | `playnine-caro-summary-v1` | Tóm tắt cho cổng PlayNine, ghi lại sau mỗi lần ván đổi (ván mới, mỗi nước, kết thúc) |
+| `playnine-lang` | Ngôn ngữ giao diện dùng chung với cổng PlayNine (`en` / `vi`) |
 
 Tóm tắt cho cổng có dạng:
 
@@ -85,20 +86,31 @@ Tóm tắt cho cổng có dạng:
 }
 ```
 
-`resume` chỉ khác `null` khi đang có ván dở (đã có ít nhất một nước và chưa kết thúc). `stats` rỗng khi chưa đấu máy ván nào.
+`resume` chỉ khác `null` khi đang có ván dở (đã có ít nhất một nước và chưa kết thúc). `stats` rỗng khi chưa đấu máy ván nào. Các chữ trong tóm tắt (`note`, `label`, `title`, `detail`) được ghi bằng ngôn ngữ đang chọn (ví dụ trên là tiếng Việt).
+
+## Ngôn ngữ / Language
+
+Giao diện có tiếng Anh (mặc định) và tiếng Việt. Toàn bộ chuỗi hiển thị nằm trong từ điển `{ en, vi }` của `i18n.js`; `engine.js` không chứa chữ hiển thị. `i18n.js` tạo đối tượng toàn cục `I18N`:
+
+- `I18N.t(key, params)` tra chuỗi theo ngôn ngữ hiện tại (thiếu thì lấy tiếng Anh), thay `{tên}` bằng `params`, hỗ trợ số ít / số nhiều tiếng Anh dạng `{ one, other }` theo `params.n`.
+- `I18N.apply()` điền chữ cho phần tử có `data-i18n`, `data-i18n-html`, `data-i18n-attr` trong `index.html`, cùng tiêu đề và mô tả trang. Chữ gốc trong `index.html` là tiếng Anh.
+- `I18N.set(lang)` lưu ngôn ngữ rồi tải lại trang (ván đã được lưu trước đó). Đổi trong Cài đặt, dòng "Language / Ngôn ngữ".
+
+Ngôn ngữ lưu ở khóa dùng chung `playnine-lang` (`'en'` hoặc `'vi'`, thiếu thì là `'en'`), chung với cổng PlayNine và các game khác. Khi trang khác (cổng hoặc iframe) đổi khóa này, game tự lưu ván và tải lại theo ngôn ngữ mới. Tóm tắt cho cổng được ghi lại bằng ngôn ngữ hiện tại mỗi lần mở game.
 
 ## Cấu trúc
 
 ```
 index.html   Khung trang, modal (ván mới, cài đặt, thống kê, xác nhận, kết quả)
 style.css    Giao diện, dark mode, bố cục dọc / ngang, bàn cờ gỗ
+i18n.js      Chuỗi giao diện tiếng Anh / tiếng Việt và hàm I18N (nạp trước engine.js)
 engine.js    Engine: luật thắng, bảng mẫu thế cờ, AI (alpha-beta + VCF), phục vụ Web Worker
 app.js       Logic game + render (cần engine.js nạp trước)
 test.js      Test engine và AI chạy bằng Node
 icon.svg     Icon app (cũng là favicon)
 ```
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html` để trình duyệt tải file mới thay vì dùng bản cache. Thông số từng mức máy nằm trong hằng `LEVELS` ở `engine.js`.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html` để trình duyệt tải file mới thay vì dùng bản cache. Thông số từng mức máy nằm trong hằng `LEVELS` ở `engine.js`.
 
 ## Kiểm tra engine
 

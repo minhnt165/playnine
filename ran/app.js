@@ -1,5 +1,5 @@
 /* =====================================================================
- * Rắn Săn Mồi - Logic giao diện (cần engine.js nạp trước)
+ * Rắn Săn Mồi - Logic giao diện (cần i18n.js và engine.js nạp trước)
  *   - Vẽ bàn chơi trên <canvas> theo DPR, rắn trượt mượt giữa hai tick (nội suy)
  *   - Bàn phím (mũi tên, WASD, Space/P), vuốt ở bất kỳ đâu trên vùng bàn chơi, nút điều hướng
  *   - Màn hình bắt đầu, tạm dừng (tự dừng khi ẩn trang), lớp phủ thua
@@ -8,8 +8,9 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.0.1';
   const G = window.GameRan;
+  const t = I18N.t;
 
   // Mọi khóa localStorage đều có tiền tố playnine-ran-
   const KEYS = {
@@ -23,21 +24,15 @@
   const OVER_DELAY = 650; // ms, chờ trước khi hiện lớp phủ thua (để thấy chỗ va chạm)
   const MAX_CATCHUP = 4; // số tick tối đa xử lý trong một khung hình (khi máy giật)
   const THEMES = ['auto', 'light', 'dark'];
-  const MODE_DESC = {
-    classic: 'Chạm tường là thua.',
-    wrap: 'Đi qua mép bàn để sang phía đối diện.',
-    maze: 'Né chướng ngại vật. Chạm tường cũng thua.',
-  };
-  const OVER_TITLE = {
-    wall: 'Rắn đâm vào tường',
-    self: 'Rắn tự cắn vào mình',
-    obstacle: 'Rắn đâm vào chướng ngại',
-  };
+  // Tên chế độ / tốc độ / bản đồ theo ngôn ngữ hiện tại (engine chỉ giữ mã)
+  const modeName = (m) => t('mode.' + m);
+  const speedName = (s) => t('speed.' + s);
+  const mapName = (i) => t('map.' + G.MAPS[i]);
 
   const $ = (id) => document.getElementById(id);
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const coarsePointer = window.matchMedia('(pointer: coarse)');
-  const fmt = (n) => Number(n || 0).toLocaleString('vi-VN');
+  const fmt = (n) => I18N.fmtNumber(n);
   const bestKey = (mode, speed) => mode + '-' + speed;
 
   /* ---------------- localStorage (mọi truy cập đều bọc try/catch) ---------------- */
@@ -144,21 +139,21 @@
   function writeSummary() {
     const best = bestOverall();
     const list = [];
-    if (best > 0) list.push({ value: fmt(best), label: 'Điểm cao nhất' });
-    if (stats.longest > 0) list.push({ value: fmt(stats.longest), label: 'Rắn dài nhất' });
-    if (stats.food > 0) list.push({ value: fmt(stats.food), label: 'Mồi đã ăn' });
+    if (best > 0) list.push({ value: fmt(best), label: t('summary.best') });
+    if (stats.longest > 0) list.push({ value: fmt(stats.longest), label: t('summary.longest') });
+    if (stats.food > 0) list.push({ value: fmt(stats.food), label: t('summary.food') });
 
-    let note = 'Lái rắn ăn mồi, càng dài càng khó';
+    let note = t('summary.note');
     if (stats.bestFood > 0) {
-      note = 'Kỷ lục ' + fmt(stats.bestFood) + ' mồi · chế độ ' + G.MODE_NAMES[stats.bestFoodMode || 'classic'];
+      note = t('summary.record', { food: fmt(stats.bestFood), mode: modeName(stats.bestFoodMode || 'classic') });
     }
 
     let resume = null;
     if (unfinished()) {
-      const modeTxt = game.mode !== 'classic' ? G.MODE_NAMES[game.mode] + ' · ' : '';
+      const modeTxt = game.mode !== 'classic' ? t('summary.mode', { mode: modeName(game.mode) }) : '';
       resume = {
-        title: 'Tiếp tục Rắn Săn Mồi',
-        detail: modeTxt + 'Dài ' + game.snake.length + ' · ' + fmt(game.score) + ' điểm',
+        title: t('summary.resume'),
+        detail: modeTxt + t('summary.detail', { len: fmt(game.snake.length), score: fmt(game.score), n: game.score }),
         pct: null,
       };
     }
@@ -698,12 +693,12 @@
     const paused = phase !== 'running';
     pauseBtn.dataset.state = paused ? 'paused' : 'running';
     pauseBtn.disabled = phase === 'over';
-    const label = phase === 'running' ? 'Tạm dừng' : phase === 'ready' ? 'Bắt đầu' : 'Tiếp tục';
+    const label = t(phase === 'running' ? 'hud.pause' : phase === 'ready' ? 'hud.start' : 'hud.resume');
     pauseBtn.setAttribute('aria-label', label);
-    pauseBtn.title = label + ' (Space / P)';
+    pauseBtn.title = t('hud.keyHint', { label });
     readyHint.hidden = phase !== 'ready';
     const badge = $('mode-badge');
-    badge.textContent = G.MODE_NAMES[game.mode] + ' · ' + G.SPEED_NAMES[game.speed];
+    badge.textContent = t('hud.badge', { mode: modeName(game.mode), speed: speedName(game.speed) });
     badge.hidden = false;
     boardEl.dataset.mode = game.mode;
   }
@@ -789,7 +784,7 @@
     ensureLoop();
     persist();
     boardEl.focus();
-    announce('Ván mới: ' + G.MODE_NAMES[game.mode] + ', tốc độ ' + G.SPEED_NAMES[game.speed] + '. Bấm hướng bất kỳ để bắt đầu.');
+    announce(t('announce.newGame', { mode: modeName(game.mode), speed: speedName(game.speed) }));
   }
 
   function countGame() {
@@ -817,7 +812,7 @@
     if (phase !== 'paused') return;
     run();
     boardEl.focus();
-    announce('Tiếp tục');
+    announce(t('announce.resumed'));
   }
 
   function pause(focus) {
@@ -826,12 +821,16 @@
     prevSnake = null;
     acc = 0;
     updateHud();
-    $('pause-sub').textContent = 'Dài ' + game.snake.length + ' · ' + fmt(game.score) + ' điểm';
+    $('pause-sub').textContent = pauseSub();
     overlayPause.hidden = false;
     draw();
     persist();
     if (focus) $('btn-resume').focus();
-    announce('Tạm dừng');
+    announce(t('announce.paused'));
+  }
+
+  function pauseSub() {
+    return t('pause.sub', { len: fmt(game.snake.length), score: fmt(game.score), n: game.score });
   }
 
   function togglePause() {
@@ -854,7 +853,7 @@
       floatScore(res.gained);
       vibrate(res.ate === 'bonus' ? 35 : 15);
     }
-    if (res.bonusSpawned) announce('Có quả vải thưởng, ăn nhanh trước khi hết giờ!');
+    if (res.bonusSpawned) announce(t('announce.bonus'));
     const key = bestKey(game.mode, game.speed);
     if (game.score > stats.best[key]) stats.best[key] = game.score;
     if (game.snake.length > stats.longest) stats.longest = game.snake.length;
@@ -876,14 +875,14 @@
 
     const key = bestKey(game.mode, game.speed);
     const newBest = game.score > startBest && game.score > 0;
-    const title = game.won ? 'Lấp kín cả bàn!' : OVER_TITLE[game.cause] || 'Kết thúc';
+    const title = t(game.won ? 'over.won' : ['wall', 'self', 'obstacle'].includes(game.cause) ? 'over.' + game.cause : 'over.end');
     $('over-title').textContent = title;
     overlayOver.classList.toggle('won', game.won);
     $('over-new-best').hidden = !newBest;
     $('over-score').textContent = fmt(game.score);
     $('over-length').textContent = fmt(game.snake.length);
     $('over-best').textContent = fmt(stats.best[key]);
-    announce(title + '. Điểm ' + fmt(game.score) + ', dài ' + game.snake.length + (newBest ? '. Kỷ lục mới!' : ''));
+    announce(t('announce.over', { title, score: fmt(game.score), len: fmt(game.snake.length) }) + (newBest ? t('announce.newBest') : ''));
 
     clearTimeout(overTimer);
     overTimer = setTimeout(
@@ -915,9 +914,9 @@
       return;
     }
     pause(false);
-    $('confirm-title').textContent = 'Bỏ ván đang chơi?';
+    $('confirm-title').textContent = t('confirm.title');
     $('confirm-text').textContent =
-      'Ván đang chơi (dài ' + game.snake.length + ', ' + fmt(game.score) + ' điểm) sẽ bị bỏ để chọn ván mới.';
+      t('confirm.text', { len: fmt(game.snake.length), score: fmt(game.score), n: game.score });
     confirmAction = () => {
       closeModal();
       showStart(true);
@@ -937,7 +936,7 @@
       cv.className = 'map-thumb';
       cv.setAttribute('aria-hidden', 'true');
       const label = document.createElement('span');
-      label.textContent = name;
+      label.textContent = mapName(i);
       b.append(cv, label);
       mapsEl.appendChild(b);
     });
@@ -964,7 +963,7 @@
 
   function renderStart() {
     syncSegmented();
-    $('mode-desc').textContent = MODE_DESC[settings.mode];
+    $('mode-desc').textContent = t('modeDesc.' + settings.mode);
     $('field-map').hidden = settings.mode !== 'maze';
     const best = stats.best[bestKey(settings.mode, settings.speed)];
     const b = $('start-best').querySelector('b');
@@ -1028,7 +1027,7 @@
   /* ---------------- Nhóm lựa chọn (radio dạng segmented) ---------------- */
   function syncSegmented() {
     document.querySelectorAll('[role="radiogroup"][data-setting]').forEach((group) => {
-      const cur = String(settings[group.dataset.setting]);
+      const cur = group.dataset.setting === 'lang' ? I18N.lang : String(settings[group.dataset.setting]);
       group.querySelectorAll('button[data-value]').forEach((b) => {
         const on = b.dataset.value === cur;
         b.setAttribute('aria-checked', on ? 'true' : 'false');
@@ -1038,6 +1037,14 @@
   }
 
   function chooseSetting(key, value) {
+    if (key === 'lang') {
+      // Đổi ngôn ngữ: lưu ván (đã tạm dừng khi mở Cài đặt) rồi tải lại trang
+      if (value === I18N.lang) return;
+      pause(false);
+      persist();
+      I18N.set(value);
+      return;
+    }
     if (key === 'theme') {
       settings.theme = value;
       saveSettings();
@@ -1118,7 +1125,7 @@
       const tr = document.createElement('tr');
       const th = document.createElement('th');
       th.scope = 'row';
-      th.textContent = G.MODE_NAMES[m];
+      th.textContent = modeName(m);
       tr.appendChild(th);
       G.SPEEDS.forEach((s) => {
         const td = document.createElement('td');
@@ -1127,7 +1134,7 @@
         if (!v) td.classList.add('empty');
         if (m === curMode && s === curSpeed) {
           td.classList.add('current');
-          td.title = 'Chế độ đang chọn';
+          td.title = t('stats.current');
         }
         tr.appendChild(td);
       });
@@ -1141,14 +1148,14 @@
   function disarmReset() {
     resetArmed = false;
     clearTimeout(resetTimer);
-    resetBtn.textContent = 'Đặt lại';
+    resetBtn.textContent = t('stats.reset');
     resetBtn.classList.remove('btn-danger');
   }
   resetBtn.addEventListener('click', () => {
     if (!resetArmed) {
       // Bấm hai lần để tránh xóa nhầm
       resetArmed = true;
-      resetBtn.textContent = 'Bấm lần nữa để xóa';
+      resetBtn.textContent = t('stats.resetConfirm');
       resetBtn.classList.add('btn-danger');
       resetTimer = setTimeout(disarmReset, 3500);
       return;
@@ -1161,7 +1168,7 @@
     renderStats();
     updateHud();
     if (appEl.dataset.screen === 'start') renderStart();
-    toast('Đã đặt lại thống kê');
+    toast(t('stats.resetDone'));
   });
 
   /* ---------------- Nút bấm ---------------- */
@@ -1320,6 +1327,12 @@
   });
 
   /* ---------------- Khởi động ---------------- */
+  I18N.apply();
+  // Ngôn ngữ đổi ở trang khác: lưu ván trước khi tải lại
+  I18N.beforeReload = () => {
+    pause(false);
+    persist();
+  };
   $('app-version').textContent = APP_VERSION;
   buildMaps();
   applyDpad();
@@ -1334,7 +1347,7 @@
     phase = 'paused';
     setScreen('game');
     updateHud();
-    $('pause-sub').textContent = 'Dài ' + game.snake.length + ' · ' + fmt(game.score) + ' điểm';
+    $('pause-sub').textContent = pauseSub();
     overlayPause.hidden = false;
     draw();
     persist();

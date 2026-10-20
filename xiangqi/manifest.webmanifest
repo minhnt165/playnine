@@ -1,7 +1,7 @@
 {
-  "name": "Cờ Tướng - Xiangqi",
-  "short_name": "Cờ Tướng",
-  "description": "Chơi cờ tướng với máy hoặc hai người trên trình duyệt",
+  "name": "Xiangqi - Chinese chess",
+  "short_name": "Xiangqi",
+  "description": "Play Xiangqi (Chinese chess) against the computer or a friend in your browser",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#14100d",

@@ -52,6 +52,7 @@ Game phá gạch chạy trên web, viết bằng HTML + CSS + JavaScript thuần
 
 ```
 index.html   Khung trang, lớp phủ bắt đầu / tạm dừng / kết thúc, modal Cách chơi / Cài đặt / Thống kê / Xác nhận
+i18n.js      Từ điển tiếng Anh / tiếng Việt và đối tượng I18N (nạp trước engine.js)
 style.css    Giao diện, bảng màu PlayNine, màu gạch / vật phẩm, dark mode, bố cục dọc / ngang, hiệu ứng
 engine.js    Engine thuần (không đụng DOM): dữ liệu 10 màn, va chạm quét, bóng, thanh, gạch, vật phẩm, mạng, điểm, khôi phục state
 app.js       Vẽ canvas, vòng lặp bước cố định, bàn phím / chuột / cảm ứng, hiệu ứng, lưu trữ, thống kê, tóm tắt cho cổng (cần engine.js nạp trước)
@@ -61,9 +62,15 @@ icon.svg     Icon app 64x64, dùng luôn làm favicon
 
 `engine.js` gắn vào `window.PhaGach` khi chạy trong trình duyệt và `module.exports` khi chạy trong Node. Giống Xếp Gạch, các hàm thao tác (`step`, `launch`, `nextLevel`, `applyPower`) **sửa trực tiếp** state truyền vào vì game chạy 120 bước mỗi giây. State là object thuần, `JSON.stringify` được. `step(state, { dir, target, launch })` chạy một bước 1/120 giây và trả về các sự kiện của bước đó (gạch vỡ / nứt kèm toạ độ và điểm, chạm thép, chạm thanh, vật phẩm đỡ được / hết hạn, mất bóng, mất mạng, hết ván, qua màn và điểm thưởng) để app chạy hiệu ứng.
 
-Dữ liệu màn là mảng chuỗi 10 ký tự mỗi hàng (tối đa 12 hàng): `.` ô trống, `r o y g c b p` gạch thường theo màu, chữ hoa cùng màu là gạch chắc chắn rơi vật phẩm, `2` / `3` gạch cứng, `#` thép. Thêm màn mới: thêm một mảng vào `LEVELS` và một tên vào `LEVEL_NAMES`; `node test.js` kiểm tra kích thước, ký tự, và mọi viên gạch phá được đều tới được (thép không bao kín).
+Dữ liệu màn là mảng chuỗi 10 ký tự mỗi hàng (tối đa 12 hàng): `.` ô trống, `r o y g c b p` gạch thường theo màu, chữ hoa cùng màu là gạch chắc chắn rơi vật phẩm, `2` / `3` gạch cứng, `#` thép. Thêm màn mới: thêm một mảng vào `LEVELS`, một tên vào `LEVEL_NAMES` và tên hiển thị `level.N` (tiếng Anh và tiếng Việt) trong `i18n.js`; `node test.js` kiểm tra kích thước, ký tự, và mọi viên gạch phá được đều tới được (thép không bao kín).
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html` để trình duyệt tải file mới thay vì dùng bản cache. Tốc độ, kích thước, điểm, tỉ lệ rơi và thời hạn vật phẩm nằm ở đầu `engine.js`; thời gian qua màn, chu kỳ lưu và độ nhạy kéo ở đầu `app.js`. Màu gạch là biến CSS `--b-r` … `--b-p`, `--b-strong`, `--b-strong3`, `--b-steel`; màu vật phẩm là `--pw-*` trong `style.css`.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html` để trình duyệt tải file mới thay vì dùng bản cache. Tốc độ, kích thước, điểm, tỉ lệ rơi và thời hạn vật phẩm nằm ở đầu `engine.js`; thời gian qua màn, chu kỳ lưu và độ nhạy kéo ở đầu `app.js`. Màu gạch là biến CSS `--b-r` … `--b-p`, `--b-strong`, `--b-strong3`, `--b-steel`; màu vật phẩm là `--pw-*` trong `style.css`.
+
+## Ngôn ngữ / Language
+
+Game có tiếng Anh (mặc định) và tiếng Việt. Toàn bộ chữ hiển thị nằm trong `i18n.js` (nạp trước `engine.js` và `app.js`), dạng từ điển `{ en: {...}, vi: {...} }` với key ngắn kiểu `settings.theme`, `banner.cleared`. `i18n.js` tạo đối tượng `I18N`: `I18N.t(key, params)` (thiếu key ở `vi` thì lấy `en`, thay `{tên}` bằng `params`, số nhiều tiếng Anh dạng `{ one, other }` theo `params.n`), `I18N.apply()` điền chữ cho `[data-i18n]`, `[data-i18n-html]`, `[data-i18n-attr]` và cập nhật `<title>` / meta description, `I18N.set(lang)` lưu ngôn ngữ rồi tải lại trang, `I18N.fmtNumber` định dạng số theo `en-US` / `vi-VN`.
+
+Ngôn ngữ lưu ở khóa dùng chung `playnine-lang` (`'en'` hoặc `'vi'`, thiếu / sai thì là `'en'`), chung cho cổng PlayNine và mọi game. Đổi trong Cài đặt (hàng "Language", hai lựa chọn English / Tiếng Việt) thì game tạm dừng, lưu ván rồi tải lại; đổi ở cổng hoặc trang khác thì game nhận sự kiện `storage` và tự tải lại theo. Chữ vẽ trên canvas (chuỗi `Combo x2`, tên vật phẩm bay lên khi đỡ được) và dòng chữ vào màn / qua màn cũng lấy từ `i18n.js`. Tóm tắt cho cổng (`note`, nhãn thống kê, `resume`) được ghi theo ngôn ngữ hiện tại và ghi lại mỗi lần mở game. `POWER_NAMES` / `LEVEL_NAMES` trong `engine.js` không còn được app dùng để hiển thị; tên màn và tên vật phẩm lấy từ `level.N` và `power.*` trong `i18n.js`.
 
 ## Dữ liệu lưu trong trình duyệt
 

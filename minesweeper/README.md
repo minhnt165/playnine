@@ -17,7 +17,7 @@ Game Dò Mìn (Minesweeper) chạy trên web, viết bằng HTML + CSS + JavaScr
 - Cài đặt: giao diện Tự động / Sáng / Tối (áp trước khi vẽ trang để không nháy màu), dấu "?", rung khi cắm cờ.
 - Bàn mìn tự co theo chiều cao khung (`100dvh`) nên không phải cuộn khi chơi. Bàn dài hơn rộng (Khó) trên màn hình dọc tự xoay thành 16 cột x 30 hàng. Ô quá nhỏ thì hiện nút phóng to: bàn to ra và kéo để xem trong khung, trang vẫn không cuộn.
 - Màu số 1–8 khác nhau rõ và đủ tương phản ở cả giao diện sáng lẫn tối.
-- Giao diện tiếng Việt, mobile first (chạy được ở bề rộng 360px), nút bấm tối thiểu 40px, tôn trọng safe-area (tai thỏ), modal dạng bottom sheet trên điện thoại, layout riêng khi xoay ngang.
+- Giao diện tiếng Anh (mặc định) / tiếng Việt, mobile first (chạy được ở bề rộng 360px), nút bấm tối thiểu 40px, tôn trọng safe-area (tai thỏ), modal dạng bottom sheet trên điện thoại, layout riêng khi xoay ngang.
 
 ## Phím tắt
 
@@ -38,13 +38,20 @@ index.html  Khung trang, modal, biểu tượng SVG dùng chung
 style.css   Giao diện, bảng màu PlayNine, dark mode, responsive
 engine.js   Engine thuần (không đụng DOM): đặt mìn, mở ô, loang, mở nhanh, cờ, thắng / thua, PRNG có seed
 app.js      Logic game + render (cần engine.js nạp trước)
+i18n.js     Từ điển tiếng Anh / tiếng Việt và hàm dịch I18N (nạp trước engine.js, app.js)
 test.js     Test engine chạy bằng Node
 icon.svg    Icon app 64x64, dùng luôn làm favicon
 ```
 
 `engine.js` gắn đối tượng `Minesweeper` vào `window` khi chạy trên trình duyệt và xuất qua `module.exports` khi chạy trong Node.
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html`. Thời gian nhấn giữ (`LONG_PRESS_MS`), ngưỡng hiện nút phóng to (`ZOOM_THRESHOLD`) và cỡ ô khi phóng to (`ZOOM_CELL`) ở đầu `app.js`. Kích thước các mức và giới hạn Tùy chỉnh nằm trong `LEVELS` / `CUSTOM_LIMITS` ở `engine.js`.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html`. Thời gian nhấn giữ (`LONG_PRESS_MS`), ngưỡng hiện nút phóng to (`ZOOM_THRESHOLD`) và cỡ ô khi phóng to (`ZOOM_CELL`) ở đầu `app.js`. Kích thước các mức và giới hạn Tùy chỉnh nằm trong `LEVELS` / `CUSTOM_LIMITS` ở `engine.js`.
+
+## Ngôn ngữ / Language
+
+Giao diện có tiếng Anh (mặc định) và tiếng Việt, chọn ở hàng **Language / Ngôn ngữ** trong Cài đặt. Ngôn ngữ lưu ở khóa dùng chung với cổng PlayNine `localStorage['playnine-lang']` (`'en'` hoặc `'vi'`; thiếu hoặc sai thì dùng `'en'`, không tự đoán theo trình duyệt). Đổi ngôn ngữ thì game lưu ván rồi tải lại trang; cổng hoặc tab khác đổi khóa này thì game cũng tự tải lại (sự kiện `storage`).
+
+`i18n.js` định nghĩa biến toàn cục `I18N`: `t(key, params)` tra chuỗi (thiếu thì lấy tiếng Anh, `{tên}` thay bằng `params`, chuỗi số nhiều tiếng Anh dạng `{ one, other }` chọn theo `params.n`), `apply()` điền các phần tử có `data-i18n` / `data-i18n-html` / `data-i18n-attr`, `set(lang)`, `fmtDate(d, opts)` (`en-US` / `vi-VN`; tiếng Việt giữ ngày dạng `dd/mm`). Chữ tĩnh trong `index.html` viết sẵn bằng tiếng Anh nên không nháy chữ khi tải. `engine.js` không chứa chữ hiển thị (tên mức Dễ / Vừa / Khó nằm ở khóa `level.<key>` trong `i18n.js`). Tóm tắt cho cổng (`note`, `stats[].label`, `resume`, `daily.title`) ghi theo ngôn ngữ đang chọn và được ghi lại mỗi lần mở trang; ví dụ dưới là bản tiếng Việt.
 
 ## Ván hằng ngày
 

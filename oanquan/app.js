@@ -10,7 +10,7 @@
   'use strict';
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.0.1';
   const KEYS = {
     settings: 'playnine-oanquan-settings-v1',
     save: 'playnine-oanquan-save-v1',
@@ -18,13 +18,11 @@
     summary: 'playnine-oanquan-summary-v1',
   };
   const E = OanQuan;
+  const t = I18N.t;
   const LEVELS = E.LEVELS;
   const LEVEL_ORDER = ['easy', 'medium', 'hard'];
-  const LEVEL_DESC = {
-    easy: 'Máy chỉ tính 1–2 lượt và hay chọn lệch. Hợp để làm quen luật.',
-    medium: 'Máy tính trước 4 lượt đi, đối thủ vững để luyện tập.',
-    hard: 'Máy tính sâu nhất có thể trong khoảng 1,5 giây mỗi nước.',
-  };
+  // Tên mức theo ngôn ngữ đang dùng (nhãn trong engine giữ nguyên, không hiển thị)
+  const levelLabel = (lv) => t('level.' + lv);
   // Thời gian cho mỗi viên quân khi rải (ms)
   const SPEED = { slow: 320, medium: 180, fast: 90, off: 0 };
   const QUAN_VALUES = [5, 10, 15];
@@ -156,13 +154,13 @@
   const moverOf = (i) => (game.first + i) % 2;
   const isAiTurn = () => game && game.mode === 'ai' && !game.state.over && game.state.turn === 1;
   const humanCanPlay = () => game && !game.state.over && !thinking && !anim.busy && !aiPreview && (game.mode === 'pvp' || game.state.turn === 0);
-  const playerName = (p) => (game && game.mode === 'pvp' ? (p === 0 ? 'Người 1' : 'Người 2') : p === 0 ? 'Bạn' : 'Máy');
+  const playerName = (p) => (game && game.mode === 'pvp' ? (p === 0 ? t('player.p1') : t('player.p2')) : p === 0 ? t('player.you') : t('player.ai'));
 
   // Số thứ tự ô (1..5 từ trái sang phải trên màn hình) và hướng theo màn hình
   const squareNo = (h) => E.ROW_LTR[E.ownerOf(h)].indexOf(h) + 1;
   const sideOf = (h, d) => ((E.ownerOf(h) === 0) === (d > 0) ? 'left' : 'right');
   const dirFor = (h, side) => ((E.ownerOf(h) === 0) === (side === 'left') ? 1 : -1);
-  const SIDE_TEXT = { left: '← trái', right: '→ phải' };
+  const SIDE_TEXT = { left: t('side.left'), right: t('side.right') };
 
   function saveGame() {
     if (!game) return;
@@ -209,7 +207,7 @@
 
   // Mô tả một nước cho nhật ký: "Bạn: ô 3 → phải, ăn 7"
   function describe(g, p, m, ev, after) {
-    const name = (q) => (g.mode === 'pvp' ? (q === 0 ? 'Người 1' : 'Người 2') : q === 0 ? 'Bạn' : 'Máy');
+    const name = (q) => (g.mode === 'pvp' ? (q === 0 ? t('player.p1') : t('player.p2')) : q === 0 ? t('player.you') : t('player.ai'));
     const h = E.houseOf(m);
     let dan = 0, quan = 0, quanNon = false;
     for (const e of ev) {
@@ -217,18 +215,18 @@
       if (e.t === 'stop' && e.why === 'quannon') quanNon = true;
     }
     let what;
-    if (quan) what = `ăn ${quan > 1 ? quan + ' ' : ''}quan` + (dan ? ` + ${dan} dân` : '');
-    else if (dan) what = `ăn ${dan}`;
-    else what = quanNon ? 'gặp quan non' : 'không ăn';
-    const out = [{ p, n: 0, text: `${name(p)}: ô ${squareNo(h)} ${SIDE_TEXT[sideOf(h, E.dirOf(m))]}, ${what}`, big: quan > 0 }];
+    if (quan) what = (quan > 1 ? t('log.takeQuans', { n: quan }) : t('log.takeQuan')) + (dan ? t('log.plusDan', { n: dan }) : '');
+    else if (dan) what = t('log.take', { n: dan });
+    else what = quanNon ? t('log.quanNon') : t('log.noTake');
+    const out = [{ p, n: 0, text: t('log.move', { name: name(p), no: squareNo(h), side: SIDE_TEXT[sideOf(h, E.dirOf(m))], what }), big: quan > 0 }];
     for (const e of ev) {
       if (e.t === 'scatter') {
         const total = e.own + e.borrow;
-        out.push({ p: e.p, info: true, text: `${name(e.p)} hết dân, rải lại ${total} quân` + (e.borrow ? ` (vay ${e.borrow})` : '') });
+        out.push({ p: e.p, info: true, text: t('log.scatter', { name: name(e.p), n: total }) + (e.borrow ? t('log.borrow', { n: e.borrow }) : '') });
       }
       if (e.t === 'over') {
         const a = E.score(after, 0), b = E.score(after, 1);
-        out.push({ p: -1, info: true, text: (e.reason === 'stuck' ? 'Hết quân để rải' : 'Hết quan, thu quân') + ` · ${name(0)} ${a} – ${name(1)} ${b}` });
+        out.push({ p: -1, info: true, text: (e.reason === 'stuck' ? t('log.overStuck') : t('log.overQuan')) + ` · ${name(0)} ${a} – ${name(1)} ${b}` });
       }
     }
     return out;
@@ -290,15 +288,15 @@
     if (!game) return;
     if (anim.busy) { skipAnim(); return; }
     const s = game.state;
-    if (s.over) { toast('Ván đã kết thúc · bấm Ván mới để chơi tiếp'); return; }
-    if (thinking || aiPreview) { toast('Máy đang nghĩ, chờ chút nhé'); return; }
+    if (s.over) { toast(t('toast.over')); return; }
+    if (thinking || aiPreview) { toast(t('toast.thinking')); return; }
     if (!humanCanPlay()) return;
-    if (E.isQuan(h)) { toast('Không được bốc ô quan để rải'); return; }
+    if (E.isQuan(h)) { toast(t('toast.noQuan')); return; }
     if (E.ownerOf(h) !== s.turn) {
-      toast(game.mode === 'pvp' ? `Đến lượt ${playerName(s.turn)} · chọn ô ở hàng ${s.turn === 0 ? 'dưới' : 'trên'}` : 'Chọn một ô ở hàng dưới của bạn');
+      toast(game.mode === 'pvp' ? t(s.turn === 0 ? 'toast.pvpBottom' : 'toast.pvpTop', { name: playerName(s.turn) }) : t('toast.pickOwn'));
       return;
     }
-    if (s.board[h] === 0) { toast('Ô này trống, chọn ô còn quân'); return; }
+    if (s.board[h] === 0) { toast(t('toast.empty')); return; }
     selected = selected === h ? -1 : h;
     focusH = h;
     render();
@@ -392,7 +390,7 @@
     render();
     renderLog();
     writeSummary();
-    toast('Đã đi lại');
+    toast(t('toast.undone'));
     scheduleAi();
   }
 
@@ -435,25 +433,25 @@
     const ai = aiTotals();
     const played = ai.played + stats.pvp.played;
     const level = game && game.mode === 'ai' ? game.level : settings.level;
-    const lvLabel = LEVELS[level].label;
+    const lvLabel = levelLabel(level);
     let note;
-    if (ai.played) note = `Thắng máy ${ai.won}/${ai.played} ván · mức ${lvLabel}`;
-    else if (stats.pvp.played) note = `${stats.pvp.played} ván hai người · chưa đấu máy`;
-    else note = 'Chưa chơi ván nào · thử đấu máy nhé';
+    if (ai.played) note = t('summary.noteAi', { won: ai.won, played: ai.played, level: lvLabel });
+    else if (stats.pvp.played) note = t('summary.notePvp', { n: stats.pvp.played });
+    else note = t('summary.noteNone');
     const list = [];
     if (played) {
-      list.push({ value: String(ai.won), label: 'Thắng máy' });
-      list.push({ value: String(played), label: 'Ván đã chơi' });
-      if (stats.top) list.push({ value: String(stats.top), label: 'Điểm cao nhất' });
+      list.push({ value: String(ai.won), label: t('summary.won') });
+      list.push({ value: String(played), label: t('summary.played') });
+      if (stats.top) list.push({ value: String(stats.top), label: t('summary.top') });
     }
     let resume = null;
     if (game && game.moves.length > 0 && !game.state.over) {
       const s = game.state;
       const ai2 = game.mode === 'ai';
-      const turnText = ai2 ? (s.turn === 0 ? 'đến lượt bạn' : 'đến lượt máy') : `đến lượt ${playerName(s.turn)}`;
+      const turnText = ai2 ? (s.turn === 0 ? t('summary.turnYou') : t('summary.turnAi')) : t('summary.turnName', { name: playerName(s.turn) });
       resume = {
-        title: ai2 ? `Ô Ăn Quan với máy · ${LEVELS[game.level].label}` : 'Ô Ăn Quan hai người',
-        detail: `${playerName(0)} ${E.score(s, 0)} – ${playerName(1)} ${E.score(s, 1)} điểm · ${turnText}`,
+        title: ai2 ? t('summary.titleAi', { level: levelLabel(game.level) }) : t('summary.titlePvp'),
+        detail: t('summary.detail', { p0: playerName(0), a: E.score(s, 0), p1: playerName(1), b: E.score(s, 1), turn: turnText }),
         pct: null,
       };
     }
@@ -523,7 +521,7 @@
       } else if (e.t === 'capture') {
         hideHand();
         flash(e.h, 'fx-cap');
-        setTurnText(`<b>${playerName(p)}</b> ăn ${e.quan ? 'quan' + (e.dan ? ` + ${e.dan} dân` : '') : e.dan + ' dân'}`);
+        setTurnText(e.quan ? (e.dan ? t('anim.captureQuanDan', { name: playerName(p), n: e.dan }) : t('anim.captureQuan', { name: playerName(p) })) : t('anim.captureDan', { name: playerName(p), n: e.dan }));
         await wait(step * 2);
         if (token !== anim.token) return;
         fly(e.h, p, e.dan + e.quan * qv, step);
@@ -539,7 +537,7 @@
         view.capDan[1 - e.p] -= e.borrow;
         view.debt = game.state.debt.slice();
         renderScores(view);
-        setTurnText(`<b>${playerName(e.p)}</b> hết dân, rải lại ${e.own + e.borrow} quân` + (e.borrow ? ` (vay ${e.borrow})` : ''));
+        setTurnText(t('anim.scatter', { name: playerName(e.p), n: e.own + e.borrow }) + (e.borrow ? t('log.borrow', { n: e.borrow }) : ''));
         await wait(step * 2);
         for (const h of e.houses) {
           if (token !== anim.token || anim.skip) break;
@@ -549,7 +547,7 @@
           await wait(step * 1.5);
         }
       } else if (e.t === 'collect') {
-        setTurnText('Hết quan · mỗi bên thu dân trên hàng mình');
+        setTurnText(t('anim.collect'));
         fly(e.h, e.p, e.n, step);
         view.board[e.h] = 0;
         view.capDan[e.p] += e.n;
@@ -567,10 +565,10 @@
   }
 
   const STOP_TEXT = {
-    quan: 'Gặp ô quan · hết lượt',
-    empty2: 'Hai ô trống liền nhau · hết lượt',
-    quannon: 'Quan non (dưới 5 dân) · chưa ăn được, hết lượt',
-    loop: 'Rải quá lâu · dừng lượt',
+    quan: t('stop.quan'),
+    empty2: t('stop.empty2'),
+    quannon: t('stop.quannon'),
+    loop: t('stop.loop'),
   };
 
   function flash(h, cls) {
@@ -677,8 +675,8 @@
     pickerEl.className = 'picker';
     pickerEl.hidden = true;
     pickerEl.innerHTML =
-      '<button type="button" class="pick-btn" data-side="left" aria-label="Rải sang trái"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>' +
-      '<button type="button" class="pick-btn" data-side="right" aria-label="Rải sang phải"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>';
+      `<button type="button" class="pick-btn" data-side="left" aria-label="${t('board.sowLeft')}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>` +
+      `<button type="button" class="pick-btn" data-side="right" aria-label="${t('board.sowRight')}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>`;
     frag.appendChild(pickerEl);
     handEl = document.createElement('div');
     handEl.className = 'hand';
@@ -712,11 +710,12 @@
   }
 
   function houseLabel(h, n, hasQuan) {
-    if (E.isQuan(h)) return `Ô quan ${h === E.QL ? 'trái' : 'phải'}: ${hasQuan ? 'còn quan, ' : 'đã mất quan, '}${n} dân`;
-    const nm = playerName(E.ownerOf(h));
-    let t = `Ô ${squareNo(h)} của ${nm === 'Bạn' || nm === 'Máy' ? nm.toLowerCase() : nm}: ${n} dân`;
-    if (h === selected) t += '. Đang chọn, bấm mũi tên trái hoặc phải để rải';
-    return t;
+    if (E.isQuan(h)) return t(hasQuan ? 'board.quanHas' : 'board.quanGone', { sq: t(h === E.QL ? 'board.quanLeft' : 'board.quanRight'), n });
+    const o = E.ownerOf(h);
+    const key = game.mode === 'pvp' ? 'board.squareOf' : o === 0 ? 'board.squareYou' : 'board.squareAi';
+    let label = t(key, { no: squareNo(h), name: playerName(o), n });
+    if (h === selected) label += t('board.selectedHint');
+    return label;
   }
 
   function render() {
@@ -769,7 +768,7 @@
       const side = b.dataset.side;
       b.hidden = !!aiPreview && aiPreview.side !== side;
       b.tabIndex = aiPreview ? -1 : 0;
-      b.setAttribute('aria-label', `Rải ô ${squareNo(h)} sang ${side === 'left' ? 'trái' : 'phải'}`);
+      b.setAttribute('aria-label', t(side === 'left' ? 'board.sowSquareLeft' : 'board.sowSquareRight', { no: squareNo(h) }));
     }
     placeOver(pickerEl, h);
   }
@@ -795,14 +794,14 @@
     for (const p of [0, 1]) {
       const sc = E.score(src, p);
       $('score-' + p).textContent = sc;
-      $('score-' + p).setAttribute('aria-label', `${sc} điểm`);
+      $('score-' + p).setAttribute('aria-label', t('score.points', { n: sc }));
       let cap = '';
       for (let i = 0; i < src.capQuan[p]; i++) cap += QUAN_ICON;
-      cap += `<span class="cap-dan">${src.capDan[p]} dân</span>`;
-      if (src.debt[p]) cap += `<span class="debt">nợ ${src.debt[p]}</span>`;
+      cap += `<span class="cap-dan">${t('score.dan', { n: src.capDan[p] })}</span>`;
+      if (src.debt[p]) cap += `<span class="debt">${t('score.debt', { n: src.debt[p] })}</span>`;
       const capEl = $('cap-' + p);
       capEl.innerHTML = cap;
-      capEl.setAttribute('aria-label', `Đã ăn ${src.capQuan[p]} quan và ${src.capDan[p]} dân` + (src.debt[p] ? `, đang nợ ${src.debt[p]}` : ''));
+      capEl.setAttribute('aria-label', t('score.captured', { quan: t('unit.quan', { n: src.capQuan[p] }), dan: t('unit.dan', { n: src.capDan[p] }) }) + (src.debt[p] ? t('score.owing', { n: src.debt[p] }) : ''));
     }
   }
 
@@ -811,17 +810,17 @@
   function renderInfo() {
     const s = game.state;
     const ai = game.mode === 'ai';
-    const lvLabel = LEVELS[game.level].label;
-    $('mode-label').textContent = (ai ? `Đấu máy · ${lvLabel}` : 'Hai người') + (game.opts.quanNon ? '' : ' · không quan non');
+    const lvLabel = levelLabel(game.level);
+    $('mode-label').textContent = (ai ? t('mode.ai', { level: lvLabel }) : t('mode.pvp')) + (game.opts.quanNon ? '' : t('mode.noQuanNon'));
     for (const p of [0, 1]) {
       const card = $('player-' + p);
       const isAi = ai && p === 1;
       $('avatar-' + p).innerHTML = isAi ? AVATAR.ai : AVATAR.human;
       let sub;
-      if (isAi) sub = `Mức ${lvLabel}`;
-      else sub = (ai ? '' : p === 0 ? 'Hàng dưới · ' : 'Hàng trên · ') + (game.first === p ? 'Đi trước' : 'Đi sau');
+      if (isAi) sub = t('player.level', { level: lvLabel });
+      else sub = (ai ? '' : p === 0 ? t('player.bottomRow') : t('player.topRow')) + (game.first === p ? t('player.first') : t('player.second'));
       const isThinking = thinking && isAi && s.turn === 1 && !anim.busy;
-      if (isThinking) sub = 'Đang nghĩ…';
+      if (isThinking) sub = t('player.thinking');
       $('name-' + p).textContent = playerName(p);
       $('sub-' + p).textContent = sub;
       card.classList.toggle('active', !s.over && s.turn === p && !anim.busy);
@@ -836,28 +835,28 @@
       // Chữ trong lúc rải do animateMove cập nhật; chỉ đặt câu mặc định
       const mover = game.moves.length ? moverOf(game.moves.length - 1) : 0;
       color = mover === 0 ? 'var(--p0)' : 'var(--p1)';
-      if (!turn.dataset.busy) setTurnText(`<b>${playerName(mover)}</b> đang rải quân… <span class="skip-hint">chạm để bỏ qua</span>`);
+      if (!turn.dataset.busy) setTurnText(t('turn.sowing', { name: playerName(mover) }));
       turn.dataset.busy = '1';
     } else {
       delete turn.dataset.busy;
       if (s.over) {
         const a = E.score(s, 0), b = E.score(s, 1);
-        if (s.winner === E.DRAW) { color = 'var(--muted)'; setTurnText(`<b>Hòa ${a} – ${b}.</b> Hết quan, thu quân`); }
+        if (s.winner === E.DRAW) { color = 'var(--muted)'; setTurnText(t('turn.draw', { a, b })); }
         else {
           color = s.winner === 0 ? 'var(--p0)' : 'var(--p1)';
-          const who = ai ? (s.winner === 0 ? 'Bạn thắng!' : 'Máy thắng.') : `${playerName(s.winner)} thắng!`;
-          setTurnText(`<b>${who}</b> ${a} – ${b} điểm`);
+          const who = ai ? (s.winner === 0 ? t('turn.youWin') : t('turn.aiWins')) : t('turn.nameWins', { name: playerName(s.winner) });
+          setTurnText(t('turn.overScore', { who, a, b }));
         }
       } else if (aiPreview) {
-        setTurnText(`<b>Máy</b> cầm ô ${squareNo(aiPreview.h)}, rải ${SIDE_TEXT[aiPreview.side]}`);
+        setTurnText(t('turn.aiPreview', { no: squareNo(aiPreview.h), side: SIDE_TEXT[aiPreview.side] }));
       } else if (thinking) {
-        setTurnText('<span class="dots">Máy đang nghĩ</span>');
+        setTurnText(`<span class="dots">${t('turn.thinking')}</span>`);
       } else if (selected >= 0) {
-        setTurnText(`Ô ${squareNo(selected)} (${s.board[selected]} quân) · chọn hướng rải <b>←</b> hoặc <b>→</b>`);
+        setTurnText(t('turn.selected', { no: squareNo(selected), n: s.board[selected] }));
       } else if (ai) {
-        setTurnText('<b>Lượt của bạn</b> · chạm một ô ở hàng dưới');
+        setTurnText(t('turn.yourTap'));
       } else {
-        setTurnText(`Lượt của <b>${playerName(s.turn)}</b> · chọn ô ở hàng ${s.turn === 0 ? 'dưới' : 'trên'}`);
+        setTurnText(t(s.turn === 0 ? 'turn.pvpBottom' : 'turn.pvpTop', { name: playerName(s.turn) }));
       }
     }
     turn.style.setProperty('--turn-c', color);
@@ -876,7 +875,7 @@
         (it.info ? '<span class="log-n" aria-hidden="true">·</span>' : `<span class="log-n">${n}</span>`) +
         `<span class="log-text">${it.text}</span></li>`);
     }
-    list.innerHTML = rows.length ? rows.slice(-160).reverse().join('') : '<li class="log-empty">Chưa có nước đi nào.</li>';
+    list.innerHTML = rows.length ? rows.slice(-160).reverse().join('') : `<li class="log-empty">${t('log.empty')}</li>`;
     list.scrollTop = 0;
   }
 
@@ -1048,7 +1047,7 @@
   const fieldGroup = (name) => document.querySelector(`#modal-new [data-field="${name}"]`);
 
   function rulesLine() {
-    return `Luật: quan non ${settings.quanNon ? 'bật' : 'tắt'} · 1 quan = ${settings.quanValue} dân. Đổi trong Cài đặt.`;
+    return t(settings.quanNon ? 'new.rulesOn' : 'new.rulesOff', { v: settings.quanValue });
   }
   function syncNewModal() {
     setSegmented(fieldGroup('mode'), draft.mode);
@@ -1056,7 +1055,7 @@
     setSegmented(fieldGroup('first'), draft.first);
     for (const el of document.querySelectorAll('#modal-new [data-ai-only]')) el.hidden = draft.mode !== 'ai';
     for (const el of document.querySelectorAll('#modal-new [data-pvp-only]')) el.hidden = draft.mode !== 'pvp';
-    $('level-desc').textContent = LEVEL_DESC[draft.level];
+    $('level-desc').textContent = t('levelDesc.' + draft.level);
     $('new-rules').textContent = rulesLine();
   }
   function openNewGame() {
@@ -1086,37 +1085,38 @@
     const s = game.state;
     const w = s.winner;
     const ai = game.mode === 'ai';
-    const lv = LEVELS[game.level].label;
+    const lv = levelLabel(game.level);
     let title, sub, celebrate = false;
     if (w === E.DRAW) {
-      title = 'Hòa';
-      sub = 'Hai bên bằng điểm sau khi thu quân.';
+      title = t('result.draw');
+      sub = t('result.drawSub');
     } else if (ai) {
       const youWin = w === 0;
-      title = youWin ? 'Bạn thắng!' : 'Máy thắng';
-      sub = youWin ? `Bạn hơn máy mức ${lv} ${E.score(s, 0) - E.score(s, 1)} điểm.` : `Máy hơn ${E.score(s, 1) - E.score(s, 0)} điểm. Thử lại nhé!`;
+      title = youWin ? t('result.youWin') : t('result.aiWins');
+      sub = youWin ? t('result.youWinSub', { level: lv, n: E.score(s, 0) - E.score(s, 1) }) : t('result.aiWinSub', { n: E.score(s, 1) - E.score(s, 0) });
       celebrate = youWin;
     } else {
-      title = `${playerName(w)} thắng!`;
-      sub = `Hơn ${Math.abs(E.score(s, 0) - E.score(s, 1))} điểm.`;
+      title = t('result.nameWins', { name: playerName(w) });
+      sub = t('result.pvpSub', { n: Math.abs(E.score(s, 0) - E.score(s, 1)) });
       celebrate = true;
     }
-    if (s.endReason === 'stuck') sub = 'Không còn quân để rải nên ván dừng. ' + sub;
+    if (s.endReason === 'stuck') sub = t('result.stuck') + sub;
     $('result-mark').className = 'result-mark' + (w === E.DRAW ? ' draw' : ' p' + w);
     $('result-mark').innerHTML = '<i class="qs big"></i>';
     $('result-title').textContent = title;
     $('result-sub').textContent = sub;
     $('result-score').innerHTML = [0, 1].map((p) => {
-      const debt = s.debt[p] ? ` · trả nợ ${s.debt[p]}` : s.debt[1 - p] ? ` · được trả ${s.debt[1 - p]}` : '';
-      return `<div data-p="${p}"${w === p ? ' class="win"' : ''}><dt>${playerName(p)}</dt><dd><b>${E.score(s, p)}</b><span>${s.capQuan[p]} quan · ${s.capDan[p]} dân${debt}</span></dd></div>`;
+      const debt = s.debt[p] ? t('result.repaid', { n: s.debt[p] }) : s.debt[1 - p] ? t('result.received', { n: s.debt[1 - p] }) : '';
+      const capLine = t('result.capLine', { quan: t('unit.quan', { n: s.capQuan[p] }), dan: t('unit.dan', { n: s.capDan[p] }) });
+      return `<div data-p="${p}"${w === p ? ' class="win"' : ''}><dt>${playerName(p)}</dt><dd><b>${E.score(s, p)}</b><span>${capLine}${debt}</span></dd></div>`;
     }).join('');
     if (ai) {
       const st = stats.levels[game.level];
-      $('result-line').textContent = `Mức ${lv}: thắng ${st.won} · thua ${st.lost} · hòa ${st.drawn}` + (stats.streak > 1 ? ` · chuỗi ${stats.streak} ván thắng` : '');
+      $('result-line').textContent = t('result.levelLine', { level: lv, w: st.won, l: st.lost, d: st.drawn }) + (stats.streak > 1 ? t('result.streak', { n: stats.streak }) : '');
     } else {
-      $('result-line').textContent = `Hai người: Người 1 thắng ${stats.pvp.p0} · Người 2 thắng ${stats.pvp.p1} · hòa ${stats.pvp.drawn}`;
+      $('result-line').textContent = t('result.pvpLine', { p0: stats.pvp.p0, p1: stats.pvp.p1, d: stats.pvp.drawn });
     }
-    $('btn-result-new').textContent = ai ? 'Chơi tiếp' : 'Ván mới';
+    $('btn-result-new').textContent = ai ? t('result.again') : t('result.newGame');
     const conf = $('confetti');
     conf.innerHTML = '';
     if (celebrate && !reduceMotion.matches) {
@@ -1142,17 +1142,17 @@
     $('stats-top').textContent = stats.top;
     $('stats-body').innerHTML = LEVEL_ORDER.map((k) => {
       const r = stats.levels[k];
-      return `<tr><td>${LEVELS[k].label}</td><td>${r.played}</td><td>${r.won}</td><td>${r.lost}</td><td>${r.drawn}</td></tr>`;
+      return `<tr><td>${levelLabel(k)}</td><td>${r.played}</td><td>${r.won}</td><td>${r.lost}</td><td>${r.drawn}</td></tr>`;
     }).join('');
     const p = stats.pvp;
-    $('stats-pvp').textContent = p.played ? `${p.played} ván · Người 1 thắng ${p.p0} · Người 2 thắng ${p.p1} · hòa ${p.drawn}` : 'Chưa có ván nào.';
+    $('stats-pvp').textContent = p.played ? t('stats.pvpLine', { n: p.played, p0: p.p0, p1: p.p1, d: p.drawn }) : t('stats.none');
     resetConfirm(false);
   }
   let resetTimer = 0;
   function resetConfirm(on) {
     const btn = $('btn-stats-reset');
     btn.classList.toggle('confirm', on);
-    btn.textContent = on ? 'Bấm lần nữa để xóa' : 'Đặt lại';
+    btn.textContent = on ? t('stats.resetConfirm') : t('stats.reset');
     clearTimeout(resetTimer);
     if (on) resetTimer = setTimeout(() => resetConfirm(false), 3500);
   }
@@ -1163,7 +1163,7 @@
     saveStats();
     writeSummary();
     renderStats();
-    toast('Đã đặt lại thống kê');
+    toast(t('toast.statsReset'));
   });
 
   /* ---------------- Cài đặt + giao diện ---------------- */
@@ -1177,6 +1177,8 @@
   const settingGroup = (name) => document.querySelector(`#modal-settings [data-setting="${name}"]`);
   bindSegmented(settingGroup('theme'), (v) => { settings.theme = v; saveSettings(); applyTheme(); });
   bindSegmented(settingGroup('speed'), (v) => { settings.speed = v; saveSettings(); });
+  // Đổi ngôn ngữ: lưu ván + cài đặt rồi tải lại trang
+  bindSegmented(settingGroup('lang'), (v) => { saveGame(); saveSettings(); I18N.set(v); });
   bindSegmented(settingGroup('quanValue'), (v) => { settings.quanValue = +v; saveSettings(); onRulesChanged(); });
   $('set-quannon').addEventListener('change', (e) => { settings.quanNon = e.target.checked; saveSettings(); onRulesChanged(); });
   // Luật mới áp dụng từ ván sau; ván hiện tại chưa đi nước nào thì áp ngay
@@ -1186,14 +1188,15 @@
       rebuild(game);
       saveGame();
       render();
-      toast('Đã áp dụng cho ván này');
+      toast(t('toast.rulesNow'));
     } else {
-      toast('Luật mới áp dụng từ ván sau');
+      toast(t('toast.rulesNext'));
     }
   }
   $('btn-settings').addEventListener('click', () => {
     setSegmented(settingGroup('theme'), settings.theme);
     setSegmented(settingGroup('speed'), settings.speed);
+    setSegmented(settingGroup('lang'), I18N.lang);
     setSegmented(settingGroup('quanValue'), settings.quanValue);
     $('set-quannon').checked = settings.quanNon;
     openModal('modal-settings');
@@ -1263,36 +1266,37 @@
     b[E.QR] = qr || 0;
     return b;
   };
+  // Nội dung từng bước lấy từ i18n.js: help.<số>.title / .text / .alt / tag
   const HELP = [
     {
-      title: 'Bàn chơi: 10 ô dân, 2 ô quan',
-      text: 'Hàng dưới là <b>5 ô của bạn</b>, hàng trên của đối thủ. Mỗi ô dân có <b>5 dân</b> (1 điểm/viên). Hai ô quan hình bán nguyệt ở hai đầu, mỗi ô có <b>1 quan</b> lớn (mặc định 10 điểm).',
-      fig: { alt: 'Bàn đầu ván: mỗi ô dân có 5 dân, mỗi ô quan có một viên quan lớn', b: B([5, 5, 5, 5, 5], [5, 5, 5, 5, 5]), hl: { 7: 'own', 8: 'own', 9: 'own', 10: 'own', 11: 'own' }, tags: { 9: 'hàng của bạn' } },
+      title: t('help.1.title'),
+      text: t('help.1.text'),
+      fig: { alt: t('help.1.alt'), b: B([5, 5, 5, 5, 5], [5, 5, 5, 5, 5]), hl: { 7: 'own', 8: 'own', 9: 'own', 10: 'own', 11: 'own' }, tags: { 9: t('help.1.tag') } },
     },
     {
-      title: 'Chọn ô và hướng rải',
-      text: 'Chạm một ô có quân ở hàng của bạn rồi chọn mũi tên <b>←</b> hoặc <b>→</b>. Bốc hết quân trong ô, <b>rải mỗi ô một viên</b> theo hướng đó, đi qua ô quan cũng thả một viên.',
-      fig: { alt: 'Bốc 5 quân ở ô giữa hàng dưới, rải sang phải qua ô quan phải lên hàng trên', b: B([5, 5, 0, 6, 6], [5, 5, 5, 6, 6], 0, 1), hl: { 9: 'sel' }, path: [9, 8, 7, 6, 5, 4], tags: { 9: 'bốc ô này' } },
+      title: t('help.2.title'),
+      text: t('help.2.text'),
+      fig: { alt: t('help.2.alt'), b: B([5, 5, 0, 6, 6], [5, 5, 5, 6, 6], 0, 1), hl: { 9: 'sel' }, path: [9, 8, 7, 6, 5, 4], tags: { 9: t('help.2.tag') } },
     },
     {
-      title: 'Ô kế tiếp còn quân? Rải tiếp',
-      text: 'Rải xong viên cuối, nhìn <b>ô ngay sau</b>. Nếu đó là ô dân còn quân, bốc cả ô đó lên và <b>rải tiếp</b> theo cùng hướng.',
-      fig: { alt: 'Viên cuối rơi vào ô 4 hàng trên, ô kế tiếp còn 5 quân nên bốc lên rải tiếp', b: B([5, 5, 0, 6, 6], [5, 5, 5, 6, 6], 0, 1), hl: { 4: 'sel', 3: 'next' }, path: [4, 3, 2], tags: { 3: 'bốc tiếp' } },
+      title: t('help.3.title'),
+      text: t('help.3.text'),
+      fig: { alt: t('help.3.alt'), b: B([5, 5, 0, 6, 6], [5, 5, 5, 6, 6], 0, 1), hl: { 4: 'sel', 3: 'next' }, path: [4, 3, 2], tags: { 3: t('help.3.tag') } },
     },
     {
-      title: 'Cách một ô trống là ăn',
-      text: 'Nếu ô ngay sau là <b>ô trống</b> và ô kế đó có quân, bạn <b>ăn hết</b> ô đó. Sau ô vừa ăn lại là một ô trống rồi một ô có quân thì <b>ăn tiếp</b> (ăn dây). Ăn ô quan là được cả viên quan.',
-      fig: { alt: 'Rải một viên, cách ô trống ăn ô quan phải, rồi ăn tiếp hai ô hàng trên', b: B([2, 0, 0, 1, 0], [1, 3, 0, 2, 0], 0, 6), hl: { 9: 'sel', 7: 'gap', 6: 'cap', 5: 'gap', 4: 'cap', 3: 'gap', 2: 'cap' }, path: [9, 8], tags: { 6: 'ăn', 4: 'ăn', 2: 'ăn' } },
+      title: t('help.4.title'),
+      text: t('help.4.text'),
+      fig: { alt: t('help.4.alt'), b: B([2, 0, 0, 1, 0], [1, 3, 0, 2, 0], 0, 6), hl: { 9: 'sel', 7: 'gap', 6: 'cap', 5: 'gap', 4: 'cap', 3: 'gap', 2: 'cap' }, path: [9, 8], tags: { 6: t('help.4.tag'), 4: t('help.4.tag'), 2: t('help.4.tag') } },
     },
     {
-      title: 'Khi nào hết lượt',
-      text: 'Hết lượt khi ô ngay sau là <b>ô quan</b>, hoặc gặp <b>hai ô trống liền nhau</b>. Luật <b>quan non</b>: ô quan còn quan mà ít hơn 5 dân thì chưa được ăn, lượt cũng dừng.',
-      fig: { alt: 'Rải một viên vào ô sát ô quan trái nên hết lượt; ô quan phải còn quan mà chỉ có 3 dân là quan non', b: B([2, 1, 0, 0, 4], [2, 0, 3, 1, 0], 2, 3), hl: { 10: 'sel', 6: 'stop', 0: 'stop' }, path: [10, 11], tags: { 0: 'hết lượt', 6: 'quan non' } },
+      title: t('help.5.title'),
+      text: t('help.5.text'),
+      fig: { alt: t('help.5.alt'), b: B([2, 1, 0, 0, 4], [2, 0, 3, 1, 0], 2, 3), hl: { 10: 'sel', 6: 'stop', 0: 'stop' }, path: [10, 11], tags: { 0: t('help.5.tagStop'), 6: t('help.5.tagNon') } },
     },
     {
-      title: 'Hết dân thì rải quân · hết quan thì thu',
-      text: 'Đến lượt mà 5 ô của bạn trống hết, lấy <b>5 dân đã ăn</b> rải lại mỗi ô một viên (thiếu thì <b>vay</b> đối thủ, cuối ván trả). Khi <b>cả hai ô quan hết quân</b>, mỗi bên thu dân trên hàng mình. Nhiều điểm hơn thì thắng.',
-      fig: { alt: 'Hai ô quan đã hết, hàng dưới vừa rải lại mỗi ô một dân', b: B([1, 1, 1, 1, 1], [0, 2, 0, 0, 3]), q: [0, 0], hl: { 7: 'own', 8: 'own', 9: 'own', 10: 'own', 11: 'own', 0: 'gap', 6: 'gap' }, tags: { 9: 'rải lại 5 dân' } },
+      title: t('help.6.title'),
+      text: t('help.6.text'),
+      fig: { alt: t('help.6.alt'), b: B([1, 1, 1, 1, 1], [0, 2, 0, 0, 3]), q: [0, 0], hl: { 7: 'own', 8: 'own', 9: 'own', 10: 'own', 11: 'own', 0: 'gap', 6: 'gap' }, tags: { 9: t('help.6.tag') } },
     },
   ];
   let helpIdx = 0;
@@ -1302,7 +1306,7 @@
     const h = HELP[helpIdx];
     $('help-body').innerHTML =
       `<div class="help-figure">${figure(h.fig)}</div>` +
-      `<p class="help-step">Bước ${helpIdx + 1}/${HELP.length}</p>` +
+      `<p class="help-step">${t('help.step', { i: helpIdx + 1, n: HELP.length })}</p>` +
       `<h3>${h.title}</h3><p>${h.text}</p>`;
     const dots = $('help-dots');
     if (!dots.children.length) {
@@ -1310,7 +1314,7 @@
         const d = document.createElement('button');
         d.type = 'button';
         d.setAttribute('role', 'tab');
-        d.setAttribute('aria-label', `Bước ${k + 1}`);
+        d.setAttribute('aria-label', t('help.dot', { i: k + 1 }));
         d.addEventListener('click', () => showHelp(k));
         dots.appendChild(d);
       });
@@ -1320,7 +1324,7 @@
       d.tabIndex = k === helpIdx ? 0 : -1;
     });
     $('btn-help-prev').disabled = helpIdx === 0;
-    $('btn-help-next').textContent = helpIdx === HELP.length - 1 ? 'Chơi thôi!' : 'Tiếp';
+    $('btn-help-next').textContent = helpIdx === HELP.length - 1 ? t('help.play') : t('help.next');
   }
   function openHelp() {
     showHelp(0);
@@ -1341,6 +1345,8 @@
   $('btn-new').addEventListener('click', openNewGame);
 
   /* ================= Khởi động ================= */
+  I18N.apply();
+  I18N.beforeReload = saveGame; // tải lại khi đổi ngôn ngữ: lưu ván trước
   $('app-version').textContent = APP_VERSION;
   applyTheme();
   buildBoard();

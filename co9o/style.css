@@ -134,7 +134,12 @@ button { font: inherit; color: inherit; }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .brand-mark { width: 32px; height: 32px; border-radius: 8px; flex: none; box-shadow: var(--shadow-sm); }
 .brand-text { display: flex; flex-direction: column; min-width: 0; }
-.logo { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.15; }
+.logo { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Tên tiếng Anh dài ("Ultimate Tic-Tac-Toe"): màn hẹp thì ẩn icon và thu chữ để tên nằm trên một dòng */
+@media (max-width: 400px) {
+  html[lang="en"] .brand-mark { display: none; }
+  html[lang="en"] .logo { font-size: 17px; }
+}
 .brand-sub { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .topbar-actions { display: flex; gap: 4px; flex: none; }
 

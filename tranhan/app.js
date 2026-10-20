@@ -7,7 +7,9 @@
   'use strict';
 
   const N = window.Nonogram;
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.0.1';
+  const t = I18N.t;
+  I18N.apply();
 
   /* Mọi khóa localStorage đều có tiền tố playnine-tranhan- */
   const PREFIX = 'playnine-tranhan-';
@@ -59,11 +61,20 @@
     return h ? `${h}:${pad2(m)}:${pad2(s)}` : `${pad2(m)}:${pad2(s)}`;
   }
   function formatDate(key) {
-    const [, m, d] = key.split('-');
+    const [y, m, d] = key.split('-');
+    // Tiếng Anh hiện dạng "Oct 20", tiếng Việt giữ dạng ngày/tháng
+    if (I18N.lang !== 'vi') return I18N.fmtDate(new Date(+y, +m - 1, +d), { month: 'short', day: 'numeric' });
     return `${d}/${m}`;
   }
   const sizeText = (s) => `${s}x${s}`;
-  const packName = (s) => `Bộ ${N.SIZE_LABELS[s]} ${sizeText(s)}`;
+  const sizeLabel = (s) => t('size.' + s);
+  const packName = (s) => t('pack.fullName', { label: sizeLabel(s), size: sizeText(s) });
+  /** Tên tranh theo ngôn ngữ (khóa theo id), chưa có bản dịch thì dùng tên trong engine. */
+  function picTitle(pic) {
+    const k = 'pic.' + pic.id;
+    const name = t(k);
+    return name === k ? pic.title : name;
+  }
 
   /* ---------------- Cài đặt ---------------- */
   const DEFAULT_SETTINGS = {
@@ -333,17 +344,17 @@
     const picsAll = N.pictures().length;
 
     let note;
-    if (!played && !won) note = `Chưa giải tranh nào · tranh hôm nay ${sizeText(D)}`;
-    else if (!won) note = `${played} tranh đã chơi · chưa giải xong tranh nào`;
-    else if (best) note = `${won} tranh đã giải · kỷ lục ${best.label} ${formatTime(best.time)}`;
-    else note = `${won} tranh đã giải`;
+    if (!played && !won) note = t('sum.none', { size: sizeText(D) });
+    else if (!won) note = t('sum.playedOnly', { n: played });
+    else if (best) note = t('sum.wonBest', { n: won, label: best.label, time: formatTime(best.time) });
+    else note = t('sum.won', { n: won });
 
     const headline = [];
     if (won || played) {
-      headline.push({ value: String(won), label: 'Tranh đã giải' });
-      headline.push({ value: `${picsDone}/${picsAll}`, label: 'Bộ tranh' });
-      if (best) headline.push({ value: formatTime(best.time), label: 'Kỷ lục ' + best.label });
-      else if (streak) headline.push({ value: String(streak), label: 'Chuỗi ngày' });
+      headline.push({ value: String(won), label: t('sum.statSolved') });
+      headline.push({ value: `${picsDone}/${picsAll}`, label: t('sum.statPacks') });
+      if (best) headline.push({ value: formatTime(best.time), label: t('result.bestSize', { size: best.label }) });
+      else if (streak) headline.push({ value: String(streak), label: t('stats.streak') });
     }
 
     let resume = null;
@@ -352,8 +363,8 @@
       const { filled, need } = filledText(g);
       const pct = need ? Math.min(1, filled / need) : 0;
       resume = {
-        title: session.kind === 'daily' ? 'Tranh Ẩn hằng ngày' : 'Tranh Ẩn ' + sizeText(session.size),
-        detail: `Đã tô ${Math.floor(pct * 100)}% · ${formatTime(elapsedMs() / 1000)}`,
+        title: session.kind === 'daily' ? t('sum.resumeDaily') : t('sum.resumeSize', { size: sizeText(session.size) }),
+        detail: t('sum.resumeDetail', { pct: Math.floor(pct * 100), time: formatTime(elapsedMs() / 1000) }),
         pct: Math.round(pct * 1000) / 1000,
       };
     }
@@ -368,7 +379,7 @@
       resume,
       daily: {
         date: today,
-        title: `Tranh hôm nay: ${sizeText(D)}`,
+        title: t('sum.dailyTitle', { size: sizeText(D) }),
         done: dailyTime(today) !== null,
         streak,
       },
@@ -449,7 +460,7 @@
     if (!canZoom) zoomed = false;
     if (zoomed) cell = Math.max(cell, ZOOM_CELL);
     $('btn-zoom').setAttribute('aria-pressed', String(zoomed));
-    $('btn-zoom').setAttribute('aria-label', zoomed ? 'Thu nhỏ lưới' : 'Phóng to lưới');
+    $('btn-zoom').setAttribute('aria-label', zoomed ? t('tool.zoomOut') : t('tool.zoomIn'));
     $('zoom-plus').setAttribute('d', zoomed ? 'M7.5 10.5h6' : 'M10.5 7.5v6M7.5 10.5h6');
     boardWrap.classList.toggle('zoomed', zoomed);
 
@@ -542,7 +553,7 @@
   }
 
   /* ---------------- Vẽ ---------------- */
-  const STATE_LABEL = ['Trống', 'Đã tô', 'Đánh dấu X', 'Tô sai, đã đánh dấu X'];
+  const STATE_LABEL = [t('cell.empty'), t('cell.filled'), t('cell.crossed'), t('cell.miss')];
 
   function cellClass(idx) {
     const g = game();
@@ -572,8 +583,8 @@
       const c = idx % g.w;
       const rowClue = (clues.rows[r].length ? clues.rows[r] : [0]).join(' ');
       const colClue = (clues.cols[c].length ? clues.cols[c] : [0]).join(' ');
-      const state = g.solved ? (g.sol[idx] ? 'Ô tranh' : 'Nền') : STATE_LABEL[g.cells[idx]];
-      el.setAttribute('aria-label', `Hàng ${r + 1} (${rowClue}), cột ${c + 1} (${colClue}): ${state}`);
+      const state = g.solved ? (g.sol[idx] ? t('cell.pic') : t('cell.bg')) : STATE_LABEL[g.cells[idx]];
+      el.setAttribute('aria-label', t('cell.aria', { r: r + 1, rc: rowClue, c: c + 1, cc: colClue, state }));
     }
   }
 
@@ -643,16 +654,16 @@
 
   function kindLabel() {
     if (session.kind === 'pack') return packName(session.size);
-    if (session.kind === 'daily') return 'Tranh hằng ngày';
-    return 'Ngẫu nhiên ' + sizeText(session.size);
+    if (session.kind === 'daily') return t('hud.daily');
+    return t('hud.random', { size: sizeText(session.size) });
   }
   function puzzleLabel() {
     if (session.kind === 'pack') {
       const pic = picOf(session);
-      return isSolved() ? pic.title : `#${picNumber(session)}`;
+      return isSolved() ? picTitle(pic) : `#${picNumber(session)}`;
     }
     if (session.kind === 'daily') return formatDate(session.daily);
-    return isSolved() ? 'Đã giải' : sizeText(session.size);
+    return isSolved() ? t('hud.solved') : sizeText(session.size);
   }
 
   function renderHud() {
@@ -663,12 +674,12 @@
     pl.classList.toggle('solved', isSolved());
     const mid = $('mid-value');
     if (settings.check) {
-      $('mid-label').textContent = 'Lỗi';
+      $('mid-label').textContent = t('hud.mistakes');
       mid.textContent = String(g.mistakes);
       mid.classList.toggle('bad', g.mistakes > 0);
     } else {
       const { filled, need } = filledText(g);
-      $('mid-label').textContent = 'Đã tô';
+      $('mid-label').textContent = t('hud.filled');
       mid.textContent = `${filled}/${need}`;
       mid.classList.remove('bad');
     }
@@ -676,7 +687,7 @@
     const left = N.HINTS_PER_PUZZLE - session.hintsUsed;
     $('hint-count').textContent = String(left);
     $('btn-hint').disabled = isSolved() || left <= 0;
-    $('btn-hint').setAttribute('aria-label', `Gợi ý (còn ${left})`);
+    $('btn-hint').setAttribute('aria-label', t('tool.hintLeft', { n: left }));
     $('btn-undo').disabled = isSolved() || !g.past.length;
     $('btn-redo').disabled = isSolved() || !g.future.length;
     renderMode();
@@ -891,7 +902,7 @@
   function useHint() {
     if (!session || isSolved() || stroke) return;
     if (session.hintsUsed >= N.HINTS_PER_PUZZLE) {
-      toast(`Đã dùng hết ${N.HINTS_PER_PUZZLE} gợi ý cho tranh này`);
+      toast(t('toast.noHints', { n: N.HINTS_PER_PUZZLE }));
       return;
     }
     const g = game();
@@ -909,7 +920,7 @@
     afterAction(changes);
     if (!g.solved) {
       flashCell(h.idx, 'flash');
-      toast(h.fix ? `Ô hàng ${r}, cột ${c} tô sai — đã sửa lại` : `Gợi ý: ${h.value === N.FILL ? 'tô' : 'đánh dấu X'} ô hàng ${r}, cột ${c}`);
+      toast(t(h.fix ? 'toast.hintFix' : h.value === N.FILL ? 'toast.hintFill' : 'toast.hintCross', { r, c }));
     }
   }
 
@@ -965,9 +976,9 @@
   }
 
   function solvedTitle() {
-    if (session.kind === 'pack') return picOf(session).title;
-    if (session.kind === 'daily') return 'Tranh hằng ngày';
-    return 'Tranh ngẫu nhiên';
+    if (session.kind === 'pack') return picTitle(picOf(session));
+    if (session.kind === 'daily') return t('hud.daily');
+    return t('result.random');
   }
 
   function showResult(sec, record, delay) {
@@ -978,37 +989,37 @@
     const canvas = $('result-pic');
     if (pic) drawPicture(canvas, pic);
     else drawGrid(canvas, g.w, g.h, (i) => g.sol[i] === 1, null, cssVar('--accent', '#b07d1f'));
-    $('result-kicker').textContent = record ? 'Kỷ lục mới!' : 'Bạn đã giải xong';
+    $('result-kicker').textContent = record ? t('result.record') : t('result.kicker');
     $('result-title').textContent = solvedTitle();
     let text;
-    if (kind === 'pack') text = `Tranh #${picNumber(session)} · ${packName(session.size)}`;
-    else if (kind === 'daily') text = `Ngày ${formatDate(session.daily)} · ${sizeText(session.size)}`;
-    else text = `${sizeText(session.size)} · mỗi tranh ngẫu nhiên đều có đúng một lời giải`;
+    if (kind === 'pack') text = t('result.packText', { n: picNumber(session), pack: packName(session.size) });
+    else if (kind === 'daily') text = t('result.dailyText', { date: formatDate(session.daily), size: sizeText(session.size) });
+    else text = t('result.randomText', { size: sizeText(session.size) });
     $('result-text').textContent = text;
     $('result-time').textContent = formatTime(sec);
     if (kind === 'daily') {
-      $('result-extra-label').textContent = 'Chuỗi ngày';
+      $('result-extra-label').textContent = t('stats.streak');
       $('result-extra').textContent = String(dailyStreak());
     } else {
-      $('result-extra-label').textContent = 'Kỷ lục ' + sizeText(session.size);
+      $('result-extra-label').textContent = t('result.bestSize', { size: sizeText(session.size) });
       $('result-extra').textContent = formatTime(stats.sizes[session.size].best);
     }
     if (settings.check) {
-      $('result-third-label').textContent = 'Lỗi';
+      $('result-third-label').textContent = t('hud.mistakes');
       $('result-third').textContent = String(g.mistakes);
     } else {
-      $('result-third-label').textContent = 'Gợi ý';
+      $('result-third-label').textContent = t('result.hints');
       $('result-third').textContent = `${session.hintsUsed}/${N.HINTS_PER_PUZZLE}`;
     }
     const note = $('result-note');
     note.hidden = false;
-    if (kind === 'pack') note.textContent = `Đã giải ${packSolvedCount(session.size)}/${N.pack(session.size).length} tranh của bộ`;
-    else if (kind === 'daily') note.textContent = `Chuỗi ${dailyStreak()} ngày · quay lại vào ngày mai nhé!`;
+    if (kind === 'pack') note.textContent = t('result.packNote', { k: packSolvedCount(session.size), n: N.pack(session.size).length });
+    else if (kind === 'daily') note.textContent = t('result.dailyNote', { n: dailyStreak() });
     else note.hidden = true;
     const next = $('btn-result-next');
-    if (kind === 'pack') next.textContent = nextUnsolved(session.size, session.pid) ? 'Tranh tiếp' : 'Xem bộ tranh';
-    else if (kind === 'random') next.textContent = 'Tranh mới';
-    else next.textContent = 'Chọn tranh';
+    if (kind === 'pack') next.textContent = nextUnsolved(session.size, session.pid) ? t('result.next') : t('result.viewPack');
+    else if (kind === 'random') next.textContent = t('result.newRandom');
+    else next.textContent = t('result.choose');
     resultTimer = setTimeout(() => openModal('modal-result'), delay);
   }
 
@@ -1274,9 +1285,9 @@
     const dl = $('daily-list');
     dl.textContent = '';
     const daily = levelOption(
-      'Tranh hằng ngày',
-      `${formatDate(today)} · ${sizeText(N.DAILY_SIZE)}${streak ? ` · chuỗi ${streak} ngày` : ''}`,
-      done !== null ? '✓ ' + formatTime(done) : 'Mới',
+      t('new.daily'),
+      `${formatDate(today)} · ${sizeText(N.DAILY_SIZE)}${streak ? t('new.dailyStreak', { n: streak }) : ''}`,
+      done !== null ? '✓ ' + formatTime(done) : t('new.badgeNew'),
       done !== null,
       ICON_DAILY,
       !!session && session.kind === 'daily' && session.daily === today,
@@ -1295,9 +1306,9 @@
       const total = N.pack(s).length;
       const k = packSolvedCount(s);
       const btn = levelOption(
-        `Bộ ${N.SIZE_LABELS[s]}`,
-        `${sizeText(s)} · ${total} tranh · đã giải ${k}`,
-        k === total ? '✓ Xong' : '',
+        t('pack.name', { label: sizeLabel(s) }),
+        t('new.packDesc', { size: sizeText(s), total, k }),
+        k === total ? t('new.packDone') : '',
         true,
         sizeText(s),
         !!session && session.kind === 'pack' && session.size === s,
@@ -1319,8 +1330,8 @@
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'random-option' + (session && session.kind === 'random' && session.size === s ? ' current' : '');
-      btn.innerHTML = `<span>${sizeText(s)}</span><small>${N.SIZE_LABELS[s]}</small>`;
-      btn.setAttribute('aria-label', `Tranh ngẫu nhiên ${sizeText(s)}`);
+      btn.innerHTML = `<span>${sizeText(s)}</span><small>${sizeLabel(s)}</small>`;
+      btn.setAttribute('aria-label', t('new.randomAria', { size: sizeText(s) }));
       btn.addEventListener('click', () => {
         closeModal('modal-new');
         newGame('random', { size: s });
@@ -1363,8 +1374,8 @@
     });
 
     const list = N.pack(packSize);
-    $('pack-title').textContent = 'Bộ ' + N.SIZE_LABELS[packSize];
-    $('pack-progress').textContent = `Đã giải ${packSolvedCount(packSize)}/${list.length} tranh · tranh chưa giải hiện dấu "?"`;
+    $('pack-title').textContent = t('pack.name', { label: sizeLabel(packSize) });
+    $('pack-progress').textContent = t('pack.progress', { k: packSolvedCount(packSize), n: list.length });
     const grid = $('pack-grid');
     grid.textContent = '';
     list.forEach((pic, k) => {
@@ -1384,12 +1395,12 @@
       }
       const name = document.createElement('span');
       name.className = 'pic-name';
-      name.textContent = solved ? pic.title : `#${k + 1}`;
+      name.textContent = solved ? picTitle(pic) : `#${k + 1}`;
       const sub = document.createElement('span');
       sub.className = 'pic-sub';
-      sub.textContent = current ? 'Đang giải' : solved ? '✓ ' + formatTime(stats.pics[pic.id]) : 'Chưa giải';
+      sub.textContent = current ? t('pack.current') : solved ? '✓ ' + formatTime(stats.pics[pic.id]) : t('pack.unsolved');
       btn.append(thumb, name, sub);
-      btn.setAttribute('aria-label', `Tranh #${k + 1}${solved ? ': ' + pic.title + ', đã giải' : current ? ', đang giải' : ', chưa giải'}`);
+      btn.setAttribute('aria-label', solved ? t('pack.ariaSolved', { n: k + 1, title: picTitle(pic) }) : t(current ? 'pack.ariaCurrent' : 'pack.ariaUnsolved', { n: k + 1 }));
       btn.addEventListener('click', () => {
         closeModal('modal-pack');
         if (current) return;
@@ -1420,7 +1431,7 @@
   function toggleMode() {
     if (!session || isSolved()) return;
     setMode(mode === 'fill' ? 'cross' : 'fill');
-    toast(mode === 'fill' ? 'Chạm để tô · nhấn giữ để đánh dấu X' : 'Chạm để đánh dấu X · nhấn giữ để tô');
+    toast(mode === 'fill' ? t('toast.modeFill') : t('toast.modeCross'));
   }
   const modeButtons = Array.from(document.querySelectorAll('#mode button'));
   modeButtons.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
@@ -1455,7 +1466,31 @@
     document.querySelectorAll('.switch[data-setting]').forEach((sw) => {
       sw.checked = !!settings[sw.dataset.setting];
     });
+    langButtons.forEach((b) => {
+      const on = b.dataset.lang === I18N.lang;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-checked', String(on));
+      b.tabIndex = on ? 0 : -1;
+    });
   }
+
+  /* Ngôn ngữ: lưu ván rồi đổi khóa dùng chung, trang tải lại */
+  const langButtons = Array.from(document.querySelectorAll('#lang-seg button'));
+  I18N.onSave = () => {
+    if (!session) return;
+    endStroke(false);
+    persist();
+    writeSummary();
+  };
+  langButtons.forEach((b) => b.addEventListener('click', () => {
+    if (b.dataset.lang !== I18N.lang) I18N.set(b.dataset.lang);
+  }));
+  $('lang-seg').addEventListener('keydown', (e) => {
+    const i = langButtons.indexOf(document.activeElement);
+    if (i < 0 || ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].indexOf(e.key) < 0) return;
+    e.preventDefault();
+    langButtons[(i + 1) % langButtons.length].focus();
+  });
 
   document.querySelectorAll('.segmented[data-setting]').forEach((seg) => {
     const key = seg.dataset.setting;
@@ -1489,7 +1524,7 @@
         // Bật kiểm tra lỗi giữa chừng: các ô đang tô sai bị đánh dấu ngay và tính lỗi
         const n = sw.checked ? flagWrong(true) : 0;
         renderHud();
-        if (n) toast(`Có ${n} ô tô sai — đã đánh dấu X đỏ`);
+        if (n) toast(t('toast.flagged', { n }));
       }
     });
   });
@@ -1517,17 +1552,17 @@
       });
       body.appendChild(tr);
     });
-    $('stats-pack-note').textContent = `Bộ tranh: đã giải ${Object.keys(stats.pics).length}/${N.pictures().length} tranh. TB: thời gian trung bình của các tranh đã giải (bộ tranh và ngẫu nhiên).`;
+    $('stats-pack-note').textContent = t('stats.note', { k: Object.keys(stats.pics).length, n: N.pictures().length });
     const reset = $('btn-stats-reset');
     reset.classList.remove('confirm');
-    reset.textContent = 'Đặt lại';
+    reset.textContent = t('stats.reset');
   }
 
   $('btn-stats-reset').addEventListener('click', () => {
     const reset = $('btn-stats-reset');
     if (!reset.classList.contains('confirm')) {
       reset.classList.add('confirm');
-      reset.textContent = 'Bấm lần nữa để xóa';
+      reset.textContent = t('stats.resetConfirm');
       return;
     }
     stats = emptyStats();
@@ -1539,7 +1574,7 @@
     saveStats();
     writeSummary();
     renderStats();
-    toast('Đã đặt lại thống kê');
+    toast(t('stats.resetDone'));
   });
 
   /* ---------------- Toast ---------------- */
@@ -1569,7 +1604,7 @@
     zoomed = !zoomed;
     layout();
     if (zoomed && cellEls[cursor]) cellEls[cursor].scrollIntoView({ block: 'center', inline: 'center' });
-    if (zoomed) toast('Một ngón để tô · hai ngón (hoặc kéo vùng số) để di chuyển');
+    if (zoomed) toast(t('toast.zoom'));
   });
   $('btn-result-next').addEventListener('click', goNext);
 

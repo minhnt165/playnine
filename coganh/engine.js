@@ -45,9 +45,9 @@ function CoGanhFactory() {
   //   depth: độ sâu tìm kiếm cố định; depthMin: độ sâu thấp nhất (chọn ngẫu nhiên)
   //   noise: nhiễu cộng vào điểm từng nước ở gốc (100 = một quân); timeMs: trần thời gian (đào sâu dần)
   const LEVELS = {
-    easy: { label: 'Dễ', depthMin: 1, depth: 2, noise: 240 },
-    medium: { label: 'Vừa', depth: 4, noise: 0 },
-    hard: { label: 'Khó', depth: 40, noise: 0, timeMs: 1500 },
+    easy: { depthMin: 1, depth: 2, noise: 240 },
+    medium: { depth: 4, noise: 0 },
+    hard: { depth: 40, noise: 0, timeMs: 1500 },
   };
 
   const rowOf = (i) => (i / SIZE) | 0;

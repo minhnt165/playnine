@@ -282,15 +282,16 @@ const Sudoku = (() => {
 
   /* ---------------- Solver theo kỹ thuật ---------------- */
   // level: mức kỹ thuật, dùng để chấm độ khó. LEVEL_ADVANCED = cần kỹ thuật ngoài danh sách.
+  // label: tên kỹ thuật (English, trung lập ngôn ngữ); chữ hiển thị lấy từ i18n.js theo key 'tech.<id>'.
   const TECHNIQUES = {
-    'naked-single': { level: 1, label: 'Ô chỉ còn một số' },
-    'hidden-single': { level: 1, label: 'Số chỉ có một vị trí' },
-    pointing: { level: 2, label: 'Cặp chỉ hướng' },
-    claiming: { level: 2, label: 'Rút gọn theo hàng/cột' },
-    'naked-pair': { level: 2, label: 'Cặp trần' },
-    'hidden-pair': { level: 3, label: 'Cặp ẩn' },
-    'naked-triple': { level: 3, label: 'Bộ ba trần' },
-    'hidden-triple': { level: 3, label: 'Bộ ba ẩn' },
+    'naked-single': { level: 1, label: 'Naked single' },
+    'hidden-single': { level: 1, label: 'Hidden single' },
+    pointing: { level: 2, label: 'Pointing pair' },
+    claiming: { level: 2, label: 'Box/line reduction' },
+    'naked-pair': { level: 2, label: 'Naked pair' },
+    'hidden-pair': { level: 3, label: 'Hidden pair' },
+    'naked-triple': { level: 3, label: 'Naked triple' },
+    'hidden-triple': { level: 3, label: 'Hidden triple' },
     'x-wing': { level: 3, label: 'X-Wing' },
     'xy-wing': { level: 3, label: 'XY-Wing' },
     swordfish: { level: 3, label: 'Swordfish' },

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -7,10 +7,10 @@
   <meta name="theme-color" id="theme-color" content="#f6f2ea">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Rắn Săn Mồi">
+  <meta name="apple-mobile-web-app-title" content="Snake">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="description" content="Rắn Săn Mồi tiếng Việt: lái rắn ăn xoài, né tường và chính mình. Ba chế độ Cổ điển, Xuyên tường, Mê cung; ba tốc độ; vuốt hoặc phím mũi tên; tự lưu ván chơi.">
-  <title>Rắn Săn Mồi</title>
+  <meta name="description" content="Snake: steer the snake to eat mangoes while dodging the walls and your own tail. Three modes (Classic, Wrap, Maze), three speeds, swipe or arrow keys, auto-saves your game.">
+  <title>Snake</title>
   <link rel="icon" type="image/svg+xml" href="icon.svg">
   <script>
     // Áp giao diện sáng/tối đã chọn trước khi vẽ trang để tránh nháy màu
@@ -29,19 +29,19 @@
     <header class="topbar">
       <div class="brand">
         <img class="brand-mark" src="icon.svg" alt="" width="34" height="34">
-        <h1 class="logo">Rắn Săn Mồi</h1>
+        <h1 class="logo" data-i18n="app.name">Snake</h1>
         <span class="mode-badge" id="mode-badge" hidden></span>
       </div>
       <div class="topbar-actions">
-        <button class="btn-icon" id="btn-stats" type="button" aria-label="Thống kê" title="Thống kê">
+        <button class="btn-icon" id="btn-stats" type="button" aria-label="Statistics" title="Statistics" data-i18n-attr="aria-label:top.stats;title:top.stats">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
         </button>
-        <button class="btn-icon" id="btn-settings" type="button" aria-label="Cài đặt" title="Cài đặt">
+        <button class="btn-icon" id="btn-settings" type="button" aria-label="Settings" title="Settings" data-i18n-attr="aria-label:top.settings;title:top.settings">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
         </button>
-        <button class="btn btn-primary btn-new" id="btn-new" type="button" title="Ván mới (N)">
+        <button class="btn btn-primary btn-new" id="btn-new" type="button" title="New game (N)" data-i18n-attr="title:top.newTitle">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>
-          <span>Ván mới</span>
+          <span data-i18n="common.newGame">New game</span>
         </button>
       </div>
     </header>
@@ -50,36 +50,36 @@
     <section class="start" id="start" aria-labelledby="start-title">
       <div class="start-card">
         <div class="start-head">
-          <h2 id="start-title">Ván mới</h2>
-          <p class="start-sub">Lái rắn ăn xoài, càng dài càng khó. Đừng cắn vào mình!</p>
+          <h2 id="start-title" data-i18n="start.title">New game</h2>
+          <p class="start-sub" data-i18n="start.sub">Steer the snake to eat mangoes. The longer it gets, the harder it is. Don’t bite yourself!</p>
         </div>
 
         <div class="field">
-          <span class="field-label" id="lbl-mode">Chế độ</span>
+          <span class="field-label" id="lbl-mode" data-i18n="start.mode">Mode</span>
           <div class="segmented" role="radiogroup" aria-labelledby="lbl-mode" aria-describedby="mode-desc" data-setting="mode">
-            <button type="button" role="radio" data-value="classic">Cổ điển</button>
-            <button type="button" role="radio" data-value="wrap">Xuyên tường</button>
-            <button type="button" role="radio" data-value="maze">Mê cung</button>
+            <button type="button" role="radio" data-value="classic" data-i18n="mode.classic">Classic</button>
+            <button type="button" role="radio" data-value="wrap" data-i18n="mode.wrap">Wrap</button>
+            <button type="button" role="radio" data-value="maze" data-i18n="mode.maze">Maze</button>
           </div>
-          <p class="field-desc" id="mode-desc">Chạm tường là thua.</p>
+          <p class="field-desc" id="mode-desc">Touch a wall and you lose.</p>
         </div>
 
         <div class="field" id="field-map">
-          <span class="field-label" id="lbl-map">Bản đồ</span>
+          <span class="field-label" id="lbl-map" data-i18n="start.map">Map</span>
           <div class="maps" id="maps" role="radiogroup" aria-labelledby="lbl-map" data-setting="map"></div>
         </div>
 
         <div class="field">
-          <span class="field-label" id="lbl-speed">Tốc độ</span>
+          <span class="field-label" id="lbl-speed" data-i18n="start.speed">Speed</span>
           <div class="segmented" role="radiogroup" aria-labelledby="lbl-speed" data-setting="speed">
-            <button type="button" role="radio" data-value="slow">Chậm</button>
-            <button type="button" role="radio" data-value="normal">Vừa</button>
-            <button type="button" role="radio" data-value="fast">Nhanh</button>
+            <button type="button" role="radio" data-value="slow" data-i18n="speed.slow">Slow</button>
+            <button type="button" role="radio" data-value="normal" data-i18n="speed.normal">Normal</button>
+            <button type="button" role="radio" data-value="fast" data-i18n="speed.fast">Fast</button>
           </div>
         </div>
 
         <div class="field">
-          <span class="field-label" id="lbl-size">Kích thước bàn</span>
+          <span class="field-label" id="lbl-size" data-i18n="start.size">Board size</span>
           <div class="segmented" role="radiogroup" aria-labelledby="lbl-size" data-setting="size">
             <button type="button" role="radio" data-value="15">15x15</button>
             <button type="button" role="radio" data-value="20">20x20</button>
@@ -87,91 +87,92 @@
           </div>
         </div>
 
-        <p class="start-best" id="start-best">Cao nhất ở chế độ này: <b>—</b></p>
+        <p class="start-best" id="start-best" data-i18n-html="start.best">Best in this mode: <b>—</b></p>
         <button class="btn btn-primary btn-start" id="btn-start" type="button">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5L8 5.5z"/></svg>
-          <span>Bắt đầu</span>
+          <span data-i18n="start.start">Start</span>
         </button>
       </div>
     </section>
 
     <section class="hud">
       <div class="score-box" id="score-box">
-        <span class="score-label">Điểm</span>
+        <span class="score-label" data-i18n="hud.score">Score</span>
         <span class="score-value" id="score">0</span>
       </div>
       <div class="score-box">
-        <span class="score-label">Cao nhất</span>
+        <span class="score-label" data-i18n="hud.best">Best</span>
         <span class="score-value" id="best">0</span>
       </div>
       <div class="score-box">
-        <span class="score-label">Độ dài</span>
+        <span class="score-label" data-i18n="hud.length">Length</span>
         <span class="score-value" id="length">3</span>
       </div>
-      <button class="btn btn-pause" id="btn-pause" type="button" aria-label="Tạm dừng" title="Tạm dừng (Space / P)">
+      <button class="btn btn-pause" id="btn-pause" type="button" aria-label="Pause" title="Pause (Space / P)">
         <svg class="icon icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
         <svg class="icon icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5L8 5.5z"/></svg>
       </button>
     </section>
 
     <main class="board-area" id="board-area">
-      <div class="board" id="board" tabindex="0" role="application" aria-roledescription="bàn chơi rắn săn mồi"
-           aria-label="Bàn chơi Rắn Săn Mồi. Dùng phím mũi tên hoặc W A S D để lái rắn, Space hoặc P để tạm dừng." aria-describedby="board-desc">
+      <div class="board" id="board" tabindex="0" role="application" aria-roledescription="snake game board"
+           aria-label="Snake game board. Use the arrow keys or W A S D to steer, Space or P to pause." aria-describedby="board-desc"
+           data-i18n-attr="aria-roledescription:board.role;aria-label:board.label">
         <canvas class="canvas" id="canvas" aria-hidden="true"></canvas>
 
         <p class="ready-hint" id="ready-hint" hidden>
-          <span class="help-touch">Vuốt hoặc bấm nút hướng để bắt đầu</span>
-          <span class="help-keys">Bấm phím mũi tên để bắt đầu</span>
+          <span class="help-touch" data-i18n="ready.touch">Swipe or tap a direction button to start</span>
+          <span class="help-keys" data-i18n="ready.keys">Press an arrow key to start</span>
         </p>
 
         <div class="overlay" id="overlay-pause" hidden>
           <div class="overlay-card">
-            <p class="overlay-title">Tạm dừng</p>
-            <p class="overlay-sub" id="pause-sub">Dài 3 · 0 điểm</p>
+            <p class="overlay-title" data-i18n="pause.title">Paused</p>
+            <p class="overlay-sub" id="pause-sub">Length 3 · 0 points</p>
             <div class="overlay-actions">
-              <button class="btn btn-ghost" type="button" id="btn-pause-new">Ván mới</button>
-              <button class="btn btn-primary" type="button" id="btn-resume">Tiếp tục</button>
+              <button class="btn btn-ghost" type="button" id="btn-pause-new" data-i18n="common.newGame">New game</button>
+              <button class="btn btn-primary" type="button" id="btn-resume" data-i18n="pause.resume">Resume</button>
             </div>
-            <p class="overlay-hint help-keys">Nhấn <kbd>Space</kbd> hoặc <kbd>P</kbd> để chơi tiếp</p>
+            <p class="overlay-hint help-keys" data-i18n-html="pause.hint">Press <kbd>Space</kbd> or <kbd>P</kbd> to resume</p>
           </div>
         </div>
 
         <div class="overlay" id="overlay-over" hidden>
           <div class="overlay-card">
-            <p class="overlay-title" id="over-title">Rắn đâm vào tường</p>
-            <p class="new-best" id="over-new-best" hidden>Kỷ lục mới!</p>
+            <p class="overlay-title" id="over-title">The snake hit the wall</p>
+            <p class="new-best" id="over-new-best" data-i18n="over.newBest" hidden>New best!</p>
             <dl class="over-stats">
-              <div><dt>Điểm</dt><dd id="over-score">0</dd></div>
-              <div><dt>Độ dài</dt><dd id="over-length">3</dd></div>
-              <div><dt>Cao nhất</dt><dd id="over-best">0</dd></div>
+              <div><dt data-i18n="hud.score">Score</dt><dd id="over-score">0</dd></div>
+              <div><dt data-i18n="hud.length">Length</dt><dd id="over-length">3</dd></div>
+              <div><dt data-i18n="hud.best">Best</dt><dd id="over-best">0</dd></div>
             </dl>
             <div class="overlay-actions">
-              <button class="btn btn-ghost" type="button" id="btn-over-menu">Đổi chế độ</button>
-              <button class="btn btn-primary" type="button" id="btn-again">Chơi lại</button>
+              <button class="btn btn-ghost" type="button" id="btn-over-menu" data-i18n="over.menu">Change mode</button>
+              <button class="btn btn-primary" type="button" id="btn-again" data-i18n="over.again">Play again</button>
             </div>
           </div>
         </div>
       </div>
     </main>
 
-    <div class="dpad" id="dpad" role="group" aria-label="Nút điều hướng" hidden>
-      <button class="dpad-btn" type="button" data-dir="up" aria-label="Lên" style="grid-area: up">
+    <div class="dpad" id="dpad" role="group" aria-label="Direction buttons" data-i18n-attr="aria-label:dpad.label" hidden>
+      <button class="dpad-btn" type="button" data-dir="up" aria-label="Up" data-i18n-attr="aria-label:dpad.up" style="grid-area: up">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7l-7 8h14z"/></svg>
       </button>
-      <button class="dpad-btn" type="button" data-dir="left" aria-label="Trái" style="grid-area: left">
+      <button class="dpad-btn" type="button" data-dir="left" aria-label="Left" data-i18n-attr="aria-label:dpad.left" style="grid-area: left">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 12l8-7v14z"/></svg>
       </button>
-      <button class="dpad-btn" type="button" data-dir="down" aria-label="Xuống" style="grid-area: down">
+      <button class="dpad-btn" type="button" data-dir="down" aria-label="Down" data-i18n-attr="aria-label:dpad.down" style="grid-area: down">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17l-7-8h14z"/></svg>
       </button>
-      <button class="dpad-btn" type="button" data-dir="right" aria-label="Phải" style="grid-area: right">
+      <button class="dpad-btn" type="button" data-dir="right" aria-label="Right" data-i18n-attr="aria-label:dpad.right" style="grid-area: right">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 12l-8-7v14z"/></svg>
       </button>
     </div>
 
     <p class="help" id="board-desc">
-      <span class="help-touch">Vuốt ở bất kỳ đâu trên bàn chơi để đổi hướng.</span>
-      <span class="help-keys"><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> hoặc <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> để lái · <kbd>Space</kbd> / <kbd>P</kbd> tạm dừng · <kbd>N</kbd> ván mới</span>
+      <span class="help-touch" data-i18n="help.touch">Swipe anywhere on the board to change direction.</span>
+      <span class="help-keys" data-i18n-html="help.keys"><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to steer · <kbd>Space</kbd> / <kbd>P</kbd> pause · <kbd>N</kbd> new game</span>
     </p>
   </div>
 
@@ -182,40 +183,47 @@
   <div class="modal" id="modal-settings" hidden>
     <div class="modal-backdrop" data-close="modal-settings"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-      <h2 id="settings-title">Cài đặt</h2>
+      <h2 id="settings-title" data-i18n="settings.title">Settings</h2>
       <div class="settings-list">
         <div class="setting">
-          <span class="setting-name" id="lbl-theme">Giao diện</span>
+          <span class="setting-name" id="lbl-theme" data-i18n="settings.theme">Theme</span>
           <div class="segmented" role="radiogroup" aria-labelledby="lbl-theme" data-setting="theme">
-            <button type="button" role="radio" data-value="auto">Tự động</button>
-            <button type="button" role="radio" data-value="light">Sáng</button>
-            <button type="button" role="radio" data-value="dark">Tối</button>
+            <button type="button" role="radio" data-value="auto" data-i18n="settings.themeAuto">Auto</button>
+            <button type="button" role="radio" data-value="light" data-i18n="settings.themeLight">Light</button>
+            <button type="button" role="radio" data-value="dark" data-i18n="settings.themeDark">Dark</button>
+          </div>
+        </div>
+        <div class="setting">
+          <span class="setting-name" id="lbl-lang" data-i18n="settings.language">Language</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="lbl-lang" data-setting="lang">
+            <button type="button" role="radio" data-value="en">English</button>
+            <button type="button" role="radio" data-value="vi">Tiếng Việt</button>
           </div>
         </div>
         <label class="setting setting-row">
           <span class="setting-text">
-            <span class="setting-name">Tăng tốc dần</span>
-            <span class="setting-desc">Rắn chạy nhanh hơn một chút sau mỗi mồi ăn được.</span>
+            <span class="setting-name" data-i18n="settings.accel">Gradual speed-up</span>
+            <span class="setting-desc" data-i18n="settings.accelDesc">The snake gets a little faster with every bite.</span>
           </span>
           <input type="checkbox" class="switch" data-setting="accel">
         </label>
         <label class="setting setting-row">
           <span class="setting-text">
-            <span class="setting-name">Nút điều hướng</span>
-            <span class="setting-desc">Hiện bốn nút mũi tên lớn dưới bàn chơi. Vẫn vuốt được như thường.</span>
+            <span class="setting-name" data-i18n="settings.dpad">Direction buttons</span>
+            <span class="setting-desc" data-i18n="settings.dpadDesc">Show four large arrow buttons below the board. Swiping still works.</span>
           </span>
           <input type="checkbox" class="switch" data-setting="dpad">
         </label>
         <label class="setting setting-row">
           <span class="setting-text">
-            <span class="setting-name">Rung</span>
-            <span class="setting-desc">Rung nhẹ khi ăn mồi và khi thua (nếu máy hỗ trợ).</span>
+            <span class="setting-name" data-i18n="settings.vibrate">Vibration</span>
+            <span class="setting-desc" data-i18n="settings.vibrateDesc">Vibrate lightly when eating and when you lose (if supported).</span>
           </span>
           <input type="checkbox" class="switch" data-setting="vibrate">
         </label>
       </div>
-      <button class="btn btn-primary btn-block" type="button" data-close="modal-settings">Xong</button>
-      <p class="app-version">Rắn Săn Mồi · phiên bản <span id="app-version">—</span></p>
+      <button class="btn btn-primary btn-block" type="button" data-close="modal-settings" data-i18n="settings.done">Done</button>
+      <p class="app-version" data-i18n-html="settings.version">Snake · version <span id="app-version">—</span></p>
     </div>
   </div>
 
@@ -223,23 +231,23 @@
   <div class="modal" id="modal-stats" hidden>
     <div class="modal-backdrop" data-close="modal-stats"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
-      <h2 id="stats-title">Thống kê</h2>
+      <h2 id="stats-title" data-i18n="stats.title">Statistics</h2>
       <dl class="stat-grid">
-        <div><dt>Ván đã chơi</dt><dd id="st-played">0</dd></div>
-        <div><dt>Mồi đã ăn</dt><dd id="st-food">0</dd></div>
-        <div><dt>Rắn dài nhất</dt><dd id="st-longest">—</dd></div>
-        <div><dt>Điểm cao nhất</dt><dd id="st-best">0</dd></div>
+        <div><dt data-i18n="stats.played">Games played</dt><dd id="st-played">0</dd></div>
+        <div><dt data-i18n="stats.food">Food eaten</dt><dd id="st-food">0</dd></div>
+        <div><dt data-i18n="stats.longest">Longest snake</dt><dd id="st-longest">—</dd></div>
+        <div><dt data-i18n="stats.best">Best score</dt><dd id="st-best">0</dd></div>
       </dl>
-      <p class="stats-section" id="best-caption">Điểm cao nhất theo chế độ và tốc độ</p>
+      <p class="stats-section" id="best-caption" data-i18n="stats.bestCaption">Best score by mode and speed</p>
       <table class="best-table" aria-labelledby="best-caption">
         <thead>
-          <tr><th scope="col"><span class="sr-only">Chế độ</span></th><th scope="col">Chậm</th><th scope="col">Vừa</th><th scope="col">Nhanh</th></tr>
+          <tr><th scope="col"><span class="sr-only" data-i18n="stats.mode">Mode</span></th><th scope="col" data-i18n="speed.slow">Slow</th><th scope="col" data-i18n="speed.normal">Normal</th><th scope="col" data-i18n="speed.fast">Fast</th></tr>
         </thead>
         <tbody id="st-best-table"></tbody>
       </table>
       <div class="modal-actions">
-        <button class="btn btn-ghost" type="button" id="btn-stats-reset">Đặt lại</button>
-        <button class="btn btn-primary" type="button" data-close="modal-stats">Đóng</button>
+        <button class="btn btn-ghost" type="button" id="btn-stats-reset" data-i18n="stats.reset">Reset</button>
+        <button class="btn btn-primary" type="button" data-close="modal-stats" data-i18n="stats.close">Close</button>
       </div>
     </div>
   </div>
@@ -248,16 +256,17 @@
   <div class="modal" id="modal-confirm" hidden>
     <div class="modal-backdrop" data-close="modal-confirm"></div>
     <div class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-text">
-      <h2 id="confirm-title">Bỏ ván đang chơi?</h2>
-      <p class="modal-text" id="confirm-text">Ván đang chơi sẽ bị bỏ.</p>
+      <h2 id="confirm-title" data-i18n="confirm.title">Abandon this game?</h2>
+      <p class="modal-text" id="confirm-text" data-i18n="confirm.textShort">The current game will be discarded.</p>
       <div class="modal-actions">
-        <button class="btn btn-ghost" type="button" data-close="modal-confirm">Hủy</button>
-        <button class="btn btn-primary" type="button" id="btn-confirm-ok">Ván mới</button>
+        <button class="btn btn-ghost" type="button" data-close="modal-confirm" data-i18n="confirm.cancel">Cancel</button>
+        <button class="btn btn-primary" type="button" id="btn-confirm-ok" data-i18n="common.newGame">New game</button>
       </div>
     </div>
   </div>
 
-  <script src="engine.js?v=1.0.0"></script>
-  <script src="app.js?v=1.0.0"></script>
+  <script src="i18n.js?v=1.0.1"></script>
+  <script src="engine.js?v=1.0.1"></script>
+  <script src="app.js?v=1.0.1"></script>
 </body>
 </html>

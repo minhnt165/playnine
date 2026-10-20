@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Sudoku">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="description" content="Sudoku tiếng Việt: 5 độ khó chấm theo kỹ thuật, ván hằng ngày, gợi ý có giải thích, ghi chú, thống kê, tự lưu ván chơi.">
+  <meta name="description" content="Sudoku: 5 difficulty levels graded by technique, a daily puzzle, explained hints, notes, statistics and autosave.">
   <title>Sudoku</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233b6cf6'/%3E%3Cpath d='M12 12h40v40H12z' fill='none' stroke='%23fff' stroke-width='3'/%3E%3Cpath d='M25.3 12v40M38.7 12v40M12 25.3h40M12 38.7h40' stroke='%23fff' stroke-width='2' opacity='.8'/%3E%3C/svg%3E">
   <script>
@@ -19,7 +19,7 @@
       if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
     } catch (e) {}
   </script>
-  <link rel="stylesheet" href="style.css?v=1.1.0">
+  <link rel="stylesheet" href="style.css?v=1.1.1">
 </head>
 <body>
   <div class="app" id="app">
@@ -31,37 +31,37 @@
         <h1 class="logo">Sudoku</h1>
       </div>
       <div class="topbar-actions">
-        <button class="btn-icon lg" id="btn-stats" type="button" aria-label="Thống kê" title="Thống kê">
+        <button class="btn-icon lg" id="btn-stats" type="button" aria-label="Statistics" title="Statistics" data-i18n-attr="aria-label:stats.title;title:stats.title">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
         </button>
-        <button class="btn-icon lg" id="btn-settings" type="button" aria-label="Cài đặt" title="Cài đặt">
+        <button class="btn-icon lg" id="btn-settings" type="button" aria-label="Settings" title="Settings" data-i18n-attr="aria-label:settings.title;title:settings.title">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
         </button>
         <button class="btn btn-primary btn-new" id="btn-new" type="button">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>
-          <span>Ván mới</span>
+          <span data-i18n="game.new">New game</span>
         </button>
       </div>
     </header>
 
     <section class="status card">
       <div class="status-item">
-        <span class="status-label">Độ khó</span>
+        <span class="status-label" data-i18n="status.difficulty">Difficulty</span>
         <span class="status-value" id="difficulty-label">—</span>
       </div>
       <div class="status-item">
-        <span class="status-label">Lỗi</span>
+        <span class="status-label" data-i18n="status.mistakes">Mistakes</span>
         <span class="status-value" id="mistakes-label"><span id="mistakes-count">0</span><span class="dim" id="mistakes-max">/3</span></span>
       </div>
       <div class="status-item">
-        <span class="status-label">Tiến độ</span>
+        <span class="status-label" data-i18n="status.progress">Progress</span>
         <span class="status-value" id="progress-label"><span id="progress-filled">0</span><span class="dim">/<span id="progress-total">0</span></span></span>
       </div>
       <div class="status-item status-timer">
-        <span class="status-label">Thời gian</span>
+        <span class="status-label" data-i18n="status.time">Time</span>
         <span class="status-value">
           <span id="timer-label">00:00</span>
-          <button class="btn-icon" id="btn-pause" type="button" aria-label="Tạm dừng" title="Tạm dừng">
+          <button class="btn-icon" id="btn-pause" type="button" aria-label="Pause" title="Pause">
             <svg class="icon icon-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>
             <svg class="icon icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
           </button>
@@ -71,17 +71,17 @@
     </section>
 
     <main class="board-wrap">
-      <div class="board" id="board" role="grid" aria-label="Bàn cờ Sudoku"></div>
+      <div class="board" id="board" role="grid" aria-label="Sudoku board" data-i18n-attr="aria-label:game.board"></div>
       <div class="board-overlay" id="pause-overlay" hidden>
-        <button class="overlay-play" id="btn-resume" type="button" aria-label="Tiếp tục">
+        <button class="overlay-play" id="btn-resume" type="button" aria-label="Resume" data-i18n-attr="aria-label:game.resume">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
         </button>
-        <p>Đã tạm dừng</p>
-        <small>Nhấn để tiếp tục</small>
+        <p data-i18n="game.paused">Paused</p>
+        <small data-i18n="game.tapResume">Tap to resume</small>
       </div>
       <div class="board-overlay gen" id="gen-overlay" hidden aria-live="polite">
         <span class="spinner" aria-hidden="true"></span>
-        <p>Đang tạo đề…</p>
+        <p data-i18n="game.generating">Generating puzzle…</p>
       </div>
     </main>
 
@@ -89,22 +89,22 @@
       <div class="hint-head">
         <span class="hint-title">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
-          Gợi ý · <span id="hint-technique"></span>
+          <span data-i18n="hint.title">Hint</span> · <span id="hint-technique"></span>
         </span>
-        <button class="btn-icon" id="btn-hint-close" type="button" aria-label="Đóng gợi ý">
+        <button class="btn-icon" id="btn-hint-close" type="button" aria-label="Close hint" data-i18n-attr="aria-label:hint.close">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>
         </button>
       </div>
       <p class="hint-body" id="hint-text"></p>
       <div class="hint-legend" aria-hidden="true">
-        <span><i class="swatch target"></i>Ô cần điền</span>
-        <span><i class="swatch reason"></i>Ô liên quan</span>
-        <span id="legend-elim" hidden><i class="swatch elim"></i>Ô bị loại số</span>
-        <span><i class="swatch unit"></i>Phạm vi xét</span>
+        <span><i class="swatch target"></i><span data-i18n="hint.legendTarget">Target cell</span></span>
+        <span><i class="swatch reason"></i><span data-i18n="hint.legendReason">Related cells</span></span>
+        <span id="legend-elim" hidden><i class="swatch elim"></i><span data-i18n="hint.legendElim">Eliminated cells</span></span>
+        <span><i class="swatch unit"></i><span data-i18n="hint.legendUnit">Scope</span></span>
       </div>
       <div class="hint-actions">
-        <button class="btn btn-ghost" id="btn-hint-self" type="button">Tự điền</button>
-        <button class="btn btn-primary" id="btn-hint-apply" type="button">Điền số <b id="hint-value"></b></button>
+        <button class="btn btn-ghost" id="btn-hint-self" type="button" data-i18n="hint.self">Do it myself</button>
+        <button class="btn btn-primary" id="btn-hint-apply" type="button"><span data-i18n="hint.apply">Place</span> <b id="hint-value"></b></button>
       </div>
     </section>
 
@@ -113,33 +113,33 @@
         <span class="tool-icon">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
         </span>
-        <span class="tool-label">Hoàn tác</span>
+        <span class="tool-label" data-i18n="tool.undo">Undo</span>
       </button>
       <button class="tool" id="btn-erase" type="button">
         <span class="tool-icon">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16.24 3.56l4.95 4.94c.78.79.78 2.05 0 2.84L12 20.53a4.008 4.008 0 0 1-5.66 0L2.81 17c-.78-.79-.78-2.05 0-2.84l10.6-10.6c.79-.78 2.05-.78 2.83 0zM4.22 15.58l3.54 3.53c.78.79 2.04.79 2.83 0l3.53-3.53-4.95-4.95-4.95 4.95z"/></svg>
         </span>
-        <span class="tool-label">Xóa</span>
+        <span class="tool-label" data-i18n="tool.erase">Erase</span>
       </button>
       <button class="tool" id="btn-notes" type="button" aria-pressed="false">
         <span class="tool-icon">
-          <span class="tool-badge" id="notes-badge">Tắt</span>
+          <span class="tool-badge" id="notes-badge">Off</span>
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
         </span>
-        <span class="tool-label">Ghi chú</span>
+        <span class="tool-label" data-i18n="tool.notes">Notes</span>
       </button>
       <button class="tool" id="btn-hint" type="button">
         <span class="tool-icon">
           <span class="tool-badge" id="hint-badge">1</span>
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
         </span>
-        <span class="tool-label">Gợi ý</span>
+        <span class="tool-label" data-i18n="tool.hint">Hint</span>
       </button>
     </section>
 
-    <section class="numpad" id="numpad" aria-label="Bàn phím số"></section>
+    <section class="numpad" id="numpad" aria-label="Number pad" data-i18n-attr="aria-label:game.numpad"></section>
 
-    <p class="hint-text">Phím tắt: <kbd>1</kbd>–<kbd>9</kbd> điền số · <kbd>⌫</kbd> xóa · <kbd>N</kbd> ghi chú · <kbd>Z</kbd> hoàn tác · <kbd>H</kbd> gợi ý · <kbd>P</kbd> tạm dừng</p>
+    <p class="hint-text" data-i18n-html="game.shortcuts">Shortcuts: <kbd>1</kbd>–<kbd>9</kbd> enter number · <kbd>⌫</kbd> erase · <kbd>N</kbd> notes · <kbd>Z</kbd> undo · <kbd>H</kbd> hint · <kbd>P</kbd> pause</p>
   </div>
 
   <div class="toast" id="toast" role="status" hidden></div>
@@ -148,11 +148,11 @@
   <div class="modal" id="modal-difficulty" hidden>
     <div class="modal-backdrop" data-close="modal-difficulty"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="difficulty-title">
-      <h2 id="difficulty-title">Chọn ván chơi</h2>
-      <p class="modal-note" id="difficulty-warning" hidden>Ván hiện tại sẽ bị mất.</p>
+      <h2 id="difficulty-title" data-i18n="picker.title">Choose a game</h2>
+      <p class="modal-note" id="difficulty-warning" hidden data-i18n="picker.warning">Your current game will be lost.</p>
       <div class="difficulty-list" id="difficulty-list"></div>
-      <p class="modal-hint">Độ khó được chấm theo kỹ thuật suy luận cần dùng. Thắng đủ số ván ở độ khó hiện tại để mở khóa độ khó tiếp theo.</p>
-      <button class="btn btn-ghost" type="button" data-close="modal-difficulty" id="btn-difficulty-cancel">Hủy</button>
+      <p class="modal-hint" data-i18n="picker.note">Difficulty is graded by the solving techniques required. Win enough games at the current level to unlock the next one.</p>
+      <button class="btn btn-ghost" type="button" data-close="modal-difficulty" id="btn-difficulty-cancel" data-i18n="game.cancel">Cancel</button>
     </div>
   </div>
 
@@ -160,45 +160,54 @@
   <div class="modal" id="modal-settings" hidden>
     <div class="modal-backdrop" data-close="modal-settings"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-      <h2 id="settings-title">Cài đặt</h2>
+      <h2 id="settings-title" data-i18n="settings.title">Settings</h2>
       <div class="settings-list">
         <div class="setting">
           <div class="setting-text">
-            <span class="setting-name">Giao diện</span>
+            <span class="setting-name" data-i18n="settings.theme">Theme</span>
           </div>
-          <div class="segmented" role="radiogroup" aria-label="Giao diện" data-setting="theme">
-            <button type="button" role="radio" data-value="auto">Tự động</button>
-            <button type="button" role="radio" data-value="light">Sáng</button>
-            <button type="button" role="radio" data-value="dark">Tối</button>
+          <div class="segmented" role="radiogroup" aria-label="Theme" data-i18n-attr="aria-label:settings.theme" data-setting="theme">
+            <button type="button" role="radio" data-value="auto" data-i18n="settings.themeAuto">Auto</button>
+            <button type="button" role="radio" data-value="light" data-i18n="settings.themeLight">Light</button>
+            <button type="button" role="radio" data-value="dark" data-i18n="settings.themeDark">Dark</button>
+          </div>
+        </div>
+        <div class="setting">
+          <div class="setting-text">
+            <span class="setting-name" data-i18n="settings.language">Language</span>
+          </div>
+          <div class="segmented" role="radiogroup" aria-label="Language" data-i18n-attr="aria-label:settings.language" id="seg-lang">
+            <button type="button" role="radio" data-value="en">English</button>
+            <button type="button" role="radio" data-value="vi">Tiếng Việt</button>
           </div>
         </div>
         <div class="setting setting-col">
           <div class="setting-text">
-            <span class="setting-name">Cách nhập số</span>
-            <span class="setting-desc">Chọn số trước: nhấn một số trên bàn phím rồi chạm vào các ô cần điền.</span>
+            <span class="setting-name" data-i18n="settings.inputMode">Input method</span>
+            <span class="setting-desc" data-i18n="settings.inputModeDesc">Number first: tap a number on the pad, then tap the cells to fill.</span>
           </div>
-          <div class="segmented" role="radiogroup" aria-label="Cách nhập số" data-setting="inputMode">
-            <button type="button" role="radio" data-value="cell">Chọn ô trước</button>
-            <button type="button" role="radio" data-value="number">Chọn số trước</button>
+          <div class="segmented" role="radiogroup" aria-label="Input method" data-i18n-attr="aria-label:settings.inputMode" data-setting="inputMode">
+            <button type="button" role="radio" data-value="cell" data-i18n="settings.cellFirst">Cell first</button>
+            <button type="button" role="radio" data-value="number" data-i18n="settings.numberFirst">Number first</button>
           </div>
         </div>
         <label class="setting">
           <div class="setting-text">
-            <span class="setting-name">Báo lỗi ngay</span>
-            <span class="setting-desc">Tô đỏ số sai ngay khi nhập và đếm lỗi. Tắt để tự kiểm tra.</span>
+            <span class="setting-name" data-i18n="settings.checkErrors">Instant error check</span>
+            <span class="setting-desc" data-i18n="settings.checkErrorsDesc">Mark wrong numbers in red as you enter them and count mistakes. Turn off to check yourself.</span>
           </div>
           <input type="checkbox" class="switch" data-setting="checkErrors">
         </label>
         <label class="setting" id="setting-mistake-limit">
           <div class="setting-text">
-            <span class="setting-name">Giới hạn 3 lỗi</span>
-            <span class="setting-desc">Thua khi mắc 3 lỗi. Cần bật "Báo lỗi ngay".</span>
+            <span class="setting-name" data-i18n="settings.mistakeLimit">3-mistake limit</span>
+            <span class="setting-desc" data-i18n="settings.mistakeLimitDesc">You lose after 3 mistakes. Requires "Instant error check".</span>
           </div>
           <input type="checkbox" class="switch" data-setting="mistakeLimit">
         </label>
       </div>
-      <button class="btn btn-primary" type="button" data-close="modal-settings">Xong</button>
-      <p class="app-version">Sudoku · phiên bản <span id="app-version">—</span></p>
+      <button class="btn btn-primary" type="button" data-close="modal-settings" data-i18n="game.done">Done</button>
+      <p class="app-version">Sudoku · <span data-i18n="settings.version">version</span> <span id="app-version">—</span></p>
     </div>
   </div>
 
@@ -206,21 +215,21 @@
   <div class="modal" id="modal-stats" hidden>
     <div class="modal-backdrop" data-close="modal-stats"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
-      <h2 id="stats-title">Thống kê</h2>
-      <p class="stats-section">Ván hằng ngày</p>
+      <h2 id="stats-title" data-i18n="stats.title">Statistics</h2>
+      <p class="stats-section" data-i18n="stats.daily">Daily puzzle</p>
       <dl class="result-stats">
-        <div><dt>Chuỗi ngày</dt><dd id="stats-streak">0</dd></div>
-        <div><dt>Đã xong</dt><dd id="stats-daily-total">0</dd></div>
-        <div><dt>Tốt nhất</dt><dd id="stats-daily-best">—</dd></div>
+        <div><dt data-i18n="stats.streak">Day streak</dt><dd id="stats-streak">0</dd></div>
+        <div><dt data-i18n="stats.completed">Completed</dt><dd id="stats-daily-total">0</dd></div>
+        <div><dt data-i18n="stats.best">Best</dt><dd id="stats-daily-best">—</dd></div>
       </dl>
-      <p class="stats-section">Theo độ khó</p>
+      <p class="stats-section" data-i18n="stats.byDifficulty">By difficulty</p>
       <table class="stats-table">
-        <thead><tr><th>Mức</th><th>Thắng</th><th>Thua</th><th>Tốt nhất</th><th>TB</th></tr></thead>
+        <thead><tr><th data-i18n="stats.level">Level</th><th data-i18n="stats.won">Won</th><th data-i18n="stats.lost">Lost</th><th data-i18n="stats.best">Best</th><th data-i18n="stats.avg">Avg</th></tr></thead>
         <tbody id="stats-body"></tbody>
       </table>
       <div class="modal-actions">
-        <button class="btn btn-ghost" type="button" id="btn-stats-reset">Đặt lại</button>
-        <button class="btn btn-primary" type="button" data-close="modal-stats">Đóng</button>
+        <button class="btn btn-ghost" type="button" id="btn-stats-reset" data-i18n="stats.reset">Reset</button>
+        <button class="btn btn-primary" type="button" data-close="modal-stats" data-i18n="game.close">Close</button>
       </div>
     </div>
   </div>
@@ -230,15 +239,15 @@
     <div class="modal-backdrop"></div>
     <div class="modal-card modal-result" role="dialog" aria-modal="true" aria-labelledby="win-title">
       <div class="result-emoji">🎉</div>
-      <h2 id="win-title">Xuất sắc!</h2>
-      <p>Bạn đã hoàn thành ván Sudoku.</p>
+      <h2 id="win-title" data-i18n="win.title">Excellent!</h2>
+      <p data-i18n="win.text">You completed the Sudoku.</p>
       <dl class="result-stats">
-        <div><dt>Độ khó</dt><dd id="win-difficulty">Dễ</dd></div>
-        <div><dt>Thời gian</dt><dd id="win-time">00:00</dd></div>
-        <div><dt>Lỗi</dt><dd id="win-mistakes">0</dd></div>
+        <div><dt data-i18n="status.difficulty">Difficulty</dt><dd id="win-difficulty">Easy</dd></div>
+        <div><dt data-i18n="status.time">Time</dt><dd id="win-time">00:00</dd></div>
+        <div><dt data-i18n="status.mistakes">Mistakes</dt><dd id="win-mistakes">0</dd></div>
       </dl>
       <p class="unlock-note" id="win-unlock" hidden></p>
-      <button class="btn btn-primary" type="button" id="btn-win-new">Ván mới</button>
+      <button class="btn btn-primary" type="button" id="btn-win-new" data-i18n="game.new">New game</button>
     </div>
   </div>
 
@@ -247,16 +256,17 @@
     <div class="modal-backdrop"></div>
     <div class="modal-card modal-result" role="dialog" aria-modal="true" aria-labelledby="lose-title">
       <div class="result-emoji">😢</div>
-      <h2 id="lose-title">Hết lượt!</h2>
-      <p>Bạn đã mắc 3 lỗi. Chơi lại ván này hoặc bắt đầu ván mới.</p>
+      <h2 id="lose-title" data-i18n="lose.title">Out of chances!</h2>
+      <p data-i18n="lose.text">You made 3 mistakes. Retry this puzzle or start a new game.</p>
       <div class="modal-actions">
-        <button class="btn btn-ghost" type="button" id="btn-lose-retry">Chơi lại</button>
-        <button class="btn btn-primary" type="button" id="btn-lose-new">Ván mới</button>
+        <button class="btn btn-ghost" type="button" id="btn-lose-retry" data-i18n="game.retry">Retry</button>
+        <button class="btn btn-primary" type="button" id="btn-lose-new" data-i18n="game.new">New game</button>
       </div>
     </div>
   </div>
 
-  <script src="engine.js?v=1.1.0"></script>
-  <script src="app.js?v=1.1.0"></script>
+  <script src="i18n.js?v=1.1.1"></script>
+  <script src="engine.js?v=1.1.1"></script>
+  <script src="app.js?v=1.1.1"></script>
 </body>
 </html>

@@ -40,17 +40,17 @@ function CoDamFactory() {
   //   backCapture: quân thường được ăn lùi; flyingKing: vua đi / ăn xa
   //   promoteContinues: phong vua giữa chuỗi ăn thì ăn tiếp như vua (không thì hết lượt)
   const RULES = {
-    intl: { id: 'intl', label: 'Quốc tế 8x8', short: 'Quốc tế', backCapture: true, flyingKing: true, promoteContinues: true, man: 100, king: 320 },
-    english: { id: 'english', label: 'Kiểu Mỹ/Anh', short: 'Mỹ/Anh', backCapture: false, flyingKing: false, promoteContinues: false, man: 100, king: 165 },
+    intl: { id: 'intl', backCapture: true, flyingKing: true, promoteContinues: true, man: 100, king: 320 },
+    english: { id: 'english', backCapture: false, flyingKing: false, promoteContinues: false, man: 100, king: 165 },
   };
 
   // Cấu hình các mức máy
   //   depth: độ sâu tối đa; noise: nhiễu cộng vào điểm từng nước ở gốc (đơn vị: 100 = một quân)
   //   timeMs: trần thời gian (đào sâu dần); maxNodes: trần số nút để không nghĩ quá lâu
   const LEVELS = {
-    easy: { label: 'Dễ', depth: 2, noise: 70 },
-    medium: { label: 'Vừa', depth: 6, noise: 0, maxNodes: 400000 },
-    hard: { label: 'Khó', depth: 40, noise: 0, timeMs: 1500 },
+    easy: { depth: 2, noise: 70 },
+    medium: { depth: 6, noise: 0, maxNodes: 400000 },
+    hard: { depth: 40, noise: 0, timeMs: 1500 },
   };
 
   const rowOf = (sq) => sq >> 3;

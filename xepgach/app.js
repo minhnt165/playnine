@@ -10,8 +10,11 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.0.1';
   const E = window.XepGach;
+  const T = window.I18N.t;
+  // Điền chữ tĩnh theo ngôn ngữ trước khi vẽ phần động
+  window.I18N.apply();
 
   // Mọi khóa localStorage đều có tiền tố playnine-xepgach-
   const KEYS = {
@@ -32,7 +35,7 @@
   const $ = (id) => document.getElementById(id);
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const coarsePointer = window.matchMedia('(pointer: coarse)');
-  const fmt = (n) => Number(n || 0).toLocaleString('vi-VN');
+  const fmt = (n) => window.I18N.fmtNumber(n);
   const now = () => performance.now();
 
   /* ---------------- localStorage (mọi truy cập đều bọc try/catch) ---------------- */
@@ -126,18 +129,18 @@
   /** Tóm tắt cho thẻ game ở cổng PlayNine. */
   function writeSummary() {
     const list = [];
-    if (stats.best > 0) list.push({ value: fmt(stats.best), label: 'Điểm cao nhất' });
-    if (stats.mostLines > 0) list.push({ value: fmt(stats.mostLines), label: 'Hàng nhiều nhất' });
-    if (stats.highestLevel > 0) list.push({ value: String(stats.highestLevel), label: 'Cấp cao nhất' });
+    if (stats.best > 0) list.push({ value: fmt(stats.best), label: T('summary.best') });
+    if (stats.mostLines > 0) list.push({ value: fmt(stats.mostLines), label: T('summary.mostLines') });
+    if (stats.highestLevel > 0) list.push({ value: String(stats.highestLevel), label: T('summary.highestLevel') });
 
-    let note = 'Xếp khối cho kín hàng để xóa hàng, ghi điểm';
-    if (stats.best > 0) note = 'Điểm cao nhất ' + fmt(stats.best) + ' · ' + fmt(stats.mostLines) + ' hàng';
+    let note = T('summary.intro');
+    if (stats.best > 0) note = T('summary.note', { score: fmt(stats.best), lines: linesText(stats.mostLines) });
 
     let resume = null;
     if (hasOpenGame()) {
       resume = {
-        title: 'Tiếp tục Xếp Gạch',
-        detail: 'Điểm ' + fmt(game.score) + ' · cấp ' + game.level,
+        title: T('summary.resumeTitle'),
+        detail: T('summary.resumeDetail', { score: fmt(game.score), level: game.level }),
         pct: null,
       };
     }
@@ -460,7 +463,7 @@
     pauseBtn.disabled = !open;
     const paused = mode === 'paused';
     pauseBtn.classList.toggle('is-paused', paused);
-    const label = paused ? 'Tiếp tục (P)' : 'Tạm dừng (P)';
+    const label = paused ? T('top.resume') : T('top.pause');
     pauseBtn.setAttribute('aria-label', label);
     pauseBtn.title = label;
   }
@@ -517,8 +520,13 @@
     Object.keys(overlays).forEach((k) => (overlays[k].hidden = k !== name));
   }
 
+  /** "12 hàng" / "12 lines" (tiếng Anh có số ít / số nhiều). */
+  function linesText(n) {
+    return T('detail.lines', { n: fmt(n) });
+  }
+
   function detailText() {
-    return 'Điểm ' + fmt(game.score) + ' · cấp ' + game.level + ' · ' + fmt(game.lines) + ' hàng';
+    return T('detail.full', { score: fmt(game.score), level: game.level, lines: linesText(game.lines) });
   }
 
   /* ---------------- Luồng chơi ---------------- */
@@ -543,7 +551,7 @@
     drawAll();
     boardEl.focus();
     kick();
-    announce('Bắt đầu ván mới từ cấp ' + game.level);
+    announce(T('announce.start', { level: game.level }));
   }
 
   /** Ván mới: hỏi lại nếu đang dở ván. */
@@ -554,7 +562,7 @@
       return;
     }
     pause(false);
-    $('confirm-text').textContent = 'Ván đang chơi (' + detailText().toLowerCase() + ') sẽ bị bỏ.';
+    $('confirm-text').textContent = T('confirm.textDetail', { detail: detailText().toLowerCase() });
     confirmAction = startNewGame;
     openModal('modal-confirm', $('btn-confirm-ok'));
   }
@@ -593,7 +601,7 @@
     updateHud();
     persist();
     if (!modalOpen()) $('btn-again').focus();
-    announce('Hết chỗ xếp. ' + detailText() + (record ? '. Kỷ lục mới!' : ''));
+    announce(T(record ? 'announce.overRecord' : 'announce.over', { detail: detailText() }));
   }
 
   /** Xử lý kết quả khóa khối từ engine (thả thẳng hoặc hết trễ khóa). */
@@ -627,17 +635,17 @@
 
     // Dòng chữ lớn: xếp 4 hàng > lên cấp > combo
     const subs = [];
-    if (res.b2b) subs.push('Liên tiếp ×1,5');
+    if (res.b2b) subs.push(T('banner.b2b'));
     if (n === 4) {
-      if (res.levelUp) subs.push('Lên cấp ' + game.level);
-      else if (res.combo >= 1) subs.push('Combo ×' + res.combo);
-      showBanner('Xếp 4 hàng!', subs.join(' · '));
-      announce('Xếp 4 hàng! +' + fmt(res.points) + ' điểm');
+      if (res.levelUp) subs.push(T('banner.levelUp', { level: game.level }));
+      else if (res.combo >= 1) subs.push(T('banner.combo', { n: res.combo }));
+      showBanner(T('banner.quad'), subs.join(' · '));
+      announce(T('announce.quad', { points: fmt(res.points) }));
     } else if (res.levelUp) {
-      showBanner('Cấp ' + game.level, res.combo >= 1 ? 'Combo ×' + res.combo : '', true);
-      announce('Lên cấp ' + game.level);
+      showBanner(T('banner.level', { level: game.level }), res.combo >= 1 ? T('banner.combo', { n: res.combo }) : '', true);
+      announce(T('banner.levelUp', { level: game.level }));
     } else if (n && res.combo >= 2) {
-      showBanner('Combo ×' + res.combo, '', true);
+      showBanner(T('banner.combo', { n: res.combo }), '', true);
     }
 
     updateRecords();
@@ -828,7 +836,7 @@
   /* ---------------- Cài đặt ---------------- */
   function syncSettingsUI() {
     document.querySelectorAll('.segmented').forEach((group) => {
-      const cur = String(settings[group.dataset.setting]);
+      const cur = group.dataset.setting === 'lang' ? window.I18N.lang : String(settings[group.dataset.setting]);
       group.querySelectorAll('button').forEach((b) => {
         const on = b.dataset.value === cur;
         b.setAttribute('aria-checked', on ? 'true' : 'false');
@@ -856,6 +864,10 @@
       settings.startLevel = Number(value);
       saveSettings();
       if (!game || mode === 'idle') updateHud();
+    } else if (key === 'lang') {
+      // Lưu ván (I18N.beforeReload) rồi tải lại trang theo ngôn ngữ mới
+      if (value !== window.I18N.lang) window.I18N.set(value);
+      return;
     }
     syncSettingsUI();
   }
@@ -905,14 +917,14 @@
   function disarmReset() {
     resetArmed = false;
     clearTimeout(resetTimer);
-    resetBtn.textContent = 'Đặt lại';
+    resetBtn.textContent = T('stats.reset');
     resetBtn.classList.remove('btn-danger');
   }
   resetBtn.addEventListener('click', () => {
     if (!resetArmed) {
       // Bấm hai lần để tránh xóa nhầm
       resetArmed = true;
-      resetBtn.textContent = 'Bấm lần nữa để xóa';
+      resetBtn.textContent = T('stats.resetConfirm');
       resetBtn.classList.add('btn-danger');
       resetTimer = setTimeout(disarmReset, 3500);
       return;
@@ -924,7 +936,7 @@
     persist();
     renderStats();
     updateHud();
-    toast('Đã đặt lại thống kê');
+    toast(T('stats.resetDone'));
   });
 
   /* ---------------- Nút bấm ---------------- */
@@ -1164,6 +1176,11 @@
     }
   });
   window.addEventListener('blur', () => pause(false));
+  // Đổi ngôn ngữ (ở đây hoặc ở cổng) sẽ tải lại trang: tạm dừng và lưu ván trước
+  window.I18N.beforeReload = () => {
+    pause(false);
+    persist();
+  };
 
   const onSchemeChange = () => {
     if (settings.theme === 'auto') applyTheme();

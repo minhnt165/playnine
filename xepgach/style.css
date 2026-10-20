@@ -214,7 +214,8 @@ button:disabled { cursor: default; }
   font-weight: 800;
   letter-spacing: -0.01em;
   line-height: 1;
-  white-space: nowrap;
+  /* Tên dài (bản tiếng Anh) được xuống dòng thay vì đè lên các nút */
+  white-space: normal;
 }
 .topbar-actions { display: flex; align-items: center; gap: 6px; flex: none; }
 
@@ -734,6 +735,11 @@ kbd {
 }
 
 /* ===================== Màn hình rất hẹp / thấp ===================== */
+/* Không đủ chỗ cho chữ "Ván mới" / "New game" cạnh tên game: nút chỉ còn icon */
+@media (max-width: 440px) {
+  .btn-new span { display: none; }
+  .btn-new { width: 42px; padding: 0; }
+}
 @media (max-width: 380px) {
   .btn-new span { display: none; }
   .btn-new { width: 40px; padding: 0; }

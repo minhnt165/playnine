@@ -16,7 +16,7 @@ Game 2048 chạy trên web, viết bằng HTML + CSS + JavaScript thuần. Khôn
 - Hỏi lại trước khi bỏ ván đang dở (bấm Ván mới hoặc đổi kích thước).
 - Tự lưu ván đang chơi vào `localStorage` sau mỗi nước, mở lại trang thì tiếp tục (kể cả lớp phủ thắng / thua).
 - Màu ô tông gỗ / vàng / hổ phách / đỏ theo bảng màu PlayNine, mỗi giá trị một màu tới 2048, các ô lớn hơn dùng đỏ sẫm viền vàng. Cỡ chữ tự nhỏ lại với số 3, 4, 5, 6 chữ số.
-- Giao diện tiếng Việt, dark mode theo hệ thống hoặc chọn thủ công (Tự động / Sáng / Tối, áp trước khi vẽ trang để không nháy màu).
+- Giao diện tiếng Anh (mặc định) / tiếng Việt, dark mode theo hệ thống hoặc chọn thủ công (Tự động / Sáng / Tối, áp trước khi vẽ trang để không nháy màu).
 - Tối ưu mobile: bàn chơi là hình vuông lớn nhất vừa phần còn lại của màn hình (`100dvh` + container query) nên không phải cuộn khi chơi; chạy được ở bề rộng 360px; nút bấm tối thiểu 40px; tôn trọng safe-area (tai thỏ); layout riêng khi xoay ngang (điểm bên trái, bàn chơi bên phải); modal dạng bottom sheet trên màn hình hẹp.
 - Truy cập bằng bàn phím: mọi nút đều Tab tới được, viền focus rõ ràng, modal giữ focus bên trong và đóng bằng `Esc`, thông báo thắng / thua / hoàn tác qua vùng `aria-live`. Tôn trọng `prefers-reduced-motion` (tắt trượt, nảy, "+N").
 
@@ -36,13 +36,20 @@ index.html   Khung trang, lớp phủ thắng / thua, modal Cài đặt / Thốn
 style.css    Giao diện, bảng màu PlayNine, màu ô, dark mode, responsive, hiệu ứng
 engine.js    Engine thuần (không đụng DOM): trượt / gộp, sinh ô, hết nước, hoàn tác, khôi phục state
 app.js       Render theo id ô, bàn phím, vuốt, lưu trữ, thống kê, tóm tắt cho cổng (cần engine.js nạp trước)
+i18n.js      Từ điển tiếng Anh / tiếng Việt và hàm dịch I18N (nạp trước engine.js, app.js)
 test.js      Test engine chạy bằng Node
 icon.svg     Icon app 64x64, dùng luôn làm favicon
 ```
 
 `engine.js` gắn vào `window.Game2048` khi chạy trong trình duyệt và `module.exports` khi chạy trong Node. Mọi hàm nhận state và trả về state mới, không sửa state cũ. `move(state, dir)` trả về thêm danh sách ô trượt (`slides`), ô gộp (`merges`) và ô mới (`spawned`) để giao diện chạy hiệu ứng.
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html` để trình duyệt tải file mới thay vì dùng bản cache. Số lượt hoàn tác (`MAX_UNDO`), ô thắng (`WIN_VALUE`), tỉ lệ ô 4 (`FOUR_CHANCE`) và các kích thước lưới (`SIZES`) nằm ở đầu `engine.js`; ngưỡng vuốt (`SWIPE_MIN`) ở đầu `app.js`.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html` để trình duyệt tải file mới thay vì dùng bản cache. Số lượt hoàn tác (`MAX_UNDO`), ô thắng (`WIN_VALUE`), tỉ lệ ô 4 (`FOUR_CHANCE`) và các kích thước lưới (`SIZES`) nằm ở đầu `engine.js`; ngưỡng vuốt (`SWIPE_MIN`) ở đầu `app.js`.
+
+## Ngôn ngữ / Language
+
+Giao diện có tiếng Anh (mặc định) và tiếng Việt, chọn ở hàng **Language / Ngôn ngữ** trong Cài đặt. Ngôn ngữ lưu ở khóa dùng chung với cổng PlayNine `localStorage['playnine-lang']` (`'en'` hoặc `'vi'`; thiếu hoặc sai thì dùng `'en'`, không tự đoán theo trình duyệt). Đổi ngôn ngữ thì game lưu ván rồi tải lại trang; cổng hoặc tab khác đổi khóa này thì game cũng tự tải lại (sự kiện `storage`).
+
+`i18n.js` định nghĩa biến toàn cục `I18N`: `t(key, params)` tra chuỗi (thiếu thì lấy tiếng Anh, `{tên}` thay bằng `params`, chuỗi số nhiều tiếng Anh dạng `{ one, other }` chọn theo `params.n`), `apply()` điền các phần tử có `data-i18n` / `data-i18n-html` / `data-i18n-attr`, `set(lang)`, `fmtNumber(n)` (`en-US` / `vi-VN`). Chữ tĩnh trong `index.html` viết sẵn bằng tiếng Anh nên không nháy chữ khi tải. `engine.js` không chứa chữ hiển thị. Tóm tắt cho cổng (`note`, `stats[].label`, `resume`) ghi theo ngôn ngữ đang chọn và được ghi lại mỗi lần mở trang.
 
 ## Dữ liệu lưu trong trình duyệt
 

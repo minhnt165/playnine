@@ -10,8 +10,12 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.0.1';
   const E = window.PhaGach;
+  const I18N = window.I18N;
+  const t = I18N.t;
+  // Chữ tĩnh trong trang theo ngôn ngữ đã chọn, trước khi vẽ nội dung động
+  I18N.apply();
 
   // Mọi khóa localStorage đều có tiền tố playnine-phagach-
   const KEYS = {
@@ -35,7 +39,7 @@
   const $ = (id) => document.getElementById(id);
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const coarsePointer = window.matchMedia('(pointer: coarse)');
-  const fmt = (n) => Number(n || 0).toLocaleString('vi-VN');
+  const fmt = (n) => I18N.fmtNumber(n);
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 
   /* ---------------- localStorage (mọi truy cập đều bọc try/catch) ---------------- */
@@ -126,18 +130,18 @@
   /** Tóm tắt cho thẻ game ở cổng PlayNine. */
   function writeSummary() {
     const list = [];
-    if (stats.best > 0) list.push({ value: fmt(stats.best), label: 'Điểm cao nhất' });
-    if (stats.highestLevel > 0) list.push({ value: String(stats.highestLevel), label: 'Màn cao nhất' });
-    if (stats.bricks > 0) list.push({ value: fmt(stats.bricks), label: 'Gạch đã phá' });
+    if (stats.best > 0) list.push({ value: fmt(stats.best), label: t('sum.best') });
+    if (stats.highestLevel > 0) list.push({ value: String(stats.highestLevel), label: t('sum.level') });
+    if (stats.bricks > 0) list.push({ value: fmt(stats.bricks), label: t('sum.bricks') });
 
-    let note = 'Đỡ bóng, phá hết gạch qua 10 màn';
-    if (stats.best > 0) note = 'Điểm cao nhất ' + fmt(stats.best) + ' · tới màn ' + stats.highestLevel;
+    let note = t('sum.note');
+    if (stats.best > 0) note = t('sum.noteBest', { score: fmt(stats.best), level: stats.highestLevel });
 
     let resume = null;
     if (inProgress()) {
       resume = {
-        title: 'Tiếp tục Phá Gạch',
-        detail: 'Màn ' + game.level + ' · ' + fmt(game.score) + ' điểm · ' + game.lives + ' mạng',
+        title: t('sum.resume'),
+        detail: detailText(),
         pct: null,
       };
     }
@@ -506,7 +510,7 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = colors.accent;
-      ctx.fillText('Chuỗi x' + mult, E.W / 2 - 6, 18);
+      ctx.fillText(t('canvas.combo', { n: mult }), E.W / 2 - 6, 18);
     }
     let x = E.W - 8;
     E.TIMED.slice().reverse().forEach((k) => {
@@ -674,9 +678,9 @@
     pauseBtn.disabled = !open;
     const paused = mode === 'paused';
     pauseBtn.dataset.state = paused ? 'paused' : 'running';
-    const label = paused ? 'Tiếp tục' : 'Tạm dừng';
+    const label = paused ? t('btn.resume') : t('btn.pause');
     pauseBtn.setAttribute('aria-label', label);
-    pauseBtn.title = label + ' (P)';
+    pauseBtn.title = t('btn.keySuffix', { label });
     readyHint.hidden = !(mode === 'playing' && game.phase === 'serve' && !modalOpen());
   }
 
@@ -735,12 +739,12 @@
     Object.keys(overlays).forEach((k) => (overlays[k].hidden = k !== name));
   }
   function detailText() {
-    return 'Màn ' + game.level + ' · ' + fmt(game.score) + ' điểm · ' + game.lives + ' mạng';
+    return t('detail', { level: game.level, score: fmt(game.score), n: game.lives });
   }
   function renderStartBest() {
     const el = $('start-best');
     el.hidden = !stats.best;
-    el.innerHTML = 'Kỷ lục: <b>' + fmt(stats.best) + '</b> điểm · tới màn <b>' + stats.highestLevel + '</b>';
+    el.innerHTML = t('start.best', { score: fmt(stats.best), level: stats.highestLevel });
   }
 
   /* ---------------- Luồng chơi ---------------- */
@@ -752,8 +756,10 @@
     hideBanner();
   }
 
-  const levelTitle = (n) => 'Màn ' + n;
-  const levelSub = (n) => E.levelName(n) + (E.loopOf(n) > 1 ? ' · vòng ' + E.loopOf(n) : '');
+  const levelTitle = (n) => t('banner.level', { n });
+  const levelName = (n) => t('level.' + (((n - 1) % E.LEVELS.length) + 1));
+  const powerName = (type) => t('power.' + type);
+  const levelSub = (n) => levelName(n) + (E.loopOf(n) > 1 ? t('banner.loop', { n: E.loopOf(n) }) : '');
 
   function startNewGame() {
     closeModal();
@@ -774,7 +780,7 @@
     boardEl.focus({ preventScroll: true });
     showBanner(levelTitle(1), levelSub(1));
     kick();
-    announce('Ván mới, màn 1. Bấm Space hoặc chạm để phóng bóng.');
+    announce(t('say.newGame'));
   }
 
   /** Ván mới: hỏi lại nếu đang dở ván. */
@@ -784,7 +790,7 @@
       return;
     }
     pause(false);
-    $('confirm-text').textContent = 'Ván đang chơi (' + detailText().toLowerCase() + ') sẽ bị bỏ.';
+    $('confirm-text').textContent = t('confirm.textDetail', { detail: detailText().toLowerCase() });
     confirmAction = startNewGame;
     openModal('modal-confirm', $('btn-confirm-ok'));
   }
@@ -799,7 +805,7 @@
     persist();
     draw();
     if (focus && !modalOpen()) $('btn-resume').focus();
-    announce('Tạm dừng');
+    announce(t('say.paused'));
   }
 
   function resume() {
@@ -831,7 +837,7 @@
     updateHud();
     persist(); // ván đã xong: xóa ván lưu, resume = null
     vibrate([70, 50, 110]);
-    announce('Hết mạng. Điểm ' + fmt(game.score) + ', tới màn ' + game.level + (record ? '. Kỷ lục mới!' : ''));
+    announce(t('say.over', { score: fmt(game.score), level: game.level }) + (record ? t('say.overRecord') : ''));
     clearTimeout(overTimer);
     overTimer = setTimeout(
       () => {
@@ -859,7 +865,7 @@
     updateHud();
     persist();
     showBanner(levelTitle(game.level), levelSub(game.level));
-    announce('Màn ' + game.level + ': ' + E.levelName(game.level) + '. Bấm Space hoặc chạm để phóng bóng.');
+    announce(t('say.level', { n: game.level, name: levelName(game.level) }));
   }
 
   /** Xử lý sự kiện của một bước vật lý: hiệu ứng, thống kê, thông báo. */
@@ -883,10 +889,11 @@
     });
     ev.caught.forEach((type) => {
       vibrate(20);
-      popup(game.paddle.x, E.PADDLE_Y - 18, E.POWER_NAMES[type] + '!', colors.power[type]);
-      announce(E.POWER_NAMES[type]);
+      popup(game.paddle.x, E.PADDLE_Y - 18, powerName(type) + '!', colors.power[type]);
+      announce(powerName(type));
     });
-    ev.expired.forEach((type) => announce('Hết ' + E.POWER_NAMES[type].toLowerCase()));
+    // vi viết thường tên vật phẩm sau "Hết" như cũ; en giữ nguyên
+    ev.expired.forEach((type) => announce(t('power.expired', { name: I18N.lang === 'vi' ? powerName(type).toLowerCase() : powerName(type) })));
     if (ev.ballLost) shakeScreen(2, 160);
     if (ev.gained) {
       updateRecords();
@@ -898,8 +905,8 @@
       vibrate([30, 50, 30]);
       floatScore(ev.bonus);
       const done = game.level === E.LEVELS.length;
-      showBanner(done ? 'Phá đảo 10 màn!' : 'Qua màn ' + game.level + '!', '+' + fmt(ev.bonus) + ' điểm thưởng');
-      announce((done ? 'Phá đảo 10 màn! ' : 'Qua màn ' + game.level + '. ') + 'Thưởng ' + fmt(ev.bonus) + ' điểm.');
+      showBanner(done ? t('banner.won') : t('banner.cleared', { n: game.level }), t('banner.bonus', { n: fmt(ev.bonus) }));
+      announce((done ? t('say.won') : t('say.cleared', { n: game.level })) + t('say.bonus', { n: fmt(ev.bonus) }));
       updateRecords();
       persist();
     }
@@ -913,7 +920,7 @@
       bricksDirty = true;
       updateHud();
       persist();
-      announce('Mất một mạng, còn ' + game.lives + ' mạng. Bấm Space hoặc chạm để phóng bóng.');
+      announce(t('say.lifeLost', { n: game.lives }));
     }
   }
 
@@ -1056,7 +1063,7 @@
   /* ---------------- Cài đặt ---------------- */
   function syncSettingsUI() {
     document.querySelectorAll('[role="radiogroup"][data-setting]').forEach((group) => {
-      const cur = String(settings[group.dataset.setting]);
+      const cur = group.dataset.setting === 'lang' ? I18N.lang : String(settings[group.dataset.setting]);
       group.querySelectorAll('button[data-value]').forEach((b) => {
         const on = b.dataset.value === cur;
         b.setAttribute('aria-checked', on ? 'true' : 'false');
@@ -1072,6 +1079,9 @@
       applyTheme();
     } else if (key === 'sens' && SENS[value]) {
       settings.sens = value;
+    } else if (key === 'lang') {
+      I18N.set(value); // lưu ván (onBeforeReload) rồi tải lại theo ngôn ngữ mới
+      return;
     } else {
       return;
     }
@@ -1123,14 +1133,14 @@
   function disarmReset() {
     resetArmed = false;
     clearTimeout(resetTimer);
-    resetBtn.textContent = 'Đặt lại';
+    resetBtn.textContent = t('stats.reset');
     resetBtn.classList.remove('btn-danger');
   }
   resetBtn.addEventListener('click', () => {
     if (!resetArmed) {
       // Bấm hai lần để tránh xóa nhầm
       resetArmed = true;
-      resetBtn.textContent = 'Bấm lần nữa để xóa';
+      resetBtn.textContent = t('stats.resetConfirm');
       resetBtn.classList.add('btn-danger');
       resetTimer = setTimeout(disarmReset, 3500);
       return;
@@ -1143,7 +1153,7 @@
     renderStats();
     renderStartBest();
     updateHud();
-    toast('Đã đặt lại thống kê');
+    toast(t('toast.statsReset'));
   });
 
   /* ---------------- Nút bấm ---------------- */
@@ -1298,6 +1308,11 @@
     pause(false);
     persist();
   });
+  // Đổi ngôn ngữ (ở đây hoặc ở cổng): tạm dừng và lưu ván trước khi tải lại
+  I18N.onBeforeReload = () => {
+    pause(false);
+    persist();
+  };
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
       pause(false); // tự tạm dừng khi ẩn trang

@@ -44,6 +44,7 @@ Game rắn săn mồi chạy trên web, viết bằng HTML + CSS + JavaScript th
 ## Cấu trúc
 
 ```
+i18n.js      Từ điển tiếng Anh / tiếng Việt và hàm dịch I18N (nạp trước engine.js)
 index.html   Khung trang, màn hình bắt đầu, lớp phủ tạm dừng / thua, nút điều hướng, modal Cài đặt / Thống kê / Xác nhận
 style.css    Giao diện, bảng màu PlayNine, màu bàn chơi / rắn, dark mode, responsive
 engine.js    Engine thuần (không đụng DOM): bước đi, hàng đợi hướng, va chạm, sinh mồi, mồi thưởng, tốc độ, bản đồ, khôi phục state
@@ -54,7 +55,13 @@ icon.svg     Icon app 64x64, dùng luôn làm favicon
 
 `engine.js` gắn vào `window.GameRan` khi chạy trong trình duyệt và `module.exports` khi chạy trong Node. Mọi hàm nhận state và trả về state mới, không sửa state cũ. State là object thuần (lưu thẳng bằng `JSON.stringify`). Thân rắn là mảng chỉ số ô (`hàng * n + cột`), phần tử đầu là đầu rắn. `step(state)` đi một bước và trả về thêm các sự kiện (`ate`, `gained`, `died`, `won`, `bonusSpawned`, `bonusExpired`) để giao diện chạy hiệu ứng; `turn(state, dir)` thêm lệnh vào hàng đợi; `tickMs(state)` cho biết độ dài bước hiện tại. Vòng lặp trong `app.js` dùng `requestAnimationFrame` với bộ đếm thời gian tích lũy, xử lý tối đa 4 bước mỗi khung hình khi máy giật.
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html` để trình duyệt tải file mới thay vì dùng bản cache. Tốc độ (`BASE_MS`, `ACCEL_STEP`, `ACCEL_MIN`), điểm (`FOOD_POINTS`, `BONUS_POINTS`), mồi thưởng (`BONUS_MS`, `BONUS_EVERY_MIN`, `BONUS_EVERY_MAX`, `BONUS_GROW`), kích thước bàn (`SIZES`) và tên bản đồ (`MAPS`) nằm ở đầu `engine.js`; ngưỡng vuốt (`SWIPE_MIN`), chu kỳ lưu (`SAVE_EVERY`) ở đầu `app.js`.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html` để trình duyệt tải file mới thay vì dùng bản cache. Tốc độ (`BASE_MS`, `ACCEL_STEP`, `ACCEL_MIN`), điểm (`FOOD_POINTS`, `BONUS_POINTS`), mồi thưởng (`BONUS_MS`, `BONUS_EVERY_MIN`, `BONUS_EVERY_MAX`, `BONUS_GROW`), kích thước bàn (`SIZES`) và mã bản đồ (`MAPS`) nằm ở đầu `engine.js`; ngưỡng vuốt (`SWIPE_MIN`), chu kỳ lưu (`SAVE_EVERY`) ở đầu `app.js`.
+
+## Ngôn ngữ / Language
+
+Giao diện có tiếng Anh (mặc định) và tiếng Việt. Toàn bộ chữ hiển thị nằm trong từ điển `{ en, vi }` của `i18n.js`; `engine.js` chỉ giữ mã chế độ / tốc độ / bản đồ, không chứa chữ. `index.html` viết sẵn bằng tiếng Anh và gắn `data-i18n` (chữ), `data-i18n-html` (chuỗi có `<b>` / `<kbd>`), `data-i18n-attr` (`aria-label`, `title`...); `app.js` gọi `I18N.apply()` lúc khởi động và dùng `I18N.t(key, params)` cho mọi chữ sinh bằng JS (trạng thái, thông báo, lớp phủ, thống kê, tóm tắt cho cổng). Số định dạng theo `en-US` / `vi-VN` qua `I18N.fmtNumber`.
+
+Ngôn ngữ lưu ở khóa dùng chung `playnine-lang` (`en` | `vi`, thiếu hoặc sai thì là `en`), dùng chung với cổng PlayNine và các game khác. Đổi ở mục **Ngôn ngữ** trong Cài đặt: game lưu ván (ván đang dở mở lại ở trạng thái tạm dừng) rồi tải lại trang. Khi trang khác đổi khóa này, sự kiện `storage` làm game lưu ván rồi tải lại theo. Tóm tắt cho cổng được ghi lại ngay khi mở game nên chữ trong đó luôn theo ngôn ngữ hiện tại.
 
 ## Dữ liệu lưu trong trình duyệt
 

@@ -29,7 +29,7 @@ Mỗi hàng và mỗi cột có một dãy số. Mỗi số là độ dài một
 - Tự lưu tranh đang giải vào `localStorage`, mở lại trang thì giải tiếp. Đồng hồ chạy từ thao tác đầu tiên và dừng khi chuyển tab / ẩn trang.
 - Mở trang khi không có ván lưu: vào tranh chưa giải kế tiếp của bộ gần nhất (người mới bắt đầu từ Trái tim 5x5).
 - Cài đặt: giao diện Tự động / Sáng / Tối (áp trước khi vẽ trang để không nháy màu), Kiểm tra lỗi, Tự đánh dấu X, rung khi nhấn giữ.
-- Giao diện tiếng Việt, mobile first (chạy được ở bề rộng 360px, không cuộn trang khi chơi nhờ `100dvh`), nút bấm tối thiểu 40px, tôn trọng safe-area, modal dạng bottom sheet trên điện thoại, layout riêng khi xoay ngang.
+- Giao diện tiếng Anh (mặc định) và tiếng Việt, mobile first (chạy được ở bề rộng 360px, không cuộn trang khi chơi nhờ `100dvh`), nút bấm tối thiểu 40px, tôn trọng safe-area, modal dạng bottom sheet trên điện thoại, layout riêng khi xoay ngang.
 
 ## Phím tắt
 
@@ -51,6 +51,7 @@ Lưới là một điểm dừng Tab duy nhất; con trỏ chỉ hiện khi đi�
 
 ```
 index.html  Khung trang, modal, biểu tượng SVG dùng chung
+i18n.js     Từ điển en / vi và hàm dịch I18N (nạp trước engine.js, app.js)
 style.css   Giao diện, bảng màu PlayNine, dark mode, responsive
 engine.js   Engine thuần (không đụng DOM): gợi ý số, bộ giải theo dòng, đếm nghiệm,
             bộ tranh, tranh ngẫu nhiên / hằng ngày, trạng thái ván, hoàn tác, gợi ý
@@ -61,7 +62,7 @@ icon.svg    Icon app 64x64, dùng luôn làm favicon
 
 `engine.js` gắn đối tượng `Nonogram` vào `window` khi chạy trên trình duyệt và xuất qua `module.exports` khi chạy trong Node.
 
-Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `engine.js`, `app.js` trong `index.html`. Thời gian nhấn giữ (`LONG_PRESS_MS`), ngưỡng hiện nút phóng to (`ZOOM_THRESHOLD`) và cỡ ô khi phóng to (`ZOOM_CELL`) ở đầu `app.js`. Số gợi ý mỗi tranh (`HINTS_PER_PUZZLE`), cỡ tranh hằng ngày (`DAILY_SIZE`) và mật độ tranh ngẫu nhiên (`RANDOM_DENSITY`) ở đầu `engine.js`.
+Phiên bản app nằm ở hằng `APP_VERSION` đầu `app.js` (hiển thị trong modal Cài đặt). Khi phát hành bản mới, tăng số này và sửa tham số `?v=` của `style.css`, `i18n.js`, `engine.js`, `app.js` trong `index.html`. Thời gian nhấn giữ (`LONG_PRESS_MS`), ngưỡng hiện nút phóng to (`ZOOM_THRESHOLD`) và cỡ ô khi phóng to (`ZOOM_CELL`) ở đầu `app.js`. Số gợi ý mỗi tranh (`HINTS_PER_PUZZLE`), cỡ tranh hằng ngày (`DAILY_SIZE`) và mật độ tranh ngẫu nhiên (`RANDOM_DENSITY`) ở đầu `engine.js`.
 
 ## Thêm tranh vào bộ
 
@@ -103,7 +104,16 @@ Tóm tắt cho cổng được ghi lại khi bắt đầu tranh, ở thao tác �
 }
 ```
 
-`resume` chỉ khác `null` khi có tranh đang giải dở (đã có ít nhất một thao tác và chưa giải xong). "Đã tô" là số ô đã tô so với tổng số ô cần tô (không lộ ô nào đúng / sai).
+`resume` chỉ khác `null` khi có tranh đang giải dở (đã có ít nhất một thao tác và chưa giải xong). "Đã tô" là số ô đã tô so với tổng số ô cần tô (không lộ ô nào đúng / sai). Các trường chữ (`note`, `stats[].label`, `resume.title`, `resume.detail`, `daily.title`) viết theo ngôn ngữ đang chọn (ví dụ trên là tiếng Việt) và được ghi lại mỗi lần mở trang.
+
+## Ngôn ngữ / Language
+
+Giao diện có tiếng Anh (mặc định) và tiếng Việt. Ngôn ngữ lưu ở khóa dùng chung của cả cổng PlayNine `localStorage['playnine-lang']` (`'en'` hoặc `'vi'`; thiếu / sai thì dùng tiếng Anh, không tự đoán theo trình duyệt).
+
+- `i18n.js` chứa từ điển `{ en, vi }` và đối tượng `I18N`: `I18N.t(khóa, tham số)` (thiếu bản dịch thì lấy tiếng Anh, rồi tới chính khóa; hỗ trợ số nhiều đơn giản `{ one, other }`), `I18N.apply()` điền chữ vào các phần tử có `data-i18n`, `data-i18n-html`, `data-i18n-attr`, `I18N.set(lang)` lưu ván rồi tải lại trang.
+- Chữ tĩnh trong `index.html` viết sẵn bằng tiếng Anh nên không nháy chữ khi tải.
+- Tên tranh trong bộ được dịch theo id tranh (khóa `pic.<id>`); `engine.js` vẫn giữ tên tiếng Việt và không phụ thuộc ngôn ngữ. Tranh mới chưa có bản dịch thì hiện tên trong `engine.js`.
+- Đổi ngôn ngữ trong Cài đặt (hàng **Ngôn ngữ**: English / Tiếng Việt) hoặc từ cổng: trang lưu ván đang giải rồi tải lại, giữ nguyên tranh và các ô đã tô.
 
 ## Kiểm tra engine
 
