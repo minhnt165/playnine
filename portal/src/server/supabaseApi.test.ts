@@ -192,6 +192,9 @@ describe('supabaseApi', () => {
     expect(s.rpc).toHaveBeenCalledWith('admin_runs', {
       p_game_id: 'g', p_before: '2026-01-01T00:00:00.123456+00:00', p_limit: 20,
     })
+    const args = s.rpc.mock.calls[0][1] as Record<string, unknown>
+    expect(Object.keys(args).sort()).toEqual(['p_before', 'p_game_id', 'p_limit'])
+    expect('p_mode' in args).toBe(false)
     expect(out[0]).toMatchObject({ id: 'r1', userId: 'u1', score: 5, timeMs: null, rejectReason: null, status: 'started' })
   })
 

@@ -31,7 +31,15 @@ describe('App routes', () => {
     location.hash = '#/events'
     const { container } = renderApp()
     expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+    expect(container.querySelector('[data-page="events"]')).not.toBeNull()
     expect(container.querySelector('#games')).toBeNull()
+  })
+
+  it('#/events/<uuid> hiện trang chi tiết sự kiện tạm', () => {
+    const id = '7c9e6679-7425-40de-944b-e07fc1f90ae7'
+    location.hash = '#/events/' + id
+    const { container } = renderApp()
+    expect(container.querySelector(`[data-page="event"][data-event-id="${id}"]`)).not.toBeNull()
   })
 
   it('#/admin hiện trang quản trị tạm', () => {

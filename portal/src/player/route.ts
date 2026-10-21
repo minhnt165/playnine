@@ -10,7 +10,7 @@ export type Route =
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
-/** Địa chỉ #/play/<id> hoặc #/u/<uuid>; id lạ thì về trang chủ (khớp như cổng cũ). */
+/** Địa chỉ #/play/<id>, #/u/<uuid>, #/events, #/events/<uuid> hoặc #/admin; id lạ thì về trang chủ (khớp như cổng cũ). */
 export function parseRoute(hash: string): Route {
   const u = hash.match(/^#\/u\/([^/?#]+)/)
   if (u) {
@@ -40,7 +40,7 @@ export function parseRoute(hash: string): Route {
 
 export const eventHref = (id: string): string => '#/events/' + id
 
-export const playHref =(g: GameDef): string => '#/play/' + g.id
+export const playHref = (g: GameDef): string => '#/play/' + g.id
 
 /** Địa chỉ trang chính của game (tương đối với cổng). */
 export const gameHref = (g: GameDef): string => g.dir + 'index.html'
