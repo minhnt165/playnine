@@ -1,5 +1,5 @@
 import type {
-  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, CollectionInput, EventInput, FinishResult, GameEvent,
+  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, CollectionInput, EventInput, EventPatch, FinishResult, GameEvent,
   GameMeta, LeaderRow, Period, Profile, RunFilter, RunResult, Rules,
 } from './types'
 
@@ -27,7 +27,7 @@ export interface ServerApi {
   profileBadges(userId: string): Promise<Badge[]>
   // Các hàm admin: lỗi SQL (forbidden, event_started...) nằm trong message của Error.
   adminUpdateGame(gameId: string, hidden: boolean | null, rules: Record<string, Rules>): Promise<void>
-  adminSaveEvent(e: EventInput): Promise<string>
+  adminSaveEvent(e: EventInput | EventPatch): Promise<string>
   adminCancelEvent(id: string): Promise<void>
   adminRecomputeEvent(id: string): Promise<void>
   adminSaveCollection(c: CollectionInput): Promise<string>

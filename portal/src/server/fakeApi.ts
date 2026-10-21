@@ -127,7 +127,7 @@ export function createFakeApi(seed: Partial<FakeState> = {}): FakeApi {
       run('adminSaveEvent', [e], () => {
         const id = e.id ?? `ev-${state.events.length + 1}`
         const old = state.events.find((x) => x.id === id)
-        const saved: GameEvent = { ...e, id, status: old?.status ?? 'scheduled' }
+        const saved = { ...old, ...e, id, status: old?.status ?? 'scheduled' } as GameEvent
         state.events = old ? state.events.map((x) => (x.id === id ? saved : x)) : [...state.events, saved]
         return id
       }),

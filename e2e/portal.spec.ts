@@ -91,3 +91,13 @@ test('unknown game id shows home', async ({ page }) => {
   await expect(page.locator('#games')).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test('events and admin pages say unavailable without a server', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('#/events');
+  await expect(page.getByText(/aren't available|chưa khả dụng/)).toBeVisible();
+  await page.goto('#/admin');
+  await expect(page.getByText(/isn't available|chưa khả dụng/)).toBeVisible();
+  expect(errors).toEqual([]);
+});

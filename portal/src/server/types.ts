@@ -37,6 +37,8 @@ export type GameEvent = {
   status: EventStatus
 }
 export type EventInput = Omit<GameEvent, 'id' | 'status'> & { id?: string }
+/** Sửa một phần: chỉ các trường có mặt mới đổi; trường vắng giữ giá trị cũ trong DB. */
+export type EventPatch = Partial<Omit<EventInput, 'id'>> & { id: string }
 export type Collection = { id: string; title: Text; gameIds: string[]; startsAt: string; endsAt: string | null; sort: number }
 export type CollectionInput = Omit<Collection, 'id'> & { id?: string }
 export type Badge = { eventId: string; rank: number; awardedAt: string; title: Text; gameId: string; mode: string }

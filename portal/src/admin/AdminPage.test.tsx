@@ -53,11 +53,11 @@ describe('AdminPage', () => {
     expect(screen.getByRole('tab', { name: en('admin.tab.players') })).toHaveAttribute('aria-selected', 'true')
   })
 
-  it('nhớ tab đã chọn; tab sự kiện và bộ sưu tập có khung tạm', async () => {
+  it('nhớ tab đã chọn; tab sự kiện và bộ sưu tập hiện trình soạn', async () => {
     sessionStorage.setItem('playnine-admin-tab', 'events')
     mountWith(createFakeApi({ user: ADMIN }), <AdminPage />)
-    expect(await screen.findByRole('heading', { name: en('admin.tab.events') })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: en('admin.newEvent') })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('tab', { name: en('admin.tab.collections') }))
-    expect(screen.getByRole('heading', { name: en('admin.tab.collections') })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: en('admin.newCollection') })).toBeInTheDocument()
   })
 })

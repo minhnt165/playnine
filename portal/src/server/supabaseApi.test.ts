@@ -174,6 +174,13 @@ describe('supabaseApi', () => {
     expect((s.rpc.mock.calls[1][1] as { p_event: { id: string } }).p_event.id).toBe('e1')
   })
 
+  it('adminSaveEvent sửa một phần: chỉ gửi các khóa có mặt, không thêm khóa undefined', async () => {
+    const s = stub({ rpc: { data: 'e1', error: null } })
+    await s.api.adminSaveEvent({ id: 'e1', title: { en: 'New' } })
+    expect(s.rpc.mock.calls[0][1]).toEqual({ p_event: { id: 'e1', title: { en: 'New' } } })
+    expect(Object.keys((s.rpc.mock.calls[0][1] as { p_event: object }).p_event).sort()).toEqual(['id', 'title'])
+  })
+
   it('adminSaveCollection map khóa và bỏ id khi tạo', async () => {
     const s = stub({ rpc: { data: 'c9', error: null } })
     expect(await s.api.adminSaveCollection({ title: { en: 'S' }, gameIds: ['a'], startsAt: 's', endsAt: null, sort: 1 })).toBe('c9')

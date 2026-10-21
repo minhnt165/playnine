@@ -3,13 +3,15 @@ import { Topbar } from '../home/Topbar'
 import { useI18n } from '../i18n/i18n'
 import { defaultSession, safeStore } from '../lib/safeStorage'
 import { useServer } from '../server/ServerProvider'
+import { AdminCollections } from './AdminCollections'
+import { AdminEvents } from './AdminEvents'
 import { AdminGames } from './AdminGames'
 import { AdminPlayers } from './AdminPlayers'
 import { AdminRuns } from './AdminRuns'
 
 const TAB_KEY = 'playnine-admin-tab'
 const store = safeStore(defaultSession())
-// Thứ tự tab; Task 7 thay khung tạm của events và collections bằng trình soạn thật.
+// Thứ tự các tab của trang.
 const TABS = ['games', 'events', 'collections', 'runs', 'players'] as const
 type Tab = (typeof TABS)[number]
 
@@ -63,12 +65,14 @@ export function AdminPage({ onThemeApplied }: { onThemeApplied?: () => void }) {
         <div id="admin-panel" role="tabpanel" aria-labelledby={'admin-tab-' + tab} className="admin-panel">
           {tab === 'games' ? (
             <AdminGames />
+          ) : tab === 'events' ? (
+            <AdminEvents />
+          ) : tab === 'collections' ? (
+            <AdminCollections />
           ) : tab === 'runs' ? (
             <AdminRuns />
-          ) : tab === 'players' ? (
-            <AdminPlayers />
           ) : (
-            <h2>{t('admin.tab.' + tab)}</h2>
+            <AdminPlayers />
           )}
         </div>
       </>

@@ -1,7 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import type { ServerApi } from './api'
 import type {
-  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, EventInput, FinishResult, GameEvent, GameMeta,
+  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, EventInput, EventPatch, FinishResult, GameEvent, GameMeta,
   LeaderRow, Metric, ModeMeta, Period, Profile, RunResult, Rules, Text,
 } from './types'
 
@@ -232,10 +232,10 @@ export function createApiFromClient(sb: SupabaseClient): ServerApi {
     async adminUpdateGame(gameId, hidden, rules) {
       await rpc('admin_update_game', { p_game_id: gameId, p_hidden: hidden, p_rules: rules })
     },
-    async adminSaveEvent(e: EventInput) {
+    async adminSaveEvent(e: EventInput | EventPatch) {
       // Không có id = tạo mới; không thêm khóa undefined (khóa thiếu nghĩa là giữ giá trị cũ khi sửa).
-      const p_event: Row = {
-        ...(e.id ? { id: e.id } : {}),
+      const full: Row = {
+        id: e.id || undefined,
         title: e.title,
         description: e.description,
         game_id: e.gameId,
@@ -245,6 +245,7 @@ export function createApiFromClient(sb: SupabaseClient): ServerApi {
         ends_at: e.endsAt,
         award_top: e.awardTop,
       }
+      const p_event: Row = Object.fromEntries(Object.entries(full).filter(([, v]) => v !== undefined))
       return String(await rpc<string>('admin_save_event', { p_event }))
     },
     async adminCancelEvent(id) {

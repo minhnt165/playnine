@@ -68,6 +68,12 @@ Phần server dùng Supabase gói Free (Postgres + RPC + Auth). Cổng chỉ hi�
 
 Cả 18 game đều đã gắn SDK và ghi điểm lên server.
 
+Sự kiện và trang quản trị (giai đoạn 3): trang `#/events` liệt kê sự kiện theo từng game và mode; kết quả được chụp
+lại khi sự kiện kết thúc nhờ `pg_cron` (phải bật extension này trên project). Trang `#/admin` chỉ dành cho tài khoản có
+`role = 'admin'`: quản lý game (ẩn/hiện, luật chống gian lận), sự kiện, bộ sưu tập, ván và người chơi. Giờ nhập ở trang
+admin theo giờ máy của admin và được lưu dạng UTC. Cách bật `pg_cron`, đẩy migration và đặt admin xem ở
+[supabase/README.md](supabase/README.md). Không có biến môi trường server thì hai trang này chỉ hiện thông báo chưa khả dụng.
+
 ## Deploy
 
 Workflow `.github/workflows/deploy.yml` chạy khi push lên `main` (hoặc chạy tay):
