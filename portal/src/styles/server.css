@@ -1,6 +1,14 @@
 /* Giao diện lớp server: nút đăng nhập, avatar và menu trên thanh trên cùng. */
+/* Topbar có .reveal (transform) nên tạo stacking context riêng: nâng lên để menu tài khoản không bị hero/thẻ phía sau đè. */
+.topbar { position: relative; z-index: 20; }
 .auth-wrap { position: relative; display: inline-flex; }
 .auth-btn { width: auto; padding: 0 14px; }
+.auth-btn .label-short { display: none; }
+/* Điện thoại ẩn chữ của .theme-btn; nút đăng nhập vẫn giữ chữ, dùng nhãn ngắn cho vừa thanh trên. */
+@media (max-width: 560px) {
+  .theme-btn.auth-btn { width: auto; padding: 0 12px; white-space: nowrap; }
+  .theme-btn.auth-btn .label-short { display: inline; }
+}
 .auth-avatar {
   width: 38px; height: 38px; border-radius: 50%; padding: 0; overflow: hidden;
   display: inline-flex; align-items: center; justify-content: center;

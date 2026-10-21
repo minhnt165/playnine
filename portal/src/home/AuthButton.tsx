@@ -36,8 +36,16 @@ export function AuthButton() {
   if (!user) {
     return (
       <>
-        <button className="theme-btn auth-btn" type="button" onClick={() => run(() => api.signInWithGoogle())}>
+        <button
+          className="theme-btn auth-btn"
+          type="button"
+          aria-label={t('auth.signIn')}
+          onClick={() => run(() => api.signInWithGoogle())}
+        >
           <span className="label">{t('auth.signIn')}</span>
+          <span className="label-short" aria-hidden="true">
+            {t('auth.signInShort')}
+          </span>
         </button>
         {failed && (
           <span className="auth-error" role="alert">
