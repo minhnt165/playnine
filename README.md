@@ -9,6 +9,7 @@ https://minhnt165.github.io/playnine/
 .
 ├── games/<dir>/        # mỗi game một thư mục, được copy ra dist/<dir>/
 ├── brand/              # tài sản thương hiệu, copy ra dist/brand/
+├── sdk/                # SDK cho game (npm workspace); build ra sdk/dist/playnine.js, assemble chép ra dist/sdk/
 ├── portal/             # portal React (npm workspace); bản build portal/dist/ được assemble ra gốc dist/
 ├── scripts/            # assemble.mjs, serve-dist.mjs và test của chúng
 ├── e2e/                # test Playwright chạy trên dist/
@@ -22,7 +23,7 @@ https://minhnt165.github.io/playnine/
 npm install                # cài dependency
 npm run dev -w portal      # chạy portal ở chế độ dev
 npm test                   # test node cho scripts/ + test của portal
-npm run build              # build portal (và các workspace khác) -> portal/dist/
+npm run build              # build SDK (sdk/dist/) rồi portal (portal/dist/)
 npm run assemble           # gom portal/dist + games thành dist/ (cần build trước)
 npm run e2e                # test Playwright (cần assemble trước; serve dist/ tại :4173/playnine/)
 ```
@@ -34,6 +35,25 @@ Lần đầu chạy e2e cần cài trình duyệt: `npx playwright install chrom
 1. Đặt game vào `games/<dir>/` (có `index.html`; nếu có `package.json` thì assemble lấy `dist/` của game).
 2. Khai báo game trong `portal/src/games/catalog.ts` (id, dir, tên, mô tả, nhãn, icon, ...) theo mẫu các game có sẵn.
 3. `npm run build && npm run assemble && npm run e2e` để kiểm tra; URL game luôn là `/playnine/<dir>/`.
+
+## SDK cho game
+
+Game cũ gắn SDK bằng một thẻ script (đường dẫn tương đối, dev và bản publish đều là `/playnine/sdk/playnine.js`) và luôn gọi qua `window.PlayNine` có kiểm tra tồn tại:
+
+```html
+<script src="../sdk/playnine.js?v=1"></script>
+```
+
+```js
+if (window.PlayNine) {
+  PlayNine.init({ gameId: '2048' });
+  PlayNine.gameStart({ mode: '4x4' });
+  PlayNine.gameEnd({ mode: '4x4', won: true, score: 1234 });
+}
+```
+
+SDK không bao giờ ném lỗi; mở thẳng link game (không có cổng, không có file SDK) vẫn chơi bình thường, chỉ không ghi điểm.
+Build SDK: `npm run build -w sdk` (cần trước `npm run assemble`). Giao thức nằm ở `sdk/src/protocol.ts`.
 
 ## Deploy
 

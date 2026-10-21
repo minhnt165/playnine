@@ -5,9 +5,13 @@ import { fileURLToPath } from 'node:url';
 
 const exists = (p) => stat(p).then(() => true, () => false);
 
-export async function assemble({ root, out, portalDir = path.join(root, 'portal', 'dist') }) {
+export async function assemble({ root, out, portalDir = path.join(root, 'portal', 'dist'), sdkDir = path.join(root, 'sdk', 'dist') }) {
   if (!(await exists(path.join(portalDir, 'index.html')))) {
     throw new Error('Không thấy ' + path.join(portalDir, 'index.html') + ' - hãy chạy npm run build trước khi assemble.');
+  }
+
+  if (!(await exists(path.join(sdkDir, 'playnine.js')))) {
+    throw new Error('Không thấy ' + path.join(sdkDir, 'playnine.js') + ' - hãy chạy npm run build (build SDK) trước khi assemble.');
   }
 
   await rm(out, { recursive: true, force: true });
@@ -15,6 +19,9 @@ export async function assemble({ root, out, portalDir = path.join(root, 'portal'
 
   // Cổng: chép toàn bộ nội dung portalDir vào gốc out/.
   await cp(portalDir, out, { recursive: true });
+
+  // SDK cho game: out/sdk/ (game cũ nạp ../sdk/playnine.js).
+  await cp(sdkDir, path.join(out, 'sdk'), { recursive: true });
 
   // Game: có package.json thì lấy bản build (dist/), ngược lại chép nguyên thư mục.
   const gamesDir = path.join(root, 'games');

@@ -2,11 +2,11 @@
   "name": "playnine",
   "version": "1.0.0",
   "private": true,
-  "workspaces": ["portal", "supabase"],
+  "workspaces": ["sdk", "portal", "supabase"],
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build": "npm run build -w sdk && npm run build -w portal",
     "assemble": "node scripts/assemble.mjs --portal portal/dist",
-    "test": "node --test \"scripts/*.test.mjs\" && npm test -w portal && npm test -w supabase",
+    "test": "node --test \"scripts/*.test.mjs\" && npm test -w sdk && npm test -w portal && npm test -w supabase",
     "e2e": "playwright test"
   },
   "devDependencies": {

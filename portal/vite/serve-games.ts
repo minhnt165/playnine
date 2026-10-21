@@ -26,7 +26,7 @@ const MIME: Record<string, string> = {
 const inside = (root: string, file: string) => file === root || file.startsWith(root + path.sep)
 
 /**
- * Ánh xạ URL dev sang file thật: /playnine/brand/* -> <repo>/brand/*, /playnine/<d>/* -> <repo>/games/<d>/*.
+ * Ánh xạ URL dev sang file thật: /playnine/brand/* -> <repo>/brand/*, /playnine/sdk/* -> <repo>/sdk/dist/*, /playnine/<d>/* -> <repo>/games/<d>/*.
  * Trả null nếu không khớp hoặc thoát khỏi thư mục gốc (.., dấu phân cách trong tên game...).
  */
 export function resolveGameFile(rawUrl: string, repoRoot: string, base = '/playnine/'): string | null {
@@ -44,6 +44,7 @@ export function resolveGameFile(rawUrl: string, repoRoot: string, base = '/playn
   const gamesDir = path.join(repoRoot, 'games')
   let root: string
   if (first === 'brand') root = path.join(repoRoot, 'brand')
+  else if (first === 'sdk') root = path.join(repoRoot, 'sdk', 'dist')
   else {
     root = path.resolve(gamesDir, first)
     if (root === gamesDir || !inside(gamesDir, root)) return null

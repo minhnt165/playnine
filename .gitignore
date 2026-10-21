@@ -3,3 +3,4 @@ dist/
 portal/dist/
 test-results/
 playwright-report/
+portal/.vite/

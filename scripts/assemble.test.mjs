@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile, readFile, access } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile, access, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { assemble } from './assemble.mjs';
@@ -16,6 +16,8 @@ async function fixture() {
   await mkdir(portalDir, { recursive: true });
   await writeFile(path.join(root, 'brand', 'icon.svg'), '<svg/>');
   await writeFile(path.join(portalDir, 'index.html'), '<h1>portal</h1>');
+  await mkdir(path.join(root, 'sdk', 'dist'), { recursive: true });
+  await writeFile(path.join(root, 'sdk', 'dist', 'playnine.js'), 'window.PlayNine={}');
   return { root, portalDir, out };
 }
 
@@ -73,4 +75,16 @@ test('clears stale output', async () => {
   await put(path.join(out, 'stale.txt'), 'old');
   await assemble({ root, out, portalDir });
   assert.equal(await exists(path.join(out, 'stale.txt')), false);
+});
+
+test('copies sdk/dist to out/sdk', async () => {
+  const { root, portalDir, out } = await fixture();
+  await assemble({ root, out, portalDir });
+  assert.equal(await readFile(path.join(out, 'sdk', 'playnine.js'), 'utf8'), 'window.PlayNine={}');
+});
+
+test('fails when sdk build is missing', async () => {
+  const { root, portalDir, out } = await fixture();
+  await rm(path.join(root, 'sdk'), { recursive: true, force: true });
+  await assert.rejects(assemble({ root, out, portalDir }), /sdk/);
 });

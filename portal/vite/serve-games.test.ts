@@ -11,6 +11,8 @@ beforeAll(() => {
   fs.mkdirSync(path.join(repo, 'brand'))
   fs.writeFileSync(path.join(repo, 'games', '2048', 'index.html'), 'x')
   fs.writeFileSync(path.join(repo, 'brand', 'icon.svg'), 'x')
+  fs.mkdirSync(path.join(repo, 'sdk', 'dist'), { recursive: true })
+  fs.writeFileSync(path.join(repo, 'sdk', 'dist', 'playnine.js'), 'x')
   fs.writeFileSync(path.join(repo, 'package.json'), '{}')
   fs.writeFileSync(path.join(repo, '.env'), 'secret')
 })
@@ -23,7 +25,10 @@ describe('resolveGameFile', () => {
   it('maps brand assets', () => {
     expect(resolveGameFile('/playnine/brand/icon.svg?v=1', repo)).toBe(path.join(repo, 'brand', 'icon.svg'))
   })
-  it.each(['/playnine/..%2f.env', '/playnine/../package.json', '/playnine/2048/../../package.json', '/playnine/./package.json', '/playnine/', '/playnine/nope/', '/other/2048/'])(
+  it('maps sdk files to sdk/dist', () => {
+    expect(resolveGameFile('/playnine/sdk/playnine.js?v=1', repo)).toBe(path.join(repo, 'sdk', 'dist', 'playnine.js'))
+  })
+  it.each(['/playnine/sdk/../package.json', '/playnine/sdk/..%2fpackage.json', '/playnine/sdk/', '/playnine/sdk/nope.js', '/playnine/..%2f.env', '/playnine/../package.json', '/playnine/2048/../../package.json', '/playnine/./package.json', '/playnine/', '/playnine/nope/', '/other/2048/'])(
     'rejects %s',
     (url) => {
       expect(resolveGameFile(url, repo)).toBeNull()
