@@ -59,6 +59,15 @@ npx --registry=https://registry.npmjs.org/ supabase db push
 - `db push` áp các file trong `migrations/` lên project đang link.
 - Mạng công ty chặn TLS (lỗi chứng chỉ): thêm `--strict-ssl=false` vào lệnh `npx`, chỉ khi thật sự bị lỗi.
 
+## Bật pg_cron
+
+Sự kiện được đóng tự động bởi `pg_cron` (mỗi 5 phút). Làm cho từng project, **trước** khi `db push` ở bước 4:
+
+1. Vào **Database → Extensions** → bật `pg_cron`.
+2. Sau khi `db push`, kiểm tra lịch đã được tạo: trong **SQL Editor** chạy `select jobname, schedule from cron.job;` phải thấy `playnine-events` với lịch `*/5 * * * *`.
+
+Không bật `pg_cron` thì migration vẫn chạy nhưng sự kiện sẽ không tự chuyển sang live/closed.
+
 ## 5. GitHub secrets (prod)
 
 Trong GitHub repo: **Settings → Secrets and variables → Actions → New repository secret**:
@@ -79,7 +88,7 @@ VITE_SUPABASE_ANON_KEY=<anon key của dev>
 
 Build SDK trước (`npm run build -w sdk`) để game tải được `sdk/playnine.js`, rồi `npm run dev -w portal` và mở `http://localhost:5180/playnine/`. Để trống hai biến thì cổng không hiện nút đăng nhập và không gọi mạng.
 
-## 7. Đặt admin (dùng ở giai đoạn 3)
+## 7. Đặt admin (giai đoạn 3 dùng cho `#/admin`)
 
 Đăng nhập vào site bằng Google một lần để tạo hồ sơ, rồi vào Supabase → **SQL Editor** (của project cần đặt admin) chạy:
 
