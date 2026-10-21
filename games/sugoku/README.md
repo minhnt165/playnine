@@ -17,7 +17,8 @@ Game Sudoku chạy trên web, viết bằng HTML + CSS + JavaScript thuần. Kh�
 - Cài đặt: giao diện Tự động / Sáng / Tối; cách nhập "chọn ô trước" hoặc "chọn số trước" (nhấn số rồi chạm nhiều ô); bật/tắt báo lỗi ngay (tắt thì tự kiểm tra, không đếm lỗi, được ghi đè ô đã điền, báo khi bàn cờ đầy mà còn sai); bật/tắt giới hạn 3 lỗi.
 - Thống kê: số ván thắng / thua, thời gian tốt nhất và trung bình theo độ khó; chuỗi ngày, số ngày và thời gian tốt nhất của ván hằng ngày. Có nút đặt lại.
 - Bàn phím số 1–9 hiện số lượng còn lại, ẩn khi đã đủ 9.
-- Nhấp ô: tô sáng hàng, cột, vùng 3x3 và các ô cùng số.
+- Nhấp ô: tô sáng hàng, cột, vùng 3x3 và các ô cùng số. Ghi chú trùng số đang chọn (ô có số, hoặc số đang chọn ở chế độ "chọn số trước") cũng được tô nổi.
+- Điền đủ 9 ô của một số (tính như bộ đếm trên bàn phím số): cả 9 ô tô màu dâng đầy rồi rút, lan dần từ ô vừa điền. Tắt khi hệ thống bật giảm chuyển động.
 - Tự lưu ván đang chơi vào `localStorage`, mở lại trang thì tiếp tục.
 - Màn hình thắng (thời gian, độ khó, lỗi, thông báo mở khóa) và màn hình thua (chơi lại / ván mới).
 - Giao diện English / Tiếng Việt (xem mục "Ngôn ngữ / Language"), responsive trên điện thoại, dark mode theo hệ thống hoặc chọn thủ công. Cho phép zoom trang; bàn cờ điều hướng bằng phím mũi tên với một điểm dừng Tab duy nhất.

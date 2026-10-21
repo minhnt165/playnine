@@ -7,7 +7,7 @@
  * ===================================================================== */
 (() => {
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html để trình duyệt tải file mới
-  const APP_VERSION = '1.1.1';
+  const APP_VERSION = '1.1.2';
   const STORAGE_KEY = 'sudoku-vn-save-v1';
   const PROGRESS_KEY = 'sudoku-vn-progress-v1';
   const SETTINGS_KEY = 'sudoku-vn-settings-v1';
@@ -416,6 +416,8 @@
     const selBox = selected >= 0 ? Sudoku.BOX[selected] : -1;
     const focusIdx = selected >= 0 ? selected : 0;
     const h = hintView;
+    // Ghi chú trùng số đang chọn được tô nổi (chỉ số 0..8 của note, -1 = không tô)
+    const noteHl = !paused && !h && hlDigit ? hlDigit - 1 : -1;
 
     for (let i = 0; i < Sudoku.CELLS; i++) {
       const cell = cellEls[i];
@@ -443,7 +445,11 @@
 
       const mask = paused || v ? 0 : state.notes[i];
       const spans = noteEls[i];
-      for (let d = 0; d < 9; d++) spans[d].classList.toggle('on', (mask & (1 << d)) !== 0);
+      for (let d = 0; d < 9; d++) {
+        const on = (mask & (1 << d)) !== 0;
+        spans[d].classList.toggle('on', on);
+        spans[d].classList.toggle('match', on && d === noteHl);
+      }
     }
   }
 
@@ -614,6 +620,7 @@
     } else {
       entry.peers = clearPeerNotes(idx, d);
       animateCell(idx, 'pop');
+      celebrateDigit(d, idx);
     }
     pushHistory(entry);
 
@@ -890,6 +897,7 @@
     pushHistory(entry);
     selected = idx;
     animateCell(idx, 'pop');
+    celebrateDigit(d, idx);
 
     if (isSolved()) {
       finishWin();
@@ -904,6 +912,21 @@
     el.classList.remove('pop', 'shake');
     void el.offsetWidth; // ép trình duyệt tính lại để chạy lại animation
     el.classList.add(cls);
+  }
+
+  /** Vừa điền đủ 9 ô của số d (tính như bàn phím số): 9 ô tô đầy rồi rút, lan dần từ ô origin. */
+  function celebrateDigit(d, origin) {
+    const cells = [];
+    for (let i = 0; i < Sudoku.CELLS; i++) if (state.board[i] === d && isFilled(i)) cells.push(i);
+    if (cells.length !== 9) return;
+    for (const i of cells) {
+      const el = cellEls[i];
+      const dist = Math.max(Math.abs(Sudoku.ROW[i] - Sudoku.ROW[origin]), Math.abs(Sudoku.COL[i] - Sudoku.COL[origin]));
+      el.style.setProperty('--fill-delay', `${dist * 60}ms`);
+      el.classList.remove('digit-done');
+      void el.offsetWidth;
+      el.classList.add('digit-done');
+    }
   }
 
   function toggleNotes() {

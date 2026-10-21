@@ -402,6 +402,25 @@ button:disabled { cursor: default; }
   0% { background-color: var(--cell-same); }
   100% { background-color: inherit; }
 }
+/* Điền đủ 9 ô của một số: màu dâng từ đáy lên đầy ô rồi rút lên trên, lần lượt theo --fill-delay */
+.cell.digit-done {
+  background-image: linear-gradient(var(--primary), var(--primary));
+  background-repeat: no-repeat;
+  animation: digit-fill 0.75s ease-in-out var(--fill-delay, 0ms) both;
+}
+.cell.digit-done .value { animation: digit-text 0.75s ease-in-out var(--fill-delay, 0ms) both; }
+@keyframes digit-fill {
+  0% { background-size: 100% 0%; background-position: bottom; }
+  45%, 55% { background-size: 100% 100%; background-position: bottom; }
+  56% { background-size: 100% 100%; background-position: top; }
+  100% { background-size: 100% 0%; background-position: top; }
+}
+@keyframes digit-text {
+  30%, 65% { color: var(--primary-text); transform: scale(1.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cell.digit-done, .cell.digit-done .value { animation: none; background-image: none; }
+}
 
 .notes {
   position: absolute;
@@ -422,6 +441,7 @@ button:disabled { cursor: default; }
   visibility: hidden;
 }
 .notes span.on { visibility: visible; }
+.notes span.match { color: var(--primary); font-weight: 700; }
 
 .board-overlay {
   position: absolute;
