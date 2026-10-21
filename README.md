@@ -40,6 +40,9 @@ Lần đầu chạy e2e cần cài trình duyệt: `npx playwright install chrom
 Workflow `.github/workflows/deploy.yml` chạy khi push lên `main` (hoặc chạy tay):
 `build` (test, build, assemble, upload `dist/`) và `e2e` chạy song song, sau đó `deploy` lên Pages.
 
+Chân trang cổng hiện bản đang chạy: `v<version> · <commit> · <thời điểm build>`, bấm vào để mở commit trên GitHub.
+Phiên bản lấy từ trường `version` trong `package.json` gốc; tăng số này khi phát hành thay đổi đáng kể.
+
 ## Việc làm tay trước khi merge vào `main`
 
 Vào **Settings → Pages → Source** và đổi sang **"GitHub Actions"**.
