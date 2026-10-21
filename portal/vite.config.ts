@@ -28,5 +28,7 @@ export default defineConfig({
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
   },
   plugins: [react(), serveGames(repoRoot)],
+  // Tránh 5173 (máy dev đang có app khác chiếm); strictPort để không tự nhảy port, vì Redirect URL của Supabase Auth gắn với port này.
+  server: { port: 5180, strictPort: true },
   test: { environment: 'jsdom', setupFiles: ['src/test-setup.ts'] },
 })

@@ -494,7 +494,7 @@ e2e/sdk-games.spec.ts
 - `supabase/README.md` (tiếng Việt, từng bước có ảnh chụp đường dẫn menu bằng chữ):
   1. Tạo 2 project Supabase `playnine-dev`, `playnine-prod` (region Singapore), ghi `Project URL` + `anon key`.
   2. Google Cloud Console: tạo OAuth consent screen (External) và OAuth client (Web) với Authorized redirect URI `https://<ref>.supabase.co/auth/v1/callback` cho mỗi project; nhập Client ID/Secret vào Supabase → Authentication → Providers → Google.
-  3. Supabase → Authentication → URL Configuration: Site URL `https://minhnt165.github.io/playnine/` (prod) / `http://localhost:5173/playnine/` (dev); Redirect URLs thêm cả hai.
+  3. Supabase → Authentication → URL Configuration: Site URL `https://minhnt165.github.io/playnine/` (prod) / `http://localhost:5180/playnine/` (dev); Redirect URLs thêm cả hai.
   4. Áp migration: `npx supabase login`, `npx supabase link --project-ref <ref>`, `npx supabase db push` cho từng project (từ thư mục `supabase/`).
   5. GitHub → Settings → Secrets and variables → Actions: `SUPABASE_URL`, `SUPABASE_ANON_KEY` (của prod).
   6. Local: `portal/.env.local` với `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` của dev.
