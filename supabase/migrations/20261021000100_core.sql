@@ -1,5 +1,8 @@
 -- Giai đoạn 2: bảng nền, RLS, đếm lượt chơi. Chạy được trên Supabase thật và PGlite (test).
 
+-- Hàm mới trong public mặc định không cấp execute cho anon/authenticated; migration sau phải grant tường minh.
+alter default privileges in schema public revoke execute on functions from anon, authenticated;
+
 create table public.profiles (
   id uuid primary key references auth.users on delete cascade,
   display_name text not null check (char_length(btrim(display_name)) between 2 and 24 and display_name = btrim(display_name)),
@@ -18,7 +21,7 @@ create table public.games (
 
 create table public.runs (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references public.profiles,
+  user_id uuid not null references public.profiles on delete cascade,
   game_id text not null references public.games,
   mode text not null,
   started_at timestamptz not null default now(),
@@ -74,14 +77,14 @@ begin
   values (new.id, nm, new.raw_user_meta_data->>'avatar_url');
   return new;
 end $$;
-revoke execute on function public.handle_new_user() from public;
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
 
 create trigger on_auth_user_created after insert on auth.users
   for each row execute function public.handle_new_user();
 
 create function public.ping() returns int
 language sql stable as $$ select 1 $$;
-revoke execute on function public.ping() from public;
+revoke execute on function public.ping() from public, anon, authenticated;
 grant execute on function public.ping() to anon, authenticated;
 
 create function public.record_play(p_game_id text) returns void
@@ -94,14 +97,14 @@ begin
   values (p_game_id, (now() at time zone 'Asia/Ho_Chi_Minh')::date, 1)
   on conflict (game_id, day) do update set count = public.play_counts.count + 1;
 end $$;
-revoke execute on function public.record_play(text) from public;
+revoke execute on function public.record_play(text) from public, anon, authenticated;
 grant execute on function public.record_play(text) to anon, authenticated;
 
 create function public.play_totals() returns table (game_id text, total bigint)
 language sql stable security definer set search_path = public as $$
   select pc.game_id, sum(pc.count)::bigint from public.play_counts pc group by pc.game_id order by pc.game_id
 $$;
-revoke execute on function public.play_totals() from public;
+revoke execute on function public.play_totals() from public, anon, authenticated;
 grant execute on function public.play_totals() to anon, authenticated;
 
 -- Seed 17 game. Luật chống gian lận rộng tay, chỉ chặn điều bất khả thi.

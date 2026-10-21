@@ -2,6 +2,20 @@ import { describe, expect, it } from 'vitest'
 import { PGlite } from '@electric-sql/pglite'
 import { asAnon, asUser, createDb, newUser } from './harness'
 
+const WINS = 'easy,medium,hard'
+const MODES: Record<string, string> = {
+  '2048': '3x3,4x4,5x5',
+  xepgach: 'lv1,lv5,lv10',
+  ran: 'classic-slow,classic-normal,classic-fast,wrap-slow,wrap-normal,wrap-fast,maze-slow,maze-normal,maze-fast',
+  phagach: 'default',
+  minesweeper: 'easy,medium,hard,daily',
+  sudoku: 'easy,medium,hard,expert,extreme,daily',
+  tranhan: 's5,s10,s15',
+  xepbai: 'draw1,draw3,daily',
+  co9o: WINS, caro: WINS, xiangqi: WINS, covua: WINS, colat: WINS,
+  codam: WINS, coganh: WINS, oanquan: WINS, bonlientiep: WINS,
+}
+
 const METRICS: Record<string, string> = {
   '2048': 'score_high', xepgach: 'score_high', ran: 'score_high', phagach: 'score_high',
   minesweeper: 'time_low', sudoku: 'time_low',
@@ -37,6 +51,7 @@ describe('core schema', () => {
     expect(r.rows).toHaveLength(17)
     for (const g of r.rows) {
       expect(g.metric).toBe(METRICS[g.id])
+      expect(g.modes.map((m) => m.key).join(',')).toBe(MODES[g.id])
       for (const m of g.modes) {
         expect(m.label.en).toBeTruthy()
         expect(m.label.vi).toBeTruthy()
@@ -121,6 +136,30 @@ describe('core schema', () => {
     const t = await asAnon(db, () => db.query<any>('select * from play_totals()'))
     expect(t.rows.map((r) => [r.game_id, Number(r.total)])).toEqual([['2048', 3]])
     expect((await db.query('select * from play_counts')).rows).toHaveLength(1)
+  })
+
+  it('internal functions are not executable by anon or authenticated', async () => {
+    const db = await createDb()
+    for (const role of ['anon', 'authenticated']) {
+      const r = await db.query<any>(
+        "select has_function_privilege($1, 'public.handle_new_user()', 'execute') as ok",
+        [role],
+      )
+      expect(r.rows[0].ok).toBe(false)
+    }
+    const ok = await db.query<any>(
+      "select has_function_privilege('anon', 'public.record_play(text)', 'execute') as a, has_function_privilege('authenticated', 'public.play_totals()', 'execute') as b",
+    )
+    expect(ok.rows[0]).toEqual({ a: true, b: true })
+  })
+
+  it('deleting an auth user removes the profile and their runs', async () => {
+    const db = await createDb()
+    const a = await newUser(db, { full_name: 'Alice' })
+    await db.query("insert into runs (user_id, game_id, mode) values ($1, '2048', '4x4')", [a])
+    await db.query('delete from auth.users where id = $1', [a])
+    expect((await db.query('select * from runs')).rows).toHaveLength(0)
+    expect((await db.query('select * from profiles')).rows).toHaveLength(0)
   })
 
   it('ping returns 1 for anon', async () => {
