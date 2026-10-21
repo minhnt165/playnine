@@ -7,6 +7,8 @@
  * ===================================================================== */
 (function () {
   'use strict';
+  const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
+  PN && PN.init({ gameId: '2048' });
 
   const APP_VERSION = '1.0.1';
   const G = window.Game2048;
@@ -303,8 +305,14 @@
   const overlayShown = () => !overlayWin.hidden || !overlayOver.hidden;
 
   /* ---------------- Luồng chơi ---------------- */
+  const modeOf = (g) => g.size + 'x' + g.size;
+  const endRun = (g) => PN && PN.gameEnd({ mode: modeOf(g), score: g.score, won: G.maxTile(g) >= G.WIN_VALUE, assisted: false });
+
   function startNewGame(size) {
+    // Đã đạt 2048 rồi chơi tiếp mà bấm ván mới: tính ván cũ là một ván thắng
+    if (game && !game.over && G.maxTile(game) >= G.WIN_VALUE) endRun(game);
     game = G.newGame(size || settings.size);
+    PN && PN.gameStart({ mode: modeOf(game) });
     counted = false;
     buildGrid();
     reconcile('new');
@@ -331,6 +339,7 @@
     animateMove(res);
     floatScore(res.gained);
     updateHud();
+    if (game.over) endRun(game);
     if (res.reached || game.over) {
       syncOverlays(true);
       announce(game.over ? t('announce.over', { score: fmt(game.score) }) : t('announce.won'));
@@ -640,6 +649,7 @@
   applyTheme();
   if (loadGame()) {
     settings.size = game.size; // kích thước theo ván đang dở
+    PN && !game.over && PN.gameStart({ mode: modeOf(game), resume: true });
     buildGrid();
     reconcile('');
     updateHud();

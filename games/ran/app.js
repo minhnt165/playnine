@@ -7,6 +7,8 @@
  * ===================================================================== */
 (function () {
   'use strict';
+  const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
+  PN && PN.init({ gameId: 'ran' });
 
   const APP_VERSION = '1.0.1';
   const G = window.GameRan;
@@ -771,6 +773,7 @@
       accel: settings.accel,
     });
     phase = 'ready';
+    PN && PN.gameStart({ mode: game.mode + '-' + game.speed });
     counted = false;
     prevSnake = null;
     particles = [];
@@ -867,6 +870,7 @@
 
   function gameOver() {
     phase = 'over';
+    PN && PN.gameEnd({ mode: game.mode + '-' + game.speed, score: game.score, won: !!game.won });
     prevSnake = null;
     acc = 0;
     updateHud();
@@ -1345,6 +1349,7 @@
     settings.map = game.map;
     startBest = stats.best[bestKey(game.mode, game.speed)];
     phase = 'paused';
+    PN && PN.gameStart({ mode: game.mode + '-' + game.speed, resume: true });
     setScreen('game');
     updateHud();
     $('pause-sub').textContent = pauseSub();

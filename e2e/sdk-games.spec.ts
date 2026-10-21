@@ -90,3 +90,76 @@ test('xiangqi re-sends start with the new level when switched before the first m
     .poll(async () => (await messages(page)).filter((m) => m.type === 'pn:start').pop()?.mode, { timeout: 5000 })
     .toBe('easy');
 });
+
+// 4 game tính điểm (2048, xepgach, ran, phagach): mode theo cấu hình mặc định.
+const arcadeGames: [id: string, mode: string, start?: string][] = [
+  ['2048', '4x4'],
+  ['xepgach', 'lv1', '#btn-start'],
+  ['ran', 'classic-normal', '#btn-start'],
+  ['phagach', 'default', '#btn-start'],
+];
+
+for (const [id, mode, startBtn] of arcadeGames) {
+  test(`${id} reports hello and start with mode ${mode}`, async ({ page }) => {
+    await captureMessages(page);
+    // Bỏ hộp hướng dẫn lần đầu để bấm được nút bắt đầu
+    await page.addInitScript((key) => window.localStorage.setItem(key, JSON.stringify({ guideSeen: true })), `playnine-${id}-settings-v1`);
+    await page.goto(`#/play/${id}`);
+    await expect
+      .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === id), { timeout: 5000 })
+      .toBe(true);
+    if (startBtn) await page.frameLocator('iframe').locator(startBtn).click();
+    await expect
+      .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === id && m.mode === mode), {
+        timeout: 5000,
+      })
+      .toBe(true);
+  });
+
+  test(`${id} plays standalone without the SDK`, async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    await page.route('**/sdk/playnine.js*', (r) => r.abort());
+    const res = await page.goto(`${id}/`);
+    expect(res?.status()).toBe(200);
+    await page.waitForTimeout(500);
+    expect(errors).toEqual([]);
+  });
+}
+
+test('2048 game over reports the score', async ({ page }) => {
+  await captureMessages(page);
+  // Lưới 4x4 đầy, chỉ còn một nước (gộp 2+2 ở hàng đầu); sau nước đó và ô sinh thêm thì hết nước.
+  await page.addInitScript(() => {
+    if (window.localStorage.getItem('playnine-2048-game-v1')) return;
+    const vals = [2, 2, 16, 32, 64, 128, 64, 128, 128, 64, 128, 64, 64, 128, 64, 128];
+    const game = {
+      v: 1,
+      size: 4,
+      cells: vals.map((v, i) => ({ id: i + 1, v })),
+      nextId: 17,
+      score: 0,
+      moves: 0,
+      won: false,
+      keepPlaying: false,
+      over: false,
+      undoLeft: 3,
+      history: [],
+    };
+    window.localStorage.setItem('playnine-2048-game-v1', JSON.stringify({ game, counted: false }));
+  });
+  await page.goto('#/play/2048');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.resume === true && m.mode === '4x4'), {
+      timeout: 5000,
+    })
+    .toBe(true);
+  await page.frameLocator('iframe').locator('#board').focus();
+  await page.keyboard.press('ArrowLeft');
+  const shown = await page.frameLocator('iframe').locator('#score').innerText();
+  await expect
+    .poll(async () => (await messages(page)).find((m) => m.type === 'pn:end'), { timeout: 5000 })
+    .toMatchObject({ gameId: '2048', mode: '4x4', won: false, assisted: false });
+  const end = (await messages(page)).find((m) => m.type === 'pn:end') as Msg & { score?: number };
+  expect(String(end.score)).toBe(shown.replace(/\D/g, ''));
+});

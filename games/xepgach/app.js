@@ -9,6 +9,8 @@
  * ===================================================================== */
 (function () {
   'use strict';
+  const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
+  PN && PN.init({ gameId: 'xepgach' });
 
   const APP_VERSION = '1.0.1';
   const E = window.XepGach;
@@ -539,6 +541,7 @@
   function startNewGame() {
     closeModal();
     game = E.newGame({ startLevel: settings.startLevel });
+    PN && PN.gameStart({ mode: 'lv' + game.startLevel });
     counted = false;
     bestAtStart = stats.best;
     mode = 'playing';
@@ -591,6 +594,7 @@
   let overAt = 0;
   function gameOver() {
     mode = 'over';
+    PN && PN.gameEnd({ mode: 'lv' + game.startLevel, score: game.score, won: false });
     overAt = now();
     releaseAll();
     updateRecords();
@@ -1205,6 +1209,7 @@
   if (loadGame()) {
     // Có ván đang dở: mở lại ở trạng thái tạm dừng
     mode = 'paused';
+    PN && PN.gameStart({ mode: 'lv' + game.startLevel, resume: true });
     $('pause-sub').textContent = detailText();
     showOverlay('pause');
   } else {

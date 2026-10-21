@@ -9,6 +9,8 @@
  * ===================================================================== */
 (function () {
   'use strict';
+  const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
+  PN && PN.init({ gameId: 'phagach' });
 
   const APP_VERSION = '1.0.1';
   const E = window.PhaGach;
@@ -765,6 +767,7 @@
     closeModal();
     clearTimeout(overTimer);
     game = E.newGame();
+    PN && PN.gameStart({ mode: 'default' });
     counted = false;
     bestAtStart = stats.best;
     mode = 'playing';
@@ -826,6 +829,7 @@
   let overTimer = 0;
   function gameOver() {
     mode = 'over';
+    PN && PN.gameEnd({ mode: 'default', score: game.score, won: game.level >= E.LEVELS.length });
     releaseInput();
     updateRecords();
     hideBanner();
@@ -1343,6 +1347,7 @@
   if (loadGame()) {
     // Có ván đang dở: mở lại ở trạng thái tạm dừng
     mode = 'paused';
+    PN && PN.gameStart({ mode: 'default', resume: true });
     $('pause-sub').textContent = detailText();
     showOverlay('pause');
   } else {
