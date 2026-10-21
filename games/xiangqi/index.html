@@ -1779,6 +1779,10 @@ $('segMode').addEventListener('click', e => {
   stopThinking();
   if (game.history.length > 0) game.assisted = true;
   game.mode = b.dataset.mode;
+  if (game.history.length === 0) { // chưa đi nước nào: tính lại ván báo cho cổng
+    game.pnRun = PN && game.mode === 'ai' ? game.level : null;
+    game.pnRun && PN.gameStart({ mode: game.pnRun });
+  }
   clearSelection();
   render();
   maybeAiMove();
@@ -1788,6 +1792,10 @@ $('segLevel').addEventListener('click', e => {
   if (!b) return;
   if (game.history.length > 0 && game.level !== b.dataset.level) game.assisted = true;
   game.level = b.dataset.level;
+  if (game.pnRun && game.history.length === 0) { // chưa đi nước nào: đổi mức thì báo lại ván mới
+    game.pnRun = game.level;
+    PN.gameStart({ mode: game.pnRun });
+  }
   try { localStorage.setItem('xiangqi.level', game.level); } catch (e2) { /* bỏ qua */ }
   renderPanel(viewState());
 });

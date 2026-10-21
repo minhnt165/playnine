@@ -74,3 +74,19 @@ test('bonlientiep reports a won run with assisted false', async ({ page }) => {
     .poll(async () => (await messages(page)).find((m) => m.type === 'pn:end'), { timeout: 5000 })
     .toMatchObject({ gameId: 'bonlientiep', mode: 'easy', won: true, assisted: false });
 });
+
+test('xiangqi re-sends start with the new level when switched before the first move', async ({ page }) => {
+  await captureMessages(page);
+  await page.goto('#/play/xiangqi');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.mode === 'medium'), { timeout: 5000 })
+    .toBe(true);
+  await page.frameLocator('iframe').locator('#segLevel [data-level="hard"]').click();
+  await expect
+    .poll(async () => (await messages(page)).filter((m) => m.type === 'pn:start').pop()?.mode, { timeout: 5000 })
+    .toBe('hard');
+  await page.frameLocator('iframe').locator('#segLevel [data-level="easy"]').click();
+  await expect
+    .poll(async () => (await messages(page)).filter((m) => m.type === 'pn:start').pop()?.mode, { timeout: 5000 })
+    .toBe('easy');
+});
