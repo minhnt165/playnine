@@ -8,7 +8,6 @@ import { createRunManager, type RunStatus } from '../server/runs'
 import { rememberReturnHash } from '../server/returnHash'
 import { useServer } from '../server/ServerProvider'
 import { useGameBridge } from './bridge'
-import { Leaderboard } from './Leaderboard'
 import { Toast, type Notice } from './Toast'
 import { gameHref, playHref } from './route'
 
@@ -55,8 +54,6 @@ export function Player({ game, heldIds, portalSeen }: Props) {
   const [runStatus, setRunStatus] = useState<RunStatus>({ kind: 'idle' })
   const [notice, setNotice] = useState<Notice | null>(null)
   const noticeSeq = useRef(0)
-  // Tăng sau mỗi ván được ghi để bảng xếp hạng tải lại.
-  const [lbKey, setLbKey] = useState(0)
   const alive = useRef(true)
   useEffect(() => {
     alive.current = true
@@ -88,7 +85,6 @@ export function Player({ game, heldIds, portalSeen }: Props) {
       runs.end(m.gameId, mode, { score: m.score, timeMs: m.timeMs, won: m.won, assisted: m.assisted ?? false }).then(
         (o) => {
           if (o.kind === 'saved') {
-            if (alive.current) setLbKey((k) => k + 1)
             const rank = mode === 'daily' ? o.result.ranks.day : o.result.ranks.week
             if (rank === undefined) say(t('play.savedNoRank'))
             else say(t(mode === 'daily' ? 'play.savedToday' : 'play.saved', { rank }))
@@ -106,8 +102,13 @@ export function Player({ game, heldIds, portalSeen }: Props) {
     document.body.classList.add('playing')
     return () => document.body.classList.remove('playing')
   }, [game])
+  // Rời game thì trả tiêu đề mặc định; dọn trước effect của trang mới nên trang giới thiệu vẫn đặt được tiêu đề riêng.
   useEffect(() => {
-    document.title = name ? name + ' · PlayNine' : 'PlayNine'
+    if (!name) return
+    document.title = name + ' · PlayNine'
+    return () => {
+      document.title = 'PlayNine'
+    }
   }, [name])
   useEffect(() => {
     if (!gameId && document.fullscreenElement) document.exitFullscreen().catch(() => {})
@@ -302,7 +303,6 @@ export function Player({ game, heldIds, portalSeen }: Props) {
           )
         })}
       </div>
-      {game?.sdk && <Leaderboard gameId={game.id} refreshKey={lbKey} />}
       </div>
     </div>
   )

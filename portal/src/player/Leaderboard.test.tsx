@@ -1,5 +1,5 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { I18nProvider } from '../i18n/i18n'
 import { DICT } from '../i18n/dict'
 import { createFakeApi } from '../server/fakeApi'
@@ -21,11 +21,6 @@ const row = (rank: number, name: string, value: number, userId = `u${rank}`): Le
 })
 const U = { id: 'me', displayName: 'Minh', avatarUrl: null }
 
-const setWide = (wide: boolean) =>
-  vi.stubGlobal('matchMedia', (q: string) => ({
-    matches: wide, media: q, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {},
-  }))
-
 const mount = (api: ReturnType<typeof createFakeApi> | null, key = 0) =>
   render(
     <I18nProvider>
@@ -37,11 +32,9 @@ const mount = (api: ReturnType<typeof createFakeApi> | null, key = 0) =>
 
 beforeEach(() => {
   localStorage.clear()
-  setWide(true)
 })
 afterEach(() => {
   cleanup()
-  vi.unstubAllGlobals()
 })
 
 describe('Leaderboard', () => {
@@ -173,52 +166,5 @@ describe('Leaderboard', () => {
       </I18nProvider>,
     )
     await waitFor(() => expect(n()).toBe(before + 1))
-  })
-})
-
-describe('Leaderboard màn hẹp (bottom sheet)', () => {
-  beforeEach(() => setWide(false))
-  const api = () => createFakeApi({ games: GAMES, boards: { '2048|classic|week': [row(1, 'An', 5)] } })
-
-  it('nút mở sheet: role dialog, aria-modal, có nhãn, focus vào trong', async () => {
-    mount(api())
-    const opener = await screen.findByRole('button', { name: DICT.en['lb.open'] as string })
-    expect(screen.queryByRole('dialog')).toBeNull()
-    opener.focus()
-    fireEvent.click(opener)
-    const dlg = screen.getByRole('dialog')
-    expect(dlg).toHaveAttribute('aria-modal', 'true')
-    expect(dlg).toHaveAccessibleName(DICT.en['lb.title'] as string)
-    expect(dlg.contains(document.activeElement)).toBe(true)
-    expect(await within(dlg).findByText('An')).toBeInTheDocument()
-  })
-
-  it('Escape đóng và trả focus về nút mở', async () => {
-    mount(api())
-    const opener = await screen.findByRole('button', { name: DICT.en['lb.open'] as string })
-    opener.focus()
-    fireEvent.click(opener)
-    fireEvent.keyDown(document, { key: 'Escape' })
-    expect(screen.queryByRole('dialog')).toBeNull()
-    expect(document.activeElement).toBe(opener)
-  })
-
-  it('nút đóng và chạm nền đều đóng', async () => {
-    mount(api())
-    const opener = await screen.findByRole('button', { name: DICT.en['lb.open'] as string })
-    fireEvent.click(opener)
-    fireEvent.click(screen.getByRole('button', { name: DICT.en['lb.close'] as string }))
-    expect(screen.queryByRole('dialog')).toBeNull()
-    fireEvent.click(opener)
-    const backdrop = document.querySelector('.lb-backdrop')!
-    fireEvent.click(backdrop)
-    expect(screen.queryByRole('dialog')).toBeNull()
-  })
-
-  it('chạm bên trong sheet không đóng', async () => {
-    mount(api())
-    fireEvent.click(await screen.findByRole('button', { name: DICT.en['lb.open'] as string }))
-    fireEvent.click(screen.getByRole('dialog'))
-    expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
 })

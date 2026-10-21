@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { GamePage } from './detail/GamePage'
 import { Home } from './home/Home'
 import { prefersReducedMotion } from './home/media'
 import { markPlayed } from './data/recent'
@@ -17,6 +18,10 @@ const currentGame = (): GameDef | null => {
   const r = parseRoute(location.hash)
   return r.name === 'play' ? r.game : null
 }
+const currentDetail = (): GameDef | null => {
+  const r = parseRoute(location.hash)
+  return r.name === 'detail' ? r.game : null
+}
 const currentProfileId = (): string | null => {
   const r = parseRoute(location.hash)
   return r.name === 'profile' ? r.userId : null
@@ -32,12 +37,14 @@ export function App() {
   const [portalSeen, setPortalSeen] = useState(() => currentGame() === null)
   const [refreshKey, setRefreshKey] = useState(0)
   const [profileId, setProfileId] = useState<string | null>(currentProfileId)
+  const [detail, setDetail] = useState<GameDef | null>(currentDetail)
   const gameRef = useRef(game)
   const { api } = useServer()
 
   useEffect(() => {
     const onHash = () => {
       setProfileId(currentProfileId())
+      setDetail(currentDetail())
       const prev = gameRef.current
       const next = currentGame()
       gameRef.current = next
@@ -88,6 +95,8 @@ export function App() {
     <>
       {profileId ? (
         <ProfilePage userId={profileId} onThemeApplied={recolor} />
+      ) : detail ? (
+        <GamePage game={detail} refreshKey={refreshKey} onThemeApplied={recolor} />
       ) : (
         <Home openIds={openIds} refreshKey={refreshKey} onThemeApplied={recolor} />
       )}
