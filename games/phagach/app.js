@@ -829,7 +829,7 @@
   let overTimer = 0;
   function gameOver() {
     mode = 'over';
-    PN && PN.gameEnd({ mode: 'default', score: game.score, won: game.level >= E.LEVELS.length });
+    PN && PN.gameEnd({ mode: 'default', score: game.score, won: game.cleared >= E.LEVELS.length });
     releaseInput();
     updateRecords();
     hideBanner();
