@@ -192,3 +192,53 @@ describe('Player + server', () => {
     await waitFor(() => expect(container.querySelector('.play-status')!.textContent).toBe(DICT.vi['play.unscored']))
   })
 })
+describe('Player + server: auth muộn và đăng nhập giữa ván', () => {
+  const U = { id: 'u-a', displayName: 'Alice', avatarUrl: null }
+  const frameSend = (container: HTMLElement, data: unknown) => {
+    const frame = container.querySelector('#frames iframe') as HTMLIFrameElement
+    act(() => {
+      window.dispatchEvent(new MessageEvent('message', { data, origin: location.origin, source: frame.contentWindow }))
+    })
+  }
+  const mountApi = (api: ReturnType<typeof createFakeApi>) => {
+    localStorage.setItem('playnine-lang', 'vi')
+    return render(
+      <I18nProvider>
+        <ServerProvider api={api}>
+          <Player game={g2048} heldIds={[g2048.id]} portalSeen={false} />
+        </ServerProvider>
+      </I18nProvider>,
+    )
+  }
+  const start = { type: 'pn:start', v: 1, gameId: '2048', mode: 'classic', resume: true }
+
+  it('pn:start (resume) tới trước khi currentUser xong → giữ ván đã lưu và vẫn ghi điểm', async () => {
+    const api = createFakeApi({ user: U, finish: { status: 'finished', reason: null, ranks: { week: 2 } } })
+    localStorage.setItem('playnine-run-2048', JSON.stringify({ runId: 'run-9', mode: 'classic', userId: 'u-a', startedAt: Date.now() }))
+    let release!: () => void
+    const gate = new Promise<void>((r) => (release = r))
+    const orig = api.currentUser
+    api.currentUser = async () => {
+      await gate
+      return orig()
+    }
+    const { container } = mountApi(api)
+    frameSend(container, start)
+    frameSend(container, { type: 'pn:end', v: 1, gameId: '2048', mode: 'classic', score: 5, won: true })
+    expect(localStorage.getItem('playnine-run-2048')).not.toBeNull()
+    release()
+    await waitFor(() => expect(container.querySelector('[role="status"]')!.textContent).toContain('hạng #2'))
+    expect(api.calls.find((c) => c.method === 'finishRun')!.args[0]).toBe('run-9')
+  })
+
+  it('đăng nhập giữa ván (khách bắt đầu) → hiện "Ván này không tính điểm"', async () => {
+    const api = createFakeApi()
+    const { container } = mountApi(api)
+    await act(async () => { await new Promise((r) => setTimeout(r, 0)) })
+    frameSend(container, { ...start, resume: false })
+    await act(async () => { await new Promise((r) => setTimeout(r, 0)) })
+    api.state.user = U
+    await act(async () => { await api.updateDisplayName('Alice') })
+    await waitFor(() => expect(container.querySelector('.play-status')!.textContent).toBe(DICT.vi['play.unscored']))
+  })
+})

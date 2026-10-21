@@ -36,7 +36,19 @@ export function Player({ game, heldIds, portalSeen }: Props) {
   const { api, user, authReady } = useServer()
   const userRef = useRef(user)
   userRef.current = user
-  const runs = useMemo(() => createRunManager({ api, getUser: () => userRef.current }), [api])
+  // start/end chờ đến khi biết người dùng, tránh coi người đã đăng nhập là khách lúc mới tải.
+  const authGate = useRef<{ promise: Promise<void>; open(): void } | null>(null)
+  if (!authGate.current) {
+    let open!: () => void
+    authGate.current = { promise: new Promise<void>((r) => (open = r)), open }
+  }
+  useEffect(() => {
+    if (authReady) authGate.current?.open()
+  }, [authReady])
+  const runs = useMemo(
+    () => createRunManager({ api, getUser: () => userRef.current, whenAuthReady: () => authGate.current!.promise }),
+    [api],
+  )
   const [frame, setFrame] = useState<HTMLIFrameElement | null>(null)
   const [runStatus, setRunStatus] = useState<RunStatus>({ kind: 'idle' })
   const [notice, setNotice] = useState<Notice | null>(null)
@@ -237,7 +249,7 @@ export function Player({ game, heldIds, portalSeen }: Props) {
           </svg>
         </button>
       </div>
-      {api && authReady && game && (!user || (runStatus.kind === 'unscored' && (runStatus.why === 'no_resume' || runStatus.why === 'error'))) && (
+      {api && authReady && game && (!user || (runStatus.kind === 'unscored' && (runStatus.why === 'no_resume' || runStatus.why === 'error' || runStatus.why === 'guest'))) && (
         <div className="play-status">
           {user ? (
             t('play.unscored')

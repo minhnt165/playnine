@@ -150,3 +150,62 @@ describe('createRunManager', () => {
     expect([a.kind, b.kind].sort()).toEqual(['saved', 'skipped'])
   })
 })
+describe('createRunManager: chờ auth và tuần tự hóa', () => {
+  const deferred = <T = void>() => {
+    let resolve!: (v: T) => void
+    let reject!: (e: unknown) => void
+    const promise = new Promise<T>((a, b) => ((resolve = a), (reject = b)))
+    return { promise, resolve, reject }
+  }
+
+  it('start gửi trước khi auth xong (resume) → scored, giữ khóa, end gọi finishRun', async () => {
+    const api = createFakeApi()
+    await mk(api).start('2048', 'classic', false)
+    const gate = deferred()
+    let current: AuthUser | null = null
+    const m = createRunManager({ api, getUser: () => current, storage, now: () => t, whenAuthReady: () => gate.promise })
+    const started = m.start('2048', 'classic', true)
+    const ended = m.end('2048', 'classic', R)
+    current = A
+    gate.resolve()
+    expect(await started).toEqual({ kind: 'scored' })
+    expect((await ended).kind).toBe('saved')
+    expect(api.calls.find((c) => c.method === 'finishRun')!.args[0]).toBe('run-1')
+  })
+
+  it('end trong lúc startRun đang chờ → kết thúc ván mới, không để khóa mồ côi', async () => {
+    const api = createFakeApi()
+    const d = deferred<string>()
+    api.startRun = () => d.promise
+    const m = mk(api)
+    const s = m.start('2048', 'classic', false)
+    const e = m.end('2048', 'classic', R)
+    d.resolve('run-new')
+    await s
+    expect((await e).kind).toBe('saved')
+    expect(api.calls.find((c) => c.method === 'finishRun')!.args[0]).toBe('run-new')
+    expect(storage.getItem(KEY)).toBeNull()
+  })
+
+  it('start trong lúc end đang lỗi chậm → khóa cuối cùng là ván mới', async () => {
+    const api = createFakeApi()
+    const m = mk(api)
+    await m.start('2048', 'classic', false)
+    const d = deferred<never>()
+    api.finishRun = () => d.promise
+    const e = m.end('2048', 'classic', R)
+    const s = m.start('2048', 'classic', false)
+    d.reject(new Error('net'))
+    expect(await e).toEqual({ kind: 'error' })
+    await s
+    expect(JSON.parse(storage.getItem(KEY)!).runId).toBe('run-2')
+  })
+
+  it('finishRun trả not_open (đã chốt từ lần trước) → skipped, im lặng', async () => {
+    const api = createFakeApi({ finish: { status: 'rejected', reason: 'not_open', ranks: {} } })
+    const m = mk(api)
+    await m.start('2048', 'classic', false)
+    expect(await m.end('2048', 'classic', R)).toEqual({ kind: 'skipped' })
+    expect(storage.getItem(KEY)).toBeNull()
+  })
+})
