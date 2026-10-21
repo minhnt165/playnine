@@ -58,10 +58,10 @@ create policy event_results_read on public.event_results for select to anon, aut
 create policy badges_read on public.badges for select to anon, authenticated using (true);
 create policy collections_read on public.collections for select to anon, authenticated using (true);
 
--- Người gọi có phải admin không (anon luôn false).
+-- Người gọi có phải admin không (anon và admin bị khóa luôn false).
 create function public.is_admin() returns boolean
 language sql stable security definer set search_path = public as $$
-  select coalesce((select pr.role = 'admin' from public.profiles pr where pr.id = auth.uid()), false)
+  select coalesce((select pr.role = 'admin' and not pr.banned from public.profiles pr where pr.id = auth.uid()), false)
 $$;
 revoke execute on function public.is_admin() from public, anon, authenticated;
 grant execute on function public.is_admin() to anon, authenticated;

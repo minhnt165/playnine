@@ -95,6 +95,8 @@ describe('events tables', () => {
     expect(await asUser(db, a, q)).toBe(false)
     await db.query("update profiles set role = 'admin' where id = $1", [a])
     expect(await asUser(db, a, q)).toBe(true)
+    await db.query('update profiles set banned = true where id = $1', [a])
+    expect(await asUser(db, a, q)).toBe(false)
   })
 
   it('migration works without pg_cron', async () => {
