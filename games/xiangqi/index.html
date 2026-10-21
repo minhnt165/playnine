@@ -1059,8 +1059,11 @@ const DIFFICULTY = {
 <!-- ===================================================================== -->
 <!-- PHẦN 3: GIAO DIỆN (UI) - vẽ SVG, âm thanh, xử lý click, điều khiển ván -->
 <!-- ===================================================================== -->
+<script src="../sdk/playnine.js?v=1"></script>
 <script id="ui">
 'use strict';
+const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
+PN && PN.init({ gameId: 'xiangqi' });
 const t = (key, params) => I18N.t(key, params);
 I18N.apply(); // điền chữ tĩnh theo ngôn ngữ trước khi chèn icon và vẽ ván
 
@@ -1259,6 +1262,8 @@ const game = {
   thinking: false,
   viewPly: null,      // null = đang xem thế hiện tại; số = đang xem lại thế sau nước thứ đó
   aiInfo: null,       // { depth, nodes, ms } của nước máy vừa đi
+  pnRun: null,        // mức máy của ván đang báo cho cổng (null = không báo)
+  assisted: false,    // đã đi lại hoặc đổi chế độ/mức máy giữa ván
 };
 
 const $ = id => document.getElementById(id);
@@ -1601,6 +1606,9 @@ function newGame() {
   game.thinking = false;
   game.viewPly = null;
   game.aiInfo = null;
+  game.assisted = false;
+  game.pnRun = PN && game.mode === 'ai' ? game.level : null;
+  game.pnRun && PN.gameStart({ mode: game.pnRun });
   layers.layerPieces.innerHTML = '';
   refreshStatus();
   render();
@@ -1674,6 +1682,8 @@ function playMove(m) {
   if (st.over) {
     const humanLost = game.mode === 'ai' && st.winner === BLACK;
     Sound.play(st.winner === null ? 'draw' : humanLost ? 'lose' : 'win');
+    if (game.pnRun && game.mode === 'ai') PN.gameEnd({ mode: game.pnRun, won: st.winner === RED, assisted: game.assisted });
+    game.pnRun = null;
   } else if (st.inCheck) {
     Sound.play('check');
   } else {
@@ -1706,6 +1716,7 @@ function stopThinking() {
 
 function undo() {
   if (game.history.length === 0) return;
+  game.assisted = true;
   stopThinking(); // máy đang nghĩ: huỷ, nước vừa đi là của người nên chỉ lùi một nước
   const step = () => {
     const h = game.history.pop();
@@ -1766,6 +1777,7 @@ $('segMode').addEventListener('click', e => {
   if (!b || b.dataset.mode === game.mode) return;
   Sound.init();
   stopThinking();
+  if (game.history.length > 0) game.assisted = true;
   game.mode = b.dataset.mode;
   clearSelection();
   render();
@@ -1774,6 +1786,7 @@ $('segMode').addEventListener('click', e => {
 $('segLevel').addEventListener('click', e => {
   const b = e.target.closest('[data-level]');
   if (!b) return;
+  if (game.history.length > 0 && game.level !== b.dataset.level) game.assisted = true;
   game.level = b.dataset.level;
   try { localStorage.setItem('xiangqi.level', game.level); } catch (e2) { /* bỏ qua */ }
   renderPanel(viewState());

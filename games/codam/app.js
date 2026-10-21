@@ -9,6 +9,8 @@
  * ===================================================================== */
 (() => {
   'use strict';
+  const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
+  PN && PN.init({ gameId: 'codam' });
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
   const APP_VERSION = '1.0.1';
@@ -196,7 +198,7 @@
 
   function saveGame() {
     if (!game) return;
-    writeJSON(KEYS.save, { v: 1, mode: game.mode, level: game.level, human: game.human, rules: game.rules, moves: game.moves, recorded: game.recorded });
+    writeJSON(KEYS.save, { v: 1, mode: game.mode, level: game.level, human: game.human, rules: game.rules, moves: game.moves, recorded: game.recorded, usedUndo: !!game.usedUndo });
   }
 
   function loadGame() {
@@ -213,6 +215,7 @@
           return p.slice();
         }),
         recorded: raw.recorded === true,
+        usedUndo: raw.usedUndo === true,
       };
       rebuild(g);
       if (g.state.over) g.recorded = true;
@@ -269,6 +272,7 @@
     render();
     renderLog();
     writeSummary();
+    PN && game.mode === 'ai' && PN.gameStart({ mode: game.level });
     scheduleAi();
   }
 
@@ -409,6 +413,7 @@
   // Đi lại: ở chế độ đấu máy, gỡ nước của người chơi cùng nước đáp của máy
   function undo() {
     if (!canUndo()) return;
+    game.usedUndo = true;
     cancelAi();
     cancelAnim();
     do {
@@ -432,6 +437,7 @@
     if (game.mode === 'ai') {
       const lv = st.levels[game.level];
       lv.played++;
+      PN && PN.gameEnd({ mode: game.level, won: w === game.human, assisted: !!game.usedUndo });
       if (w === game.human) { lv.won++; stats.streak++; stats.best = Math.max(stats.best, stats.streak); }
       else if (w === E.DRAW) { lv.drawn++; stats.streak = 0; }
       else { lv.lost++; stats.streak = 0; }
@@ -1350,6 +1356,7 @@
   const saved = loadGame();
   if (saved) {
     game = saved;
+    PN && game.mode === 'ai' && !game.recorded && PN.gameStart({ mode: game.level, resume: true });
     render();
     renderLog();
     writeSummary();

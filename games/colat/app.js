@@ -8,6 +8,8 @@
  * ===================================================================== */
 (() => {
   'use strict';
+  const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
+  PN && PN.init({ gameId: 'colat' });
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
   const APP_VERSION = '1.0.1';
@@ -172,7 +174,7 @@
 
   function saveGame() {
     if (!game) return;
-    writeJSON(KEYS.save, { v: 1, mode: game.mode, level: game.level, you: game.you, moves: game.moves, recorded: game.recorded });
+    writeJSON(KEYS.save, { v: 1, mode: game.mode, level: game.level, you: game.you, moves: game.moves, recorded: game.recorded, usedUndo: !!game.usedUndo });
   }
 
   function loadGame() {
@@ -185,6 +187,7 @@
         you: raw.you === 1 ? 1 : 0,
         moves: raw.moves.slice(),
         recorded: raw.recorded === true,
+        usedUndo: raw.usedUndo === true,
       };
       rebuild(g);
       if (g.state.over) g.recorded = true;
@@ -254,6 +257,7 @@
     render();
     renderLog();
     writeSummary();
+    PN && game.mode === 'ai' && PN.gameStart({ mode: game.level });
     scheduleAi();
   }
 
@@ -363,6 +367,7 @@
   // (máy có thể đi liền nhiều nước nếu bạn mất lượt)
   function undo() {
     if (!canUndo()) return;
+    game.usedUndo = true;
     cancelAi();
     cancelAnim();
     if (game.mode === 'pvp') game.moves.pop();
@@ -391,6 +396,7 @@
     if (game.mode === 'ai') {
       const lv = stats.levels[game.level];
       lv.played++;
+      PN && PN.gameEnd({ mode: game.level, won: w === game.you, assisted: !!game.usedUndo });
       if (w === game.you) {
         lv.won++;
         stats.streak++;
@@ -1133,6 +1139,7 @@
   const saved = loadGame();
   if (saved) {
     game = saved;
+    PN && game.mode === 'ai' && !game.recorded && PN.gameStart({ mode: game.level, resume: true });
     focusSq = firstFocus();
     render();
     renderLog();

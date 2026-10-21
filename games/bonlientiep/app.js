@@ -8,6 +8,8 @@
  * ===================================================================== */
 (() => {
   'use strict';
+  const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
+  PN && PN.init({ gameId: 'bonlientiep' });
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
   const APP_VERSION = '1.0.1';
@@ -167,7 +169,7 @@
 
   function saveGame() {
     if (!game) return;
-    writeJSON(KEYS.save, { v: 1, mode: game.mode, level: game.level, first: game.first, moves: game.moves, recorded: game.recorded });
+    writeJSON(KEYS.save, { v: 1, mode: game.mode, level: game.level, first: game.first, moves: game.moves, recorded: game.recorded, usedUndo: !!game.usedUndo });
   }
 
   function loadGame() {
@@ -180,6 +182,7 @@
         first: raw.first === 1 ? 1 : 0,
         moves: raw.moves.slice(),
         recorded: raw.recorded === true,
+        usedUndo: raw.usedUndo === true,
       };
       rebuild(g);
       if (g.state.over) g.recorded = true;
@@ -232,6 +235,7 @@
     render();
     renderLog();
     writeSummary();
+    PN && game.mode === 'ai' && PN.gameStart({ mode: game.level });
     scheduleAi();
   }
 
@@ -333,6 +337,7 @@
   // Đi lại: ở chế độ đấu máy, gỡ nước của người chơi cùng nước đáp của máy
   function undo() {
     if (!canUndo()) return;
+    game.usedUndo = true;
     cancelAi();
     finishDrops();
     do {
@@ -355,6 +360,7 @@
     if (game.mode === 'ai') {
       const lv = stats.levels[game.level];
       lv.played++;
+      PN && PN.gameEnd({ mode: game.level, won: w === 0, assisted: !!game.usedUndo });
       if (w === 0) {
         lv.won++;
         stats.streak++;
@@ -1075,6 +1081,7 @@
   const saved = loadGame();
   if (saved) {
     game = saved;
+    PN && game.mode === 'ai' && !game.recorded && PN.gameStart({ mode: game.level, resume: true });
     winShown = true; // ván đã xong lúc rời đi: tô đường thắng ngay
     render();
     renderLog();

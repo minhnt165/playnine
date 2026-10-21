@@ -7,6 +7,8 @@
  * ===================================================================== */
 (() => {
   'use strict';
+  const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
+  PN && PN.init({ gameId: 'caro' });
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html để trình duyệt tải file mới
   const APP_VERSION = '1.0.1';
@@ -141,6 +143,7 @@
     clearTimeout(resultTimer);
     closeModal('modal-result');
     game = makeGame(cfg);
+    PN && game.mode === 'ai' && PN.gameStart({ mode: game.level });
     focusIdx = E.CENTER;
     freshIdx = -1;
     persist();
@@ -166,6 +169,7 @@
     try { rep = E.replay(raw.moves, g.rules); } catch (e) { return false; }
     if (rep.over) return false; // ván đã xong thì không khôi phục
     g.moves = raw.moves.slice();
+    g.usedUndo = raw.usedUndo === true;
     g.board = rep.board;
     game = g;
     focusIdx = g.moves.length ? g.moves[g.moves.length - 1] : E.CENTER;
@@ -174,7 +178,7 @@
 
   function persist() {
     if (game && !game.over && game.moves.length) {
-      writeJSON(KEYS.save, { v: 1, mode: game.mode, level: game.level, human: game.human, rules: game.rules, moves: game.moves });
+      writeJSON(KEYS.save, { v: 1, mode: game.mode, level: game.level, human: game.human, rules: game.rules, moves: game.moves, usedUndo: !!game.usedUndo });
     } else {
       removeKey(KEYS.save);
     }
@@ -203,6 +207,7 @@
   function finishGame() {
     const w = game.over.winner;
     if (game.mode === 'ai') recordResult(game.level, w === 0 ? 'drawn' : w === game.human ? 'won' : 'lost');
+    if (game.mode === 'ai') PN && PN.gameEnd({ mode: game.level, won: w !== 0 && w === game.human, assisted: !!game.usedUndo });
     announce(resultTitle());
     clearTimeout(resultTimer);
     resultTimer = setTimeout(showResult, reduceMotion.matches ? 300 : RESULT_DELAY_MS);
@@ -216,6 +221,7 @@
   // Đi lại: với máy thì bỏ nước trả lời của máy cùng nước gần nhất của người
   function undo() {
     if (!canUndo()) return;
+    game.usedUndo = true;
     cancelAi();
     if (game.mode === 'pvp') game.moves.pop();
     else {
@@ -833,7 +839,9 @@
   applyTheme();
   buildBoard();
   AI.start();
-  if (!restore()) game = makeGame({ mode: settings.mode, level: settings.level, human: settings.human });
+  const resumed = restore();
+  if (!resumed) game = makeGame({ mode: settings.mode, level: settings.level, human: settings.human });
+  PN && game.mode === 'ai' && PN.gameStart(resumed ? { mode: game.level, resume: true } : { mode: game.level });
   persist();
   renderAll();
   maybeAi();
