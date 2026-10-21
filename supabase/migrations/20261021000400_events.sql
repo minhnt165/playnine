@@ -170,9 +170,12 @@ create function public._close_event(p_event_id uuid) returns void
 language plpgsql security definer set search_path = public as $$
 declare
   top int;
+  st text;
 begin
-  select e.award_top into top from public.events e where e.id = p_event_id for update;
+  select e.award_top, e.status into top, st from public.events e where e.id = p_event_id for update;
   if not found then return; end if;
+  -- Sự kiện đã hủy (kể cả hủy xen giữa lúc tick chọn nó) thì không đóng, không phát huy hiệu.
+  if st = 'cancelled' then return; end if;
   delete from public.event_results where event_id = p_event_id;
   delete from public.badges where event_id = p_event_id;
   insert into public.event_results (event_id, user_id, rank, value, achieved_at)

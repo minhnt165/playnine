@@ -66,7 +66,7 @@ Sự kiện được đóng tự động bởi `pg_cron` (mỗi 5 phút). Làm c
 1. Vào **Database → Extensions** → bật `pg_cron`.
 2. Sau khi `db push`, kiểm tra lịch đã được tạo: trong **SQL Editor** chạy `select jobname, schedule from cron.job;` phải thấy `playnine-events` với lịch `*/5 * * * *`.
 
-Không bật `pg_cron` thì migration vẫn chạy nhưng sự kiện sẽ không tự chuyển sang live/closed.
+Migration tự bật `pg_cron` và tạo lịch nếu project có extension này; nên bật trước trong Dashboard để chắc chắn. Nếu `cron.job` không có `playnine-events` thì sự kiện sẽ không tự chuyển sang live/closed.
 
 ## 5. GitHub secrets (prod)
 

@@ -244,6 +244,17 @@ describe('closing', () => {
     expect(await count(db, 'event_results', ev)).toBe(0)
   })
 
+  it('_close_event on a cancelled event does nothing', async () => {
+    const db = await createDb()
+    const a = await newUser(db, { full_name: 'Alice' })
+    const ev = await addEvent(db, { status: 'cancelled', startsAgo: '3 hours', endsIn: '-1 hour' })
+    await addRun(db, a, '2048', '4x4', { score: 100, startedAgo: '2 hours 31 minutes', endedAgo: '2 hours 30 minutes' })
+    await db.query('select _close_event($1)', [ev])
+    expect((await db.query<any>('select status from events where id = $1', [ev])).rows[0].status).toBe('cancelled')
+    expect(await count(db, 'event_results', ev)).toBe(0)
+    expect(await count(db, 'badges', ev)).toBe(0)
+  })
+
   it('award_top 0 gives no badges', async () => {
     const db = await createDb()
     const a = await newUser(db, { full_name: 'Alice' })
