@@ -66,13 +66,15 @@ test('back from deep link goes home', async ({ page }) => {
 
 test('switch game keeps history', async ({ page }) => {
   await page.goto('');
-  const home = page.url();
   await page.locator('#games a[href*="2048"]').first().click();
+  await expect(page).toHaveURL(/#\/game\/2048$/);
+  const preview = page.url();
+  await page.locator('.detail-play').click();
   await expect(page).toHaveURL(/#\/play\/2048/);
   await page.locator('#p-switch button:not([aria-current="true"])').first().click();
   await expect(page).not.toHaveURL(/#\/play\/2048/);
   await page.goBack();
-  await expect(page).toHaveURL(home);
+  await expect(page).toHaveURL(preview);
   await expect(page.locator('body')).not.toHaveClass(/playing/);
 });
 
