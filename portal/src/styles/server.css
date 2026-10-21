@@ -21,3 +21,20 @@
 }
 .auth-menu a:hover, .auth-menu button:hover { background: var(--chip); }
 .auth-error { color: var(--fire); font-size: .8rem; }
+
+/* Dòng trạng thái ghi điểm dưới thanh player và thông báo nổi. */
+.play-status {
+  display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+  padding: 6px 12px; font-size: .85rem; color: var(--text);
+  background: var(--chip); border-bottom: 1px solid var(--border);
+}
+.play-status button {
+  padding: 4px 12px; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface-solid); color: var(--text); font: inherit; cursor: pointer;
+}
+.play-status button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.toast-region { position: fixed; left: 0; right: 0; bottom: 20px; z-index: 40; display: flex; justify-content: center; pointer-events: none; }
+.toast {
+  padding: 10px 18px; border-radius: 12px; font-weight: 700; color: var(--text);
+  background: var(--surface-solid); border: 1px solid var(--border); box-shadow: var(--shadow);
+}

@@ -1,8 +1,10 @@
-import { act, cleanup, fireEvent, render } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { GAMES, gameById } from '../games/catalog'
 import { I18nProvider } from '../i18n/i18n'
 import { DICT } from '../i18n/dict'
+import { createFakeApi } from '../server/fakeApi'
+import { ServerProvider } from '../server/ServerProvider'
 import { Player } from './Player'
 
 const g2048 = gameById('2048')!
@@ -125,5 +127,68 @@ describe('Player', () => {
     expect(container.querySelector('#frames iframe')).toBe(f)
     expect(f).not.toHaveClass('on')
     expect(document.title).toBe('PlayNine')
+  })
+})
+
+describe('Player + server', () => {
+  const U = { id: 'u-a', displayName: 'Alice', avatarUrl: null }
+  const mountServer = (api: ReturnType<typeof createFakeApi>) => {
+    localStorage.setItem('playnine-lang', 'vi')
+    const r = render(
+      <I18nProvider>
+        <ServerProvider api={api}>
+          <Player game={g2048} heldIds={[g2048.id]} portalSeen={false} />
+        </ServerProvider>
+      </I18nProvider>,
+    )
+    const frame = r.container.querySelector('#frames iframe') as HTMLIFrameElement
+    const send = (data: unknown) =>
+      act(() => {
+        window.dispatchEvent(new MessageEvent('message', { data, origin: location.origin, source: frame.contentWindow }))
+      })
+    return { ...r, send }
+  }
+  const settle = () => act(async () => { await new Promise((r) => setTimeout(r, 0)) })
+  const start = { type: 'pn:start', v: 1, gameId: '2048', mode: 'classic', resume: false }
+  const end = { type: 'pn:end', v: 1, gameId: '2048', mode: 'classic', score: 10, won: true }
+  const has = (api: ReturnType<typeof createFakeApi>, m: string) => api.calls.some((c) => c.method === m)
+
+  it('đã đăng nhập: pn:start rồi pn:end → toast "Đã ghi điểm · hạng #1"', async () => {
+    const api = createFakeApi({ user: U, finish: { status: 'finished', reason: null, ranks: { week: 1 } } })
+    const { send, container } = mountServer(api)
+    await settle()
+    send(start)
+    await waitFor(() => expect(has(api, 'startRun')).toBe(true))
+    await waitFor(() => expect(localStorage.getItem('playnine-run-2048')).not.toBeNull())
+    send(end)
+    await waitFor(() => expect(container.querySelector('[role="status"]')!.textContent).toContain('Đã ghi điểm · hạng #1'))
+  })
+
+  it('khách: hiện dòng đăng nhập để ghi điểm, nút gọi signInWithGoogle', async () => {
+    const api = createFakeApi()
+    const { container } = mountServer(api)
+    await waitFor(() => expect(container.querySelector('.play-status')!.textContent).toContain('Đăng nhập để ghi điểm'))
+    fireEvent.click(container.querySelector('.play-status button')!)
+    expect(has(api, 'signInWithGoogle')).toBe(true)
+  })
+
+  it('finishRun lỗi → toast saveFailed, không lỗi chưa bắt', async () => {
+    const api = createFakeApi({ user: U })
+    const { send, container } = mountServer(api)
+    await settle()
+    send(start)
+    await waitFor(() => expect(localStorage.getItem('playnine-run-2048')).not.toBeNull())
+    api.fail('finishRun')
+    send(end)
+    await waitFor(() => expect(container.querySelector('[role="status"]')!.textContent).toBe(DICT.vi['play.saveFailed']))
+  })
+
+  it('startRun lỗi → dòng "không tính điểm"', async () => {
+    const api = createFakeApi({ user: U })
+    api.fail('startRun')
+    const { send, container } = mountServer(api)
+    await settle()
+    send(start)
+    await waitFor(() => expect(container.querySelector('.play-status')!.textContent).toBe(DICT.vi['play.unscored']))
   })
 })

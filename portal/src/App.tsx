@@ -6,6 +6,8 @@ import type { GameDef } from './games/catalog'
 import { startGlyphs } from './legacy/glyphs'
 import { nextFrameIds } from './player/frames'
 import { Player } from './player/Player'
+import { recordPlayThrottled } from './server/playCount'
+import { useServer } from './server/ServerProvider'
 import { isPlaying } from './player/playing'
 import { parseRoute } from './player/route'
 import { useShortcuts } from './player/useShortcuts'
@@ -25,6 +27,7 @@ export function App() {
   const [portalSeen, setPortalSeen] = useState(() => currentGame() === null)
   const [refreshKey, setRefreshKey] = useState(0)
   const gameRef = useRef(game)
+  const { api } = useServer()
 
   useEffect(() => {
     const onHash = () => {
@@ -53,8 +56,11 @@ export function App() {
 
   // Mỗi lần mở game ghi mốc "chơi gần nhất".
   useEffect(() => {
-    if (game) markPlayed(game.id)
-  }, [game])
+    if (game) {
+      markPlayed(game.id)
+      recordPlayThrottled(api, game.id)
+    }
+  }, [game, api])
 
   useShortcuts(game !== null)
 

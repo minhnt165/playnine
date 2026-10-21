@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import type { GameToPortal } from '@playnine/sdk/protocol'
 import { sudokuData } from '../data/sudoku'
 import { readSummary } from '../data/summary'
 import { gameById, GAMES, type GameDef } from '../games/catalog'
 import { useI18n } from '../i18n/i18n'
+import { createRunManager, type RunStatus } from '../server/runs'
+import { useServer } from '../server/ServerProvider'
+import { useGameBridge } from './bridge'
+import { Toast, type Notice } from './Toast'
 import { gameHref, playHref } from './route'
 
 type Props = {
@@ -27,6 +32,57 @@ export function Player({ game, heldIds, portalSeen }: Props) {
   const gameId = game?.id ?? null
   const name = game ? loc(game.name) : ''
 
+  // Cầu nối game ↔ server: RunManager tạo một lần, đọc người dùng hiện tại qua ref.
+  const { api, user, authReady } = useServer()
+  const userRef = useRef(user)
+  userRef.current = user
+  const runs = useMemo(() => createRunManager({ api, getUser: () => userRef.current }), [api])
+  const [frame, setFrame] = useState<HTMLIFrameElement | null>(null)
+  const [runStatus, setRunStatus] = useState<RunStatus>({ kind: 'idle' })
+  const [notice, setNotice] = useState<Notice | null>(null)
+  const noticeSeq = useRef(0)
+  const alive = useRef(true)
+  useEffect(() => {
+    alive.current = true
+    return () => {
+      alive.current = false
+    }
+  }, [])
+  // Đổi game: trạng thái ván của game trước không còn đúng.
+  useEffect(() => {
+    setRunStatus({ kind: 'idle' })
+    setNotice(null)
+  }, [gameId])
+  useEffect(() => {
+    setFrame(gameId ? (frameRefs.current[gameId] ?? null) : null)
+  }, [gameId, heldIds])
+
+  const say = (text: string) => {
+    if (alive.current && gameRef.current) setNotice({ id: ++noticeSeq.current, text })
+  }
+  const onGameMessage = (m: GameToPortal) => {
+    if (m.type === 'pn:start') {
+      const id = m.gameId
+      runs.start(id, m.mode, m.resume).then(
+        (s) => alive.current && gameRef.current?.id === id && setRunStatus(s),
+        () => alive.current && gameRef.current?.id === id && setRunStatus({ kind: 'unscored', why: 'error' }),
+      )
+    } else if (m.type === 'pn:end') {
+      const { mode } = m
+      runs.end(m.gameId, mode, { score: m.score, timeMs: m.timeMs, won: m.won, assisted: m.assisted ?? false }).then(
+        (o) => {
+          if (o.kind === 'saved') {
+            const rank = mode === 'daily' ? o.result.ranks.day : o.result.ranks.week
+            if (rank === undefined) say(t('play.savedNoRank'))
+            else say(t(mode === 'daily' ? 'play.savedToday' : 'play.saved', { rank }))
+          } else if (o.kind === 'rejected') say(t('play.rejected'))
+          else if (o.kind === 'error') say(t('play.saveFailed'))
+        },
+        () => say(t('play.saveFailed')),
+      )
+    }
+  }
+  useGameBridge({ frame, gameId, onMessage: onGameMessage })
   // Class body, tiêu đề tab, thoát toàn màn hình khi về trang chủ.
   useEffect(() => {
     if (!game) return
@@ -181,6 +237,21 @@ export function Player({ game, heldIds, portalSeen }: Props) {
           </svg>
         </button>
       </div>
+      {api && authReady && game && (!user || (runStatus.kind === 'unscored' && (runStatus.why === 'no_resume' || runStatus.why === 'error'))) && (
+        <div className="play-status">
+          {user ? (
+            t('play.unscored')
+          ) : (
+            <>
+              <span>{t('play.signInToScore')}</span>
+              <button type="button" onClick={() => api.signInWithGoogle().catch(() => {})}>
+                {t('auth.signIn')}
+              </button>
+            </>
+          )}
+        </div>
+      )}
+      <Toast notice={notice} />
       <div className="frames" id="frames">
         {/* Render trước iframe (giống cổng cũ) để iframe đang tải không che spinner. */}
         <div className={'loading' + (game && !ready.has(game.id) ? ' on' : '')} id="p-loading">
