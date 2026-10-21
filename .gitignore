@@ -5,3 +5,4 @@ test-results/
 playwright-report/
 portal/.vite/
 portal/.env.local
+.superpowers/
