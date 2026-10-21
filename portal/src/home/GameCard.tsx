@@ -1,6 +1,7 @@
 import type { CSSProperties, PointerEvent } from 'react'
 import type { GameDef } from '../games/catalog'
 import { useI18n } from '../i18n/i18n'
+import { formatCount } from '../lib/format'
 import { canHover, prefersReducedMotion } from './media'
 
 type Props = {
@@ -9,10 +10,12 @@ type Props = {
   ribbon: [string, string] | null
   note: string | undefined
   hidden: boolean
+  /** Tổng số lượt chơi từ server; undefined thì không hiện. */
+  plays?: number
 }
 
-export function GameCard({ game: g, index: i, ribbon, note, hidden }: Props) {
-  const { t, loc } = useI18n()
+export function GameCard({ game: g, index: i, ribbon, note, hidden, plays }: Props) {
+  const { t, loc, lang } = useI18n()
   const tilt = !prefersReducedMotion() && canHover()
 
   const onMove = (e: PointerEvent<HTMLAnchorElement>) => {
@@ -63,7 +66,10 @@ export function GameCard({ game: g, index: i, ribbon, note, hidden }: Props) {
             ))}
           </ul>
           <div className="card-foot">
-            <span className="card-note">{note}</span>
+            <div className="card-meta">
+              <span className="card-note">{note}</span>
+              {plays !== undefined && <span className="plays">{t('card.plays', { n: formatCount(plays, lang === 'vi' ? 'vi-VN' : 'en-US') })}</span>}
+            </div>
             <span className="play">
               {t('card.play')} <span aria-hidden="true">→</span>
             </span>

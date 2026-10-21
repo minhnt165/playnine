@@ -7,6 +7,7 @@ import { useI18n } from '../i18n/i18n'
 import { createRunManager, type RunStatus } from '../server/runs'
 import { useServer } from '../server/ServerProvider'
 import { useGameBridge } from './bridge'
+import { Leaderboard } from './Leaderboard'
 import { Toast, type Notice } from './Toast'
 import { gameHref, playHref } from './route'
 
@@ -53,6 +54,8 @@ export function Player({ game, heldIds, portalSeen }: Props) {
   const [runStatus, setRunStatus] = useState<RunStatus>({ kind: 'idle' })
   const [notice, setNotice] = useState<Notice | null>(null)
   const noticeSeq = useRef(0)
+  // Tăng sau mỗi ván được ghi để bảng xếp hạng tải lại.
+  const [lbKey, setLbKey] = useState(0)
   const alive = useRef(true)
   useEffect(() => {
     alive.current = true
@@ -84,6 +87,7 @@ export function Player({ game, heldIds, portalSeen }: Props) {
       runs.end(m.gameId, mode, { score: m.score, timeMs: m.timeMs, won: m.won, assisted: m.assisted ?? false }).then(
         (o) => {
           if (o.kind === 'saved') {
+            if (alive.current) setLbKey((k) => k + 1)
             const rank = mode === 'daily' ? o.result.ranks.day : o.result.ranks.week
             if (rank === undefined) say(t('play.savedNoRank'))
             else say(t(mode === 'daily' ? 'play.savedToday' : 'play.saved', { rank }))
@@ -264,6 +268,7 @@ export function Player({ game, heldIds, portalSeen }: Props) {
         </div>
       )}
       <Toast notice={notice} />
+      <div className="pbody">
       <div className="frames" id="frames">
         {/* Render trước iframe (giống cổng cũ) để iframe đang tải không che spinner. */}
         <div className={'loading' + (game && !ready.has(game.id) ? ' on' : '')} id="p-loading">
@@ -289,6 +294,8 @@ export function Player({ game, heldIds, portalSeen }: Props) {
             />
           )
         })}
+      </div>
+      {game && <Leaderboard gameId={game.id} refreshKey={lbKey} />}
       </div>
     </div>
   )

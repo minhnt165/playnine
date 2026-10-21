@@ -1,7 +1,9 @@
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { I18nProvider } from '../i18n/i18n'
 import { DICT } from '../i18n/dict'
+import { createFakeApi } from '../server/fakeApi'
+import { ServerProvider } from '../server/ServerProvider'
 import { Home } from './Home'
 
 const renderHome = (openIds = new Set<string>()) =>
@@ -75,6 +77,40 @@ describe('Home', () => {
     renderHome()
     fireEvent.click(document.getElementById('lang-btn')!)
     expect(document.getElementById('today')!.getAttribute('aria-label')).toBe(DICT.vi['today.label'])
+  })
+
+  it('có server: thẻ 2048 hiện số lượt chơi rút gọn, thẻ không có số thì không', async () => {
+    const api = createFakeApi({ totals: { '2048': 1234 } })
+    const { container } = render(
+      <I18nProvider>
+        <ServerProvider api={api}>
+          <Home openIds={new Set()} refreshKey={0} />
+        </ServerProvider>
+      </I18nProvider>,
+    )
+    const card = container.querySelector('a.card[href="#/play/2048"]')!
+    await waitFor(() => expect(card.querySelector('.plays')!.textContent).toBe('1.2K plays'))
+    expect(container.querySelectorAll('.plays')).toHaveLength(1)
+  })
+
+  it('playTotals lỗi: không có .plays và không lỗi chưa bắt', async () => {
+    const api = createFakeApi({ totals: { '2048': 5 } })
+    api.fail('playTotals')
+    const { container } = render(
+      <I18nProvider>
+        <ServerProvider api={api}>
+          <Home openIds={new Set()} refreshKey={0} />
+        </ServerProvider>
+      </I18nProvider>,
+    )
+    await waitFor(() => expect(api.calls.some((c) => c.method === 'playTotals')).toBe(true))
+    await act(async () => { await new Promise((r) => setTimeout(r, 0)) })
+    expect(container.querySelector('.plays')).toBeNull()
+  })
+
+  it('không server: không có .plays', () => {
+    const { container } = renderHome()
+    expect(container.querySelector('.plays')).toBeNull()
   })
 
   it('stats đếm lên rồi dừng ở giá trị đích', () => {

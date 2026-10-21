@@ -7,6 +7,7 @@ import type { Summary } from '../data/summary'
 import { useI18n } from '../i18n/i18n'
 import { readRaw, write } from '../lib/storage'
 import { fmtDuration } from '../lib/time'
+import { useServer } from '../server/ServerProvider'
 import { Filters, type FilterKey } from './Filters'
 import { GameCard } from './GameCard'
 import { mountPreviews } from '../legacy/previews'
@@ -37,6 +38,21 @@ export function GameGrid({ sd, xq, rec, sums, openIds, now }: Props) {
   const listRef = useRef<HTMLUListElement>(null)
   const cardKey = GAMES.map((g) => g.id).join()
 
+  // Số lượt chơi tải một lần khi có server; lỗi thì thẻ chỉ không hiện số.
+  const { api } = useServer()
+  const [totals, setTotals] = useState<Record<string, number>>({})
+  useEffect(() => {
+    if (!api) return
+    let alive = true
+    api.playTotals().then(
+      (v) => alive && setTotals(v),
+      () => {},
+    )
+    return () => {
+      alive = false
+    }
+  }, [api])
+
   // Chỉ gắn lại preview khi tập thẻ đổi (không phải mỗi lần render); dọn khi gỡ.
   useEffect(() => mountPreviews(listRef.current!, { isPlaying, reduceMotion: prefersReducedMotion() }), [cardKey])
   const notes: Record<string, string> = {
@@ -65,6 +81,7 @@ export function GameGrid({ sd, xq, rec, sums, openIds, now }: Props) {
             game={g}
             index={i}
             hidden={filter !== 'all' && g.cat !== filter}
+            plays={api ? totals[g.id] : undefined}
             ribbon={ribbonFor(g, { openIds, lastId, rec, t, now: now.getTime() })}
             note={notes[g.id] || (sums[g.id]?.note ? String(sums[g.id].note) : loc(g.note))}
           />
