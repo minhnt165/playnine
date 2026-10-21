@@ -454,6 +454,42 @@ export function mountPreviews(root, opts) {
       });
     },
 
+    // Nối Hình: lần lượt đưa ô xuống khay, đủ 3 ô cùng hình thì biến mất
+    pv_noihinh(host) {
+      const ICONS = ['💄', '🧺', '🎮', '🦆'];
+      // 12 ô (4 hình x 3), ô thứ k trên bàn mang hình BOARD[k]; ORDER là thứ tự chạm
+      const BOARD = [0, 1, 2, 3, 2, 0, 3, 1, 1, 3, 0, 2];
+      const ORDER = [0, 5, 1, 10, 7, 2, 8, 4, 3, 11, 6, 9];
+      const grid = document.createElement('div');
+      grid.className = 'mini-nh';
+      const board = document.createElement('div');
+      board.className = 'b';
+      const tray = document.createElement('div');
+      tray.className = 't';
+      const tiles = BOARD.map((type) => { const s = document.createElement('span'); s.textContent = ICONS[type]; board.appendChild(s); return s; });
+      const slots = [];
+      for (let i = 0; i < 7; i++) { const s = document.createElement('span'); tray.appendChild(s); slots.push(s); }
+      grid.append(board, tray);
+      host.appendChild(grid);
+      let k = 0, inTray = [], pause = 0;
+      const paintTray = () => slots.forEach((s, i) => { s.textContent = inTray[i] != null ? ICONS[inTray[i]] : ''; s.className = inTray[i] != null ? 'on' : ''; });
+      const reset = () => { tiles.forEach((s) => { s.className = ''; }); inTray = []; k = 0; paintTray(); };
+      if (opts.reduceMotion) return;
+      this.loop(host, 520, () => {
+        if (pause > 0) { if (--pause === 0) reset(); return; }
+        // Bộ ba đã đủ ở nhịp trước: xoá khỏi khay
+        const full = [0, 1, 2, 3].find((t) => inTray.filter((x) => x === t).length === 3);
+        if (full != null) { inTray = inTray.filter((x) => x !== full); paintTray(); return; }
+        if (k >= ORDER.length) { pause = 4; return; }
+        const i = ORDER[k++];
+        tiles[i].className = 'gone';
+        const type = BOARD[i];
+        const at = inTray.lastIndexOf(type);
+        inTray.splice(at < 0 ? inTray.length : at + 1, 0, type);
+        paintTray();
+      });
+    },
+
     // 2048: tự chơi theo thứ tự ưu tiên trái → xuống → phải → lên
     pv_2048(host) {
       const COLORS = { 2: '#f3e6c8', 4: '#efd9a6', 8: '#f2b179', 16: '#f59563', 32: '#f67c5f', 64: '#e8622c', 128: '#edcf72', 256: '#e0b964', 512: '#d9a13a', 1024: '#c9902d', 2048: '#b3261e' };

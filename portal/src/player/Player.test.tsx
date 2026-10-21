@@ -43,11 +43,11 @@ describe('Player', () => {
     expect(document.title).toBe(NAME + ' · PlayNine')
   })
 
-  it('#p-switch có 17 nút, nút 2048 aria-current', () => {
+  it('#p-switch có 18 nút, nút 2048 aria-current', () => {
     const { container } = mount()
     const btns = container.querySelectorAll('#p-switch button')
     expect(btns).toHaveLength(GAMES.length)
-    expect(btns).toHaveLength(17)
+    expect(btns).toHaveLength(18)
     const cur = [...btns].filter((b) => b.getAttribute('aria-current') === 'true')
     expect(cur).toHaveLength(1)
     expect(cur[0].getAttribute('title')).toBe(NAME)
