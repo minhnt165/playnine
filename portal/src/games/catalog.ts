@@ -302,6 +302,22 @@ export const GAMES: GameDef[] = [
     note: { en: 'Break bricks back to back to multiply your score', vi: 'Đập gạch liên tiếp để nhân điểm' },
     icon: svgIcon,
   },
+  {
+    id: 'noihinh',
+    sdk: true,
+    name: { en: 'Tile Match', vi: 'Nối Hình' },
+    sub: { en: 'Match three', vi: 'Tile Match' },
+    dir: 'noihinh/',
+    cat: 'puzzle',
+    isNew: true,
+    desc: {
+      en: 'Tap uncovered tiles to drop them into a 7-slot tray; three of a kind clear. Clear the layered board before the tray fills up, with Take out, Undo and Shuffle.',
+      vi: 'Chạm ô không bị che để đưa xuống khay 7 chỗ, đủ 3 hình giống nhau thì biến mất. Dọn sạch bàn nhiều lớp trước khi khay đầy, có Lấy ra, Hoàn tác và Xáo trộn.',
+    },
+    tags: { en: ['Puzzle', '1 player', 'Levels'], vi: ['Giải đố', '1 người', 'Qua màn'] },
+    note: { en: 'Every level can be cleared', vi: 'Cấp độ nào cũng có cách giải' },
+    icon: svgIcon,
+  },
 ]
 
 export const gameById = (id: string): GameDef | undefined => GAMES.find((g) => g.id === id)

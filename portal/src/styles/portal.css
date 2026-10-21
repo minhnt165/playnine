@@ -290,6 +290,7 @@
     .pv-bonlientiep { background: radial-gradient(120% 120% at 50% 0%, rgba(122, 162, 255, .24), transparent 60%), linear-gradient(160deg, #1e1f45, #0b0b1e); }
     .pv-xepbai { background: radial-gradient(120% 120% at 50% 0%, rgba(224, 185, 100, .22), transparent 60%), linear-gradient(160deg, #17361f, #08160c); }
     .pv-phagach { background: radial-gradient(120% 120% at 70% 0%, rgba(95, 208, 208, .2), transparent 60%), linear-gradient(160deg, #172a33, #091216); }
+    .pv-noihinh { background: radial-gradient(120% 120% at 50% 0%, rgba(184, 140, 224, .32), transparent 60%), linear-gradient(160deg, #2c1f3d, #120c1a); }
     .kbd {
       position: absolute;
       z-index: 2;
@@ -370,6 +371,7 @@
     .preview > .mini-cg, .preview > .mini-cv, .preview > .mini-rv, .preview > .mini-cd, .preview > .mini-c4 { width: auto; height: 84%; }
     .preview > .mini-sol { width: 84%; height: auto; }
     .preview > .mini-bk { width: auto; height: 80%; }
+    .preview > .mini-nh { width: auto; height: 84%; }
 
     /* Ô Ăn Quan xem trước */
     .mini-oq { filter: drop-shadow(0 14px 26px rgba(0, 0, 0, .45)); }
@@ -428,6 +430,16 @@
     .mini-2048 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 6px; width: min(50%, 184px); aspect-ratio: 1; border-radius: 12px; background: rgba(0, 0, 0, .3); box-shadow: 0 16px 34px rgba(0, 0, 0, .4); }
     .mini-2048 span { display: grid; place-items: center; border-radius: 7px; background: rgba(255, 255, 255, .07); color: #1d1711; font-size: clamp(10px, 2.6vw, 16px); font-weight: 800; }
     .mini-2048 span.pop { animation: pop .28s cubic-bezier(.2, 1.4, .4, 1); }
+
+    /* Nối Hình xem trước: bàn 4x3 và khay gỗ 7 ô */
+    .mini-nh { display: flex; flex-direction: column; align-items: center; justify-content: space-between; aspect-ratio: 1; filter: drop-shadow(0 14px 26px rgba(0, 0, 0, .45)); }
+    .mini-nh .b { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; width: 62%; }
+    .mini-nh .b span, .mini-nh .t span { display: grid; place-items: center; aspect-ratio: 1; border-radius: 6px; font-size: clamp(10px, 2.4vw, 17px); line-height: 1; }
+    .mini-nh .b span { background: #fffaf0; box-shadow: 0 3px 0 #cdb98f; transition: opacity .25s, transform .25s; }
+    .mini-nh .b span.gone { opacity: 0; transform: translateY(40%) scale(.5); }
+    .mini-nh .t { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; width: 100%; padding: 4px; border-radius: 8px; background: linear-gradient(#f0c38c, #d99a5b 50%, #a5652e); box-shadow: 0 3px 0 #8a4f1f; }
+    .mini-nh .t span { background: rgba(90, 45, 10, .32); font-size: clamp(8px, 1.9vw, 13px); }
+    .mini-nh .t span.on { background: #fffaf0; animation: pop .24s cubic-bezier(.2, 1.4, .4, 1); }
 
     /* Cờ Gánh, Cờ Vua, Cờ Lật, Cờ Đam, Bốn Liên Tiếp, Xếp Bài, Phá Gạch xem trước */
     .mini-cg, .mini-cv, .mini-rv, .mini-cd, .mini-c4, .mini-sol, .mini-bk { filter: drop-shadow(0 16px 28px rgba(0, 0, 0, .45)); }

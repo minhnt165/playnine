@@ -27,10 +27,10 @@ afterEach(() => {
 })
 
 describe('Home', () => {
-  it('hiện 17 thẻ game, mỗi thẻ có preview và liên kết tới trang giới thiệu #/game/<id>', () => {
+  it('hiện 18 thẻ game, mỗi thẻ có preview và liên kết tới trang giới thiệu #/game/<id>', () => {
     const { container } = renderHome()
     const items = container.querySelectorAll('#games > li')
-    expect(items).toHaveLength(17)
+    expect(items).toHaveLength(18)
     expect(items[0].querySelector('a.card')!.getAttribute('href')).toBe('#/game/co9o')
     expect(items[0].querySelector('.preview.pv-co9o[data-game="co9o"]')).not.toBeNull()
     expect(items[0].querySelectorAll('.kbd')).toHaveLength(1)
@@ -58,12 +58,12 @@ describe('Home', () => {
     expect(container.querySelector('#filters button[aria-pressed="true"]')!.textContent).toMatch(/^Versus/)
   })
 
-  it('localStorage.getItem ném lỗi: vẫn render 17 thẻ và stats.empty', () => {
+  it('localStorage.getItem ném lỗi: vẫn render 18 thẻ và stats.empty', () => {
     vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error('blocked')
     })
     const { container } = renderHome()
-    expect(container.querySelectorAll('#games > li')).toHaveLength(17)
+    expect(container.querySelectorAll('#games > li')).toHaveLength(18)
     expect(container.querySelector('#stats')!.textContent).toBe(DICT.en['stats.empty'])
   })
 

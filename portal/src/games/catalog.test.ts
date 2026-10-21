@@ -7,9 +7,9 @@ import { GAMES, gameById } from './catalog'
 const gamesDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../games')
 
 describe('catalog', () => {
-  it('có 17 game với id duy nhất', () => {
-    expect(GAMES).toHaveLength(17)
-    expect(new Set(GAMES.map((g) => g.id)).size).toBe(17)
+  it('có 18 game với id duy nhất', () => {
+    expect(GAMES).toHaveLength(18)
+    expect(new Set(GAMES.map((g) => g.id)).size).toBe(18)
   })
   it('gameById tìm đúng game', () => {
     expect(gameById('sudoku')?.dir).toBe('sugoku/')

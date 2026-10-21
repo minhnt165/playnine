@@ -346,3 +346,47 @@ test('sudoku reports a won run with assisted false', async ({ page }) => {
   const end = (await messages(page)).find((m) => m.type === 'pn:end') as Msg & { timeMs?: number };
   expect(end.timeMs).toBeGreaterThanOrEqual(120000);
 });
+
+test('noihinh reports hello and start with mode classic', async ({ page }) => {
+  await captureMessages(page);
+  await page.goto('#/play/noihinh');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === 'noihinh'), { timeout: 5000 })
+    .toBe(true);
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === 'noihinh' && m.mode === 'classic'), {
+      timeout: 5000,
+    })
+    .toBe(true);
+});
+
+test('noihinh plays standalone without the SDK', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.route('**/sdk/playnine.js*', (r) => r.abort());
+  const res = await page.goto('noihinh/');
+  expect(res?.status()).toBe(200);
+  await page.waitForTimeout(500);
+  expect(errors).toEqual([]);
+});
+
+test('noihinh reports a won run when level 1 is cleared', async ({ page }) => {
+  await captureMessages(page);
+  await page.goto('#/play/noihinh');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === 'noihinh'), { timeout: 5000 })
+    .toBe(true);
+  // Cấp 1: 9 ô không bị che, 3 hình x 3 ô; chạm lần lượt theo từng hình
+  const frame = page.frameLocator('iframe');
+  const tiles = frame.locator('.tile');
+  await expect(tiles).toHaveCount(9);
+  const faces = await tiles.evaluateAll((els) => els.map((el) => [el.getAttribute('data-id'), el.textContent]));
+  faces.sort((a, b) => String(a[1]).localeCompare(String(b[1])));
+  for (const [id] of faces) {
+    await frame.locator(`.tile[data-id="${id}"]`).click();
+    await page.waitForTimeout(300);
+  }
+  await expect
+    .poll(async () => (await messages(page)).find((m) => m.type === 'pn:end'), { timeout: 5000 })
+    .toMatchObject({ gameId: 'noihinh', mode: 'classic', won: true, assisted: false });
+});
