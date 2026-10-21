@@ -7,6 +7,8 @@
   'use strict';
 
   const N = window.Nonogram;
+  const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
+  PN && PN.init({ gameId: 'tranhan' });
   const APP_VERSION = '1.0.1';
   const t = I18N.t;
   I18N.apply();
@@ -251,6 +253,7 @@
     buildBoard();
     renderAll();
     writeSummary();
+    PN && PN.gameStart({ mode: 's' + session.size });
   }
 
   /** Bắt đầu tranh mặc định: tranh chưa giải kế tiếp của bộ gần nhất, hết thì tranh ngẫu nhiên. */
@@ -928,6 +931,7 @@
   function onSolved() {
     stopClock();
     const sec = Math.max(1, Math.round(elapsedMs() / 1000));
+    PN && PN.gameEnd({ mode: 's' + session.size, timeMs: Math.round(elapsedMs()), won: true, assisted: session.hintsUsed > 0 || !!settings.check || !!settings.autoX });
     let record = false;
     if (session.kind === 'daily') {
       stats.daily.won++;
@@ -1653,6 +1657,7 @@
     renderAll();
     startClock();
     writeSummary();
+    PN && PN.gameStart({ mode: 's' + session.size, resume: true });
   } else {
     startDefault();
   }

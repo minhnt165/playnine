@@ -163,3 +163,94 @@ test('2048 game over reports the score', async ({ page }) => {
   const end = (await messages(page)).find((m) => m.type === 'pn:end') as Msg & { score?: number };
   expect(String(end.score)).toBe(shown.replace(/\D/g, ''));
 });
+
+// 2 game giải đố (tranhan, xepbai): mode theo cấu hình mặc định, ván seed gần xong để kiểm tra pn:end.
+const puzzleGames: [id: string, mode: string][] = [
+  ['tranhan', 's5'],
+  ['xepbai', 'draw1'],
+];
+
+for (const [id, mode] of puzzleGames) {
+  test(`${id} reports hello and start with mode ${mode}`, async ({ page }) => {
+    await captureMessages(page);
+    await page.addInitScript((key) => window.localStorage.setItem(key, JSON.stringify({ guideSeen: true })), `playnine-${id}-settings-v1`);
+    await page.goto(`#/play/${id}`);
+    await expect
+      .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === id), { timeout: 5000 })
+      .toBe(true);
+    await expect
+      .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === id && m.mode === mode), {
+        timeout: 5000,
+      })
+      .toBe(true);
+  });
+
+  test(`${id} plays standalone without the SDK`, async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    await page.route('**/sdk/playnine.js*', (r) => r.abort());
+    const res = await page.goto(`${id}/`);
+    expect(res?.status()).toBe(200);
+    await page.waitForTimeout(500);
+    expect(errors).toEqual([]);
+  });
+}
+
+test('tranhan reports a solved picture with assisted false', async ({ page }) => {
+  await captureMessages(page);
+  // Tranh ngẫu nhiên 5x5 chỉ cần tô nốt ô cuối của hàng đầu (ô 4); đã có 5 giây trên đồng hồ.
+  await page.addInitScript(() => {
+    if (window.localStorage.getItem('playnine-tranhan-save-v1')) return;
+    const sol = [1, 1, 1, 1, 1, ...new Array(20).fill(0)];
+    const cells = [1, 1, 1, 1, ...new Array(21).fill(0)];
+    window.localStorage.setItem(
+      'playnine-tranhan-save-v1',
+      JSON.stringify({
+        v: 1, kind: 'random', pid: null, daily: null, elapsed: 5000, counted: true, hintsUsed: 0, cursor: 0,
+        game: { v: 1, w: 5, h: 5, sol, cells, mistakes: 0, past: [], future: [], solved: false },
+      }),
+    );
+  });
+  await page.goto('#/play/tranhan');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.resume === true && m.mode === 's5'), {
+      timeout: 5000,
+    })
+    .toBe(true);
+  await page.frameLocator('iframe').locator('#c4').click();
+  await expect
+    .poll(async () => (await messages(page)).find((m) => m.type === 'pn:end'), { timeout: 5000 })
+    .toMatchObject({ gameId: 'tranhan', mode: 's5', won: true, assisted: false });
+  const end = (await messages(page)).find((m) => m.type === 'pn:end') as Msg & { timeMs?: number };
+  expect(end.timeMs).toBeGreaterThanOrEqual(5000);
+});
+
+test('xepbai reports a won run (auto-complete is not assistance)', async ({ page }) => {
+  await captureMessages(page);
+  // Ván seed: đã đi các nước đến khi có thể tự xếp; bấm tự xếp để thắng.
+  const deck = [24,44,23,10,43,31,50,41,6,29,35,22,40,34,11,3,49,33,8,14,4,27,45,38,30,7,21,16,12,1,36,37,25,47,2,17,39,9,15,5,20,19,42,18,51,28,13,46,48,26,0,32];
+  const moves = [{"t":"move","from":"t5","n":1,"to":"t2"},{"t":"move","from":"t1","n":1,"to":"t6"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"t2"},{"t":"move","from":"t1","n":1,"to":"t2"},{"t":"move","from":"t5","n":1,"to":"t1"},{"t":"move","from":"t6","n":2,"to":"t5"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"f0"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"f1"},{"t":"draw"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"t6"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"f2"},{"t":"draw"},{"t":"draw"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"t4"},{"t":"move","from":"t5","n":3,"to":"t4"},{"t":"move","from":"t5","n":1,"to":"t0"},{"t":"move","from":"t3","n":1,"to":"t5"},{"t":"move","from":"t3","n":1,"to":"t1"},{"t":"move","from":"t5","n":2,"to":"t0"},{"t":"draw"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"t6"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"t0"},{"t":"move","from":"t4","n":5,"to":"t0"},{"t":"move","from":"t4","n":1,"to":"f2"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"t6"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"f2"},{"t":"move","from":"t0","n":1,"to":"t3"},{"t":"move","from":"t0","n":1,"to":"f2"},{"t":"move","from":"t3","n":2,"to":"t0"},{"t":"draw"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"f3"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"f2"},{"t":"move","from":"t0","n":3,"to":"t5"},{"t":"move","from":"t0","n":1,"to":"f2"},{"t":"draw"},{"t":"draw"},{"t":"draw"},{"t":"move","from":"t5","n":4,"to":"t0"},{"t":"move","from":"waste","n":1,"to":"t5"},{"t":"draw"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"t1"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"f0"},{"t":"draw"},{"t":"draw"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"t1"},{"t":"move","from":"t6","n":4,"to":"t1"},{"t":"move","from":"t6","n":1,"to":"t1"},{"t":"move","from":"t6","n":1,"to":"f1"},{"t":"move","from":"t4","n":1,"to":"t1"},{"t":"move","from":"t4","n":1,"to":"t3"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"f1"},{"t":"draw"},{"t":"draw"},{"t":"draw"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"f0"},{"t":"move","from":"t1","n":1,"to":"f0"},{"t":"move","from":"t0","n":2,"to":"t4"},{"t":"move","from":"t0","n":1,"to":"f0"},{"t":"move","from":"t1","n":1,"to":"t2"},{"t":"move","from":"t1","n":1,"to":"f0"},{"t":"move","from":"t1","n":1,"to":"f2"},{"t":"move","from":"t0","n":2,"to":"t6"},{"t":"move","from":"t0","n":1,"to":"f2"},{"t":"move","from":"t6","n":3,"to":"t0"},{"t":"move","from":"t6","n":1,"to":"f3"},{"t":"move","from":"t4","n":1,"to":"f3"},{"t":"move","from":"t4","n":1,"to":"f1"},{"t":"move","from":"t2","n":1,"to":"f1"},{"t":"move","from":"t0","n":1,"to":"f1"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"t3"},{"t":"draw"},{"t":"draw"},{"t":"move","from":"t6","n":1,"to":"t5"},{"t":"move","from":"waste","n":1,"to":"t6"},{"t":"move","from":"waste","n":1,"to":"t6"},{"t":"draw"},{"t":"draw"},{"t":"move","from":"t3","n":3,"to":"t6"},{"t":"move","from":"waste","n":1,"to":"t3"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"f3"},{"t":"move","from":"t4","n":1,"to":"f3"},{"t":"move","from":"t2","n":1,"to":"f3"},{"t":"move","from":"t0","n":1,"to":"f3"},{"t":"move","from":"t1","n":1,"to":"f3"},{"t":"move","from":"t1","n":1,"to":"f2"},{"t":"move","from":"t2","n":1,"to":"f1"},{"t":"move","from":"t0","n":1,"to":"f1"},{"t":"move","from":"t6","n":1,"to":"f3"},{"t":"move","from":"t1","n":1,"to":"f3"},{"t":"move","from":"t0","n":1,"to":"t6"},{"t":"move","from":"t0","n":1,"to":"f2"},{"t":"move","from":"t0","n":1,"to":"f3"},{"t":"move","from":"t5","n":1,"to":"f3"},{"t":"move","from":"t3","n":1,"to":"f3"},{"t":"draw"},{"t":"move","from":"waste","n":1,"to":"t1"},{"t":"move","from":"t2","n":2,"to":"t1"},{"t":"move","from":"t2","n":1,"to":"f0"}];
+  await page.addInitScript(
+    ([d, m]) => {
+      if (window.localStorage.getItem('playnine-xepbai-save-v1')) return;
+      window.localStorage.setItem(
+        'playnine-xepbai-save-v1',
+        JSON.stringify({ v: 1, kind: 'random', daily: null, draw: 1, deck: d, moves: m, elapsed: 5000, counted: true }),
+      );
+      window.localStorage.setItem('playnine-xepbai-settings-v1', JSON.stringify({ guideSeen: true }));
+    },
+    [deck, moves] as const,
+  );
+  await page.goto('#/play/xepbai');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.resume === true && m.mode === 'draw1'), {
+      timeout: 5000,
+    })
+    .toBe(true);
+  await page.frameLocator('iframe').locator('#btn-auto').click();
+  await expect
+    .poll(async () => (await messages(page)).find((m) => m.type === 'pn:end'), { timeout: 8000 })
+    .toMatchObject({ gameId: 'xepbai', mode: 'draw1', won: true, assisted: false });
+  const end = (await messages(page)).find((m) => m.type === 'pn:end') as Msg & { timeMs?: number };
+  expect(end.timeMs).toBeGreaterThanOrEqual(5000);
+});

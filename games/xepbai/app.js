@@ -11,6 +11,8 @@
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
   const APP_VERSION = '1.0.1';
+  const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
+  PN && PN.init({ gameId: 'xepbai' });
   const KEYS = {
     settings: 'playnine-xepbai-settings-v1',
     save: 'playnine-xepbai-save-v1',
@@ -177,7 +179,7 @@
     const daily = kind === 'daily' ? (opts && opts.date) || todayKey() : null;
     const deck = kind === 'daily' ? X.dailyDeck(daily) : (opts && opts.deck) || X.shuffledDeck();
     const draw = kind === 'daily' ? X.DAILY_DRAW : (opts && opts.draw) || settings.draw;
-    return { kind, daily, draw, deck, moves: [], state: X.deal(deck, draw), elapsed: 0, counted: false, won: false };
+    return { kind, daily, draw, deck, moves: [], state: X.deal(deck, draw), elapsed: 0, counted: false, won: false, usedAssist: false };
   }
 
   /** Bỏ ván đang chơi dở (đã đi ít nhất một nước, chưa thắng): mất chuỗi thắng. */
@@ -203,6 +205,7 @@
     persist();
     writeSummary();
     renderDeal();
+    PN && PN.gameStart({ mode: bucketOf(session) });
   }
 
   function restartSame() {
@@ -277,6 +280,7 @@
   }
   function undo() {
     if (!canUndo()) return;
+    session.usedAssist = true;
     popMove();
     held = null;
     lastTap = null;
@@ -351,6 +355,7 @@
     session.won = true;
     held = null;
     const sec = Math.max(1, Math.round(elapsedMs() / 1000));
+    PN && PN.gameEnd({ mode: bucketOf(session), timeMs: sec * 1000, won: true, assisted: !!session.usedAssist });
     const score = session.state.score;
     const b = stats.modes[bucketOf(session)];
     const recordTime = b.bestTime === null || sec < b.bestTime;
@@ -439,6 +444,7 @@
       moves: session.moves,
       elapsed: Math.round(elapsedMs()),
       counted: session.counted,
+      usedAssist: !!session.usedAssist,
       savedAt: Date.now(),
     });
   }
@@ -467,6 +473,7 @@
       elapsed: typeof raw.elapsed === 'number' && raw.elapsed > 0 ? raw.elapsed : 0,
       counted: raw.counted === true && moves.length > 0,
       won: false,
+      usedAssist: raw.usedAssist === true,
     };
   }
 
@@ -766,6 +773,7 @@
   }
   function showHint() {
     if (!isPlaying() || auto.busy) return;
+    session.usedAssist = true;
     clearHint();
     const s = session.state;
     const m = X.hint(s);
@@ -1465,6 +1473,7 @@
       persist();
       render(true);
       toast(t('toast.appliedNow'));
+      PN && PN.gameStart({ mode: bucketOf(session) });
     } else if (session && session.draw !== settings.draw) {
       toast(t('toast.appliedNext'));
     }
@@ -1685,6 +1694,7 @@
     renderControls();
     if (!document.hidden) startClock();
     writeSummary();
+    PN && PN.gameStart({ mode: bucketOf(session), resume: true });
   } else {
     startGame('random', { draw: settings.draw });
   }
