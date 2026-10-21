@@ -18,9 +18,15 @@ const toProfile = (r: Row): Profile => ({
 
 /** Client Supabase thật. Chỉ dùng anon key; mọi ghi của người chơi đi qua RPC. */
 export function createSupabaseApi(url: string, anonKey: string): ServerApi {
-  const sb: SupabaseClient = createClient(url, anonKey, {
-    auth: { flowType: 'pkce', detectSessionInUrl: true, persistSession: true },
-  })
+  return createApiFromClient(
+    createClient(url, anonKey, {
+      auth: { flowType: 'pkce', detectSessionInUrl: true, persistSession: true },
+    }),
+  )
+}
+
+/** Dựng ServerApi từ một client có sẵn (test truyền client giả vào đây). */
+export function createApiFromClient(sb: SupabaseClient): ServerApi {
 
   // Tên/ảnh lấy từ bảng profiles (không lấy từ metadata Google) để tên đã đổi được dùng.
   async function loadProfile(id: string): Promise<Profile | null> {
