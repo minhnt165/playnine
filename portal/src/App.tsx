@@ -6,6 +6,7 @@ import type { GameDef } from './games/catalog'
 import { startGlyphs } from './legacy/glyphs'
 import { nextFrameIds } from './player/frames'
 import { Player } from './player/Player'
+import { ProfilePage } from './profile/ProfilePage'
 import { recordPlayThrottled } from './server/playCount'
 import { useServer } from './server/ServerProvider'
 import { isPlaying } from './player/playing'
@@ -15,6 +16,10 @@ import { useShortcuts } from './player/useShortcuts'
 const currentGame = (): GameDef | null => {
   const r = parseRoute(location.hash)
   return r.name === 'play' ? r.game : null
+}
+const currentProfileId = (): string | null => {
+  const r = parseRoute(location.hash)
+  return r.name === 'profile' ? r.userId : null
 }
 
 export function App() {
@@ -26,11 +31,13 @@ export function App() {
   // Chỉ true khi đã ở trang cổng trước khi vào game (để Back = history.back); vào thẳng link game thì false.
   const [portalSeen, setPortalSeen] = useState(() => currentGame() === null)
   const [refreshKey, setRefreshKey] = useState(0)
+  const [profileId, setProfileId] = useState<string | null>(currentProfileId)
   const gameRef = useRef(game)
   const { api } = useServer()
 
   useEffect(() => {
     const onHash = () => {
+      setProfileId(currentProfileId())
       const prev = gameRef.current
       const next = currentGame()
       gameRef.current = next
@@ -79,7 +86,11 @@ export function App() {
 
   return (
     <>
-      <Home openIds={openIds} refreshKey={refreshKey} onThemeApplied={recolor} />
+      {profileId ? (
+        <ProfilePage userId={profileId} onThemeApplied={recolor} />
+      ) : (
+        <Home openIds={openIds} refreshKey={refreshKey} onThemeApplied={recolor} />
+      )}
       <Player game={game} heldIds={heldIds} portalSeen={portalSeen} />
     </>
   )

@@ -86,3 +86,37 @@
   .pbody { flex-direction: row; }
   .lb-panel { display: block; }
 }
+/* Trang hồ sơ người chơi. */
+.profile { display: flex; flex-direction: column; gap: 20px; padding-bottom: 40px; }
+.profile-back { align-self: flex-start; color: var(--accent); font-weight: 700; text-decoration: none; }
+.profile-back:hover { text-decoration: underline; }
+.profile-back:focus-visible, .profile-btn:focus-visible, .profile-form input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.profile-head { display: flex; align-items: center; gap: 16px; }
+.profile-avatar {
+  flex: none; width: 72px; height: 72px; border-radius: 50%; overflow: hidden;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border); background: var(--chip); color: var(--text); font-size: 1.8rem; font-weight: 700;
+}
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.profile-who { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; min-width: 0; }
+.profile-name { margin: 0; font-size: 1.6rem; color: var(--text); overflow-wrap: anywhere; }
+.profile-btn {
+  padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--chip); color: var(--text); font: inherit; cursor: pointer;
+}
+.profile-btn:disabled { opacity: .6; cursor: default; }
+.profile-form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.profile-form input {
+  min-width: 200px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface-solid); color: var(--text); font: inherit;
+}
+.profile-hint { color: var(--muted); font-size: .85rem; }
+.profile-bests { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.profile-bests li {
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+  background: var(--surface-solid); border: 1px solid var(--border); border-radius: 12px; color: var(--text);
+}
+.profile-bests .card-icon { flex: none; width: 36px; height: 36px; }
+.profile-bests .card-icon img, .profile-bests .card-icon svg { width: 100%; height: 100%; }
+.profile-game { flex: 1; min-width: 0; font-weight: 700; overflow-wrap: anywhere; }
+.profile-mode { color: var(--muted); font-size: .9rem; }
