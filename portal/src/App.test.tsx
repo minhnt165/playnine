@@ -48,6 +48,14 @@ describe('App routes', () => {
     expect(container.querySelector('[data-page="admin"]')).not.toBeNull()
   })
 
+  it('#/game/2048 hiện trang giới thiệu game, không hiện lưới game', () => {
+    location.hash = '#/game/2048'
+    const { container } = renderApp()
+    expect(container.querySelector('main.detail')).not.toBeNull()
+    expect(container.querySelector('a.detail-play')).toHaveAttribute('href', '#/play/2048')
+    expect(container.querySelector('#games')).toBeNull()
+  })
+
   it('#/play/2048 vẫn mở Player như trước', () => {
     location.hash = '#/play/2048'
     const { container } = renderApp()

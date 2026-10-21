@@ -172,7 +172,7 @@ describe('Player + server', () => {
     expect(has(api, 'signInWithGoogle')).toBe(true)
   })
 
-  it('game chưa nối SDK (bản sao sudoku không có sdk): không có bảng xếp hạng và không có dòng đăng nhập; 2048: có cả hai', async () => {
+  it('màn chơi không hiện bảng xếp hạng; game chưa nối SDK không có dòng đăng nhập, 2048 thì có', async () => {
     const meta = (id: string) => ({ id, metric: 'score_high' as const, hidden: false, modes: [{ key: 'classic', label: { en: 'Classic', vi: 'Cổ điển' } }] })
     const sudoku = { ...gameById('sudoku')!, sdk: false }
     const api = createFakeApi({ games: [meta('sudoku'), meta('2048')] })
@@ -186,12 +186,12 @@ describe('Player + server', () => {
       )
     const a = at(sudoku)
     await settle()
-    expect(a.container.querySelector('.lb-panel, .lb-open')).toBeNull()
+    expect(a.container.querySelector('.lb-panel')).toBeNull()
     expect(a.container.querySelector('.play-status')).toBeNull()
     cleanup()
     const b = at(g2048)
-    await waitFor(() => expect(b.container.querySelector('.lb-panel, .lb-open')).not.toBeNull())
-    expect(b.container.querySelector('.play-status')!.textContent).toContain(DICT.en['play.signInToScore'] as string)
+    await waitFor(() => expect(b.container.querySelector('.play-status')!.textContent).toContain(DICT.en['play.signInToScore'] as string))
+    expect(b.container.querySelector('.lb-panel')).toBeNull()
   })
 
   it('finishRun lỗi → toast saveFailed, không lỗi chưa bắt', async () => {

@@ -27,11 +27,11 @@ afterEach(() => {
 })
 
 describe('Home', () => {
-  it('hiện 17 thẻ game, mỗi thẻ có preview và liên kết #/play/<id>', () => {
+  it('hiện 17 thẻ game, mỗi thẻ có preview và liên kết tới trang giới thiệu #/game/<id>', () => {
     const { container } = renderHome()
     const items = container.querySelectorAll('#games > li')
     expect(items).toHaveLength(17)
-    expect(items[0].querySelector('a.card')!.getAttribute('href')).toBe('#/play/co9o')
+    expect(items[0].querySelector('a.card')!.getAttribute('href')).toBe('#/game/co9o')
     expect(items[0].querySelector('.preview.pv-co9o[data-game="co9o"]')).not.toBeNull()
     expect(items[0].querySelectorAll('.kbd')).toHaveLength(1)
     expect(items[9].querySelector('.kbd')).toBeNull()
@@ -88,7 +88,7 @@ describe('Home', () => {
         </ServerProvider>
       </I18nProvider>,
     )
-    const card = container.querySelector('a.card[href="#/play/2048"]')!
+    const card = container.querySelector('a.card[href="#/game/2048"]')!
     await waitFor(() => expect(card.querySelector('.plays')!.textContent).toBe('1.2K plays'))
     expect(container.querySelectorAll('.plays')).toHaveLength(1)
   })

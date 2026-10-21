@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { EventPanel } from '../events/EventBoard'
 import { liveEventsFor } from '../events/model'
 import { useNow } from '../events/useNow'
@@ -8,31 +8,15 @@ import { useServer } from '../server/ServerProvider'
 import type { GameEvent, GameMeta, LeaderRow, Period } from '../server/types'
 import { formatValue, periodsFor } from './leaderboardModel'
 
-const WIDE = '(min-width: 900px)'
 const TOP = 50
 const modeKeyOf = (gameId: string) => 'playnine-lb-mode-' + gameId
 const PERIOD_LABEL: Record<Period, string> = { day: 'lb.day', week: 'lb.week', all: 'lb.all' }
-
-/** Màn rộng (≥ 900px) hiện ngăn bên phải; không có matchMedia thì coi là màn rộng. */
-function useWide(): boolean {
-  const get = () => (typeof matchMedia === 'function' ? matchMedia(WIDE).matches : true)
-  const [wide, setWide] = useState(get)
-  useEffect(() => {
-    if (typeof matchMedia !== 'function') return
-    const mq = matchMedia(WIDE)
-    const on = () => setWide(mq.matches)
-    on()
-    mq.addEventListener('change', on)
-    return () => mq.removeEventListener('change', on)
-  }, [])
-  return wide
-}
 
 type Loaded = { key: string; rows: LeaderRow[]; mine: LeaderRow | null; error: boolean }
 
 type Props = { gameId: string; refreshKey: number }
 
-/** Chỉ render khi có server và game có trong metadata. */
+/** Bảng xếp hạng trên trang giới thiệu game; chỉ render khi có server và game có trong metadata. */
 export function Leaderboard({ gameId, refreshKey }: Props) {
   const { api, games } = useServer()
   const meta = games[gameId]
@@ -56,14 +40,9 @@ function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
   const { api, user } = useServer()
   const { t, lang, fmtNumber } = useI18n()
   const gameId = meta.id
-  const wide = useWide()
-  const [open, setOpen] = useState(false)
   const [savedMode, setSavedMode] = useState(() => readRaw(modeKeyOf(gameId)))
   const [savedPeriod, setSavedPeriod] = useState<Period | null>(null)
   const [loaded, setLoaded] = useState<Loaded | null>(null)
-  const openerRef = useRef<HTMLButtonElement>(null)
-  const closeRef = useRef<HTMLButtonElement>(null)
-  const sheetRef = useRef<HTMLDivElement>(null)
   const titleId = useId()
   const [events, setEvents] = useState<GameEvent[]>([])
   const [showEvent, setShowEvent] = useState(false)
@@ -80,10 +59,9 @@ function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
   const period = savedPeriod && periods.includes(savedPeriod) ? savedPeriod : periods[0]
   const viewKey = `${mode}|${period}`
   const userId = user?.id ?? null
-  const active = wide || open
 
   useEffect(() => {
-    if (!api || !active) return
+    if (!api) return
     let alive = true
     const key = `${mode}|${period}`
     ;(async () => {
@@ -104,7 +82,7 @@ function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
     }
     // user đổi theo userId; displayName đổi không cần tải lại bảng.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, gameId, mode, period, refreshKey, userId, active])
+  }, [api, gameId, mode, period, refreshKey, userId])
 
   // Tải sự kiện một lần; lỗi thì coi như không có sự kiện, bảng thường vẫn chạy.
   useEffect(() => {
@@ -119,42 +97,6 @@ function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
     }
   }, [api])
 
-  const close = useCallback(() => {
-    setOpen(false)
-    openerRef.current?.focus()
-  }, [])
-
-  useEffect(() => {
-    if (!open) return
-    closeRef.current?.focus()
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close()
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [open, close])
-
-  // Rộng ra khi sheet đang mở thì đóng sheet, tránh kẹt trạng thái modal.
-  useEffect(() => {
-    if (wide) setOpen(false)
-  }, [wide])
-
-  // Giữ Tab trong sheet.
-  const trapTab = (e: React.KeyboardEvent) => {
-    if (e.key !== 'Tab') return
-    const els = sheetRef.current?.querySelectorAll<HTMLElement>('button, [href], [tabindex]:not([tabindex="-1"])')
-    if (!els || els.length === 0) return
-    const first = els[0]
-    const last = els[els.length - 1]
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault()
-      last.focus()
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault()
-      first.focus()
-    }
-  }
-
   const pickMode = (key: string) => {
     write(modeKeyOf(gameId), key)
     setSavedMode(key)
@@ -164,8 +106,11 @@ function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
 
   const fmt = (v: number) => formatValue(meta.metric, v, fmtNumber)
   const data = loaded && loaded.key === viewKey ? loaded : null
-  const body = (
-    <>
+  return (
+    <section className="lb-panel" aria-labelledby={titleId}>
+      <div className="section-head">
+        <h2 id={titleId}>{t('lb.title')}</h2>
+      </div>
       <div className="lb-tabs" role="tablist">
         {meta.modes.map((m) => (
           <button key={m.key} type="button" role="tab" aria-selected={m.key === mode} onClick={() => pickMode(m.key)}>
@@ -208,35 +153,6 @@ function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
           )}
         </ol>
       ) : null}
-    </>
-  )
-
-  if (wide) {
-    return (
-      <aside className="lb-panel" aria-labelledby={titleId}>
-        <h2 id={titleId}>{t('lb.title')}</h2>
-        {body}
-      </aside>
-    )
-  }
-  return (
-    <>
-      <button ref={openerRef} type="button" className="lb-open" onClick={() => setOpen(true)}>
-        {t('lb.open')}
-      </button>
-      {open && (
-        <div className="lb-backdrop" onClick={(e) => e.target === e.currentTarget && close()}>
-          <div ref={sheetRef} className="lb-sheet" role="dialog" aria-modal="true" aria-labelledby={titleId} onKeyDown={trapTab}>
-            <div className="lb-sheet-head">
-              <h2 id={titleId}>{t('lb.title')}</h2>
-              <button ref={closeRef} type="button" className="lb-close" aria-label={t('lb.close')} onClick={close}>
-                ×
-              </button>
-            </div>
-            {body}
-          </div>
-        </div>
-      )}
-    </>
+    </section>
   )
 }

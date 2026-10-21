@@ -1,6 +1,7 @@
 import type { CSSProperties, PointerEvent } from 'react'
 import type { GameDef } from '../games/catalog'
 import { useI18n } from '../i18n/i18n'
+import { detailHref } from '../player/route'
 import { formatCount } from '../lib/format'
 import { canHover, prefersReducedMotion } from './media'
 
@@ -37,7 +38,7 @@ export function GameCard({ game: g, index: i, ribbon, note, hidden, plays }: Pro
     <li className="reveal" hidden={hidden} data-cat={g.cat} style={{ '--i': 5 + i * 0.5 } as CSSProperties}>
       <a
         className="card"
-        href={'#/play/' + g.id}
+        href={detailHref(g)}
         aria-label={t('card.playGame', { game: loc(g.name) })}
         onPointerMove={tilt ? onMove : undefined}
         onPointerLeave={tilt ? onLeave : undefined}

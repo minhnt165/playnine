@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { gameById } from '../games/catalog'
-import { eventHref, gameHref, parseRoute, playHref } from './route'
+import { detailHref, eventHref, gameHref, parseRoute, playHref } from './route'
 
 describe('route', () => {
   it('hash rỗng là trang chủ', () => {
@@ -17,6 +17,11 @@ describe('route', () => {
     const r = parseRoute('#/play/2048?x')
     expect(r.name === 'play' && r.game.id).toBe('2048')
   })
+  it('#/game/<id> mở trang giới thiệu, id lạ về trang chủ', () => {
+    const r = parseRoute('#/game/2048')
+    expect(r.name === 'detail' && r.game.id).toBe('2048')
+    expect(parseRoute('#/game/khongco')).toEqual({ name: 'home' })
+  })
   it('#/u/<uuid> mở hồ sơ, chuỗi không phải uuid về trang chủ', () => {
     const id = '7c9e6679-7425-40de-944b-e07fc1f90ae7'
     expect(parseRoute('#/u/' + id)).toEqual({ name: 'profile', userId: id })
@@ -30,9 +35,10 @@ describe('route', () => {
     expect(parseRoute('#/admin')).toEqual({ name: 'admin' })
     expect(eventHref(id)).toBe('#/events/' + id)
   })
-  it('playHref và gameHref', () => {
+  it('playHref, detailHref và gameHref', () => {
     const g = gameById('2048')!
     expect(playHref(g)).toBe('#/play/2048')
+    expect(detailHref(g)).toBe('#/game/2048')
     expect(gameHref(g)).toBe(g.dir + 'index.html')
   })
 })

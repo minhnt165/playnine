@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AdminPage } from './admin/AdminPage'
+import { GamePage } from './detail/GamePage'
 import { EventPage } from './events/EventPage'
 import { EventsPage } from './events/EventsPage'
 import { Home } from './home/Home'
@@ -20,7 +21,7 @@ const currentGame = (): GameDef | null => {
   const r = parseRoute(location.hash)
   return r.name === 'play' ? r.game : null
 }
-/** Route của trang không phải game (home, profile, events, event, admin). */
+/** Route của trang không phải game (home, detail, profile, events, event, admin). */
 const currentPage = (): Route => {
   const r = parseRoute(location.hash)
   return r.name === 'play' ? { name: 'home' } : r
@@ -92,6 +93,8 @@ export function App() {
     <>
       {page.name === 'profile' ? (
         <ProfilePage userId={page.userId} onThemeApplied={recolor} />
+      ) : page.name === 'detail' ? (
+        <GamePage game={page.game} refreshKey={refreshKey} onThemeApplied={recolor} />
       ) : page.name === 'events' ? (
         <EventsPage onThemeApplied={recolor} />
       ) : page.name === 'event' ? (
