@@ -101,6 +101,8 @@ describe('finish_run', () => {
           )
         },
       },
+      { reason: 'bad_value', game: '2048', mode: '4x4', ago: '60 seconds', score: -5, time: null, won: false },
+      { reason: 'bad_value', game: 'minesweeper', mode: 'easy', ago: '60 seconds', score: null, time: -1000, won: true },
       { reason: 'score_rate', game: '2048', mode: '4x4', ago: '10 seconds', score: 30000, time: null, won: false },
       { reason: 'expired', game: '2048', mode: '4x4', ago: '25 hours', score: 100, time: null, won: false },
       {
@@ -181,6 +183,18 @@ describe('finish_run', () => {
 })
 
 describe('leaderboard', () => {
+  it('a stored extreme negative value does not break the board', async () => {
+    const db = await createDb()
+    const a = await newUser(db, { full_name: 'Alice' })
+    const b = await newUser(db, { full_name: 'Bob' })
+    await db.query("insert into runs (user_id, game_id, mode, ended_at, score, status) values ($1, '2048', '4x4', now(), -9223372036854775808, 'finished')", [a])
+    await addRun(db, b, '2048', '4x4', { score: 50 })
+    expect(await board(db, '2048', '4x4', 'all')).toEqual([
+      { rank: 1, name: 'Bob', value: 50 },
+      { rank: 2, name: 'Alice', value: -9223372036854776000 },
+    ])
+  })
+
   it("score_high board keeps each player's best", async () => {
     const db = await createDb()
     const a = await newUser(db, { full_name: 'Alice' })

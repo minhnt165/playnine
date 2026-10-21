@@ -82,8 +82,32 @@ describe('core schema', () => {
     await asAnon(db, async () => {
       expect((await db.query('select * from games')).rows.length).toBe(17)
       await db.query('select * from play_counts')
-      expect((await db.query('select * from profiles')).rows.length).toBe(1)
+      expect((await db.query('select id, display_name, avatar_url from profiles')).rows.length).toBe(1)
     })
+  })
+
+  it('profiles expose only public columns to anon and authenticated', async () => {
+    const db = await createDb()
+    const a = await newUser(db, { full_name: 'Alice' })
+    for (const as of [(fn: () => Promise<unknown>) => asAnon(db, fn), (fn: () => Promise<unknown>) => asUser(db, a, fn)]) {
+      await expect(as(() => db.query('select role from profiles'))).rejects.toThrow(/permission denied/)
+      await expect(as(() => db.query('select * from profiles'))).rejects.toThrow(/permission denied/)
+      await expect(as(() => db.query('select banned from profiles'))).rejects.toThrow(/permission denied/)
+      const r = (await as(() => db.query<any>('select id, display_name, avatar_url from profiles'))) as { rows: any[] }
+      expect(r.rows).toHaveLength(1)
+    }
+  })
+
+  it('rejects display names made only of tabs or NBSP', async () => {
+    const db = await createDb()
+    const a = await newUser(db, { full_name: 'Alice' })
+    for (const bad of ['\t\t', '\u00a0\u00a0\u00a0', '\t\u00a0']) {
+      await expect(asUser(db, a, () => db.query('update profiles set display_name = $2 where id = $1', [a, bad]))).rejects.toThrow()
+    }
+    const ok = await asUser(db, a, () => db.query("update profiles set display_name = 'Bao Anh' where id = $1", [a]))
+    expect(ok.affectedRows).toBe(1)
+    const b = await newUser(db, { full_name: '\t\t\t' })
+    expect((await db.query<any>('select display_name from profiles where id = $1', [b])).rows[0].display_name).toBe('Player')
   })
 
   it('runs are not directly readable or writable', async () => {

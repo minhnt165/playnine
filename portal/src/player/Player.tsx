@@ -5,6 +5,7 @@ import { readSummary } from '../data/summary'
 import { gameById, GAMES, type GameDef } from '../games/catalog'
 import { useI18n } from '../i18n/i18n'
 import { createRunManager, type RunStatus } from '../server/runs'
+import { rememberReturnHash } from '../server/returnHash'
 import { useServer } from '../server/ServerProvider'
 import { useGameBridge } from './bridge'
 import { Leaderboard } from './Leaderboard'
@@ -253,14 +254,20 @@ export function Player({ game, heldIds, portalSeen }: Props) {
           </svg>
         </button>
       </div>
-      {api && authReady && game && (!user || (runStatus.kind === 'unscored' && (runStatus.why === 'no_resume' || runStatus.why === 'error' || runStatus.why === 'guest'))) && (
+      {api && authReady && game?.sdk && (!user || (runStatus.kind === 'unscored' && (runStatus.why === 'no_resume' || runStatus.why === 'error' || runStatus.why === 'guest'))) && (
         <div className="play-status">
           {user ? (
             t('play.unscored')
           ) : (
             <>
               <span>{t('play.signInToScore')}</span>
-              <button type="button" onClick={() => api.signInWithGoogle().catch(() => {})}>
+              <button
+                type="button"
+                onClick={() => {
+                  rememberReturnHash()
+                  api.signInWithGoogle().catch(() => {})
+                }}
+              >
                 {t('auth.signIn')}
               </button>
             </>
@@ -295,7 +302,7 @@ export function Player({ game, heldIds, portalSeen }: Props) {
           )
         })}
       </div>
-      {game && <Leaderboard gameId={game.id} refreshKey={lbKey} />}
+      {game?.sdk && <Leaderboard gameId={game.id} refreshKey={lbKey} />}
       </div>
     </div>
   )

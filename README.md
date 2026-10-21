@@ -21,6 +21,7 @@ https://minhnt165.github.io/playnine/
 
 ```bash
 npm install                # cài dependency
+npm run build -w sdk       # build SDK trước khi chạy dev (để game tải được sdk/playnine.js)
 npm run dev -w portal      # chạy portal ở chế độ dev
 npm test                   # test node cho scripts/ + test của portal
 npm run build              # build SDK (sdk/dist/) rồi portal (portal/dist/)
@@ -60,7 +61,7 @@ Build SDK: `npm run build -w sdk` (cần trước `npm run assemble`). Giao th�
 Phần server dùng Supabase gói Free (Postgres + RPC + Auth). Cổng chỉ hiện nút đăng nhập khi có hai biến môi trường
 `VITE_SUPABASE_URL` và `VITE_SUPABASE_ANON_KEY`; để trống thì cổng chạy như giai đoạn 1 (không gọi mạng).
 
-- Dev local: đặt hai biến trên trong `portal/.env.local` (mẫu ở `portal/.env.example`), chạy `npm run dev -w portal`, mở http://localhost:5180/playnine/.
+- Dev local: đặt hai biến trên trong `portal/.env.local` (mẫu ở `portal/.env.example`), chạy `npm run build -w sdk` (để game tải được SDK) rồi `npm run dev -w portal`, mở http://localhost:5180/playnine/.
 - Build/deploy: lấy từ GitHub secrets `SUPABASE_URL`, `SUPABASE_ANON_KEY` (xem `deploy.yml`). Workflow `.github/workflows/keepalive.yml` gọi `ping()` mỗi ngày để project không bị tạm dừng.
 - Test cơ sở dữ liệu: `npm test -w supabase`.
 - Hướng dẫn thiết lập từng bước (tạo project, Google OAuth, migration, secrets, đặt admin): [supabase/README.md](supabase/README.md).

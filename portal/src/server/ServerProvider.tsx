@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { ServerApi } from './api'
+import { restoreReturnHash } from './returnHash'
 import { createSupabaseApi } from './supabaseApi'
 import type { AuthUser, GameMeta } from './types'
 
@@ -47,6 +48,11 @@ export function ServerProvider({ api: apiProp, children }: { api?: ServerApi | n
       off()
     }
   }, [api])
+
+  // Đăng nhập xong (quay về từ Google): trở lại trang game đã nhớ.
+  useEffect(() => {
+    if (authReady && user) restoreReturnHash()
+  }, [authReady, user])
 
   const refreshUser = useCallback(async () => {
     if (!api) return

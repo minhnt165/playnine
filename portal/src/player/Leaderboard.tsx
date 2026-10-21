@@ -42,7 +42,7 @@ function Row({ r, me, value, you }: { r: LeaderRow; me: boolean; value: string; 
     <li className={me ? 'me' : undefined}>
       <span className="lb-rank">{r.rank}</span>
       <span className="lb-name">
-        {r.displayName}
+        <a href={`#/u/${encodeURIComponent(r.userId)}`}>{r.displayName}</a>
         {me && <em className="lb-you">{you}</em>}
       </span>
       <span className="lb-value">{value}</span>

@@ -172,6 +172,28 @@ describe('Player + server', () => {
     expect(has(api, 'signInWithGoogle')).toBe(true)
   })
 
+  it('game chưa nối SDK (sudoku): không có bảng xếp hạng và không có dòng đăng nhập; 2048: có cả hai', async () => {
+    const meta = (id: string) => ({ id, metric: 'score_high' as const, hidden: false, modes: [{ key: 'classic', label: { en: 'Classic', vi: 'Cổ điển' } }] })
+    const sudoku = gameById('sudoku')!
+    const api = createFakeApi({ games: [meta('sudoku'), meta('2048')] })
+    const at = (game: typeof g2048) =>
+      render(
+        <I18nProvider>
+          <ServerProvider api={api}>
+            <Player game={game} heldIds={[game.id]} portalSeen={false} />
+          </ServerProvider>
+        </I18nProvider>,
+      )
+    const a = at(sudoku)
+    await settle()
+    expect(a.container.querySelector('.lb-panel, .lb-open')).toBeNull()
+    expect(a.container.querySelector('.play-status')).toBeNull()
+    cleanup()
+    const b = at(g2048)
+    await waitFor(() => expect(b.container.querySelector('.lb-panel, .lb-open')).not.toBeNull())
+    expect(b.container.querySelector('.play-status')!.textContent).toContain(DICT.en['play.signInToScore'] as string)
+  })
+
   it('finishRun lỗi → toast saveFailed, không lỗi chưa bắt', async () => {
     const api = createFakeApi({ user: U })
     const { send, container } = mountServer(api)

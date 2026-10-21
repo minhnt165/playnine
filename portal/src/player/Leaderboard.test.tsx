@@ -77,6 +77,12 @@ describe('Leaderboard', () => {
     expect(api.calls.find((c) => c.method === 'leaderboard')!.args).toEqual(['2048', 'classic', 'week', 50])
   })
 
+  it('tên người chơi là liên kết tới #/u/<userId>', async () => {
+    mount(createFakeApi({ games: GAMES, boards: { '2048|classic|week': [row(1, 'An', 100, 'u-an')] } }))
+    const link = await screen.findByRole('link', { name: 'An' })
+    expect(link).toHaveAttribute('href', '#/u/u-an')
+  })
+
   it('người dùng hạng 72 ngoài top: có dấu … và hàng của mình được đánh dấu', async () => {
     const api = createFakeApi({
       user: U, games: GAMES,

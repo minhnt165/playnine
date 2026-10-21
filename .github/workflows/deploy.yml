@@ -40,10 +40,9 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      # Intentionally no VITE_SUPABASE_*: e2e must cover the no-server site
+      # and must never write to the prod database.
       - run: npm run build
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       - run: npm run assemble
       - run: npx playwright install --with-deps chromium
       - run: npm run e2e

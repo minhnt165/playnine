@@ -20,6 +20,8 @@ export type GameDef = {
   daily?: Localized<string> // có đề hằng ngày: hiện ô gợi ý khi hôm nay chưa chơi
   isNew?: boolean
   keepAlive?: boolean
+  /** Game đã nối SDK (ghi ván, bảng xếp hạng); chưa nối thì cổng không hiện bảng và lời mời đăng nhập. */
+  sdk?: boolean
   /** Trả về HTML tĩnh tin cậy (render bằng innerHTML). */
   icon(base: string): string
 }
@@ -29,6 +31,7 @@ const svgIcon = (base: string) => '<img src="' + base + 'icon.svg" alt="">'
 export const GAMES: GameDef[] = [
   {
     id: 'co9o',
+    sdk: true,
     name: { en: 'Ultimate Tic-Tac-Toe', vi: 'Cờ 9 Ô' },
     sub: { en: 'Nine boards in one', vi: 'Ultimate Tic-Tac-Toe' },
     dir: 'co9o/',
@@ -58,6 +61,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'xiangqi',
+    sdk: true,
     name: { en: 'Xiangqi', vi: 'Cờ Tướng' },
     sub: { en: 'Chinese chess', vi: 'Xiangqi' },
     dir: 'xiangqi/',
@@ -88,6 +92,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'caro',
+    sdk: true,
     name: { en: 'Gomoku', vi: 'Cờ Caro' },
     sub: { en: 'Five in a row', vi: 'Gomoku' },
     dir: 'caro/',
@@ -103,6 +108,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: '2048',
+    sdk: true,
     name: { en: '2048', vi: '2048' },
     sub: { en: 'Merge the tiles', vi: 'Gộp số' },
     dir: '2048/',
@@ -118,6 +124,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'oanquan',
+    sdk: true,
     name: { en: 'O An Quan', vi: 'Ô Ăn Quan' },
     sub: { en: 'Vietnamese mancala', vi: 'Trò chơi dân gian' },
     dir: 'oanquan/',
@@ -133,6 +140,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'coganh',
+    sdk: true,
     name: { en: 'Co Ganh', vi: 'Cờ Gánh' },
     sub: { en: 'Vietnamese folk strategy', vi: 'Trò chơi dân gian' },
     dir: 'coganh/',
@@ -148,6 +156,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'tranhan',
+    sdk: true,
     name: { en: 'Nonogram', vi: 'Tranh Ẩn' },
     sub: { en: 'Picture logic puzzle', vi: 'Nonogram' },
     dir: 'tranhan/',
@@ -164,6 +173,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'xepgach',
+    sdk: true,
     name: { en: 'Falling Blocks', vi: 'Xếp Gạch' },
     sub: { en: 'Clear the lines', vi: 'Falling Blocks' },
     dir: 'xepgach/',
@@ -179,6 +189,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'ran',
+    sdk: true,
     name: { en: 'Snake', vi: 'Rắn Săn Mồi' },
     sub: { en: 'Classic arcade', vi: 'Snake' },
     dir: 'ran/',
@@ -194,6 +205,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'covua',
+    sdk: true,
     name: { en: 'Chess', vi: 'Cờ Vua' },
     sub: { en: 'Classic strategy', vi: 'Chess' },
     dir: 'covua/',
@@ -209,6 +221,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'colat',
+    sdk: true,
     name: { en: 'Reversi', vi: 'Cờ Lật' },
     sub: { en: 'Flip to win', vi: 'Reversi' },
     dir: 'colat/',
@@ -224,6 +237,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'codam',
+    sdk: true,
     name: { en: 'Checkers', vi: 'Cờ Đam' },
     sub: { en: 'Draughts', vi: 'Checkers' },
     dir: 'codam/',
@@ -239,6 +253,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'bonlientiep',
+    sdk: true,
     name: { en: 'Four in a Row', vi: 'Bốn Liên Tiếp' },
     sub: { en: 'Drop and connect', vi: 'Four in a Row' },
     dir: 'bonlientiep/',
@@ -254,6 +269,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'xepbai',
+    sdk: true,
     name: { en: 'Solitaire', vi: 'Xếp Bài' },
     sub: { en: 'Klondike', vi: 'Solitaire' },
     dir: 'xepbai/',
@@ -270,6 +286,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'phagach',
+    sdk: true,
     name: { en: 'Brick Breaker', vi: 'Phá Gạch' },
     sub: { en: 'Arcade', vi: 'Brick Breaker' },
     dir: 'phagach/',

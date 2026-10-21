@@ -11,7 +11,7 @@ Quy ước: `<ref>` là Project ref của project Supabase (chuỗi trong URL `h
 2. Tạo `playnine-dev` và `playnine-prod`, **Region: Southeast Asia (Singapore)**, đặt mật khẩu database và lưu lại.
 3. Với mỗi project, ghi lại:
    - `Project URL`: **Project Settings → API → Project URL**.
-   - `anon key`: **Project Settings → API Keys** (khóa `anon` / publishable). Không dùng `service_role` key ở bất cứ đâu trong repo hay client.
+   - `anon key`: **Project Settings → API Keys**. Tên khóa tùy giao diện: khóa `anon` (legacy) hoặc khóa `publishable` đều dùng được, cả hai đều là khóa công khai. Không bao giờ dùng `service_role` hay khóa secret ở bất cứ đâu trong repo hay client.
 
 ## 2. Bật đăng nhập Google
 
@@ -23,6 +23,9 @@ Làm cho từng project (dev và prod đều cần).
 4. Ở **Authorized redirect URIs** thêm `https://<ref>.supabase.co/auth/v1/callback` (thay `<ref>` bằng ref của project; thêm cả hai URI nếu dùng chung một OAuth client cho dev và prod).
 5. Lấy **Client ID** và **Client secret**.
 6. Trong Supabase: **Authentication → Providers → Google** → bật **Enable Sign in with Google**, dán Client ID/Secret, **Save**.
+7. Vào **Google Auth Platform → Audience** (hoặc OAuth consent screen → Publishing status) và bấm **Publish app** để chuyển sang **In production**. App chỉ dùng scope `openid`, `email`, `profile` nên không cần Google xác minh. Nếu để ở **Testing** thì chỉ các test user đã thêm mới đăng nhập được.
+8. Nên dùng **một OAuth client duy nhất** cho cả hai project: thêm cả hai redirect URI (`https://<ref-dev>.supabase.co/auth/v1/callback` và `https://<ref-prod>.supabase.co/auth/v1/callback`) vào client đó, rồi dán cùng Client ID/Secret vào Provider Google của cả hai project.
+9. Trong Supabase: **Authentication → Providers → Email** → tắt (disable). Chỉ dùng đăng nhập Google.
 
 ## 3. URL Configuration
 
@@ -52,7 +55,7 @@ npx --registry=https://registry.npmjs.org/ supabase db push
 ```
 
 - `login` mở trình duyệt để lấy access token (làm một lần).
-- `link` hỏi mật khẩu database của project đó; chạy lại với `<ref>` kia để chuyển sang project còn lại.
+- `link` hỏi **mật khẩu database** của project đó (đặt ở bước 1; quên thì đặt lại ở **Project Settings → Database**); chạy lại với `<ref>` kia để chuyển sang project còn lại.
 - `db push` áp các file trong `migrations/` lên project đang link.
 - Mạng công ty chặn TLS (lỗi chứng chỉ): thêm `--strict-ssl=false` vào lệnh `npx`, chỉ khi thật sự bị lỗi.
 
@@ -63,7 +66,7 @@ Trong GitHub repo: **Settings → Secrets and variables → Actions → New repo
 - `SUPABASE_URL`: Project URL của `playnine-prod`.
 - `SUPABASE_ANON_KEY`: anon key của `playnine-prod`.
 
-Hai secret này được dùng bởi `deploy.yml` (truyền vào build thành `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`) và `keepalive.yml` (gọi `ping()` mỗi ngày để project Free không bị tạm dừng). Chưa đặt secret thì build vẫn chạy như giai đoạn 1 (không có nút đăng nhập) và keep-alive tự bỏ qua kèm cảnh báo.
+Hai secret này được dùng bởi `deploy.yml` (truyền vào build thành `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`) và `keepalive.yml` (gọi `ping()` mỗi ngày để project Free không bị tạm dừng). Job e2e cố ý không nhận hai biến này để test chạy trên bản không có server và không ghi dữ liệu lên prod. Chưa đặt secret thì build vẫn chạy như giai đoạn 1 (không có nút đăng nhập) và keep-alive tự bỏ qua kèm cảnh báo.
 
 ## 6. Chạy local (dev)
 
@@ -74,7 +77,7 @@ VITE_SUPABASE_URL=https://<ref-dev>.supabase.co
 VITE_SUPABASE_ANON_KEY=<anon key của dev>
 ```
 
-Rồi `npm run dev -w portal` và mở `http://localhost:5180/playnine/`. Để trống hai biến thì cổng không hiện nút đăng nhập và không gọi mạng.
+Build SDK trước (`npm run build -w sdk`) để game tải được `sdk/playnine.js`, rồi `npm run dev -w portal` và mở `http://localhost:5180/playnine/`. Để trống hai biến thì cổng không hiện nút đăng nhập và không gọi mạng.
 
 ## 7. Đặt admin (dùng ở giai đoạn 3)
 
@@ -92,3 +95,5 @@ update profiles set role = 'admin' where id = (select id from auth.users where e
 4. Thấy toast "Đã ghi điểm" và tên mình trên bảng xếp hạng là xong.
 
 Kiểm tra keep-alive: GitHub → **Actions → Supabase keep-alive → Run workflow**, job phải xanh.
+
+Lưu ý: GitHub tự tắt workflow chạy theo lịch (`schedule`) sau 60 ngày repo không có hoạt động. Nếu keep-alive bị tắt, vào tab **Actions → Supabase keep-alive** và bấm **Enable workflow** (project Free bị tạm dừng sau 7 ngày không có truy cập).
