@@ -55,10 +55,10 @@
 ## File Structure
 
 ```
-supabase/migrations/20261021000400_events.sql   events, event_results, badges, collections, RLS, is_admin,
+supabase/migrations/20261021000500_events.sql   events, event_results, badges, collections, RLS, is_admin,
                                                  _event_phase, _event_board, event_leaderboard, profile_badges,
                                                  _close_event, _tick_events, tick_events, lịch pg_cron (nếu có)
-supabase/migrations/20261021000500_admin.sql    _require_admin + mọi RPC admin_*
+supabase/migrations/20261021000600_admin.sql    _require_admin + mọi RPC admin_*
 supabase/tests/events.test.ts, supabase/tests/admin.test.ts
 supabase/README.md                               thêm bước bật pg_cron và kiểm tra job
 portal/src/server/types.ts, api.ts, supabaseApi.ts (+test), fakeApi.ts, ServerProvider.tsx
@@ -83,7 +83,7 @@ e2e/portal.spec.ts                               thêm test các trang mới khi
 ### Task 1: Database sự kiện, bộ sưu tập, huy hiệu và đóng sự kiện
 
 **Files:**
-- Create: `supabase/migrations/20261021000400_events.sql`, `supabase/tests/events.test.ts`
+- Create: `supabase/migrations/20261021000500_events.sql`, `supabase/tests/events.test.ts`
 - Modify: `supabase/README.md` (mục mới "Bật pg_cron", thêm sau bước 4: Database → Extensions → bật `pg_cron` trước khi `db push`; sau khi push thì kiểm tra `select jobname, schedule from cron.job;` có `playnine-events` `*/5 * * * *`. Sửa bước 7 (đặt admin) để nói rằng giai đoạn 3 dùng nó cho `#/admin`.)
 
 **Interfaces:**
@@ -148,7 +148,7 @@ e2e/portal.spec.ts                               thêm test các trang mới khi
   - `migration works without pg_cron`: bảo đảm bằng chính việc `createDb()` chạy được trên PGlite; thêm assert rằng `select count(*) from pg_namespace where nspname = 'cron'` = 0.
 
 - [ ] **Step 2: Chạy `npm test -w supabase`** → FAIL (chưa có migration).
-- [ ] **Step 3: Viết `20261021000400_events.sql`** theo phần Interfaces. Mọi function: `revoke execute … from public, anon, authenticated` rồi grant đúng role; function `security definer` phải có `set search_path = public`.
+- [ ] **Step 3: Viết `20261021000500_events.sql`** theo phần Interfaces. Mọi function: `revoke execute … from public, anon, authenticated` rồi grant đúng role; function `security definer` phải có `set search_path = public`.
 - [ ] **Step 4: Chạy `npm test -w supabase`** → PASS.
 - [ ] **Step 5: Cập nhật `supabase/README.md`** như ở phần Files.
 - [ ] **Step 6: Commit** `Add events, collections and badges with cron-driven closing`.
@@ -158,7 +158,7 @@ e2e/portal.spec.ts                               thêm test các trang mới khi
 ### Task 2: RPC admin
 
 **Files:**
-- Create: `supabase/migrations/20261021000500_admin.sql`, `supabase/tests/admin.test.ts`
+- Create: `supabase/migrations/20261021000600_admin.sql`, `supabase/tests/admin.test.ts`
 
 **Interfaces:**
 - Consumes: bảng và các hàm nội bộ của Task 1, `games.modes[].rules` (giai đoạn 2).
@@ -213,7 +213,7 @@ e2e/portal.spec.ts                               thêm test các trang mới khi
   - `admin_set_banned bans and unbans, never self`: người bị khóa → `start_run` lỗi `banned`, và biến khỏi `leaderboard`.
 
 - [ ] **Step 2: Chạy `npm test -w supabase`** → FAIL.
-- [ ] **Step 3: Viết `20261021000500_admin.sql`.**
+- [ ] **Step 3: Viết `20261021000600_admin.sql`.**
 - [ ] **Step 4: Chạy `npm test -w supabase`** → PASS.
 - [ ] **Step 5: Commit** `Add admin RPCs for games, events, collections, runs and players`.
 
