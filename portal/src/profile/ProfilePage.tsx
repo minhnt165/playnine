@@ -1,19 +1,21 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { localized } from '../events/model'
 import { gameById } from '../games/catalog'
 import { Topbar } from '../home/Topbar'
 import { useI18n } from '../i18n/i18n'
 import { formatValue } from '../player/leaderboardModel'
+import { eventHref } from '../player/route'
 import { useServer } from '../server/ServerProvider'
-import type { BestRow, Profile } from '../server/types'
+import type { Badge, BestRow, Profile } from '../server/types'
 
 const NAME_MIN = 2
 const NAME_MAX = 24
 
-type Loaded = { status: 'loading' } | { status: 'error' } | { status: 'ready'; profile: Profile | null; bests: BestRow[] }
+type Loaded = { status: 'loading' } | { status: 'error' } | { status: 'ready'; profile: Profile | null; bests: BestRow[]; badges: Badge[] }
 
 /** Trang hồ sơ #/u/<id>: tên, avatar, kỷ lục theo game → mode; chủ hồ sơ được sửa tên. */
 export function ProfilePage({ userId, onThemeApplied }: { userId: string; onThemeApplied?: () => void }) {
-  const { t, loc, fmtNumber } = useI18n()
+  const { t, loc, lang, fmtNumber } = useI18n()
   const { api, user, games, refreshUser } = useServer()
   const [data, setData] = useState<Loaded>({ status: 'loading' })
   const [editing, setEditing] = useState(false)
@@ -26,8 +28,10 @@ export function ProfilePage({ userId, onThemeApplied }: { userId: string; onThem
     let alive = true
     setData({ status: 'loading' })
     setEditing(false)
-    Promise.all([api.profile(userId), api.profileBests(userId)]).then(
-      ([profile, bests]) => alive && setData({ status: 'ready', profile, bests }),
+    // Huy hiệu lỗi thì chỉ ẩn mục huy hiệu, phần còn lại vẫn hiện.
+    const badges = api.profileBadges(userId).catch((): Badge[] => [])
+    Promise.all([api.profile(userId), api.profileBests(userId), badges]).then(
+      ([profile, bests, badges]) => alive && setData({ status: 'ready', profile, bests, badges }),
       () => alive && setData({ status: 'error' }),
     )
     return () => {
@@ -132,6 +136,27 @@ export function ProfilePage({ userId, onThemeApplied }: { userId: string; onThem
               </span>
             )}
           </form>
+        )}
+        {data.badges.length > 0 && (
+          <section>
+            <div className="section-head">
+              <h2>{t('profile.badges')}</h2>
+            </div>
+            <ul className="profile-badges">
+              {data.badges.map((b) => {
+                const game = gameById(b.gameId)
+                return (
+                  <li key={b.eventId}>
+                    <a href={eventHref(b.eventId)}>
+                      <span className="badge-rank">{t('profile.badgeRank', { rank: b.rank })}</span>
+                      <span className="badge-title">{localized(b.title, lang)}</span>
+                      <span className="badge-game">{game ? loc(game.name) : b.gameId}</span>
+                    </a>
+                  </li>
+                )
+              })}
+            </ul>
+          </section>
         )}
         <section>
           <div className="section-head">

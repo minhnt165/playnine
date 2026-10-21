@@ -45,6 +45,38 @@ describe('ProfilePage', () => {
     expect(document.title).toBe('Lan · PlayNine')
   })
 
+  it('huy hiệu: hạng, tên sự kiện theo ngôn ngữ, tên game, link tới sự kiện; nằm trước kỷ lục', async () => {
+    localStorage.setItem('playnine-lang', 'vi')
+    const badges = [
+      { eventId: 'e1', rank: 1, awardedAt: '2026-10-21T00:00:00Z', title: { en: 'Spring cup', vi: 'Cúp xuân' }, gameId: '2048', mode: 'classic' },
+      { eventId: 'e2', rank: 2, awardedAt: '2026-10-20T00:00:00Z', title: { en: 'Mines <b>' }, gameId: 'minesweeper', mode: 'beginner' },
+    ]
+    mount(seed({ badges: { other: badges } }), 'other')
+    const link = await screen.findByRole('link', { name: /Cúp xuân/ })
+    expect(link.getAttribute('href')).toBe('#/events/e1')
+    expect(link.textContent).toContain('#1')
+    expect(link.textContent).toContain('2048')
+    const second = screen.getByRole('link', { name: /Mines <b>/ })
+    expect(second.textContent).toContain('#2')
+    expect(screen.getByRole('heading', { name: 'Huy hiệu' })).toBeTruthy()
+    const heads = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)
+    expect(heads).toEqual(['Huy hiệu', 'Kỷ lục cá nhân'])
+  })
+
+  it('không có huy hiệu: ẩn cả mục', async () => {
+    mount(seed(), 'other')
+    await screen.findByRole('heading', { name: 'Lan' })
+    expect(screen.queryByRole('heading', { name: en('profile.badges') })).toBeNull()
+  })
+
+  it('profileBadges lỗi: không có mục huy hiệu nhưng kỷ lục vẫn hiện', async () => {
+    const api = seed()
+    api.fail('profileBadges')
+    mount(api, 'other')
+    expect(await screen.findByText('12,345')).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: en('profile.badges') })).toBeNull()
+  })
+
   it('người khác thì không có ô sửa tên', async () => {
     mount(seed({ user: ME }), 'other')
     await screen.findByRole('heading', { name: 'Lan' })

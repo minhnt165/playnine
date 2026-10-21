@@ -3,7 +3,10 @@ import { sudokuData } from '../data/sudoku'
 import { xiangqiData } from '../data/xiangqi'
 import { summaries } from '../data/summary'
 import { recent } from '../data/recent'
+import { isHidden } from '../events/model'
 import { useI18n } from '../i18n/i18n'
+import { useServer } from '../server/ServerProvider'
+import { CollectionRows } from './CollectionRows'
 import { EventBanner } from './EventBanner'
 import { Footer } from './Footer'
 import { GameGrid } from './GameGrid'
@@ -26,6 +29,7 @@ type Props = {
 
 export function Home({ openIds, refreshKey, onThemeApplied }: Props) {
   const i18n = useI18n()
+  const { games } = useServer()
   useReveal(refreshKey + ':' + i18n.lang)
 
   // Đọc lại khi đổi ngôn ngữ (nhãn) hoặc refreshKey; mốc `now` cố định cho cả lần vẽ.
@@ -41,9 +45,12 @@ export function Home({ openIds, refreshKey, onThemeApplied }: Props) {
   const { now, sd, xq, rec, sums } = data
 
   const tiles = useMemo(
-    () => buildTodayTiles({ sd, xq, rec, sums, now, i18n }),
+    () => {
+      const hiddenIds = new Set(Object.keys(games).filter((id) => isHidden(games, id)))
+      return buildTodayTiles({ sd, xq, rec, sums, now, i18n, hiddenIds })
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, i18n.lang],
+    [data, i18n.lang, games],
   )
   const stats = useMemo(
     () => buildStats(sd, sums, i18n),
@@ -58,6 +65,7 @@ export function Home({ openIds, refreshKey, onThemeApplied }: Props) {
         <Hero now={now} />
         <EventBanner />
         <Today tiles={tiles} />
+        <CollectionRows />
         <GameGrid sd={sd} xq={xq} rec={rec} sums={sums} openIds={openIds} now={now} />
         <Stats items={stats} />
       </main>

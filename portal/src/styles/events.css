@@ -54,6 +54,30 @@
 .ev-details { display: inline-block; margin-top: 8px; color: var(--accent); font-weight: 700; text-decoration: none; }
 .ev-details:hover { text-decoration: underline; }
 
+/* Bộ sưu tập ở trang chủ: hàng cuộn ngang */
+.col-row { margin-top: 18px; }
+.col-games { list-style: none; margin: 0; padding: 0 0 6px; display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x proximity; }
+.col-games li { flex: none; scroll-snap-align: start; }
+.col-game {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; width: 96px; padding: 10px 6px;
+  border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: var(--text);
+}
+.col-game:hover { border-color: var(--accent); }
+.col-game .card-icon { width: 48px; height: 48px; }
+.col-game .card-icon img, .col-game .card-icon svg { width: 100%; height: 100%; }
+.col-game-name { font-size: .85rem; font-weight: 600; text-align: center; overflow-wrap: anywhere; }
+
+/* Huy hiệu trên hồ sơ */
+.profile-badges { list-style: none; margin: 0 0 18px; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.profile-badges a {
+  display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 999px;
+  text-decoration: none; color: var(--text);
+}
+.profile-badges a:hover { border-color: var(--accent); }
+.badge-rank { font-weight: 800; color: var(--accent); }
+.badge-title { font-weight: 600; overflow-wrap: anywhere; }
+.badge-game { color: var(--muted); font-size: .85rem; }
+
 @media (max-width: 640px) {
   .ev-card a { flex-wrap: wrap; }
   .ev-card-count { width: 100%; }

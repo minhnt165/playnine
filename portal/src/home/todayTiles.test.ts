@@ -50,6 +50,14 @@ describe('buildTodayTiles', () => {
     expect(ids(tiles)).not.toContain('sudoku')
   })
 
+  it('hiddenIds bỏ ô của game ẩn, ô khác lấp chỗ', () => {
+    const sums = { co9o: sum({ updatedAt: 1, resume: { title: 'A' } }) }
+    const tiles = buildTodayTiles({ ...base(), sums, hiddenIds: new Set(['sudoku', 'co9o']) })
+    expect(ids(tiles)).not.toContain('sudoku')
+    expect(ids(tiles)).not.toContain('co9o')
+    expect(tiles).toHaveLength(3)
+  })
+
   it('resume.pct 1.7 → bar 1; resume.title là text, không phải html', () => {
     const sums = { co9o: sum({ updatedAt: 1, resume: { title: '<b>x</b>', detail: 'd', pct: 1.7 } }) }
     const [first] = buildTodayTiles({ ...base(), sums })

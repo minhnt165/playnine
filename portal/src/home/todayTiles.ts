@@ -28,10 +28,12 @@ type Input = {
   sums: Record<string, Summary>
   now: Date
   i18n: I18nApi
+  /** Game bị ẩn: không có ô nào trên "Hôm nay". */
+  hiddenIds?: Set<string>
 }
 
 /** Thứ tự ưu tiên: ván đang dở (mới nhất trước) → đề hằng ngày chưa làm → đề đã xong → gợi ý khác. */
-export function buildTodayTiles({ sd, xq, rec, sums, now, i18n }: Input): TodayTile[] {
+export function buildTodayTiles({ sd, xq, rec, sums, now, i18n, hiddenIds }: Input): TodayTile[] {
   const { t, loc, weekdayOf } = i18n
   const resumes: { at: number; tile: TodayTile }[] = []
   const todo: TodayTile[] = []
@@ -129,5 +131,7 @@ export function buildTodayTiles({ sd, xq, rec, sums, now, i18n }: Input): TodayT
   })
 
   resumes.sort((a, b) => b.at - a.at)
-  return [...resumes.map((r) => r.tile), ...todo, ...done, ...extras].slice(0, MAX_TODAY)
+  return [...resumes.map((r) => r.tile), ...todo, ...done, ...extras]
+    .filter((x) => !hiddenIds?.has(x.game.id))
+    .slice(0, MAX_TODAY)
 }

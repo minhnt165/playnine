@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { isHidden } from '../events/model'
 import { CATS, GAMES } from '../games/catalog'
 import type { SudokuData } from '../data/sudoku'
 import type { XqData } from '../data/xiangqi'
@@ -36,10 +37,12 @@ export function GameGrid({ sd, xq, rec, sums, openIds, now }: Props) {
   const [filter, setFilter] = useState<FilterKey>(initialFilter)
   const lastId = lastPlayedId(rec)
   const listRef = useRef<HTMLUListElement>(null)
-  const cardKey = GAMES.map((g) => g.id).join()
+  const { api, games } = useServer()
+  // Game bị admin ẩn thì bỏ hẳn khỏi lưới (phím số vẫn dùng chỉ số gốc trong GAMES).
+  const shown = GAMES.filter((g) => !isHidden(games, g.id))
+  const cardKey = shown.map((g) => g.id).join()
 
   // Số lượt chơi tải một lần khi có server; lỗi thì thẻ chỉ không hiện số.
-  const { api } = useServer()
   const [totals, setTotals] = useState<Record<string, number>>({})
   useEffect(() => {
     if (!api) return
@@ -68,6 +71,7 @@ export function GameGrid({ sd, xq, rec, sums, openIds, now }: Props) {
         <h2>{t('games.title')}</h2>
         <Filters
           filter={filter}
+          games={shown}
           onChange={(k) => {
             setFilter(k)
             write(FILTER_KEY, k)
@@ -75,11 +79,11 @@ export function GameGrid({ sd, xq, rec, sums, openIds, now }: Props) {
         />
       </div>
       <ul className="games" id="games" ref={listRef}>
-        {GAMES.map((g, i) => (
+        {shown.map((g) => (
           <GameCard
             key={g.id}
             game={g}
-            index={i}
+            index={GAMES.indexOf(g)}
             hidden={filter !== 'all' && g.cat !== filter}
             plays={api ? totals[g.id] : undefined}
             ribbon={ribbonFor(g, { openIds, lastId, rec, t, now: now.getTime() })}

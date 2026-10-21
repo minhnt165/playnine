@@ -1,5 +1,5 @@
 import type { Lang, TFn } from '../i18n/types'
-import type { Collection, EventPhase, GameEvent, Text } from '../server/types'
+import type { Collection, EventPhase, GameEvent, GameMeta, Text } from '../server/types'
 
 /** Pha của sự kiện theo giờ `now` (ms); cùng quy tắc với `_event_phase` trong SQL. */
 export function eventPhase(e: GameEvent, now: number): EventPhase {
@@ -29,6 +29,11 @@ export function groupEvents(
     upcoming: pick('upcoming').sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt)),
     ended: pick('ended').sort((a, b) => byEnd(b, a)),
   }
+}
+
+/** Game bị admin ẩn khỏi trang chủ; chưa có metadata thì coi như không ẩn. */
+export function isHidden(games: Record<string, GameMeta>, id: string): boolean {
+  return games[id]?.hidden === true
 }
 
 /** Bộ sưu tập đang hiệu lực, chỉ giữ game nhìn thấy được; bỏ bộ rỗng. */
