@@ -4,6 +4,7 @@
  *   - Đặt mìn sau cú mở đầu tiên, loại ô được mở và 8 ô xung quanh
  *   - Ván hằng ngày: mìn cố định theo seed, cú mở đầu tiên được làm an toàn
  *     bằng cách dời mìn ra khỏi vùng mở theo một dãy ngẫu nhiên cũng có seed
+ *   - Bộ giải logic: chỉ chọn bàn giải được hết mà không phải đoán (no-guess)
  *   - Mở ô (loang vùng trống), cắm cờ / dấu ?, mở nhanh (chording)
  *   - Phát hiện thắng / thua, khôi phục ván từ JSON
  * Trạng thái ván là object thuần (mảng số) nên JSON.stringify được ngay.
@@ -95,6 +96,256 @@ const Minesweeper = (() => {
     return { w: cw, h: ch, mines: cm };
   }
 
+  /* ---------------- Bộ giải logic ---------------- */
+
+  const neighborCache = {};
+
+  /** Bảng ô kề của mọi ô trên bàn w x h (lưu lại để dùng chung). */
+  function neighborTable(w, h) {
+    const key = w + 'x' + h;
+    if (!neighborCache[key]) {
+      const table = [];
+      for (let i = 0; i < w * h; i++) table.push(neighbors(w, h, i));
+      neighborCache[key] = table;
+    }
+    return neighborCache[key];
+  }
+
+  /** Giới hạn số nút khi liệt kê cấu hình mìn ở một lượt; vượt quá thì coi như bí. */
+  const ENUM_NODE_LIMIT = 200000;
+
+  /**
+   * Bàn có giải được hoàn toàn bằng suy luận (không phải đoán) khi mở đầu ở ô start không?
+   * Người giải chỉ biết những gì người chơi thấy: số trên ô đã mở và tổng số mìn.
+   * Suy luận theo ba tầng, tầng sau chỉ chạy khi tầng trước bí:
+   *   1. Từng ô số: đủ mìn thì các ô kề còn lại an toàn, đủ ô thì tất cả là mìn.
+   *   2. Từng cặp ô số chồng nhau: phần riêng của ô này buộc phải toàn mìn / toàn an toàn.
+   *   3. Liệt kê mọi cấu hình mìn hợp lệ trên viền (theo từng cụm độc lập) kết hợp tổng số mìn:
+   *      ô không là mìn ở mọi cấu hình thì an toàn, là mìn ở mọi cấu hình thì là mìn.
+   */
+  function isSolvable(w, h, mine, start, totalMines) {
+    const n = w * h;
+    const nb = neighborTable(w, h);
+    if (mine[start]) return false;
+    const adj = new Int8Array(n);
+    for (let i = 0; i < n; i++) {
+      if (mine[i]) for (const j of nb[i]) adj[j]++;
+    }
+    const known = new Int8Array(n).fill(-1); // -1 chưa biết, 0 đã mở, 1 đã biết là mìn
+    let safeLeft = n - totalMines;
+    let unknownCount = n;
+    let flagged = 0;
+
+    function open(s) {
+      const stack = [s];
+      while (stack.length) {
+        const i = stack.pop();
+        if (known[i] !== -1) continue;
+        if (mine[i]) throw new Error('isSolvable: suy luận sai, mở trúng mìn');
+        known[i] = 0;
+        safeLeft--;
+        unknownCount--;
+        if (adj[i] === 0) for (const j of nb[i]) if (known[j] === -1) stack.push(j);
+      }
+    }
+
+    function flag(i) {
+      if (known[i] !== -1) return;
+      if (!mine[i]) throw new Error('isSolvable: suy luận sai, cắm cờ ô không có mìn');
+      known[i] = 1;
+      flagged++;
+      unknownCount--;
+    }
+
+    /** Ràng buộc của các ô số đang có ô kề chưa biết: { cells, need }. */
+    function constraints() {
+      const out = [];
+      for (let i = 0; i < n; i++) {
+        if (known[i] !== 0 || adj[i] === 0) continue;
+        const cells = [];
+        let need = adj[i];
+        for (const j of nb[i]) {
+          if (known[j] === -1) cells.push(j);
+          else if (known[j] === 1) need--;
+        }
+        if (cells.length) out.push({ cells, need });
+      }
+      return out;
+    }
+
+    /** Áp kết quả suy luận; trả về true nếu có ô mới được biết. */
+    function apply(safe, mines) {
+      let changed = false;
+      for (const i of mines) if (known[i] === -1) { flag(i); changed = true; }
+      for (const i of safe) if (known[i] === -1) { open(i); changed = true; }
+      return changed;
+    }
+
+    function singlePass(cons) {
+      const safe = [];
+      const mines = [];
+      for (const c of cons) {
+        if (c.need === 0) safe.push(...c.cells);
+        else if (c.need === c.cells.length) mines.push(...c.cells);
+      }
+      return apply(safe, mines);
+    }
+
+    function pairPass(cons) {
+      const byCell = new Map();
+      cons.forEach((c, k) => {
+        for (const i of c.cells) {
+          if (!byCell.has(i)) byCell.set(i, []);
+          byCell.get(i).push(k);
+        }
+      });
+      const safe = [];
+      const mines = [];
+      const inA = new Set();
+      for (let a = 0; a < cons.length; a++) {
+        const A = cons[a];
+        inA.clear();
+        A.cells.forEach((i) => inA.add(i));
+        const seen = new Set();
+        for (const i of A.cells) {
+          for (const b of byCell.get(i)) {
+            if (b <= a || seen.has(b)) continue;
+            seen.add(b);
+            const B = cons[b];
+            const onlyB = B.cells.filter((j) => !inA.has(j));
+            const onlyA = A.cells.filter((j) => B.cells.indexOf(j) < 0);
+            // Phần riêng của A chứa ít nhất need_A - need_B mìn; nếu bằng đúng số ô thì toàn mìn
+            // và khi đó phần chung đã đủ mìn cho B nên phần riêng của B an toàn. Xét cả hai chiều.
+            if (A.need - B.need === onlyA.length) { mines.push(...onlyA); safe.push(...onlyB); }
+            if (B.need - A.need === onlyB.length) { mines.push(...onlyB); safe.push(...onlyA); }
+          }
+        }
+      }
+      return apply(safe, mines);
+    }
+
+    function enumPass(cons) {
+      // Gom ràng buộc thành các cụm độc lập (không chung ô chưa biết nào)
+      const parent = cons.map((_, k) => k);
+      const find = (k) => (parent[k] === k ? k : (parent[k] = find(parent[k])));
+      const owner = new Map();
+      cons.forEach((c, k) => {
+        for (const i of c.cells) {
+          if (owner.has(i)) parent[find(k)] = find(owner.get(i));
+          else owner.set(i, k);
+        }
+      });
+      const groups = new Map();
+      cons.forEach((c, k) => {
+        const r = find(k);
+        if (!groups.has(r)) groups.set(r, []);
+        groups.get(r).push(k);
+      });
+
+      let nodes = 0;
+      const comps = [];
+      for (const ks of groups.values()) {
+        // Thứ tự ô theo ràng buộc để cắt nhánh sớm
+        const cells = [];
+        const local = new Map();
+        for (const k of ks) {
+          for (const i of cons[k].cells) {
+            if (!local.has(i)) { local.set(i, cells.length); cells.push(i); }
+          }
+        }
+        const m = cells.length;
+        const cellCons = cells.map(() => []);
+        const need = [];
+        const size = [];
+        ks.forEach((k, ci) => {
+          need.push(cons[k].need);
+          size.push(cons[k].cells.length);
+          for (const i of cons[k].cells) cellCons[local.get(i)].push(ci);
+        });
+        const minesIn = new Array(ks.length).fill(0);
+        const assigned = new Array(ks.length).fill(0);
+        const value = new Int8Array(m);
+        const stats = new Map(); // số mìn k -> { mineSeen, safeSeen }
+        let aborted = false;
+        let mineCount = 0;
+
+        const ok = (ci) => minesIn[ci] <= need[ci] && minesIn[ci] + (size[ci] - assigned[ci]) >= need[ci];
+        const step = (p) => {
+          if (aborted) return;
+          if (++nodes > ENUM_NODE_LIMIT) { aborted = true; return; }
+          if (p === m) {
+            let s = stats.get(mineCount);
+            if (!s) { s = { mineSeen: new Uint8Array(m), safeSeen: new Uint8Array(m) }; stats.set(mineCount, s); }
+            for (let q = 0; q < m; q++) {
+              if (value[q]) s.mineSeen[q] = 1;
+              else s.safeSeen[q] = 1;
+            }
+            return;
+          }
+          for (let v = 0; v <= 1; v++) {
+            value[p] = v;
+            mineCount += v;
+            let good = true;
+            for (const ci of cellCons[p]) {
+              assigned[ci]++;
+              minesIn[ci] += v;
+            }
+            for (const ci of cellCons[p]) if (!ok(ci)) { good = false; break; }
+            if (good) step(p + 1);
+            for (const ci of cellCons[p]) {
+              assigned[ci]--;
+              minesIn[ci] -= v;
+            }
+            mineCount -= v;
+          }
+        };
+        step(0);
+        if (aborted) return false;
+        const counts = [...stats.keys()];
+        comps.push({ cells, stats, counts, min: Math.min(...counts), max: Math.max(...counts) });
+      }
+
+      // Kết hợp với tổng số mìn: R mìn chưa biết, chia cho viền và I ô bên trong (không kề ô số nào)
+      const R = totalMines - flagged;
+      const frontier = owner.size;
+      const I = unknownCount - frontier;
+      const sumMin = comps.reduce((s, c) => s + c.min, 0);
+      const sumMax = comps.reduce((s, c) => s + c.max, 0);
+      const safe = [];
+      const mines = [];
+      let fMin = 0;
+      let fMax = 0;
+      for (const c of comps) {
+        // Số mìn k của cụm khả thi nếu phần còn lại của viền + bên trong bù được cho đủ R
+        const feasible = c.counts.filter((k) => k + sumMax - c.max >= R - I && k + sumMin - c.min <= R);
+        fMin += Math.min(...feasible);
+        fMax += Math.max(...feasible);
+        c.cells.forEach((cell, q) => {
+          if (feasible.every((k) => !c.stats.get(k).mineSeen[q])) safe.push(cell);
+          else if (feasible.every((k) => !c.stats.get(k).safeSeen[q])) mines.push(cell);
+        });
+      }
+      if (I > 0 && (fMin >= R || fMax <= R - I)) {
+        const interiorSafe = fMin >= R;
+        for (let i = 0; i < n; i++) {
+          if (known[i] !== -1 || owner.has(i)) continue;
+          (interiorSafe ? safe : mines).push(i);
+        }
+      }
+      return apply(safe, mines);
+    }
+
+    open(start);
+    while (safeLeft > 0) {
+      const cons = constraints();
+      if (singlePass(cons)) continue;
+      if (pairPass(cons)) continue;
+      if (enumPass(cons)) continue;
+      return false;
+    }
+    return true;
+  }
+
   /* ---------------- Tạo ván ---------------- */
 
   /** Chọn ngẫu nhiên `count` phần tử khác nhau từ mảng (Fisher-Yates từng phần, sửa tại chỗ). */
@@ -170,21 +421,40 @@ const Minesweeper = (() => {
     game.adj = adj;
   }
 
-  /** Đặt mìn ngẫu nhiên sau cú mở đầu tiên, tránh vùng an toàn quanh ô idx. */
+  /** Ván thường: thời gian tối đa dành cho việc tìm bàn không phải đoán. */
+  const NO_GUESS_BUDGET_MS = 250;
+  /** Ván có seed: số lần thử tối đa (đếm theo lần thử chứ không theo giờ để luôn tất định). */
+  const NO_GUESS_SEEDED_ATTEMPTS = 300;
+
+  /** Rải `count` mìn ngẫu nhiên lên các ô `free`, trả về mảng 0/1. */
+  function scatter(n, free, count, rng) {
+    const mine = new Array(n).fill(0);
+    pickSome(free, count, rng).forEach((i) => { mine[i] = 1; });
+    return mine;
+  }
+
+  /**
+   * Đặt mìn sau cú mở đầu tiên, tránh vùng an toàn quanh ô idx, và chọn bàn giải được
+   * hoàn toàn bằng logic (isSolvable). Bàn quá dày mìn có thể không tìm được trong thời gian
+   * cho phép, khi đó giữ bàn cuối cùng (vẫn chơi được, chỉ là có thể phải đoán).
+   */
   function placeMines(game, idx, rng) {
     const { w, h, mines } = game;
     const n = w * h;
     const zone = new Set(safeZone(w, h, mines, idx));
     const free = [];
     for (let i = 0; i < n; i++) if (!zone.has(i)) free.push(i);
-    game.mine = new Array(n).fill(0);
-    pickSome(free, mines, rng || Math.random).forEach((i) => { game.mine[i] = 1; });
+    const deadline = Date.now() + NO_GUESS_BUDGET_MS;
+    do {
+      game.mine = scatter(n, free, mines, rng || Math.random);
+    } while (!isSolvable(w, h, game.mine, idx, mines) && Date.now() < deadline);
   }
 
   /**
    * Ván có seed: dời các mìn đang nằm trong vùng an toàn quanh idx sang ô trống khác.
-   * Ô đích được chọn bằng PRNG lấy seed từ seed của ván, nên cùng đề + cùng ô mở đầu
-   * thì luôn ra cùng một bàn.
+   * Nếu bàn sau khi dời vẫn phải đoán thì rải lại toàn bộ mìn (ngoài vùng an toàn) cho tới
+   * khi giải được bằng logic. Mọi lựa chọn đều dùng PRNG lấy seed từ seed của ván, nên
+   * cùng đề + cùng ô mở đầu thì luôn ra cùng một bàn.
    */
   function makeSafe(game, idx) {
     const { w, h, mines, mine } = game;
@@ -198,11 +468,19 @@ const Minesweeper = (() => {
         moving++;
       }
     }
-    if (!moving) return;
-    const free = [];
-    for (let i = 0; i < n; i++) if (!mine[i] && !zone.has(i)) free.push(i);
     const rng = seededRandom((game.seed ^ 0x9e3779b9) >>> 0);
-    pickSome(free, moving, rng).forEach((i) => { mine[i] = 1; });
+    if (moving) {
+      const free = [];
+      for (let i = 0; i < n; i++) if (!mine[i] && !zone.has(i)) free.push(i);
+      pickSome(free, moving, rng).forEach((i) => { mine[i] = 1; });
+    }
+    if (isSolvable(w, h, mine, idx, mines)) return;
+    const free = [];
+    for (let i = 0; i < n; i++) if (!zone.has(i)) free.push(i);
+    for (let attempt = 0; attempt < NO_GUESS_SEEDED_ATTEMPTS; attempt++) {
+      game.mine = scatter(n, free, mines, rng);
+      if (isSolvable(w, h, game.mine, idx, mines)) return;
+    }
   }
 
   /** Chuẩn bị bàn trước cú mở đầu tiên (đặt mìn hoặc dời mìn), chuyển sang 'playing'. */
@@ -420,6 +698,7 @@ const Minesweeper = (() => {
     progress,
     wrongFlags,
     restore,
+    isSolvable,
   };
 })();
 

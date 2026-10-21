@@ -4,6 +4,7 @@
  * - Loang vùng trống, không mở ô cắm cờ
  * - Mở nhanh (chording): đủ cờ thì mở, thiếu cờ thì chặn, cờ sai thì trúng mìn
  * - Phát hiện thắng / thua, cắm cờ / dấu ?, khôi phục ván từ JSON
+ * - Không phải đoán: bộ giải logic đúng, ván mới và ván hằng ngày luôn giải được bằng logic
  */
 const M = require('./engine.js');
 
@@ -276,6 +277,74 @@ test('ván chơi ngẫu nhiên bằng "người chơi hoàn hảo" luôn thắng
   }
 });
 
+/* ---------------- Không phải đoán ---------------- */
+
+/** Tham số isSolvable (w, h, mine, mines) từ sơ đồ chữ. */
+function layoutArgs(rows) {
+  const g = fromLayout(rows);
+  return [g.w, g.h, g.mine, g.mines];
+}
+
+test('isSolvable: thế 50/50 ở góc bàn là phải đoán', () => {
+  const [w, h, mine, mines] = layoutArgs([
+    '...*',
+    '....',
+  ]);
+  eq(M.isSolvable(w, h, mine, 0, mines), false);
+});
+
+test('isSolvable: bàn suy ra được từ số trên ô', () => {
+  const [w, h, mine, mines] = layoutArgs([
+    '.....',
+    '.....',
+    '*....',
+  ]);
+  eq(M.isSolvable(w, h, mine, 4, mines), true);
+});
+
+test('isSolvable không bao giờ suy luận sai trên bàn ngẫu nhiên (sai thì ném lỗi)', () => {
+  const rng = M.seededRandom(99);
+  let solved = 0;
+  const rounds = 400;
+  for (let round = 0; round < rounds; round++) {
+    const w = 5 + Math.floor(rng() * 20);
+    const h = 5 + Math.floor(rng() * 12);
+    const n = w * h;
+    const start = Math.floor(rng() * n);
+    const cells = [];
+    for (let i = 0; i < n; i++) if (i !== start) cells.push(i);
+    const list = [];
+    const count = 1 + Math.floor(rng() * n * 0.25);
+    for (let k = 0; k < count; k++) list.push(cells.splice(Math.floor(rng() * cells.length), 1)[0]);
+    const g = M.fromMines(w, h, list);
+    if (M.isSolvable(w, h, g.mine, start, list.length)) solved++;
+  }
+  assert(solved > 0 && solved < rounds, 'phải có cả bàn giải được và bàn phải đoán');
+});
+
+test('ván mới ở mọi mức luôn giải được bằng logic từ cú mở đầu', () => {
+  const rng = M.seededRandom(2024);
+  for (const key of Object.keys(M.LEVELS)) {
+    const L = M.LEVELS[key];
+    for (let round = 0; round < 60; round++) {
+      const g = M.createGame(L);
+      const idx = Math.floor(rng() * L.w * L.h);
+      M.reveal(g, idx, rng);
+      eq(sum(g.mine), L.mines, `${key}: số mìn`);
+      assert(M.isSolvable(L.w, L.h, g.mine, idx, L.mines), `${key}: bàn phải đoán (ô mở đầu ${idx})`);
+    }
+  }
+});
+
+test('bàn Tùy chỉnh quá dày mìn: không tìm được bàn không phải đoán thì vẫn tạo ván đúng số mìn, không treo', () => {
+  const g = M.createGame({ w: 10, h: 10, mines: 60 });
+  const t0 = Date.now();
+  const res = M.reveal(g, 55, M.seededRandom(3));
+  assert(Date.now() - t0 < 2000, 'tạo bàn quá lâu');
+  assert(!res.hit, 'cú mở đầu trúng mìn');
+  eq(sum(g.mine), 60);
+});
+
 /* ---------------- Cờ & dấu ? ---------------- */
 
 test('cắm cờ: trống → cờ → trống; bật dấu ? thì trống → cờ → ? → trống', () => {
@@ -335,6 +404,19 @@ test('ván hằng ngày: cú mở đầu an toàn, dời mìn tất định, gi�
   }
 });
 
+test('ván hằng ngày: bàn sau cú mở đầu luôn giải được bằng logic', () => {
+  for (let day = 1; day <= 28; day++) {
+    const key = '2026-03-' + String(day).padStart(2, '0');
+    for (const idx of [0, 15, 136, 240]) {
+      const g = M.createDaily(key);
+      M.reveal(g, idx);
+      eq(sum(g.mine), 40, 'số mìn');
+      assert(M.isSolvable(16, 16, g.mine, idx, 40), `${key}: bàn phải đoán (ô mở đầu ${idx})`);
+    }
+  }
+});
+
+// Đề 2026-10-20 mở ở ô 100 đã giải được ngay sau khi dời mìn nên không phải rải lại mìn
 test('ván hằng ngày: mìn ngoài vùng an toàn không bị dời', () => {
   const key = '2026-10-20';
   const orig = M.createDaily(key).mine.slice();

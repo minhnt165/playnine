@@ -7,7 +7,7 @@
   'use strict';
 
   const M = window.Minesweeper;
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.0.2';
   const t = I18N.t;
 
   // Điền chữ tĩnh theo ngôn ngữ trước khi vẽ phần động

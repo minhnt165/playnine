@@ -6,6 +6,7 @@ Game Dò Mìn (Minesweeper) chạy trên web, viết bằng HTML + CSS + JavaScr
 
 - 3 mức chơi: Dễ (9x9, 10 mìn), Vừa (16x16, 40 mìn), Khó (30x16, 99 mìn), và Tùy chỉnh (cạnh 5–40 ô, tối đa `rộng x cao - 9` mìn).
 - Cú mở đầu luôn an toàn và mở ra một vùng trống: mìn chỉ được đặt sau cú mở đầu, tránh ô được mở và 8 ô xung quanh.
+- Không phải đoán: sau cú mở đầu, bàn được sinh lại cho tới khi bộ giải logic (`isSolvable` trong `engine.js`) mở được hết ô an toàn chỉ bằng suy luận từ số trên ô và tổng số mìn. Ván thường thử tối đa 250 ms, ván hằng ngày tối đa 300 lần (đếm lần thử để luôn tất định). Bàn Tùy chỉnh quá dày mìn có thể không tìm được, khi đó giữ bàn ngẫu nhiên.
 - Ván hằng ngày: mỗi ngày một bàn Vừa chung cho mọi người, tính chuỗi ngày thắng liên tiếp.
 - Mở ô (chạm / nhấp trái), cắm cờ (nhấp phải, hoặc nhấn giữ ~350 ms trên màn hình cảm ứng, có rung nếu máy hỗ trợ). Nút "Cắm cờ" đổi chạm thành cắm cờ (khi đó nhấn giữ sẽ mở ô).
 - Mở nhanh (chording): chạm / nhấp vào ô số đã đủ cờ xung quanh để mở các ô kề còn lại. Chưa đủ cờ thì các ô kề nháy nhẹ để báo. Chuột giữa cũng mở nhanh.
@@ -55,7 +56,7 @@ Giao diện có tiếng Anh (mặc định) và tiếng Việt, chọn ở hàng
 
 ## Ván hằng ngày
 
-Seed sinh từ chuỗi `playnine-minesweeper-daily-YYYY-MM-DD` (băm FNV-1a) và đưa vào PRNG mulberry32, nên cùng ngày thì mọi máy có cùng vị trí mìn. Mìn được đặt sẵn theo seed ngay khi tạo ván. Ở cú mở đầu, các mìn nằm trong ô được mở và 8 ô xung quanh được dời sang ô trống khác, ô đích chọn bằng một PRNG khác cũng lấy từ seed. Vì vậy cùng ngày và cùng ô mở đầu thì luôn ra cùng một bàn. Ván hằng ngày luôn ở mức Vừa; thua thì được thử lại cùng bàn. Thắng thì tính vào chuỗi ngày.
+Seed sinh từ chuỗi `playnine-minesweeper-daily-YYYY-MM-DD` (băm FNV-1a) và đưa vào PRNG mulberry32, nên cùng ngày thì mọi máy có cùng vị trí mìn. Mìn được đặt sẵn theo seed ngay khi tạo ván. Ở cú mở đầu, các mìn nằm trong ô được mở và 8 ô xung quanh được dời sang ô trống khác, ô đích chọn bằng một PRNG khác cũng lấy từ seed. Nếu bàn sau khi dời vẫn phải đoán thì toàn bộ mìn (ngoài vùng an toàn) được rải lại bằng chính PRNG đó cho tới khi giải được bằng logic. Vì vậy cùng ngày và cùng ô mở đầu thì luôn ra cùng một bàn. Ván hằng ngày luôn ở mức Vừa; thua thì được thử lại cùng bàn. Thắng thì tính vào chuỗi ngày.
 
 ## Dữ liệu lưu trong trình duyệt
 
@@ -95,7 +96,7 @@ Tóm tắt cho cổng được ghi lại khi bắt đầu ván, khi mở ô đ�
 node test.js
 ```
 
-Kiểm tra: đặt đúng số mìn và cú mở đầu an toàn ở mọi mức (kể cả góc bàn và bàn Tùy chỉnh dày mìn nhất), loang vùng trống, không mở ô cắm cờ, trúng mìn thì thua, mở nhanh (đủ cờ / thiếu cờ / cờ sai), phát hiện thắng, cắm cờ và dấu "?", ván hằng ngày tất định (cùng ngày cùng đề, cùng ô mở đầu cùng bàn, mìn ngoài vùng an toàn giữ nguyên), khôi phục ván từ JSON và từ chối dữ liệu hỏng.
+Kiểm tra: đặt đúng số mìn và cú mở đầu an toàn ở mọi mức (kể cả góc bàn và bàn Tùy chỉnh dày mìn nhất), loang vùng trống, không mở ô cắm cờ, trúng mìn thì thua, mở nhanh (đủ cờ / thiếu cờ / cờ sai), phát hiện thắng, cắm cờ và dấu "?", ván hằng ngày tất định (cùng ngày cùng đề, cùng ô mở đầu cùng bàn, mìn ngoài vùng an toàn giữ nguyên khi bàn đã giải được), không phải đoán (bộ giải nhận ra thế 50/50, không bao giờ suy luận sai trên bàn ngẫu nhiên, ván mới ở mọi mức và ván hằng ngày luôn giải được, bàn quá dày mìn không làm treo), khôi phục ván từ JSON và từ chối dữ liệu hỏng.
 
 ## Chạy cục bộ
 
