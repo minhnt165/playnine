@@ -254,3 +254,95 @@ test('xepbai reports a won run (auto-complete is not assistance)', async ({ page
   const end = (await messages(page)).find((m) => m.type === 'pn:end') as Msg & { timeMs?: number };
   expect(end.timeMs).toBeGreaterThanOrEqual(5000);
 });
+
+// Minesweeper và Sudoku: mode theo ván mặc định / độ khó chọn, ván Sudoku seed gần xong để kiểm tra pn:end.
+test('minesweeper reports hello and start with mode easy', async ({ page }) => {
+  await captureMessages(page);
+  await page.goto('#/play/minesweeper');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === 'minesweeper'), { timeout: 5000 })
+    .toBe(true);
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === 'minesweeper' && m.mode === 'easy'), {
+      timeout: 5000,
+    })
+    .toBe(true);
+});
+
+test('sudoku reports hello and start with the chosen difficulty', async ({ page }) => {
+  await captureMessages(page);
+  await page.goto('#/play/sudoku');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === 'sudoku'), { timeout: 5000 })
+    .toBe(true);
+  await page.frameLocator('iframe').locator('.difficulty-option[data-difficulty="easy"]').click();
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === 'sudoku' && m.mode === 'easy'), {
+      timeout: 8000,
+    })
+    .toBe(true);
+});
+
+for (const [id, dir] of [['minesweeper', 'minesweeper'], ['sudoku', 'sugoku']]) {
+  test(`${id} plays standalone without the SDK`, async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    await page.route('**/sdk/playnine.js*', (r) => r.abort());
+    const res = await page.goto(`${dir}/`);
+    expect(res?.status()).toBe(200);
+    await page.waitForTimeout(500);
+    expect(errors).toEqual([]);
+  });
+}
+
+test('minesweeper custom game sends nothing', async ({ page }) => {
+  await captureMessages(page);
+  await page.goto('#/play/minesweeper');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.mode === 'easy'), { timeout: 5000 })
+    .toBe(true);
+  const before = (await messages(page)).filter((m) => m.type === 'pn:start').length;
+  const frame = page.frameLocator('iframe');
+  await frame.locator('#btn-new').click();
+  await frame.locator('.level-option', { hasText: /custom|tùy chỉnh/i }).click();
+  await frame.locator('#custom-form button[type="submit"]').click();
+  await page.waitForTimeout(800);
+  const after = await messages(page);
+  expect(after.filter((m) => m.type === 'pn:start').length).toBe(before);
+  expect(after.some((m) => m.type === 'pn:end')).toBe(false);
+});
+
+test('sudoku reports a won run with assisted false', async ({ page }) => {
+  await captureMessages(page);
+  // Ván seed: chỉ thiếu ô đầu tiên (đáp án 3), đã có 120 giây trên đồng hồ.
+  await page.addInitScript(() => {
+    if (window.localStorage.getItem('sudoku-vn-save-v1')) return;
+    const puzzle = '090567800106248790780103260260900370009000120000870056000380000000401087015020030'.split('').map(Number);
+    const solution = '392567841156248793784193265268915374579634128431872956647389512923451687815726439'.split('').map(Number);
+    const board = solution.slice();
+    board[0] = 0;
+    window.localStorage.setItem(
+      'sudoku-vn-save-v1',
+      JSON.stringify({
+        version: 1, difficulty: 'easy', daily: null, level: 1, puzzle, solution, board, notes: new Array(81).fill(0),
+        initialGivens: puzzle.filter((v) => v !== 0).length, hintCells: [], mistakes: 0, hintsUsed: 0, seconds: 120,
+        history: [], status: 'playing',
+      }),
+    );
+  });
+  await page.goto('#/play/sudoku');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.resume === true && m.mode === 'easy'), {
+      timeout: 5000,
+    })
+    .toBe(true);
+  const frame = page.frameLocator('iframe');
+  await frame.locator('#btn-resume').click();
+  await frame.locator('.cell[data-idx="0"]').click();
+  await frame.locator('.num[data-num="3"]').click();
+  await expect
+    .poll(async () => (await messages(page)).find((m) => m.type === 'pn:end'), { timeout: 5000 })
+    .toMatchObject({ gameId: 'sudoku', mode: 'easy', won: true, assisted: false });
+  const end = (await messages(page)).find((m) => m.type === 'pn:end') as Msg & { timeMs?: number };
+  expect(end.timeMs).toBeGreaterThanOrEqual(120000);
+});

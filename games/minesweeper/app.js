@@ -7,7 +7,9 @@
   'use strict';
 
   const M = window.Minesweeper;
-  const APP_VERSION = '1.0.2';
+  const APP_VERSION = '1.0.3';
+  const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
+  PN && PN.init({ gameId: 'minesweeper' });
   const t = I18N.t;
 
   // Điền chữ tĩnh theo ngôn ngữ trước khi vẽ phần động
@@ -222,6 +224,7 @@
     buildBoard();
     renderAll();
     writeSummary();
+    PN && session.kind !== 'custom' && PN.gameStart({ mode: session.daily ? 'daily' : session.kind });
   }
 
   /* ---------------- Lưu / khôi phục ---------------- */
@@ -618,6 +621,7 @@
   function onWin(fromIdx) {
     stopClock();
     const sec = Math.max(1, Math.round(elapsedMs() / 1000));
+    PN && session.kind !== 'custom' && PN.gameEnd({ mode: session.daily ? 'daily' : session.kind, timeMs: Math.round(elapsedMs()), won: true, assisted: false });
     let record = false;
     if (session.kind === 'daily') {
       stats.daily.won++;
@@ -644,6 +648,7 @@
 
   function onLose() {
     stopClock();
+    PN && session.kind !== 'custom' && PN.gameEnd({ mode: session.daily ? 'daily' : session.kind, won: false });
     saveStats();
     persist();
     writeSummary();
@@ -1219,6 +1224,7 @@
     renderAll();
     if (game().status === 'playing' && !document.hidden) startClock();
     writeSummary();
+    PN && session.kind !== 'custom' && PN.gameStart({ mode: session.daily ? 'daily' : session.kind, resume: true });
   } else {
     newGame(settings.level === 'custom' || LEVEL_ORDER.indexOf(settings.level) >= 0 ? settings.level : 'easy');
   }

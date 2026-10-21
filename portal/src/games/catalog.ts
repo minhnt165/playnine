@@ -47,6 +47,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'sudoku',
+    sdk: true,
     cat: 'puzzle',
     name: { en: 'Sudoku', vi: 'Sudoku' },
     sub: { en: 'Number puzzle', vi: 'Sudoku' },
@@ -76,6 +77,7 @@ export const GAMES: GameDef[] = [
   },
   {
     id: 'minesweeper',
+    sdk: true,
     name: { en: 'Minesweeper', vi: 'Dò Mìn' },
     sub: { en: 'Classic puzzle', vi: 'Minesweeper' },
     dir: 'minesweeper/',

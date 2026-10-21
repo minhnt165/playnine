@@ -172,9 +172,9 @@ describe('Player + server', () => {
     expect(has(api, 'signInWithGoogle')).toBe(true)
   })
 
-  it('game chưa nối SDK (sudoku): không có bảng xếp hạng và không có dòng đăng nhập; 2048: có cả hai', async () => {
+  it('game chưa nối SDK (bản sao sudoku không có sdk): không có bảng xếp hạng và không có dòng đăng nhập; 2048: có cả hai', async () => {
     const meta = (id: string) => ({ id, metric: 'score_high' as const, hidden: false, modes: [{ key: 'classic', label: { en: 'Classic', vi: 'Cổ điển' } }] })
-    const sudoku = gameById('sudoku')!
+    const sudoku = { ...gameById('sudoku')!, sdk: false }
     const api = createFakeApi({ games: [meta('sudoku'), meta('2048')] })
     const at = (game: typeof g2048) =>
       render(

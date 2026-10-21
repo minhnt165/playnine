@@ -66,7 +66,7 @@ Phần server dùng Supabase gói Free (Postgres + RPC + Auth). Cổng chỉ hi�
 - Test cơ sở dữ liệu: `npm test -w supabase`.
 - Hướng dẫn thiết lập từng bước (tạo project, Google OAuth, migration, secrets, đặt admin): [supabase/README.md](supabase/README.md).
 
-Hiện 2 game (Minesweeper, Sudoku) chưa ghi điểm lên server; 15 game còn lại đã gắn SDK.
+Cả 17 game đều đã gắn SDK và ghi điểm lên server.
 
 ## Deploy
 

@@ -7,7 +7,9 @@
  * ===================================================================== */
 (() => {
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html để trình duyệt tải file mới
-  const APP_VERSION = '1.1.2';
+  const APP_VERSION = '1.1.3';
+  const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
+  PN && PN.init({ gameId: 'sudoku' });
   const STORAGE_KEY = 'sudoku-vn-save-v1';
   const PROGRESS_KEY = 'sudoku-vn-progress-v1';
   const SETTINGS_KEY = 'sudoku-vn-settings-v1';
@@ -985,6 +987,7 @@
       save();
       renderAll();
       startTimer();
+      PN && PN.gameStart({ mode: state.daily ? 'daily' : state.difficulty });
     }, 30);
   }
 
@@ -1007,12 +1010,14 @@
     save();
     renderAll();
     startTimer();
+    PN && PN.gameStart({ mode: state.daily ? 'daily' : state.difficulty });
   }
 
   /* ---------------- Kết thúc ván ---------------- */
   function finishWin() {
     stopTimer();
     state.status = 'won';
+    PN && PN.gameEnd({ mode: state.daily ? 'daily' : state.difficulty, timeMs: state.seconds * 1000, won: true, assisted: state.hintsUsed > 0 || !settings.mistakeLimit });
     const notes = [];
     if (state.daily) {
       const prev = dailyTime(state.daily);
@@ -1041,6 +1046,7 @@
   function finishLose() {
     stopTimer();
     state.status = 'lost';
+    PN && PN.gameEnd({ mode: state.daily ? 'daily' : state.difficulty, won: false });
     if (!state.daily) {
       diffStats(state.difficulty).lost++;
       saveStats();
@@ -1402,6 +1408,7 @@
         state.status = 'paused';
         renderAll();
         startTimer();
+        PN && PN.gameStart({ mode: state.daily ? 'daily' : state.difficulty, resume: true });
       }
     } else {
       clearSave();
