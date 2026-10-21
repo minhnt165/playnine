@@ -10,9 +10,11 @@ export type ServerCtx = {
   authReady: boolean
   games: Record<string, GameMeta>
   refreshUser(): Promise<void>
+  /** Tải lại metadata game (sau khi admin sửa luật hoặc ẩn/hiện game). */
+  refreshGames(): Promise<void>
 }
 
-const NO_SERVER: ServerCtx = { api: null, user: null, authReady: true, games: {}, refreshUser: async () => {} }
+const NO_SERVER: ServerCtx = { api: null, user: null, authReady: true, games: {}, refreshUser: async () => {}, refreshGames: async () => {} }
 const ServerContext = createContext<ServerCtx>(NO_SERVER)
 
 /** Không có biến môi trường thì không có server: cổng chạy y như giai đoạn 1. */
@@ -63,9 +65,19 @@ export function ServerProvider({ api: apiProp, children }: { api?: ServerApi | n
     }
   }, [api])
 
+  const refreshGames = useCallback(async () => {
+    if (!api) return
+    try {
+      const list = await api.gameMeta()
+      setGames(Object.fromEntries(list.map((g) => [g.id, g])))
+    } catch {
+      /* giữ nguyên danh sách hiện tại */
+    }
+  }, [api])
+
   const value = useMemo<ServerCtx>(
-    () => (api ? { api, user, authReady, games, refreshUser } : NO_SERVER),
-    [api, user, authReady, games, refreshUser],
+    () => (api ? { api, user, authReady, games, refreshUser, refreshGames } : NO_SERVER),
+    [api, user, authReady, games, refreshUser, refreshGames],
   )
   return <ServerContext.Provider value={value}>{children}</ServerContext.Provider>
 }

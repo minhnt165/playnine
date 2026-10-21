@@ -6,6 +6,7 @@ import { ServerProvider } from './server/ServerProvider'
 import './styles/portal.css'
 import './styles/events.css'
 import './styles/server.css'
+import './styles/admin.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

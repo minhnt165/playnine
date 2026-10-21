@@ -59,4 +59,15 @@ describe('ServerProvider', () => {
     expect(last!.games).toEqual({})
     expect(last!.user).toEqual(A)
   })
+
+  it('refreshGames tải lại metadata game', async () => {
+    const api = createFakeApi({ user: A })
+    renderWith(api)
+    await waitFor(() => expect(last!.games['sugoku']?.hidden).toBe(false))
+    api.state.games = api.state.games.map((g) => (g.id === 'sugoku' ? { ...g, hidden: true } : g))
+    await act(async () => {
+      await last!.refreshGames()
+    })
+    expect(last!.games['sugoku'].hidden).toBe(true)
+  })
 })

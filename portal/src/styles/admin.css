@@ -1,0 +1,47 @@
+/* Trang quản trị #/admin: tab, bảng, ô nhập luật. */
+.admin h1 { margin: 0 0 16px; }
+.admin-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.admin-tab {
+  padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--chip);
+  color: var(--text); font: inherit; font-weight: 600; cursor: pointer;
+}
+.admin-tab[aria-selected="true"] { border-color: var(--accent); color: var(--accent); }
+.admin-tab:focus-visible, .admin-btn:focus-visible, .admin-bar input:focus-visible, .admin-bar select:focus-visible,
+.admin-field input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.admin-btn {
+  padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--chip);
+  color: var(--text); font: inherit; cursor: pointer;
+}
+.admin-btn:hover:not(:disabled) { border-color: var(--accent); }
+.admin-btn:disabled { opacity: .55; cursor: default; }
+.admin-more { margin-top: 12px; }
+.admin-bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; margin-bottom: 12px; }
+.admin-bar input, .admin-bar select, .admin-field input {
+  padding: 6px 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-solid);
+  color: var(--text); font: inherit; min-width: 0;
+}
+.admin-field { display: flex; flex-direction: column; gap: 4px; font-size: .85rem; color: var(--muted); }
+.admin-ok { color: var(--accent); margin: 8px 0 0; }
+.admin-err { color: #d64545; margin: 8px 0; overflow-wrap: anywhere; }
+.admin-field-error { color: #d64545; font-size: .8rem; }
+.admin-field input[aria-invalid="true"] { border-color: #d64545; }
+
+/* Game */
+.admin-game { padding: 12px 14px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 12px; }
+.admin-game-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.admin-game-head h3 { margin: 0; flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.admin-id { color: var(--muted); font-size: .8rem; font-weight: 400; }
+.admin-check { display: inline-flex; align-items: center; gap: 6px; }
+.admin-modes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.admin-mode {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px;
+  flex: 1 1 280px; min-width: 0; border: 1px solid var(--border); border-radius: 10px;
+}
+.admin-mode legend { padding: 0 6px; font-weight: 600; }
+
+/* Bảng */
+.admin-scroll { overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.admin-table th, .admin-table td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+.admin-table td { overflow-wrap: anywhere; }
+.admin-table a { color: var(--accent); }
