@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { AdminPage } from './admin/AdminPage'
+import { EventPage, EventsPage } from './events/EventsPage'
 import { Home } from './home/Home'
 import { prefersReducedMotion } from './home/media'
 import { markPlayed } from './data/recent'
@@ -10,16 +12,17 @@ import { ProfilePage } from './profile/ProfilePage'
 import { recordPlayThrottled } from './server/playCount'
 import { useServer } from './server/ServerProvider'
 import { isPlaying } from './player/playing'
-import { parseRoute } from './player/route'
+import { parseRoute, type Route } from './player/route'
 import { useShortcuts } from './player/useShortcuts'
 
 const currentGame = (): GameDef | null => {
   const r = parseRoute(location.hash)
   return r.name === 'play' ? r.game : null
 }
-const currentProfileId = (): string | null => {
+/** Route của trang không phải game (home, profile, events, event, admin). */
+const currentPage = (): Route => {
   const r = parseRoute(location.hash)
-  return r.name === 'profile' ? r.userId : null
+  return r.name === 'play' ? { name: 'home' } : r
 }
 
 export function App() {
@@ -31,13 +34,13 @@ export function App() {
   // Chỉ true khi đã ở trang cổng trước khi vào game (để Back = history.back); vào thẳng link game thì false.
   const [portalSeen, setPortalSeen] = useState(() => currentGame() === null)
   const [refreshKey, setRefreshKey] = useState(0)
-  const [profileId, setProfileId] = useState<string | null>(currentProfileId)
+  const [page, setPage] = useState<Route>(currentPage)
   const gameRef = useRef(game)
   const { api } = useServer()
 
   useEffect(() => {
     const onHash = () => {
-      setProfileId(currentProfileId())
+      setPage(currentPage())
       const prev = gameRef.current
       const next = currentGame()
       gameRef.current = next
@@ -86,8 +89,14 @@ export function App() {
 
   return (
     <>
-      {profileId ? (
-        <ProfilePage userId={profileId} onThemeApplied={recolor} />
+      {page.name === 'profile' ? (
+        <ProfilePage userId={page.userId} onThemeApplied={recolor} />
+      ) : page.name === 'events' ? (
+        <EventsPage onThemeApplied={recolor} />
+      ) : page.name === 'event' ? (
+        <EventPage eventId={page.eventId} onThemeApplied={recolor} />
+      ) : page.name === 'admin' ? (
+        <AdminPage onThemeApplied={recolor} />
       ) : (
         <Home openIds={openIds} refreshKey={refreshKey} onThemeApplied={recolor} />
       )}

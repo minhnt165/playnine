@@ -54,6 +54,16 @@ describe('AuthButton', () => {
     await waitFor(() => expect(api.calls.some((c) => c.method === 'signOut')).toBe(true))
   })
 
+  it('isAdmin: menu có mục Admin trỏ #/admin; người chơi thường thì không', async () => {
+    renderBtn(createFakeApi({ user: { ...A, isAdmin: true } }))
+    fireEvent.click(await screen.findByRole('button', { name: /Alice/ }))
+    expect(screen.getByRole('menuitem', { name: DICT.en['auth.admin'] as string })).toHaveAttribute('href', '#/admin')
+    cleanup()
+    renderBtn(createFakeApi({ user: A }))
+    fireEvent.click(await screen.findByRole('button', { name: /Alice/ }))
+    expect(screen.queryByRole('menuitem', { name: DICT.en['auth.admin'] as string })).toBeNull()
+  })
+
   it('có avatarUrl thì hiện ảnh', async () => {
     renderBtn(createFakeApi({ user: { ...A, avatarUrl: 'https://example.com/a.png' } }))
     const btn = await screen.findByRole('button', { name: /Alice/ })

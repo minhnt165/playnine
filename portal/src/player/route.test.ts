@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { gameById } from '../games/catalog'
-import { gameHref, parseRoute, playHref } from './route'
+import { eventHref, gameHref, parseRoute, playHref } from './route'
 
 describe('route', () => {
   it('hash rỗng là trang chủ', () => {
@@ -21,6 +21,14 @@ describe('route', () => {
     const id = '7c9e6679-7425-40de-944b-e07fc1f90ae7'
     expect(parseRoute('#/u/' + id)).toEqual({ name: 'profile', userId: id })
     expect(parseRoute('#/u/abc')).toEqual({ name: 'home' })
+  })
+  it('#/events, #/events/<uuid>, #/events/<lạ>, #/admin', () => {
+    const id = '7c9e6679-7425-40de-944b-e07fc1f90ae7'
+    expect(parseRoute('#/events')).toEqual({ name: 'events' })
+    expect(parseRoute('#/events/' + id)).toEqual({ name: 'event', eventId: id })
+    expect(parseRoute('#/events/abc')).toEqual({ name: 'events' })
+    expect(parseRoute('#/admin')).toEqual({ name: 'admin' })
+    expect(eventHref(id)).toBe('#/events/' + id)
   })
   it('playHref và gameHref', () => {
     const g = gameById('2048')!

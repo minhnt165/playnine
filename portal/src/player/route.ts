@@ -1,6 +1,12 @@
 import { GAMES, type GameDef } from '../games/catalog'
 
-export type Route = { name: 'home' } | { name: 'play'; game: GameDef } | { name: 'profile'; userId: string }
+export type Route =
+  | { name: 'home' }
+  | { name: 'play'; game: GameDef }
+  | { name: 'profile'; userId: string }
+  | { name: 'events' }
+  | { name: 'event'; eventId: string }
+  | { name: 'admin' }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -16,12 +22,25 @@ export function parseRoute(hash: string): Route {
     }
     return UUID.test(id) ? { name: 'profile', userId: id } : { name: 'home' }
   }
+  const ev = hash.match(/^#\/events(?:\/([^/?#]+))?(?:[/?#]|$)/)
+  if (ev) {
+    let id = ''
+    try {
+      id = decodeURIComponent(ev[1] ?? '')
+    } catch {
+      /* chuỗi hỏng: về danh sách sự kiện */
+    }
+    return UUID.test(id) ? { name: 'event', eventId: id } : { name: 'events' }
+  }
+  if (/^#\/admin(?:[/?#]|$)/.test(hash)) return { name: 'admin' }
   const m = hash.match(/^#\/play\/([\w-]+)/)
   const game = m ? GAMES.find((x) => x.id === m[1]) : undefined
   return game ? { name: 'play', game } : { name: 'home' }
 }
 
-export const playHref = (g: GameDef): string => '#/play/' + g.id
+export const eventHref = (id: string): string => '#/events/' + id
+
+export const playHref =(g: GameDef): string => '#/play/' + g.id
 
 /** Địa chỉ trang chính của game (tương đối với cổng). */
 export const gameHref = (g: GameDef): string => g.dir + 'index.html'

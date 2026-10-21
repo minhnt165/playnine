@@ -76,6 +76,11 @@ export function AuthButton() {
           <a role="menuitem" href={`#/u/${encodeURIComponent(user.id)}`} onClick={() => setOpen(false)}>
             {t('auth.profile')}
           </a>
+          {user.isAdmin && (
+            <a role="menuitem" href="#/admin" onClick={() => setOpen(false)}>
+              {t('auth.admin')}
+            </a>
+          )}
           <button
             role="menuitem"
             type="button"

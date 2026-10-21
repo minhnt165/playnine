@@ -1,7 +1,8 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import type { ServerApi } from './api'
 import type {
-  AuthUser, BestRow, FinishResult, GameMeta, LeaderRow, Metric, ModeMeta, Period, Profile, RunResult,
+  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, EventInput, FinishResult, GameEvent, GameMeta,
+  LeaderRow, Metric, ModeMeta, Period, Profile, RunResult, Rules, Text,
 } from './types'
 
 type Row = Record<string, unknown>
@@ -14,6 +15,55 @@ const toProfile = (r: Row): Profile => ({
   id: String(r.id),
   displayName: String(r.display_name ?? ''),
   avatarUrl: typeof r.avatar_url === 'string' && r.avatar_url ? r.avatar_url : null,
+})
+
+const toLeaderRow = (r: Row): LeaderRow => ({
+  rank: Number(r.rank),
+  userId: String(r.user_id),
+  displayName: String(r.display_name ?? ''),
+  avatarUrl: typeof r.avatar_url === 'string' && r.avatar_url ? r.avatar_url : null,
+  value: Number(r.value),
+  achievedAt: String(r.achieved_at),
+})
+
+const toEvent = (r: Row): GameEvent => ({
+  id: String(r.id),
+  title: r.title as Text,
+  description: (r.description ?? {}) as GameEvent['description'],
+  gameId: String(r.game_id),
+  mode: String(r.mode),
+  agg: r.agg as GameEvent['agg'],
+  startsAt: String(r.starts_at),
+  endsAt: String(r.ends_at),
+  awardTop: Number(r.award_top),
+  status: r.status as GameEvent['status'],
+})
+
+const toCollection = (r: Row): Collection => ({
+  id: String(r.id),
+  title: r.title as Text,
+  gameIds: Array.isArray(r.game_ids) ? r.game_ids.map(String) : [],
+  startsAt: String(r.starts_at),
+  endsAt: r.ends_at == null ? null : String(r.ends_at),
+  sort: Number(r.sort ?? 0),
+})
+
+const numOrNull = (v: unknown): number | null => (v == null ? null : Number(v))
+
+const toAdminRun = (r: Row): AdminRun => ({
+  id: String(r.id),
+  userId: String(r.user_id),
+  displayName: String(r.display_name ?? ''),
+  gameId: String(r.game_id),
+  mode: String(r.mode),
+  startedAt: String(r.started_at),
+  endedAt: r.ended_at == null ? null : String(r.ended_at),
+  score: numOrNull(r.score),
+  timeMs: numOrNull(r.time_ms),
+  won: r.won == null ? null : Boolean(r.won),
+  assisted: Boolean(r.assisted),
+  status: r.status as AdminRun['status'],
+  rejectReason: r.reject_reason == null ? null : String(r.reject_reason),
 })
 
 /** Client Supabase thật. Chỉ dùng anon key; mọi ghi của người chơi đi qua RPC. */
@@ -38,10 +88,15 @@ export function createApiFromClient(sb: SupabaseClient): ServerApi {
   async function userOf(sessionUser: { id: string; user_metadata?: Record<string, unknown> } | undefined): Promise<AuthUser | null> {
     if (!sessionUser) return null
     const p = await loadProfile(sessionUser.id)
-    if (p) return p
+    // RPC lỗi thì coi như không phải admin (không chặn đăng nhập).
+    const isAdmin = await sb.rpc('is_admin').then(
+      ({ data, error }) => !error && data === true,
+      () => false,
+    )
+    if (p) return { ...p, isAdmin }
     // Hàng profiles có thể chưa kịp tạo ngay sau lần đăng nhập đầu.
     const name = sessionUser.user_metadata?.name
-    return { id: sessionUser.id, displayName: typeof name === 'string' && name ? name : 'Player', avatarUrl: null }
+    return { id: sessionUser.id, displayName: typeof name === 'string' && name ? name : 'Player', avatarUrl: null, isAdmin }
   }
 
   async function rpc<T>(fn: string, args?: Record<string, unknown>): Promise<T> {
@@ -86,6 +141,7 @@ export function createApiFromClient(sb: SupabaseClient): ServerApi {
           modes: (Array.isArray(r.modes) ? r.modes : []).map((m: Row): ModeMeta => ({
             key: String(m.key),
             label: m.label as ModeMeta['label'],
+            ...(m.rules && typeof m.rules === 'object' ? { rules: m.rules as Rules } : {}),
           })),
           hidden: Boolean(r.hidden),
         }),
@@ -120,16 +176,7 @@ export function createApiFromClient(sb: SupabaseClient): ServerApi {
       const rows = await rpc<Row[] | null>('leaderboard', {
         p_game_id: gameId, p_mode: mode, p_period: period, p_limit: limit,
       })
-      return (rows ?? []).map(
-        (r): LeaderRow => ({
-          rank: Number(r.rank),
-          userId: String(r.user_id),
-          displayName: String(r.display_name ?? ''),
-          avatarUrl: typeof r.avatar_url === 'string' && r.avatar_url ? r.avatar_url : null,
-          value: Number(r.value),
-          achievedAt: String(r.achieved_at),
-        }),
-      )
+      return (rows ?? []).map(toLeaderRow)
     },
     async myRank(gameId, mode, period) {
       const rows = await rpc<Row[] | null>('my_rank', { p_game_id: gameId, p_mode: mode, p_period: period })
@@ -154,6 +201,103 @@ export function createApiFromClient(sb: SupabaseClient): ServerApi {
       if (!data.user) throw new Error('updateDisplayName: not signed in')
       const { error } = await sb.from('profiles').update({ display_name: name }).eq('id', data.user.id)
       if (error) fail('updateDisplayName', error)
+    },
+    async events() {
+      const { data, error } = await sb.from('events').select('*')
+      if (error) fail('events', error)
+      return ((data ?? []) as Row[]).map(toEvent)
+    },
+    async eventLeaderboard(eventId, limit = 50) {
+      const rows = await rpc<Row[] | null>('event_leaderboard', { p_event_id: eventId, p_limit: limit })
+      return (rows ?? []).map(toLeaderRow)
+    },
+    async collections() {
+      const { data, error } = await sb.from('collections').select('*')
+      if (error) fail('collections', error)
+      return ((data ?? []) as Row[]).map(toCollection)
+    },
+    async profileBadges(userId) {
+      const rows = await rpc<Row[] | null>('profile_badges', { p_user_id: userId })
+      return (rows ?? []).map(
+        (r): Badge => ({
+          eventId: String(r.event_id),
+          rank: Number(r.rank),
+          awardedAt: String(r.awarded_at),
+          title: r.title as Text,
+          gameId: String(r.game_id),
+          mode: String(r.mode),
+        }),
+      )
+    },
+    async adminUpdateGame(gameId, hidden, rules) {
+      await rpc('admin_update_game', { p_game_id: gameId, p_hidden: hidden, p_rules: rules })
+    },
+    async adminSaveEvent(e: EventInput) {
+      // Không có id = tạo mới; không thêm khóa undefined (khóa thiếu nghĩa là giữ giá trị cũ khi sửa).
+      const p_event: Row = {
+        ...(e.id ? { id: e.id } : {}),
+        title: e.title,
+        description: e.description,
+        game_id: e.gameId,
+        mode: e.mode,
+        agg: e.agg,
+        starts_at: e.startsAt,
+        ends_at: e.endsAt,
+        award_top: e.awardTop,
+      }
+      return String(await rpc<string>('admin_save_event', { p_event }))
+    },
+    async adminCancelEvent(id) {
+      await rpc('admin_cancel_event', { p_event_id: id })
+    },
+    async adminRecomputeEvent(id) {
+      await rpc('admin_recompute_event', { p_event_id: id })
+    },
+    async adminSaveCollection(c) {
+      const p_collection: Row = {
+        ...(c.id ? { id: c.id } : {}),
+        title: c.title,
+        game_ids: c.gameIds,
+        starts_at: c.startsAt,
+        ends_at: c.endsAt,
+        sort: c.sort,
+      }
+      return String(await rpc<string>('admin_save_collection', { p_collection }))
+    },
+    async adminDeleteCollection(id) {
+      await rpc('admin_delete_collection', { p_id: id })
+    },
+    async adminRuns(f) {
+      const args: Row = {}
+      // p_before giữ nguyên chuỗi server trả (không đi qua Date để khỏi mất độ chính xác micro giây).
+      if (f.gameId !== undefined) args.p_game_id = f.gameId
+      if (f.mode !== undefined) args.p_mode = f.mode
+      if (f.userId !== undefined) args.p_user_id = f.userId
+      if (f.status !== undefined) args.p_status = f.status
+      if (f.before !== undefined) args.p_before = f.before
+      if (f.limit !== undefined) args.p_limit = f.limit
+      const rows = await rpc<Row[] | null>('admin_runs', args)
+      return (rows ?? []).map(toAdminRun)
+    },
+    async adminRejectRun(runId, reason) {
+      await rpc('admin_reject_run', { p_run_id: runId, p_reason: reason ?? null })
+    },
+    async adminPlayers(query) {
+      const rows = await rpc<Row[] | null>('admin_players', { p_query: query, p_limit: 50 })
+      return (rows ?? []).map(
+        (r): AdminPlayer => ({
+          id: String(r.id),
+          displayName: String(r.display_name ?? ''),
+          avatarUrl: typeof r.avatar_url === 'string' && r.avatar_url ? r.avatar_url : null,
+          role: r.role === 'admin' ? 'admin' : 'player',
+          banned: Boolean(r.banned),
+          createdAt: String(r.created_at),
+          runs: Number(r.runs),
+        }),
+      )
+    },
+    async adminSetBanned(userId, banned) {
+      await rpc('admin_set_banned', { p_user_id: userId, p_banned: banned })
     },
   }
 }
