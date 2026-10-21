@@ -113,7 +113,7 @@ describe('Home', () => {
     expect(container.querySelector('.plays')).toBeNull()
   })
 
-  it('có server: game ẩn biến khỏi lưới, nút lọc và ô "Hôm nay"; không server vẫn 17', async () => {
+  it('có server: game ẩn biến khỏi lưới, nút lọc và ô "Hôm nay"; không server vẫn 18', async () => {
     const hidden = { id: '2048', metric: 'score_high' as const, hidden: true, modes: [] }
     const api = createFakeApi({ games: [hidden] })
     const { container } = render(
@@ -123,14 +123,14 @@ describe('Home', () => {
         </ServerProvider>
       </I18nProvider>,
     )
-    await waitFor(() => expect(container.querySelectorAll('#games > li')).toHaveLength(16))
+    await waitFor(() => expect(container.querySelectorAll('#games > li')).toHaveLength(17))
     expect(container.querySelector('a.card[href="#/game/2048"]')).toBeNull()
-    expect(container.querySelector('#filters button:first-child b')!.textContent).toBe('16')
+    expect(container.querySelector('#filters button:first-child b')!.textContent).toBe('17')
     expect(container.querySelector('#today')!.innerHTML).not.toContain('2048')
     cleanup()
     const plain = renderHome()
-    expect(plain.container.querySelectorAll('#games > li')).toHaveLength(17)
-    expect(plain.container.querySelector('#filters button:first-child b')!.textContent).toBe('17')
+    expect(plain.container.querySelectorAll('#games > li')).toHaveLength(18)
+    expect(plain.container.querySelector('#filters button:first-child b')!.textContent).toBe('18')
   })
 
   it('stats đếm lên rồi dừng ở giá trị đích', () => {
