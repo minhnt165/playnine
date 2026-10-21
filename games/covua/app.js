@@ -15,7 +15,7 @@
   const sfx = (name, o) => { try { SFX && SFX.play(name, o); } catch (e) { /* bỏ qua */ } };
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '1.3.0';
   const KEYS = {
     settings: 'playnine-covua-settings-v1',
     save: 'playnine-covua-save-v1',

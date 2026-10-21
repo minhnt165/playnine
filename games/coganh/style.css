@@ -841,6 +841,10 @@ kbd {
 }
 .help-dots button::before { content: ""; width: 8px; height: 8px; border-radius: 99px; background: var(--line); transition: width 0.2s, background 0.2s; }
 .help-dots button[aria-selected="true"]::before { width: 22px; background: var(--accent); }
+@media (pointer: coarse) {
+  .help-dots { gap: 0; }
+  .help-dots button { width: 40px; height: 40px; }
+}
 
 /* Hình minh họa */
 .d-board { fill: var(--wood-2); stroke: var(--wood-edge); stroke-width: 0.8; }
@@ -857,6 +861,14 @@ kbd {
 .d-arrow.dash { stroke-dasharray: 2.6 1.8; }
 .d-arrow-head { fill: var(--fig-arrow); }
 .d-tag { font: 700 5.4px var(--font); fill: var(--text); text-anchor: middle; paint-order: stroke; stroke: var(--surface); stroke-width: 2.2px; stroke-linejoin: round; }
+
+/* Điện thoại dọc: bàn tràn viền, các hàng người chơi / lượt / nút giữ lề trong 10px */
+@media (max-width: 560px) and (orientation: portrait) {
+  :root { --gut: 0px; }
+  .topbar { padding-left: 10px; padding-right: 10px; }
+  .player, .turn, .log-box, .controls { width: calc(100% - 20px); }
+  .board { border-radius: 0; }
+}
 
 /* ---------------- Màn ngang / máy tính ---------------- */
 /* Bàn và hai thẻ người chơi bên trái, cột lượt + nút + nhật ký bên phải */
@@ -884,20 +896,31 @@ kbd {
   .kbd-hint { display: block; flex: none; }
 }
 
-/* Màn rất thấp (điện thoại xoay ngang): thu gọn */
+/* Màn rất thấp (điện thoại xoay ngang): bàn chiếm hết chiều cao, thẻ người chơi chuyển sang cột phải */
 @media (max-height: 520px) and (min-aspect-ratio: 11/10) {
   :root {
-    --bw: min(calc(100vw - 2 * var(--gut) - var(--panel, 260px) - 28px - var(--safe-l) - var(--safe-r)),
-              calc(var(--vh) - 40px - 22px - 2 * 46px - 20px - var(--safe-t) - var(--safe-b)),
+    --panel: clamp(220px, 34vw, 300px);
+    --bw: min(calc(100vw - 2 * var(--gut) - var(--panel) - 20px - var(--safe-l) - var(--safe-r)),
+              calc(var(--vh) - 40px - 22px - var(--safe-t) - var(--safe-b)),
               640px);
   }
   .topbar { height: 40px; }
-  .stage { row-gap: 8px; }
-  .player { min-height: 44px; padding-top: 3px; padding-bottom: 3px; }
+  .stage {
+    grid-template-columns: var(--bw) var(--panel);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas: "board p1" "board panel" "board p0";
+    justify-content: center;
+    align-content: center;
+    column-gap: 20px;
+    row-gap: 6px;
+  }
+  .player { width: 100%; min-height: 44px; padding-top: 3px; padding-bottom: 3px; }
+  .panel { display: flex; flex-direction: column; gap: 6px; grid-area: panel; min-height: 0; width: 100%; }
+  .turn, .log-box, .controls { width: 100%; }
   .pavatar { width: 28px; height: 28px; }
   .kbd-hint { display: none !important; }
   .tool { height: 42px; }
-  .log-box { min-height: 0; }
+  .log-box { flex: 1; min-height: 0; }
 }
 
 /* ---------------- Màn kết quả + phản hồi khi bấm ---------------- */

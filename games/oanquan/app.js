@@ -12,7 +12,7 @@
   PN && PN.init({ gameId: 'oanquan' });
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '1.3.0';
   const KEYS = {
     settings: 'playnine-oanquan-settings-v1',
     save: 'playnine-oanquan-save-v1',

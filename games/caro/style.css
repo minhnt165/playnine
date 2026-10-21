@@ -515,6 +515,16 @@ kbd {
   .help { display: block; }
 }
 
+/* Điện thoại dọc: bàn cờ tràn viền, các hàng chữ / nút giữ lề trong */
+@media (max-width: 560px) and (orientation: portrait) {
+  .app {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  .topbar, .status, .tools { padding-left: 10px; padding-right: 10px; }
+  .board-viewport, .board { border-radius: 0; }
+}
+
 /* ---------- Màn hình rộng: bàn cờ trái, bảng điều khiển phải ---------- */
 @media (min-width: 560px) and (min-aspect-ratio: 5/4) {
   .app {
@@ -708,6 +718,10 @@ kbd {
 .stats-table th { font-size: 0.72rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
 .stats-table td:first-child, .stats-table th:first-child { text-align: left; font-weight: 700; }
 .stats-table tr.total td { font-weight: 800; border-bottom: 0; }
+/* 320px: bảng 5 cột tiếng Anh vừa khung, không cuộn ngang trong modal */
+@media (max-width: 359px) {
+  .stats-table th, .stats-table td { padding-left: 2px; padding-right: 2px; }
+}
 
 .modal-result { align-items: stretch; }
 .result-badge {

@@ -109,6 +109,45 @@
   .ev-card-count { width: 100%; }
   .ev-banner-all { margin-left: 0; }
 }
+/* Điện thoại: sự kiện live trên một hàng vuốt ngang, mỗi thẻ 2 dòng (tên · game + giờ còn lại) */
+@media (max-width: 560px) {
+  .ev-banner { gap: 6px; margin-bottom: 20px; padding: 10px; }
+  .ev-banner-list { flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .ev-banner-list::-webkit-scrollbar { display: none; }
+  .ev-banner-list li { flex: 0 0 min(86%, 300px); scroll-snap-align: start; }
+  .ev-banner-list li:only-child { flex-basis: 100%; }
+  .ev-banner-item {
+    display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; gap: 2px 8px; height: 100%;
+    padding: 8px 10px; border-color: var(--border); background: var(--surface-solid);
+  }
+  .ev-banner-item .ev-live-dot { grid-row: 1; }
+  .ev-banner-title { grid-column: 2 / -1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; overflow-wrap: normal; }
+  .ev-banner-game { grid-column: 2; white-space: nowrap; }
+  .ev-banner-count { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .ev-banner-all { margin-left: auto; font-size: .9rem; }
+  /* Bộ sưu tập: hàng cuộn tràn mép màn hình */
+  .col-row { margin-top: 14px; }
+  .col-games {
+    gap: 10px; scrollbar-width: none;
+    margin-left: calc(-1 * max(16px, env(safe-area-inset-left))); margin-right: calc(-1 * max(16px, env(safe-area-inset-right)));
+    padding: 0 max(16px, env(safe-area-inset-right)) 4px max(16px, env(safe-area-inset-left));
+    scroll-padding-left: max(16px, env(safe-area-inset-left));
+  }
+  .col-games::-webkit-scrollbar { display: none; }
+  .col-game { width: 84px; padding: 8px 4px; }
+  .col-game .card-icon { width: 42px; height: 42px; }
+  .col-game-name { font-size: .8rem; }
+}
+/* Mục ngay sau hàng bộ sưu tập cuối cùng (lưới game) cách ra như các dải khác */
+.col-row + :not(.col-row) { margin-top: 36px; }
+@media (max-width: 560px) { .col-row + :not(.col-row) { margin-top: 24px; } }
+@media (pointer: coarse) {
+  .ev-banner-item { min-height: 40px; }
+  .ev-banner-all { padding: 10px 0; margin-top: -10px; margin-bottom: -10px; }
+  .ev-details { padding: 11px 0; margin: -3px 0 -11px; }
+  .feed-filters button { min-height: 40px; }
+  .profile-badges a { min-height: 40px; }
+}
 
 /* Tin tức #/news và bài viết #/news/<slug> */
 .news-head { display: flex; flex-direction: column; gap: 4px; }
@@ -162,6 +201,17 @@
   .post-card.featured { grid-template-columns: minmax(0, 1fr); }
   .post-card.featured .post-cover { aspect-ratio: 16 / 9; min-height: 0; }
   .post-card.featured .post-body { padding: 18px; }
+}
+/* Điện thoại: bài trong lưới thành thẻ ngang (bìa vuông nhỏ + tiêu đề), bỏ tóm tắt để danh sách ngắn lại */
+@media (max-width: 560px) {
+  .post-grid { gap: 10px; }
+  .post-grid .post-card { grid-template-columns: 96px minmax(0, 1fr); border-radius: 16px; }
+  .post-grid .post-cover { aspect-ratio: auto; min-height: 96px; }
+  .post-grid .post-cover .card-icon { width: 48%; }
+  .post-grid .post-cover-mark { font-size: 36px; }
+  .post-grid .post-body { gap: 6px; padding: 10px 12px; }
+  .post-grid .post-title { display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: .95rem; }
+  .post-grid .post-summary { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .post-card { transition: none; } }
 

@@ -8,7 +8,7 @@
   'use strict';
 
   const E = window.NoiHinh;
-  const APP_VERSION = '1.2.0';
+  const APP_VERSION = '1.3.0';
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'noihinh' });
   // Âm thanh / pháo giấy của SDK: SDK cũ hoặc chạy không có SDK thì im lặng, không lỗi
@@ -331,14 +331,19 @@
     const cap = game.cap;
     // Khay: ô khay không lớn hơn ô bàn tối đa, chừa chỗ nút "+"
     const addW = 46;
-    const S = Math.max(24, Math.min(MAX_TILE, (Math.min(W, 520) - 24 - addW - 10) / E.MAX_TRAY));
+    // Sân rộng và thấp (điện thoại xoay ngang): khay sang phải, bàn dùng hết chiều cao
+    const side = W >= H * 1.7;
+    const S = Math.max(24, Math.min(MAX_TILE, (Math.min(side ? W * 0.5 : W, 520) - 24 - addW - 10) / E.MAX_TRAY, side ? (H - 30) / 3 : MAX_TILE));
     const trayW = S * cap + 16;
     const trayH = S + 18;
-    const trayX = (W - (trayW + addW + 10)) / 2;
-    const trayY = H - trayH - 4;
+    const sideW = S * E.MAX_TRAY + 16 + addW + 10;
+    const trayX = side ? W - 4 - (trayW + addW + 10) : (W - (trayW + addW + 10)) / 2;
+    const trayY = side ? H / 2 + 4 : H - trayH - 4;
     // Hàng chờ (Lấy ra) ngay trên khay, chỉ chiếm chỗ khi có ô
     const holdH = game.hold.length ? S + 10 : 0;
-    const boardH = trayY - holdH - 14;
+    const boardW = side ? W - sideW - 12 : W;
+    const boardH = side ? H - 8 : trayY - holdH - 14;
+    const holdW = S * E.HOLD_SIZE + 8 * (E.HOLD_SIZE - 1);
     let maxX = 0;
     let maxY = 0;
     game.tiles.forEach((tl) => {
@@ -346,15 +351,17 @@
       maxY = Math.max(maxY, tl.y + E.TILE + 1);
     });
     // Mỗi lớp nhô lên một chút nên chừa thêm theo số lớp
-    const u = Math.max(2, Math.min(MAX_TILE / E.TILE, (W - 12) / maxX, boardH / maxY));
+    const u = Math.max(2, Math.min(MAX_TILE / E.TILE, (boardW - 4) / maxX, boardH / maxY));
     const T = u * E.TILE;
     geo = {
       T,
       u,
-      bx: (W - maxX * u) / 2,
+      bx: (boardW - maxX * u) / 2,
       by: Math.max(6, (boardH - maxY * u) / 2 + 6),
       tray: { x: trayX + 8, y: trayY + 9, S },
-      hold: { x: (W - S * E.HOLD_SIZE - 8 * (E.HOLD_SIZE - 1)) / 2, y: trayY - holdH, S },
+      hold: side
+        ? { x: trayX + (trayW + addW + 10 - holdW) / 2, y: trayY - S - 14, S }
+        : { x: (W - holdW) / 2, y: trayY - holdH, S },
     };
     trayEl.style.left = trayX + 'px';
     trayEl.style.top = trayY + 'px';

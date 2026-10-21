@@ -370,6 +370,32 @@ const I18N = (() => {
     .panel { width: min(100%, 580px); }
     .moves { max-height: 110px; }
   }
+  /* Điện thoại dọc: bàn cờ tràn viền, chữ và bảng điều khiển giữ lề nhỏ; khung gỗ không bo góc */
+  @media (max-width: 560px) {
+    .app { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+    header, .panel, footer { padding-left: 12px; padding-right: 12px; }
+    svg#board > rect:first-of-type { rx: 0; }
+    .overlay { border-radius: 0; }
+  }
+  /* Điện thoại xoay ngang: bàn cờ cao hết màn hình bên trái, tiêu đề + bảng điều khiển cuộn được bên phải */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .app {
+      max-width: none; height: 100vh; height: 100dvh; min-height: 0; padding: 8px 12px;
+      display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto;
+      column-gap: 16px; row-gap: 8px;
+    }
+    .layout { display: contents; }
+    .board-wrap { grid-column: 1; grid-row: 1 / -1; align-self: center; width: calc((100vh - 16px) * 560 / 620); width: calc((100dvh - 16px) * 560 / 620); }
+    header { grid-column: 2; grid-row: 1; }
+    header h1 { font-size: 1.3rem; }
+    .panel { grid-column: 2; grid-row: 2; width: auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+    .moves { max-height: 110px; }
+    footer { grid-column: 2; grid-row: 3; text-align: left; }
+  }
+  /* Màn cảm ứng: nút chọn chế độ / cấp độ / điều hướng nước đi tối thiểu 40px */
+  @media (pointer: coarse) {
+    .seg button, .nav button { min-height: 40px; }
+  }
   /* Giảm chuyển động: tắt hiệu ứng trượt, nhấp nháy và bật lớp phủ */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: .001ms !important; }

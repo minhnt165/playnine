@@ -670,6 +670,10 @@ kbd {
 }
 .help-dots button::before { content: ""; width: 8px; height: 8px; border-radius: 99px; background: var(--line); transition: width 0.2s, background 0.2s; }
 .help-dots button[aria-selected="true"]::before { width: 22px; background: var(--accent); }
+@media (pointer: coarse) {
+  .help-dots { gap: 0; }
+  .help-dots button { width: 40px; height: 40px; }
+}
 
 /* Hình minh họa */
 .d-board { fill: var(--board-bg); stroke: var(--line); }
@@ -688,6 +692,20 @@ kbd {
 .d-arrow-head { fill: var(--text); }
 .d-label { font: 700 6px var(--font); fill: var(--muted); text-anchor: middle; }
 .d-line { stroke-width: 4.5; stroke-linecap: round; }
+
+/* Điện thoại dọc: bàn cờ tràn viền, các hàng người chơi / nút giữ lề trong 10px */
+@media (max-width: 560px) and (orientation: portrait) {
+  :root { --gut: 0px; }
+  .topbar { padding-left: 10px; padding-right: 10px; }
+  .info, .controls { width: calc(100% - 20px); }
+  .board { border-radius: 0; border-left: 0; border-right: 0; }
+}
+/* Rất hẹp (320px): ba nút điều khiển tiếng Anh không bị tràn chữ */
+@media (max-width: 359px) {
+  .controls { gap: 6px; }
+  .tool { gap: 4px; padding: 0 4px; font-size: 13px; }
+  .tool .icon { width: 18px; height: 18px; }
+}
 
 /* Màn ngang / máy tính: bàn cờ bên trái, bảng điều khiển bên phải */
 @media (min-width: 640px) and (min-aspect-ratio: 11/10) {

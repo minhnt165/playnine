@@ -17,7 +17,7 @@
   const sdkConfetti = () => { try { hasFx() && PN.fx.confetti({ count: 150 }); } catch (e) {} };
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '1.3.0';
   const KEYS = {
     settings: 'playnine-bonlientiep-settings-v1',
     save: 'playnine-bonlientiep-save-v1',

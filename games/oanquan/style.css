@@ -811,7 +811,7 @@ kbd {
 #btn-stats-reset.confirm { border-color: var(--red); color: var(--red); }
 
 /* Kết quả */
-.modal-result { text-align: center; align-items: stretch; overflow: hidden; }
+.modal-result { text-align: center; align-items: stretch; overflow: hidden auto; } /* khung thấp: vẫn cuộn được */
 .modal-result p { margin: 0; color: var(--muted); }
 .result-mark {
   --cell: 110px;
@@ -889,6 +889,21 @@ kbd {
 .d-arrow { stroke: var(--fig-arrow); stroke-width: 1.5; fill: none; stroke-linejoin: round; stroke-dasharray: 3 2; }
 .d-arrow-head { fill: var(--fig-arrow); }
 .d-tag { font: 700 5px var(--font); fill: var(--text); text-anchor: middle; }
+
+/* Điện thoại dọc: bàn tràn viền (chừa 2px cho viền gỗ), các hàng khác giữ lề nhỏ */
+@media (max-width: 560px) {
+  .app { padding-left: var(--safe-l); padding-right: var(--safe-r); }
+  .topbar { padding: 0 10px; }
+  .board-wrap {
+    --bw: min(calc(100vw - var(--safe-l) - var(--safe-r) - 4px),
+              calc((var(--vh) - var(--ui-h) - var(--safe-t) - var(--safe-b)) * 3.3),
+              660px);
+  }
+}
+@media (pointer: coarse) {
+  .help-dots { gap: 0; }
+  .help-dots button { width: 40px; height: 40px; }
+}
 
 /* ---------------- Màn ngang / máy tính ---------------- */
 /* Bàn và hai thẻ người chơi bên trái, cột lượt + nút + nhật ký bên phải */

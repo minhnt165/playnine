@@ -646,7 +646,7 @@ kbd {
 #btn-stats-reset.confirm { border-color: var(--red); color: var(--red); }
 
 /* Kết quả */
-.modal-result { text-align: center; align-items: stretch; overflow: hidden; }
+.modal-result { text-align: center; align-items: stretch; overflow: hidden auto; } /* khung thấp: vẫn cuộn được */
 .modal-result p { margin: 0; color: var(--muted); }
 .result-mark {
   position: relative;
@@ -752,6 +752,16 @@ kbd {
 .d-tag { font: 700 5px var(--font); fill: var(--text); text-anchor: middle; }
 .d-tag.bad { fill: var(--red); }
 .d-plus { font: 800 5.4px var(--font); fill: var(--accent); text-anchor: middle; }
+
+/* Điện thoại dọc: bàn bài dùng hết bề ngang (app.js căn lá sát mép), các hàng khác giữ lề nhỏ */
+@media (max-width: 560px) {
+  .app { padding-left: var(--safe-l); padding-right: var(--safe-r); }
+  .topbar, .hud, .controls { padding-left: 10px; padding-right: 10px; }
+}
+@media (pointer: coarse) {
+  .help-dots { gap: 0; }
+  .help-dots button { width: 40px; height: 40px; }
+}
 
 /* ---------------- Màn ngang / máy tính ---------------- */
 /* Bàn bài bên trái, cột điểm + nút + phím tắt bên phải */

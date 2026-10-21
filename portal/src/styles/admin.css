@@ -88,3 +88,17 @@
 .admin-feed h3 { margin: 0 0 4px; }
 .admin-feed .admin-hint { margin: 0 0 12px; }
 .admin-item-off { opacity: .6; }
+
+/* Nút và nhãn trạng thái không bẻ chữ; bảng hẹp thì cuộn ngang trong .admin-scroll thay vì bẻ từng chữ cái */
+.admin-btn, .admin-tab, .admin-phase { white-space: nowrap; }
+@media (max-width: 900px) {
+  .admin-scroll .admin-table { min-width: 760px; }
+  .admin-scroll .admin-table td { overflow-wrap: normal; }
+}
+@media (pointer: coarse) {
+  .admin-tab, .admin-btn, .admin-bar input, .admin-bar select, .admin-field input, .admin-field select { min-height: 40px; }
+  .admin-btn { display: inline-flex; align-items: center; justify-content: center; }
+  .admin-check { min-height: 40px; }
+  .admin-table a { padding: 11px 0; }
+  .admin-order .admin-btn { padding: 2px 12px; }
+}

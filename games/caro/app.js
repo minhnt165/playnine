@@ -11,7 +11,7 @@
   PN && PN.init({ gameId: 'caro' });
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html để trình duyệt tải file mới
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '1.3.0';
   const E = window.CaroEngine;
   const N = E.SIZE, NN = E.CELLS, X = E.X, O = E.O;
   const KEYS = {

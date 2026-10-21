@@ -41,6 +41,14 @@
   background: var(--surface-solid); color: var(--text); font: inherit; cursor: pointer;
 }
 .play-status button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+/* Điện thoại xoay ngang: thanh player và dòng trạng thái mỏng lại để game còn nhiều chiều cao (từ ~83px xuống ~62px) */
+@media (orientation: landscape) and (max-height: 500px) {
+  .pbar { height: calc(42px + env(safe-area-inset-top)); }
+  .pbar .pbtn { height: 36px; min-width: 36px; }
+  .pbar .pbtn.icon-only { width: 36px; }
+  .play-status { padding: 2px 10px; gap: 8px; font-size: .78rem; }
+  .play-status button { padding: 2px 10px; }
+}
 .toast-region { position: fixed; left: 0; right: 0; bottom: 20px; z-index: 40; display: flex; justify-content: center; pointer-events: none; }
 .toast {
   padding: 10px 18px; border-radius: 12px; font-weight: 700; color: var(--text);
@@ -65,6 +73,14 @@
 .lb-tabs button[aria-selected="true"], .lb-tabs button[aria-pressed="true"] { background: var(--grad); color: #fff; border-color: transparent; }
 .lb-tabs button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .lb-periods { margin-bottom: 12px; }
+/* Điện thoại: nút chọn xếp hạng/kỳ trên một hàng cuộn ngang, không xuống dòng */
+@media (max-width: 560px) {
+  .lb-tabs { flex-wrap: nowrap; overflow-x: auto; padding: 2px; margin-left: -2px; margin-right: -2px; scrollbar-width: none; }
+  .lb-tabs::-webkit-scrollbar { display: none; }
+  .lb-tabs button { flex: none; white-space: nowrap; }
+  /* Tên dài một dòng "…" để cột điểm thẳng hàng, không bẻ tên thành 2–3 dòng */
+  .lb-name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+}
 .lb-list { list-style: none; margin: 0; padding: 0; }
 .lb-list li { display: flex; align-items: baseline; gap: 10px; padding: 6px 8px; border-radius: 8px; font-size: .9rem; }
 .lb-list li.me { background: var(--spot); font-weight: 700; }
@@ -224,6 +240,14 @@
 .lbs-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); font-weight: 700; text-decoration: none; }
 .lbs-name:hover { text-decoration: underline; }
 .lbs-value { color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; }
+/* Điện thoại: ô bục hẹp, giữ "98.765 điểm" trên một dòng */
+@media (max-width: 560px) {
+  .lbs-podium { gap: 8px; }
+  .lbs-podium li { padding: 14px 6px 12px; }
+  .lbs-podium .rank-1 { padding-top: 22px; }
+  .lbs-value { max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: .78rem; }
+}
+@media (max-width: 380px) { .lb-panel { padding: 12px; } .lbs-podium { gap: 6px; } .lbs-podium li { padding-left: 4px; padding-right: 4px; } .lbs-value { font-size: .72rem; } }
 
 /* Dải "Top tuần này" ở trang chủ */
 .top-week { margin-bottom: 40px; }
@@ -241,6 +265,20 @@
 .top-rank { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--chip); font-size: .75rem; font-weight: 800; }
 .top-card .rank-1 .top-rank { background: var(--grad); color: #fff; }
 .top-value { flex: none; color: var(--muted); font-variant-numeric: tabular-nums; }
+/* Điện thoại: các thẻ top thành một hàng vuốt ngang tràn mép (như ô "Hôm nay") thay vì xếp chồng 6 thẻ */
+@media (max-width: 560px) {
+  .top-week { margin-bottom: 28px; }
+  .top-cards {
+    display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    margin-left: calc(-1 * max(16px, env(safe-area-inset-left))); margin-right: calc(-1 * max(16px, env(safe-area-inset-right)));
+    padding: 2px max(16px, env(safe-area-inset-right)) 6px max(16px, env(safe-area-inset-left));
+    scroll-padding-left: max(16px, env(safe-area-inset-left));
+  }
+  .top-cards::-webkit-scrollbar { display: none; }
+  .top-cards > li { flex: 0 0 min(82%, 300px); scroll-snap-align: start; }
+  .top-cards > li:only-child { flex-basis: 100%; }
+  .top-card { padding: 12px 14px; }
+}
 
 /* Dải "Chơi nhiều nhất" kiểu Top 10: số hạng rất to đè lên bìa đứng, tên game bên dưới */
 .most-played { margin-bottom: 40px; }
@@ -266,7 +304,7 @@
 }
 .most-cover .card-icon { width: 46%; height: auto; aspect-ratio: 1; border-radius: 22%; box-shadow: 0 12px 28px rgba(0, 0, 0, .45); }
 .most-plays {
-  position: absolute; left: 8px; right: 8px; bottom: 8px; padding: 4px 8px; border-radius: 999px; text-align: center;
+  position: absolute; left: 6px; right: 6px; bottom: 8px; padding: 4px 5px; border-radius: 999px; text-align: center;
   background: rgba(0, 0, 0, .5); color: #fff; font-size: 11.5px; font-weight: 700;
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
@@ -283,9 +321,13 @@
   .most-list li { flex: 0 0 210px; scroll-snap-align: start; }
 }
 @media (max-width: 560px) {
-  .most-list li { flex-basis: 172px; }
-  .most-rank { width: 62px; font-size: 104px; margin-right: -18px; }
-  .most-name, .most-sub { padding-left: 44px; }
+  .most-played { margin-bottom: 28px; }
+  .most-list li { flex-basis: 148px; }
+  .most-rank { width: 54px; font-size: 88px; margin-right: -16px; -webkit-text-stroke-width: 2.5px; }
+  .most-cover { border-radius: 16px; }
+  .most-plays { left: 5px; right: 5px; bottom: 6px; padding: 3px 4px; font-size: 10.5px; }
+  .most-name { margin-top: 8px; }
+  .most-name, .most-sub { padding-left: 38px; }
 }
 @media (prefers-reduced-motion: reduce) { .most-cover, .most-rank { transition: none; } }
 
@@ -340,3 +382,16 @@
 .rating-clear { padding: 0; border: 0; background: none; color: var(--muted); font: inherit; font-size: .82rem; text-decoration: underline; cursor: pointer; }
 .card-rating { color: #f5b301; font-size: 12px; font-weight: 700; }
 @media (prefers-reduced-motion: reduce) { .stars button { transition: none; } }
+
+/* Màn hình cảm ứng: vùng chạm tối thiểu 40px. Link chữ trong hàng nới vùng chạm bằng padding + margin âm để bố cục không đổi. */
+@media (pointer: coarse) {
+  .auth-avatar { width: 40px; height: 40px; }
+  .lbs-tabs button { height: 40px; }
+  .lb-tabs button { min-height: 40px; }
+  .profile-back, .profile-btn { min-height: 40px; }
+  .stars button { width: 40px; height: 40px; font-size: 24px; }
+  .section-link { display: inline-flex; align-items: center; padding: 11px 0; margin: -11px 0; }
+  .rating-clear { padding: 12px 0; margin: -12px 0; }
+  .top-game { padding: 4px 0; margin: -4px 0 6px; }
+  .top-card ol a, .lb-name a, .lbs-name { padding: 11px 0; margin: -11px 0; }
+}

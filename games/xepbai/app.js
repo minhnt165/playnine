@@ -10,7 +10,7 @@
   'use strict';
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '1.3.0';
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'xepbai' });
   // Âm thanh + pháo giấy từ SDK: SDK cũ / thiếu thì im lặng, không bao giờ làm hỏng game

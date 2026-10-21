@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { recent } from '../data/recent'
 import { isHidden } from '../events/model'
 import { gameById, type GameDef } from '../games/catalog'
@@ -6,6 +6,7 @@ import { useI18n } from '../i18n/i18n'
 import { detailHref } from '../player/route'
 import { useServer } from '../server/ServerProvider'
 import { BrandMark } from './BrandMark'
+import { GameMenu } from './GameMenu'
 
 const MAX_RECENT = 5
 
@@ -20,6 +21,14 @@ const ICON_EVENTS = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z" />
     <path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3" />
+  </svg>
+)
+const ICON_GAMES = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="3.5" y="3.5" width="7" height="7" rx="2" />
+    <rect x="13.5" y="3.5" width="7" height="7" rx="2" />
+    <rect x="3.5" y="13.5" width="7" height="7" rx="2" />
+    <rect x="13.5" y="13.5" width="7" height="7" rx="2" />
   </svg>
 )
 const ICON_BOARDS = (
@@ -56,6 +65,7 @@ function sectionOf(hash: string, profileHref: string | null): string | null {
 /** Thanh điều hướng bên trái (máy tính) / thanh tab dưới đáy (điện thoại), kèm danh sách game chơi gần đây. */
 export function Sidebar() {
   const { t, loc } = useI18n()
+  const [menuOpen, setMenuOpen] = useState(false)
   const { api, user, games } = useServer()
   // Sidebar vẽ lại cùng trang mỗi lần đổi route hoặc quay về từ game nên đọc hash và `recent` lúc vẽ là đủ.
   const hash = location.hash
@@ -68,10 +78,16 @@ export function Sidebar() {
     .filter((g): g is GameDef => g !== undefined && !isHidden(games, g.id))
     .slice(0, MAX_RECENT)
 
-  const item = (key: string, href: string, icon: ReactNode, label: string) => (
-    <a href={href} aria-current={section === key ? 'page' : undefined}>
+  // `short`: nhãn ngắn cho thanh tab dưới đáy (mobile) để không xuống dòng; tên đầy đủ vẫn là aria-label.
+  const item = (key: string, href: string, icon: ReactNode, label: string, short?: string) => (
+    <a href={href} aria-current={section === key ? 'page' : undefined} aria-label={short ? label : undefined}>
       {icon}
-      <span>{label}</span>
+      <span className={short ? 'nav-full' : undefined}>{label}</span>
+      {short && (
+        <span className="nav-short" aria-hidden="true">
+          {short}
+        </span>
+      )}
     </a>
   )
 
@@ -85,7 +101,11 @@ export function Sidebar() {
       </a>
       <nav className="sidenav-links" aria-label={t('nav.label')}>
         {item('home', '#/', ICON_HOME, t('nav.home'))}
-        {api && item('leaderboards', '#/leaderboards', ICON_BOARDS, t('nav.leaderboards'))}
+        <button type="button" className="sidenav-games" aria-haspopup="dialog" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>
+          {ICON_GAMES}
+          <span>{t('nav.games')}</span>
+        </button>
+        {api && item('leaderboards', '#/leaderboards', ICON_BOARDS, t('nav.leaderboards'), t('nav.leaderboardsShort'))}
         {api && item('events', '#/events', ICON_EVENTS, t('ev.title'))}
         {api && item('news', '#/news', ICON_NEWS, t('news.title'))}
         {profileHref && item('profile', profileHref, ICON_PROFILE, t('nav.profile'))}
@@ -105,6 +125,7 @@ export function Sidebar() {
           </ul>
         </section>
       )}
+      {menuOpen && <GameMenu onClose={() => setMenuOpen(false)} />}
     </aside>
   )
 }

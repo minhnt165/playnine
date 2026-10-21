@@ -3,7 +3,7 @@ import type { Lang } from './types'
 
 export const DICT: Record<Lang, Record<string, string | { one: string; other: string }>> = {
   en: {
-    'meta.description': 'PlayNine: nine cells, nine paths, one great move. Seventeen puzzle, strategy and arcade games right in your browser, with your progress and daily streaks.',
+    'meta.description': 'PlayNine: nine cells, nine paths, one great move. Eighteen puzzle, strategy and arcade games right in your browser, with points, leaderboards and daily streaks.',
     'lang.label': 'Language: English. Switch to Tiếng Việt',
     'theme.auto': 'Auto',
     'theme.light': 'Light',
@@ -53,6 +53,12 @@ export const DICT: Record<Lang, Record<string, string | { one: string; other: st
     'spot.details': 'Details',
     'spot.choose': 'Featured games',
     'nav.leaderboards': 'Leaderboards',
+    'nav.leaderboardsShort': 'Ranks',
+    'nav.games': 'Games',
+    'menu.title': 'All games',
+    'menu.count': { one: '1 game', other: '{n} games' },
+    'menu.close': 'Close',
+    'menu.playName': 'Play {name}',
     'auth.guest': 'Play as guest',
     'auth.guestShort': 'Guest',
     'auth.guestTag': 'Guest account',
@@ -324,7 +330,7 @@ export const DICT: Record<Lang, Record<string, string | { one: string; other: st
     'admin.phase.cancelled': 'Cancelled',
   },
   vi: {
-    'meta.description': 'PlayNine: chín ô, chín đường, một nước hay. Sudoku và Cờ Tướng chơi ngay trên trình duyệt, xem tiến độ và chuỗi ngày của bạn.',
+    'meta.description': 'PlayNine: chín ô, chín đường, một nước hay. 18 game giải đố, chiến thuật và giải trí chơi ngay trên trình duyệt, có điểm thưởng, bảng xếp hạng và chuỗi ngày.',
     'lang.label': 'Ngôn ngữ: Tiếng Việt. Chuyển sang English',
     'theme.auto': 'Tự động',
     'theme.light': 'Sáng',
@@ -374,6 +380,12 @@ export const DICT: Record<Lang, Record<string, string | { one: string; other: st
     'spot.details': 'Xem chi tiết',
     'spot.choose': 'Game nổi bật',
     'nav.leaderboards': 'Bảng xếp hạng',
+    'nav.leaderboardsShort': 'Xếp hạng',
+    'nav.games': 'Game',
+    'menu.title': 'Tất cả game',
+    'menu.count': '{n} game',
+    'menu.close': 'Đóng',
+    'menu.playName': 'Chơi {name}',
     'auth.guest': 'Chơi với tư cách khách',
     'auth.guestShort': 'Khách',
     'auth.guestTag': 'Tài khoản khách',

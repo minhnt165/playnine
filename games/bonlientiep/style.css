@@ -804,6 +804,10 @@ kbd {
 }
 .help-dots button::before { content: ""; width: 8px; height: 8px; border-radius: 99px; background: var(--line); transition: width 0.2s, background 0.2s; }
 .help-dots button[aria-selected="true"]::before { width: 22px; background: var(--accent); }
+@media (pointer: coarse) {
+  .help-dots { gap: 0; }
+  .help-dots button { width: 40px; height: 40px; }
+}
 
 /* Hình minh họa */
 .d-frame { fill: var(--frame); stroke: var(--frame-edge); stroke-width: 0.8; }
@@ -818,6 +822,14 @@ kbd {
 .d-line { stroke: #fff4d6; stroke-width: 1.6; stroke-linecap: round; }
 .d-arrow { stroke: var(--fig-arrow); stroke-width: 1.2; fill: none; stroke-linecap: round; }
 .d-arrow-head { fill: var(--fig-arrow); }
+
+/* Điện thoại dọc: bàn tràn viền, các hàng thẻ / lượt / nút giữ lề trong 10px */
+@media (max-width: 560px) and (orientation: portrait) {
+  :root { --gut: 0px; }
+  .topbar { padding-left: 10px; padding-right: 10px; }
+  .players, .turn, .log-box, .controls { width: calc(100% - 20px); }
+  .board { border-radius: 0; }
+}
 
 /* ---------------- Màn ngang / máy tính ---------------- */
 /* Hai thẻ người chơi và bàn bên trái, cột lượt + nút + nhật ký bên phải */

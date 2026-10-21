@@ -834,6 +834,15 @@ kbd {
   .overlay-title { font-size: 1.5rem; }
   .overlay-card { gap: 10px; }
 }
+/* Điện thoại dọc: hàng giữ | bàn | kế tiếp tràn viền (app.js nới cỡ ô theo bề ngang mới),
+   thanh trên, điểm và nút bấm giữ lề nhỏ; mép sát màn hình không bo góc */
+@media (max-width: 560px) {
+  .app { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+  .topbar, .hud, .pad, .help { padding-left: 12px; padding-right: 12px; }
+  .panel-hold { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+  .panel-next { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+  .overlay { border-radius: 0; }
+}
 
 /* ===================== Màn hình ngang / máy tính =====================
    Bàn chơi ở giữa; trái: giữ, điểm, phím; phải: kế tiếp. Nút bấm (nếu có) tách hai bên. */
@@ -916,6 +925,11 @@ kbd {
   .panel-label { font-size: 0.62rem; }
   .overlay-title { font-size: 1.4rem; }
   .btn-wide { min-height: 44px; }
+}
+/* Ngang rất thấp (trong cổng): điểm một hàng, nút bấm nhỏ lại để cột phải không đè lên ô "Kế tiếp" */
+@media (min-aspect-ratio: 1/1) and (min-width: 600px) and (max-height: 360px) {
+  .app { --pad-btn: 42px; }
+  .hud { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 /* ===================== Giảm chuyển động ===================== */

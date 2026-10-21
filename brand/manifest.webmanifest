@@ -1,12 +1,12 @@
 {
   "name": "PlayNine",
   "short_name": "PlayNine",
-  "description": "Nine cells, nine paths, one great move. Seventeen puzzle, strategy and arcade games in your browser.",
+  "description": "Nine cells, nine paths, one great move. Eighteen puzzle, strategy and arcade games in your browser, with points, leaderboards and daily streaks.",
   "start_url": "../",
   "scope": "../",
   "display": "standalone",
-  "background_color": "#0e0b09",
-  "theme_color": "#0e0b09",
+  "background_color": "#090b14",
+  "theme_color": "#090b14",
   "icons": [
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" },
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
