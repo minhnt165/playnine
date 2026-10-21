@@ -53,6 +53,26 @@ describe('rulesFromForm', () => {
     }
   })
 
+  it('số nguyên quá dài hoặc không an toàn bị loại', () => {
+    expect(rulesFromForm({ a: { ...blank, max_score: '1234567890123456789' } })).toEqual({ ok: false, mode: 'a', field: 'max_score' })
+    // 16 chữ số nhưng vượt Number.MAX_SAFE_INTEGER.
+    expect(rulesFromForm({ a: { ...blank, min_duration_ms: '9999999999999999' } })).toEqual({
+      ok: false,
+      mode: 'a',
+      field: 'min_duration_ms',
+    })
+    expect(rulesFromForm({ a: { ...blank, min_time_ms: '999999999999999' } }).ok).toBe(true)
+  })
+
+  it('max_score_per_sec vượt 1e9 bị loại, đúng 1e9 thì nhận', () => {
+    expect(rulesFromForm({ a: { ...blank, max_score_per_sec: '1000000000.5' } })).toEqual({
+      ok: false,
+      mode: 'a',
+      field: 'max_score_per_sec',
+    })
+    expect(rulesFromForm({ a: { ...blank, max_score_per_sec: '1000000000' } }).ok).toBe(true)
+  })
+
   it('số 0 là hợp lệ', () => {
     expect(rulesFromForm({ a: { ...blank, min_time_ms: '0' } })).toEqual({ ok: true, rules: { a: { min_time_ms: 0 } } })
   })

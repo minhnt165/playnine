@@ -42,7 +42,7 @@ describe('ProfilePage', () => {
     expect(screen.getByText('01:23')).toBeTruthy()
     expect(screen.getByText('12.345')).toBeTruthy()
     expect(screen.getByText('Cổ điển')).toBeTruthy()
-    expect(document.title).toBe('Lan · PlayNine')
+    await waitFor(() => expect(document.title).toBe('Lan · PlayNine'))
   })
 
   it('huy hiệu: hạng, tên sự kiện theo ngôn ngữ, tên game, link tới sự kiện; nằm trước kỷ lục', async () => {

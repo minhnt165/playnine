@@ -145,6 +145,12 @@ describe('AdminEvents', () => {
     expect(saveCall(api)!.args[0]).toEqual({ id: 'e1', endsAt: new Date('2031-01-01T10:00').toISOString() })
   })
 
+  it('sự kiện live đã quá hạn (cron chưa đóng) không có nút hủy', async () => {
+    const { container } = setup([ev({ startsAt: iso(-3 * HOUR), endsAt: iso(-HOUR), status: 'live' })])
+    await waitFor(() => expect(rowOf(container, 'e1')).not.toBeNull())
+    expect(within(rowOf(container, 'e1')).queryByRole('button', { name: en('admin.cancelEvent') })).toBeNull()
+  })
+
   it('sự kiện closed có nút tính lại (có confirm), không có nút hủy', async () => {
     const ask = vi.fn(() => true)
     vi.stubGlobal('confirm', ask)

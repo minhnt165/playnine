@@ -1,4 +1,4 @@
-import { cleanup, screen } from '@testing-library/react'
+import { cleanup, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DICT } from '../i18n/dict'
 import { createFakeApi } from '../server/fakeApi'
@@ -35,7 +35,7 @@ describe('EventsPage', () => {
     expect(heads).toEqual([en('ev.live'), en('ev.upcoming'), en('ev.ended')])
     expect(screen.queryByText('Gone one')).toBeNull()
     expect(screen.getByRole('link', { name: /Now one/ })).toHaveAttribute('href', '#/events/now')
-    expect(document.title).toBe(en('ev.title') + ' · PlayNine')
+    await waitFor(() => expect(document.title).toBe(en('ev.title') + ' · PlayNine'))
   })
 
   it('thẻ có tên game, nhãn mode và đếm ngược cho sự kiện đang diễn ra', async () => {

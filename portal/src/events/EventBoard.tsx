@@ -22,7 +22,8 @@ export function EventBoard({ event, limit = 50, onRows }: Props) {
   const { api, user, games } = useServer()
   const { t, fmtNumber } = useI18n()
   const [loaded, setLoaded] = useState<Loaded | null>(null)
-  const metric = games[event.gameId]?.metric ?? 'score_high'
+  // Chưa biết metric của game thì chưa định dạng giá trị (time_low sẽ hiện nhầm ms thô).
+  const metric = games[event.gameId]?.metric
   const userId = user?.id ?? null
 
   useEffect(() => {
@@ -56,7 +57,7 @@ export function EventBoard({ event, limit = 50, onRows }: Props) {
   return (
     <ol className="lb-list">
       {data.rows.map((r) => (
-        <Row key={r.userId} r={r} me={r.userId === userId} value={formatValue(metric, r.value, fmtNumber)} you={t('lb.you')} />
+        <Row key={r.userId} r={r} me={r.userId === userId} value={metric ? formatValue(metric, r.value, fmtNumber) : ''} you={t('lb.you')} />
       ))}
     </ol>
   )

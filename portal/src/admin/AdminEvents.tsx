@@ -350,7 +350,7 @@ export function AdminEvents() {
                   <button type="button" className="admin-btn" onClick={() => open(e)}>
                     {t('admin.edit')}
                   </button>
-                  {(e.status === 'scheduled' || e.status === 'live') && (
+                  {(e.status === 'scheduled' || e.status === 'live') && phase !== 'ended' && (
                     <button type="button" className="admin-btn" onClick={() => cancel(e)}>
                       {t('admin.cancelEvent')}
                     </button>

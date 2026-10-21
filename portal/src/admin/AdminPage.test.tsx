@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, screen } from '@testing-library/react'
+import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { mountWith } from '../events/testUtil'
 import { DICT } from '../i18n/dict'
@@ -47,7 +47,7 @@ describe('AdminPage', () => {
       en('admin.tab.players'),
     ])
     expect(screen.getByRole('tablist')).toBeInTheDocument()
-    expect(document.title).toBe('Admin · PlayNine')
+    await waitFor(() => expect(document.title).toBe('Admin · PlayNine'))
     fireEvent.click(screen.getByRole('tab', { name: en('admin.tab.players') }))
     expect(sessionStorage.getItem('playnine-admin-tab')).toBe('players')
     expect(screen.getByRole('tab', { name: en('admin.tab.players') })).toHaveAttribute('aria-selected', 'true')

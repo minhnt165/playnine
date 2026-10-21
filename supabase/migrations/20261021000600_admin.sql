@@ -17,6 +17,7 @@ declare
   v jsonb;
   rk text;
   rv jsonb;
+  bad boolean;
 begin
   perform public._require_admin();
   select * into g from public.games where id = p_game_id for update;
@@ -29,10 +30,16 @@ begin
     end if;
     if jsonb_typeof(v) <> 'object' then raise exception 'bad_rules'; end if;
     for rk, rv in select * from jsonb_each(v) loop
-      if rk not in ('min_duration_ms', 'max_score', 'max_score_per_sec', 'min_time_ms')
-         or jsonb_typeof(rv) <> 'number' or (rv #>> '{}')::numeric < 0 then
-        raise exception 'bad_rules';
-      end if;
+      -- Ba khóa số nguyên: chuỗi chữ số tối đa 18 ký tự (finish_run ép ::bigint, giá trị lớn hơn
+      -- hoặc có phần thập phân sẽ làm mọi lần nộp điểm của mode đó lỗi). max_score_per_sec: số >= 0, <= 1e9.
+      -- CASE lồng nhau để phép ép numeric chỉ chạy sau khi đã chắc là số.
+      bad := case
+           when rk not in ('min_duration_ms', 'max_score', 'max_score_per_sec', 'min_time_ms') then true
+           when jsonb_typeof(rv) <> 'number' then true
+           when rk = 'max_score_per_sec' then (rv #>> '{}')::numeric < 0 or (rv #>> '{}')::numeric > 1000000000
+           else (rv #>> '{}') !~ '^\d{1,18}$'
+         end;
+      if bad then raise exception 'bad_rules'; end if;
     end loop;
   end loop;
   update public.games
@@ -156,12 +163,13 @@ grant execute on function public.admin_save_event(jsonb) to authenticated;
 create function public.admin_cancel_event(p_event_id uuid) returns void
 language plpgsql security definer set search_path = public as $$
 declare
-  st text;
+  e public.events;
 begin
   perform public._require_admin();
-  select e.status into st from public.events e where e.id = p_event_id for update;
+  select * into e from public.events where id = p_event_id for update;
   if not found then raise exception 'not_found'; end if;
-  if st not in ('scheduled', 'live') then raise exception 'event_locked'; end if;
+  -- Đã quá hạn mà cron chưa đóng: kết quả đã đạt được, không cho hủy.
+  if e.status not in ('scheduled', 'live') or public._event_phase(e, now()) = 'ended' then raise exception 'event_locked'; end if;
   update public.events set status = 'cancelled' where id = p_event_id;
 end $$;
 revoke execute on function public.admin_cancel_event(uuid) from public, anon, authenticated;

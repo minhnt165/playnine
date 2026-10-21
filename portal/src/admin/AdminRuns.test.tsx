@@ -8,6 +8,7 @@ import { AdminRuns } from './AdminRuns'
 
 const en = (k: string) => DICT.en[k] as string
 const rowOf = (c: HTMLElement, id: string) => within(c.querySelector<HTMLElement>(`[data-run="${id}"]`)!)
+const UID = '0b9c7a52-3d1e-4f6a-8c21-5e7d9a1b2c3d'
 const calls = (api: ReturnType<typeof createFakeApi>) => api.calls.filter((c) => c.method === 'adminRuns')
 
 /** 60 ván, mới nhất trước; startedAt giữ nguyên độ chính xác micro giây. */
@@ -50,11 +51,29 @@ describe('AdminRuns', () => {
     await screen.findByText('Anna')
     fireEvent.change(screen.getByLabelText(en('admin.filter.game')), { target: { value: '2048' } })
     fireEvent.change(screen.getByLabelText(en('admin.filter.mode')), { target: { value: '4x4' } })
-    fireEvent.change(screen.getByLabelText(en('admin.filter.user')), { target: { value: ' u1 ' } })
+    fireEvent.change(screen.getByLabelText(en('admin.filter.user')), { target: { value: ' ' + UID + ' ' } })
     fireEvent.change(screen.getByLabelText(en('admin.filter.status')), { target: { value: 'finished' } })
     fireEvent.click(screen.getByRole('button', { name: en('admin.filter.apply') }))
     await waitFor(() => expect(calls(api).length).toBe(2))
-    expect(calls(api)[1].args).toEqual([{ gameId: '2048', mode: '4x4', userId: 'u1', status: 'finished', limit: 50 }])
+    expect(calls(api)[1].args).toEqual([{ gameId: '2048', mode: '4x4', userId: UID, status: 'finished', limit: 50 }])
+  })
+
+  it('ID người chơi không phải UUID: báo lỗi trên ô, không gọi API; sửa lại thì hết lỗi', async () => {
+    const api = createFakeApi({ user: ADMIN, games: GAMES_META, adminRuns: [run('r1')] })
+    mountWith(api, <AdminRuns />)
+    await screen.findByText('Anna')
+    const input = screen.getByLabelText(en('admin.filter.user'))
+    fireEvent.change(input, { target: { value: 'abc' } })
+    fireEvent.click(screen.getByRole('button', { name: en('admin.filter.apply') }))
+    expect(input).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByText(en('admin.filter.userBad'))).toBeInTheDocument()
+    expect(calls(api).length).toBe(1)
+    fireEvent.change(input, { target: { value: UID } })
+    expect(input).not.toHaveAttribute('aria-invalid')
+    expect(screen.queryByText(en('admin.filter.userBad'))).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: en('admin.filter.apply') }))
+    await waitFor(() => expect(calls(api).length).toBe(2))
+    expect(calls(api)[1].args).toEqual([{ userId: UID, limit: 50 }])
   })
 
   it('từ chối: prompt trả cheat gọi adminRejectRun, hàng đổi thành rejected', async () => {

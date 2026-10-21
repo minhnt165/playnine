@@ -5,9 +5,11 @@ import { useI18n } from '../i18n/i18n'
 import { formatValue } from '../player/leaderboardModel'
 import { useServer } from '../server/ServerProvider'
 import type { AdminRun, RunFilter, RunStatusDb } from '../server/types'
+import { AdminField } from './AdminField'
 import { errorCode } from './forms'
 
 const PAGE = 50
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const STATUSES: RunStatusDb[] = ['started', 'finished', 'rejected']
 
 /** Tab Ván: lọc, xem và từ chối ván; "Xem thêm" phân trang theo startedAt. */
@@ -18,6 +20,7 @@ export function AdminRuns() {
   const [gameId, setGameId] = useState('')
   const [mode, setMode] = useState('')
   const [userId, setUserId] = useState('')
+  const [userBad, setUserBad] = useState(false)
   const [status, setStatus] = useState('')
   const [applied, setApplied] = useState<RunFilter>({})
   const [rows, setRows] = useState<AdminRun[] | null>(null)
@@ -74,7 +77,12 @@ export function AdminRuns() {
     const f: RunFilter = {}
     if (gameId) f.gameId = gameId
     if (gameId && mode) f.mode = mode
-    if (userId.trim()) f.userId = userId.trim()
+    const uid = userId.trim()
+    if (uid && !UUID.test(uid)) {
+      setUserBad(true)
+      return
+    }
+    if (uid) f.userId = uid
     if (status) f.status = status as RunStatusDb
     setRows(null)
     setMore(false)
@@ -144,10 +152,17 @@ export function AdminRuns() {
             ))}
           </select>
         </label>
-        <label className="admin-field">
-          <span>{t('admin.filter.user')}</span>
-          <input type="text" value={userId} onChange={(e) => setUserId(e.target.value)} />
-        </label>
+        <AdminField label={t('admin.filter.user')} hint={userBad ? t('admin.filter.userBad') : undefined}>
+          <input
+            type="text"
+            value={userId}
+            aria-invalid={userBad || undefined}
+            onChange={(e) => {
+              setUserId(e.target.value)
+              setUserBad(false)
+            }}
+          />
+        </AdminField>
         <label className="admin-field">
           <span>{t('admin.filter.status')}</span>
           <select value={status} onChange={(e) => setStatus(e.target.value)}>

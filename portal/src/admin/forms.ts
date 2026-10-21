@@ -3,14 +3,17 @@ import type { CollectionInput, EventInput, EventPhase, GameMeta, Rules } from '.
 /** Bốn ô luật của một mode, theo đúng tên trường trong DB. */
 export const RULE_FIELDS: (keyof Rules)[] = ['min_duration_ms', 'max_score', 'max_score_per_sec', 'min_time_ms']
 
-const INT = /^\d+$/
+const INT = /^\d{1,18}$/
 const DECIMAL = /^(\d+(\.\d+)?|\.\d+)$/
+/** Cận trên của max_score_per_sec; khớp `admin_update_game`. */
+const PER_SEC_MAX = 1e9
 
 export type RulesResult = { ok: true; rules: Record<string, Rules> } | { ok: false; mode: string; field: keyof Rules }
 
 /**
  * Chuyển các ô nhập (chuỗi) thành luật theo từng mode.
- * Ô trống nghĩa là không có luật; chỉ `max_score_per_sec` được là số thập phân.
+ * Ô trống nghĩa là không có luật; chỉ `max_score_per_sec` được là số thập phân (tối đa 1e9);
+ * ba ô còn lại là số nguyên an toàn, tối đa 18 chữ số.
  */
 export function rulesFromForm(values: Record<string, Record<keyof Rules, string>>): RulesResult {
   const rules: Record<string, Rules> = {}
@@ -20,7 +23,10 @@ export function rulesFromForm(values: Record<string, Record<keyof Rules, string>
       const raw = (fields[field] ?? '').trim()
       if (raw === '') continue
       if (!(field === 'max_score_per_sec' ? DECIMAL : INT).test(raw)) return { ok: false, mode, field }
-      out[field] = Number(raw)
+      const n = Number(raw)
+      // Số nguyên tối đa 18 chữ số (finish_run ép ::bigint) và phải biểu diễn chính xác được.
+      if (field === 'max_score_per_sec' ? n > PER_SEC_MAX : !Number.isSafeInteger(n)) return { ok: false, mode, field }
+      out[field] = n
     }
     rules[mode] = out
   }

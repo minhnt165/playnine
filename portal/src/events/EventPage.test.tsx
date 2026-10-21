@@ -1,9 +1,10 @@
-import { cleanup, render, screen, within } from '@testing-library/react'
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DICT } from '../i18n/dict'
 import { I18nProvider } from '../i18n/i18n'
 import { createFakeApi } from '../server/fakeApi'
 import { ServerProvider } from '../server/ServerProvider'
+import { EventBoard } from './EventBoard'
 import { EventPage } from './EventPage'
 import { ev, GAMES, mountWith, NOW, row } from './testUtil'
 
@@ -21,6 +22,25 @@ afterEach(() => {
 
 const BOARD = [row(1, 'An', 12345), row(2, 'Binh', 900), row(3, 'Chi', 12)]
 
+describe('EventBoard metric', () => {
+  it('game time_low: giá trị hiện dạng mm:ss, không phải ms thô', async () => {
+    const games = [{ id: 'minesweeper', metric: 'time_low' as const, hidden: false, modes: [{ key: 'beginner', label: { en: 'Beginner', vi: 'Dễ' } }] }]
+    const e = ev({ gameId: 'minesweeper', mode: 'beginner' })
+    const api = createFakeApi({ games, events: [e], eventBoards: { e1: [row(1, 'An', 65000)] } })
+    const { container } = mountWith(api, <EventBoard event={e} />)
+    expect(await screen.findByText('An')).toBeInTheDocument()
+    await waitFor(() => expect(container.querySelector('.lb-value')!.textContent).toBe('01:05'))
+  })
+
+  it('chưa biết metric của game: hiện hàng nhưng để trống giá trị', async () => {
+    const e = ev({ gameId: 'ghost' })
+    const api = createFakeApi({ games: GAMES, events: [e], eventBoards: { e1: [row(1, 'An', 65000)] } })
+    const { container } = mountWith(api, <EventBoard event={e} />)
+    expect(await screen.findByText('An')).toBeInTheDocument()
+    expect(container.querySelector('.lb-value')!.textContent).toBe('')
+  })
+})
+
 describe('EventPage', () => {
   it('sự kiện live: đếm ngược, nút Chơi ngay, bảng 3 hàng đã định dạng', async () => {
     const api = createFakeApi({ games: GAMES, events: [ev()], eventBoards: { e1: BOARD } })
@@ -35,7 +55,7 @@ describe('EventPage', () => {
     expect(container.querySelector('[data-page="event"]')).toHaveAttribute('data-event-id', 'e1')
     expect(screen.getByText(en('ev.agg.best'))).toBeInTheDocument()
     expect(screen.getByText('Top 2 earn a badge')).toBeInTheDocument()
-    expect(document.title).toBe('Spring cup · PlayNine')
+    await waitFor(() => expect(document.title).toBe('Spring cup · PlayNine'))
   })
 
   it('mô tả giữ xuống dòng và hiện dạng text', async () => {

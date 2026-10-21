@@ -47,7 +47,7 @@ export function EventPage({ eventId, onThemeApplied }: Props) {
     const desc = text.description(event)
     const rows = loaded && loaded.id === event.id ? loaded.rows : []
     const winners = rows.filter((r) => r.rank <= event.awardTop)
-    const metric = games[event.gameId]?.metric ?? 'score_high'
+    const metric = games[event.gameId]?.metric
     body = (
       <>
         <header className="ev-head">
@@ -102,7 +102,7 @@ export function EventPage({ eventId, onThemeApplied }: Props) {
                   key={r.userId}
                   r={r}
                   me={r.userId === user?.id}
-                  value={formatValue(metric, r.value, fmtNumber)}
+                  value={metric ? formatValue(metric, r.value, fmtNumber) : ''}
                   you={t('lb.you')}
                 />
               ))}

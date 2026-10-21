@@ -45,7 +45,7 @@ Cổng dev chạy cố định ở cổng 5180 (`strictPort`), nên địa chỉ
 
 ## 4. Áp migration
 
-Chạy từ thư mục `supabase/`, lần lượt cho từng project (dev rồi prod):
+Chạy từ thư mục `supabase/`, lần lượt cho từng project (dev rồi prod). Trước khi `db push`, bật `pg_cron` theo mục "Bật pg_cron" ngay bên dưới:
 
 ```bash
 cd supabase
