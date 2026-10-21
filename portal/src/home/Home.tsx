@@ -4,6 +4,7 @@ import { xiangqiData } from '../data/xiangqi'
 import { summaries } from '../data/summary'
 import { recent } from '../data/recent'
 import { useI18n } from '../i18n/i18n'
+import { EventBanner } from './EventBanner'
 import { Footer } from './Footer'
 import { GameGrid } from './GameGrid'
 import { Hero } from './Hero'
@@ -55,6 +56,7 @@ export function Home({ openIds, refreshKey, onThemeApplied }: Props) {
       <Topbar onThemeApplied={onThemeApplied} />
       <main>
         <Hero now={now} />
+        <EventBanner />
         <Today tiles={tiles} />
         <GameGrid sd={sd} xq={xq} rec={rec} sums={sums} openIds={openIds} now={now} />
         <Stats items={stats} />

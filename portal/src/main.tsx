@@ -4,6 +4,7 @@ import { App } from './App'
 import { I18nProvider } from './i18n/i18n'
 import { ServerProvider } from './server/ServerProvider'
 import './styles/portal.css'
+import './styles/events.css'
 import './styles/server.css'
 
 createRoot(document.getElementById('root')!).render(

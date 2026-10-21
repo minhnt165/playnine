@@ -1,0 +1,61 @@
+/* Sự kiện: banner trang chủ, trang danh sách, trang chi tiết và tab trên bảng xếp hạng. */
+
+/* Banner trang chủ (ngay dưới hero) */
+.ev-banner {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
+  margin: 0 0 24px; padding: 12px 14px; border-radius: 14px;
+  background: var(--spot); border: 1px solid var(--accent);
+}
+.ev-banner-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; flex: 1 1 auto; min-width: 0; }
+.ev-banner-list li { min-width: 0; max-width: 100%; }
+.ev-banner-item {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; max-width: 100%;
+  padding: 6px 12px; border-radius: 10px; color: var(--text); text-decoration: none;
+  border: 1px solid transparent;
+}
+.ev-banner-item:hover { border-color: var(--accent); }
+.ev-banner-title { font-weight: 700; overflow-wrap: anywhere; }
+.ev-banner-game { color: var(--muted); font-size: .85rem; }
+.ev-banner-count { color: var(--accent); font-weight: 700; font-size: .85rem; font-variant-numeric: tabular-nums; }
+.ev-banner-all { margin-left: auto; color: var(--accent); font-weight: 700; text-decoration: none; white-space: nowrap; }
+.ev-banner-all:hover { text-decoration: underline; }
+.ev-banner-item:focus-visible, .ev-banner-all:focus-visible, .ev-card a:focus-visible, .ev-play:focus-visible, .ev-details:focus-visible {
+  outline: 2px solid var(--focus); outline-offset: 2px;
+}
+
+/* Trang danh sách */
+.ev-heading { margin: 0; font-size: 1.6rem; color: var(--text); overflow-wrap: anywhere; }
+.ev-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.ev-card a {
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px;
+  color: var(--text); text-decoration: none; background: var(--spot); border: 1px solid transparent;
+}
+.ev-card a:hover { border-color: var(--accent); }
+.ev-card .card-icon { flex: none; width: 40px; height: 40px; }
+.ev-card .card-icon img, .ev-card .card-icon svg { width: 100%; height: 100%; }
+.ev-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ev-card-title { font-weight: 700; overflow-wrap: anywhere; }
+.ev-card-meta, .ev-card-time { color: var(--muted); font-size: .85rem; }
+.ev-card-count { flex: none; color: var(--accent); font-weight: 700; font-size: .85rem; font-variant-numeric: tabular-nums; }
+
+/* Trang chi tiết */
+.ev-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.ev-status { padding: 2px 10px; border-radius: 999px; font-size: .8rem; color: var(--muted); border: 1px solid var(--muted); }
+.ev-desc { margin: 0; white-space: pre-line; overflow-wrap: anywhere; color: var(--text); }
+.ev-rules { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-direction: column; gap: 4px; color: var(--muted); }
+.ev-count { margin: 0 0 10px; color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; }
+.ev-play {
+  display: inline-block; padding: 10px 18px; border-radius: 10px; font-weight: 700; text-decoration: none;
+  background: var(--accent); color: var(--on-accent);
+}
+
+/* Tab "Sự kiện" trên bảng xếp hạng */
+.ev-panel .ev-count { margin: 4px 0 8px; font-size: .9rem; }
+.ev-details { display: inline-block; margin-top: 8px; color: var(--accent); font-weight: 700; text-decoration: none; }
+.ev-details:hover { text-decoration: underline; }
+
+@media (max-width: 640px) {
+  .ev-card a { flex-wrap: wrap; }
+  .ev-card-count { width: 100%; }
+  .ev-banner-all { margin-left: 0; }
+}

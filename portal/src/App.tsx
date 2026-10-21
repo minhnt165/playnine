@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AdminPage } from './admin/AdminPage'
-import { EventPage, EventsPage } from './events/EventsPage'
+import { EventPage } from './events/EventPage'
+import { EventsPage } from './events/EventsPage'
 import { Home } from './home/Home'
 import { prefersReducedMotion } from './home/media'
 import { markPlayed } from './data/recent'

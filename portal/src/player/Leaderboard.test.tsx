@@ -4,7 +4,7 @@ import { I18nProvider } from '../i18n/i18n'
 import { DICT } from '../i18n/dict'
 import { createFakeApi } from '../server/fakeApi'
 import { ServerProvider } from '../server/ServerProvider'
-import type { GameMeta, LeaderRow } from '../server/types'
+import type { GameEvent, GameMeta, LeaderRow } from '../server/types'
 import { Leaderboard } from './Leaderboard'
 
 const GAMES: GameMeta[] = [
@@ -220,5 +220,51 @@ describe('Leaderboard màn hẹp (bottom sheet)', () => {
     fireEvent.click(await screen.findByRole('button', { name: DICT.en['lb.open'] as string }))
     fireEvent.click(screen.getByRole('dialog'))
     expect(screen.getByRole('dialog')).toBeInTheDocument()
+  })
+})
+
+describe('Leaderboard tab sự kiện', () => {
+  const evt = (over: Partial<GameEvent> = {}): GameEvent => ({
+    id: 'e1', title: { en: 'Spring cup' }, description: {}, gameId: '2048', mode: 'classic', agg: 'best',
+    startsAt: new Date(Date.now() - 3600_000).toISOString(), endsAt: new Date(Date.now() + 3600_000).toISOString(),
+    awardTop: 3, status: 'live', ...over,
+  })
+  const eventCalls = (api: ReturnType<typeof createFakeApi>) => api.calls.filter((c) => c.method === 'eventLeaderboard')
+
+  it('sự kiện live khớp mode đang chọn: có tab ev.tab, bấm vào thì tải bảng sự kiện', async () => {
+    const api = createFakeApi({ games: GAMES, events: [evt()], eventBoards: { e1: [row(1, 'Zed', 777)] } })
+    mount(api)
+    const tab = await screen.findByRole('tab', { name: DICT.en['ev.tab'] as string })
+    expect(eventCalls(api)).toHaveLength(0)
+    fireEvent.click(tab)
+    expect(await screen.findByText('Zed')).toBeInTheDocument()
+    expect(eventCalls(api)[0].args[0]).toBe('e1')
+    expect(tab).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('link', { name: DICT.en['ev.details'] as string })).toHaveAttribute('href', '#/events/e1')
+    expect(screen.getByText(/^Ends in \d\d:\d\d:\d\d$/)).toBeInTheDocument()
+  })
+
+  it('mode đang chọn khác mode sự kiện: không có tab', async () => {
+    localStorage.setItem('playnine-lb-mode-2048', 'daily')
+    const api = createFakeApi({ games: GAMES, events: [evt()] })
+    mount(api)
+    await screen.findByRole('tab', { name: 'Daily' })
+    await waitFor(() => expect(api.calls.some((c) => c.method === 'events')).toBe(true))
+    expect(screen.queryByRole('tab', { name: DICT.en['ev.tab'] as string })).toBeNull()
+  })
+
+  it('chưa có mode đã lưu: mặc định chọn mode của sự kiện đang live', async () => {
+    const api = createFakeApi({ games: GAMES, events: [evt({ mode: 'daily' })] })
+    mount(api)
+    await screen.findByRole('tab', { name: DICT.en['ev.tab'] as string })
+    expect(screen.getByRole('tab', { name: 'Daily' })).toHaveAttribute('aria-selected', 'true')
+  })
+
+  it('events lỗi: bảng thường vẫn chạy, không có tab', async () => {
+    const api = createFakeApi({ games: GAMES, boards: { '2048|classic|week': [row(1, 'An', 5)] } })
+    api.fail('events')
+    mount(api)
+    expect(await screen.findByText('An')).toBeInTheDocument()
+    expect(screen.queryByRole('tab', { name: DICT.en['ev.tab'] as string })).toBeNull()
   })
 })

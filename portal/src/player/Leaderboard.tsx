@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { EventPanel } from '../events/EventBoard'
+import { liveEventsFor } from '../events/model'
+import { useNow } from '../events/useNow'
 import { useI18n } from '../i18n/i18n'
 import { readRaw, write } from '../lib/storage'
 import { useServer } from '../server/ServerProvider'
-import type { GameMeta, LeaderRow, Period } from '../server/types'
+import type { GameEvent, GameMeta, LeaderRow, Period } from '../server/types'
 import { formatValue, periodsFor } from './leaderboardModel'
 
 const WIDE = '(min-width: 900px)'
@@ -62,8 +65,17 @@ function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
   const closeRef = useRef<HTMLButtonElement>(null)
   const sheetRef = useRef<HTMLDivElement>(null)
   const titleId = useId()
+  const [events, setEvents] = useState<GameEvent[]>([])
+  const [showEvent, setShowEvent] = useState(false)
+  const now = useNow(10000)
 
-  const mode = meta.modes.some((m) => m.key === savedMode) ? (savedMode as string) : meta.modes[0].key
+  // Mode mặc định: mode đã lưu, nếu chưa có thì mode của sự kiện đang diễn ra, cuối cùng là mode đầu tiên.
+  const liveEvents = liveEventsFor(events, gameId, now)
+  const mode = meta.modes.some((m) => m.key === savedMode)
+    ? (savedMode as string)
+    : (liveEvents.find((e) => meta.modes.some((m) => m.key === e.mode))?.mode ?? meta.modes[0].key)
+  const event = liveEvents.find((e) => e.mode === mode) ?? null
+  const eventOn = showEvent && event !== null
   const periods = periodsFor(mode)
   const period = savedPeriod && periods.includes(savedPeriod) ? savedPeriod : periods[0]
   const viewKey = `${mode}|${period}`
@@ -93,6 +105,19 @@ function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
     // user đổi theo userId; displayName đổi không cần tải lại bảng.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, gameId, mode, period, refreshKey, userId, active])
+
+  // Tải sự kiện một lần; lỗi thì coi như không có sự kiện, bảng thường vẫn chạy.
+  useEffect(() => {
+    if (!api) return
+    let alive = true
+    api.events().then(
+      (list) => alive && setEvents(list),
+      () => {},
+    )
+    return () => {
+      alive = false
+    }
+  }, [api])
 
   const close = useCallback(() => {
     setOpen(false)
@@ -134,6 +159,7 @@ function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
     write(modeKeyOf(gameId), key)
     setSavedMode(key)
     setSavedPeriod(null)
+    setShowEvent(false)
   }
 
   const fmt = (v: number) => formatValue(meta.metric, v, fmtNumber)
@@ -149,12 +175,19 @@ function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
       </div>
       <div className="lb-tabs lb-periods" role="tablist">
         {periods.map((p) => (
-          <button key={p} type="button" role="tab" aria-selected={p === period} onClick={() => setSavedPeriod(p)}>
+          <button key={p} type="button" role="tab" aria-selected={!eventOn && p === period} onClick={() => { setSavedPeriod(p); setShowEvent(false) }}>
             {t(PERIOD_LABEL[p])}
           </button>
         ))}
+        {event && (
+          <button type="button" role="tab" aria-selected={eventOn} onClick={() => setShowEvent(true)}>
+            {t('ev.tab')}
+          </button>
+        )}
       </div>
-      {data?.error ? (
+      {eventOn && event ? (
+        <EventPanel event={event} limit={TOP} />
+      ) : data?.error ? (
         <p className="lb-note lb-error" role="alert">
           {t('lb.error')}
         </p>
