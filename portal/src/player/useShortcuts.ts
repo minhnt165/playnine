@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { GAMES } from '../games/catalog'
 import { playHref } from './route'
 
-/** Phím tắt ở trang chủ: 1-9 mở game, t đổi giao diện, l đổi ngôn ngữ (bấm nút của thanh trên như cổng cũ). */
+/** Phím tắt ở trang chủ: 1-9 mở game, t đổi giao diện, l đổi ngôn ngữ (bấm nút của thanh trên như cổng cũ), / tới ô tìm game. */
 export function useShortcuts(playing: boolean): void {
   useEffect(() => {
     if (playing) return
@@ -16,6 +16,12 @@ export function useShortcuts(playing: boolean): void {
         document.getElementById('theme-btn')?.click()
       } else if (e.key === 'l' || e.key === 'L') {
         document.getElementById('lang-btn')?.click()
+      } else if (e.key === '/') {
+        const search = document.getElementById('game-search')
+        if (search) {
+          e.preventDefault()
+          search.focus()
+        }
       }
     }
     window.addEventListener('keydown', onKey)

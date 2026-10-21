@@ -29,6 +29,7 @@
       'tray.label': 'Tray',
       'tray.add': 'Add a tray slot',
       'tile.free': 'Tile {name}',
+      'tile.names': 'apple|banana|grapes|clover|gem|carrot|donut|lollipop|strawberry|candy|ice cream|pear|cupcake|watermelon|cherries|pineapple|star|cookie',
 
       'tool.out': 'Take out',
       'tool.outTitle': 'Move the first 3 tray tiles out of the tray (O)',
@@ -62,6 +63,8 @@
       'settings.themeLight': 'Light',
       'settings.themeDark': 'Dark',
       'settings.language': 'Language',
+      'settings.sound': 'Sound',
+      'settings.soundDesc': 'Sound effects for taps, matches and level clears.',
       'settings.vibrate': 'Vibrate',
       'settings.vibrateDesc': 'Vibrate briefly when three tiles clear (if supported).',
       'settings.restart': 'Restart level',
@@ -99,6 +102,7 @@
       'tray.label': 'Khay',
       'tray.add': 'Thêm một ô khay',
       'tile.free': 'Ô {name}',
+      'tile.names': 'táo|chuối|nho|cỏ bốn lá|kim cương|cà rốt|bánh donut|kẹo mút|dâu tây|kẹo|kem|lê|bánh cupcake|dưa hấu|anh đào|dứa|ngôi sao|bánh quy',
 
       'tool.out': 'Lấy ra',
       'tool.outTitle': 'Đưa 3 ô đầu khay ra ngoài (O)',
@@ -132,6 +136,8 @@
       'settings.themeLight': 'Sáng',
       'settings.themeDark': 'Tối',
       'settings.language': 'Ngôn ngữ',
+      'settings.sound': 'Âm thanh',
+      'settings.soundDesc': 'Hiệu ứng âm thanh khi chạm ô, ăn bộ ba và qua cấp độ.',
       'settings.vibrate': 'Rung',
       'settings.vibrateDesc': 'Rung nhẹ khi ăn được 3 ô (nếu máy hỗ trợ).',
       'settings.restart': 'Chơi lại cấp độ',

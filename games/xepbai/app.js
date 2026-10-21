@@ -10,9 +10,14 @@
   'use strict';
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.1.0';
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'xepbai' });
+  // Âm thanh + pháo giấy từ SDK: SDK cũ / thiếu thì im lặng, không bao giờ làm hỏng game
+  const SFX = PN && PN.sfx && typeof PN.sfx.play === 'function' ? PN.sfx : null;
+  const sfx = (name, opts) => { try { SFX && SFX.play(name, opts); } catch (e) {} };
+  const hasFx = () => !!(PN && PN.fx && typeof PN.fx.confetti === 'function');
+  const sdkConfetti = () => { try { hasFx() && PN.fx.confetti({ count: 160 }); } catch (e) {} };
   const KEYS = {
     settings: 'playnine-xepbai-settings-v1',
     save: 'playnine-xepbai-save-v1',
@@ -205,6 +210,7 @@
     persist();
     writeSummary();
     renderDeal();
+    sfx('start');
     PN && PN.gameStart({ mode: bucketOf(session) });
   }
 
@@ -225,11 +231,14 @@
     if (!isPlaying()) return false;
     const s = session.state;
     const desc = m.t === 'move' ? describeMove(s, m) : '';
+    const src = m.t === 'move' ? X.pile(s, m.from) : null;
+    const card = src ? src[src.length - m.n] : -1; // lá dưới cùng của dãy vừa chuyển
     const res = X.apply(s, m);
     if (!res) return false;
     session.moves.push(m);
     if (!session.counted) onFirstMove();
     startClock();
+    moveFeedback(m, res, card);
     if (res.points) bump('score');
     if (!(opts && opts.quiet)) {
       if (m.t === 'draw') announce(res.redeal ? t('say.redeal') : t('say.drew', { n: res.drawn, card: cardName(s.waste[s.waste.length - 1]) }));
@@ -259,10 +268,46 @@
     return t('pile.col', { n: +id[1] + 1 });
   }
 
+  /**
+   * Tiếng + hiệu ứng của một nước, phát lúc lá chạm chỗ mới: rút = flip, chia lại = move, xuống cột = place,
+   * lên ô đích = coin cao dần theo bậc (đủ 13 lá thì ô đích lóe sáng, ngoài lúc tự xếp thì thêm levelup).
+   */
+  let coinAt = 0;
+  function moveFeedback(m, res, card) {
+    if (m.t === 'draw') { sfx(res.redeal ? 'move' : 'flip'); return; }
+    const s = session.state;
+    const land = Math.round(moveMs() * 0.75);
+    const later = (fn) => (land ? setTimeout(fn, land) : fn());
+    if (m.to[0] === 'f') {
+      const F = s.found[+m.to[1]];
+      const rank = X.rankOf(card);
+      const busy = auto.busy;
+      later(() => {
+        // Tự xếp: tiếng dồn dập nhưng không quá một tiếng mỗi 55 ms
+        const now = Date.now();
+        if (now - coinAt >= 55) { coinAt = now; sfx('coin', { pitch: 0.75 + rank * 0.06, volume: busy ? 0.6 : 1 }); }
+        pulseCard(card, F.length === 13 ? 'fdone' : 'fland', F.length === 13 ? 900 : 450);
+      });
+      if (F.length === 13 && !busy && !X.isWon(s)) setTimeout(() => sfx('levelup', { volume: 0.8 }), land + 120);
+    } else {
+      later(() => sfx('place'));
+    }
+    if (res.flipped) setTimeout(() => sfx('flip', { volume: 0.7 }), land + 70);
+  }
+  function pulseCard(c, cls, ms) {
+    const el = cardEls[c];
+    if (!el || reduceMotion.matches) return;
+    el.classList.remove('fland', 'fdone');
+    void el.offsetWidth;
+    el.classList.add(cls);
+    setTimeout(() => el.classList.remove(cls), ms);
+  }
+
   function drawCard() {
     if (!isPlaying() || auto.busy) return;
     lastTap = null;
     if (!X.isLegal(session.state, { t: 'draw' })) {
+      sfx('error');
       toast(t('toast.empty'));
       return;
     }
@@ -287,6 +332,7 @@
     clearHint();
     render();
     persist();
+    sfx('tap');
     writeSummary();
     announce(t('say.undone'));
     checkAfterMove();
@@ -375,6 +421,8 @@
     render();
     announce(t('say.win'));
     stopWinFx();
+    // Tiếng thắng ngay khi lá cuối lên ô đích, pháo giấy khi hiện bảng kết quả (sau màn lá nảy)
+    setTimeout(() => sfx('win'), 250);
     const delay = celebrate();
     winFx.result = { sec, score, record: recordTime && b.won > 1 };
     winFx.timer = setTimeout(() => {
@@ -793,11 +841,13 @@
       mark(dst.length ? cardEls[dst[dst.length - 1]] : slotEls[m.to]);
       toast(t('hint.move', { move: describeMove(s, m) }));
     }
+    sfx('pop', { volume: 0.7 });
     hintTimer = setTimeout(clearHint, 2200);
   }
 
   /* ---------------- Hiệu ứng ---------------- */
   function nope(cards) {
+    sfx('error');
     if (reduceMotion.matches) return;
     cards.forEach((c) => {
       const el = cardEls[c];
@@ -923,6 +973,7 @@
     const cards = src.slice(src.length - press.pick.n);
     press.drag = true;
     clearHint();
+    sfx('tap'); // cầm lá lên
     press.base = cards.map((c, i) => {
       const el = cardEls[c];
       clearTimeout(liftTimers[c]);
@@ -972,7 +1023,11 @@
     }
     lastTap = null;
     if (best) doMove({ t: 'move', from: p.pick.from, n: p.pick.n, to: best });
-    else render();
+    else {
+      // Thả chỗ không hợp lệ (kéo đi xa chứ không phải thả lại chỗ cũ): báo lỗi, lá bay về
+      if (Math.hypot(dx, dy) > lay.cw * 0.6) sfx('error');
+      render();
+    }
   }
 
   function tapSlot(id) {
@@ -1050,6 +1105,7 @@
     }
     held = { from: pk.from, n: pk.n };
     render();
+    sfx('tap');
     announce(t('say.held', { card: cardName(pk.c) }) + (pk.n > 1 ? t('say.heldMore', { n: pk.n - 1 }) : ''));
   }
 
@@ -1131,6 +1187,7 @@
     }
     held = { from: id, n };
     render();
+    sfx('tap');
     const src = X.pile(s, id);
     announce(t('say.held', { card: cardName(src[src.length - n]) }) + (n > 1 ? t('say.heldMore', { n: n - 1 }) : '') + t('say.heldPlace'));
   }
@@ -1384,7 +1441,9 @@
     $('btn-result-new').textContent = daily ? t('new.random') : t('btn.new');
     const conf = $('confetti');
     conf.innerHTML = '';
-    if (!reduceMotion.matches) {
+    // SDK có pháo giấy thì bắn pháo giấy toàn màn hình thay cho pháo giấy trong bảng
+    sdkConfetti();
+    if (!reduceMotion.matches && !hasFx()) {
       const colors = ['var(--accent)', 'var(--red)', 'var(--text)', '#e0b964'];
       for (let i = 0; i < 28; i++) {
         const p = document.createElement('i');
@@ -1463,6 +1522,16 @@
     render(true);
   });
   bindSegmented(settingGroup('speed'), (v) => { settings.speed = v; saveSettings(); });
+  // Âm thanh: bật / tắt dùng chung với cổng PlayNine (SDK lưu); SDK không có âm thanh thì ẩn mục này
+  let syncSound = () => {};
+  if (SFX && typeof SFX.isMuted === 'function' && typeof SFX.setMuted === 'function') {
+    const soundGroup = settingGroup('sound');
+    syncSound = () => setSegmented(soundGroup, SFX.isMuted() ? 'off' : 'on');
+    $('field-sound').hidden = false;
+    bindSegmented(soundGroup, (v) => { SFX.setMuted(v === 'off'); if (v === 'on') sfx('tap'); });
+    if (typeof SFX.onChange === 'function') SFX.onChange(() => syncSound());
+    syncSound();
+  }
   bindSegmented(settingGroup('draw'), (v) => {
     settings.draw = +v;
     saveSettings();
@@ -1492,6 +1561,7 @@
     setSegmented(settingGroup('draw'), settings.draw);
     setSegmented(settingGroup('lang'), I18N.lang);
     $('tap-desc').textContent = TAP_DESC[settings.tap];
+    syncSound();
     openModal('modal-settings');
   });
   $('btn-settings-help').addEventListener('click', () => { closeModal('modal-settings'); openHelp(); });

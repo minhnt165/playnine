@@ -17,14 +17,21 @@ export async function createDb(): Promise<PGlite> {
   return db
 }
 
+// Bỏ khóa "points" khỏi mọi mode, để mọi ván dùng games.points.
+export async function withoutModePoints(db: PGlite): Promise<PGlite> {
+  await db.exec(`update games g set modes = (
+    select jsonb_agg(m - 'points' order by o) from jsonb_array_elements(g.modes) with ordinality t(m, o))`)
+  return db
+}
+
 export async function newUser(
   db: PGlite,
-  meta: { full_name?: string; avatar_url?: string; email?: string } = {},
+  meta: { full_name?: string; avatar_url?: string; email?: string; anonymous?: boolean } = {},
 ): Promise<string> {
-  const { email, ...rest } = meta
+  const { email, anonymous, ...rest } = meta
   const r = await db.query<{ id: string }>(
-    'insert into auth.users (email, raw_user_meta_data) values ($1, $2::jsonb) returning id',
-    [email ?? null, JSON.stringify(rest)],
+    'insert into auth.users (email, raw_user_meta_data, is_anonymous) values ($1, $2::jsonb, $3) returning id',
+    [email ?? null, JSON.stringify(rest), anonymous ?? false],
   )
   return r.rows[0].id
 }

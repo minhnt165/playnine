@@ -11,7 +11,7 @@
   PN && PN.init({ gameId: 'caro' });
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html để trình duyệt tải file mới
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.1.0';
   const E = window.CaroEngine;
   const N = E.SIZE, NN = E.CELLS, X = E.X, O = E.O;
   const KEYS = {
@@ -34,6 +34,9 @@
   const grid = $('grid');
   const viewport = $('board-viewport');
   const reduceMotion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  // Âm thanh + pháo giấy từ SDK PlayNine; SDK cũ hoặc không có SDK thì im lặng, không lỗi
+  const sfx = (name, o) => { try { PN && PN.sfx && PN.sfx.play(name, o); } catch (e) { /* bỏ qua */ } };
+  const confetti = () => { try { PN && PN.fx && PN.fx.confetti(); } catch (e) { /* bỏ qua */ } };
 
   /* ---------------- 1. Lưu trữ (mọi truy cập localStorage đều bọc try/catch) ---------------- */
   function readJSON(key) {
@@ -144,6 +147,7 @@
     closeModal('modal-result');
     game = makeGame(cfg);
     PN && game.mode === 'ai' && PN.gameStart({ mode: game.level });
+    sfx('start');
     focusIdx = E.CENTER;
     freshIdx = -1;
     persist();
@@ -195,6 +199,10 @@
     const line = E.checkWin(game.board, i, game.rules);
     if (line) game.over = { winner: p, line };
     else if (game.moves.length >= NN) game.over = { winner: 0, line: [] };
+    // Tiếng đặt quân: nước của máy trầm và nhỏ hơn; ván hai người thì O cao hơn X một chút
+    const byAi = game.mode === 'ai' && p !== game.human;
+    sfx('place', byAi ? { pitch: 0.82, volume: 0.8 } : game.mode === 'pvp' && p === O ? { pitch: 1.12 } : undefined);
+    if (line) setTimeout(() => sfx('clear'), 120); // vừa nối đủ 5 quân
 
     const who = game.mode === 'ai' ? (p === game.human ? tr('player.you') : tr('player.ai')) : tr('player.mark', { mark: pieceName(p) });
     announce(tr('say.move', { who, cell: cellName(i) }));
@@ -210,7 +218,16 @@
     if (game.mode === 'ai') PN && PN.gameEnd({ mode: game.level, won: w !== 0 && w === game.human, assisted: !!game.usedUndo });
     announce(resultTitle());
     clearTimeout(resultTimer);
-    resultTimer = setTimeout(showResult, reduceMotion.matches ? 300 : RESULT_DELAY_MS);
+    resultTimer = setTimeout(() => { outcomeFx(); showResult(); }, reduceMotion.matches ? 300 : RESULT_DELAY_MS);
+  }
+
+  // Âm thanh kết thúc ván, kèm pháo giấy khi thắng (ván hai người: luôn có người thắng để mừng)
+  function outcomeFx() {
+    if (!game || !game.over) return;
+    const w = game.over.winner;
+    if (w === 0) sfx('draw');
+    else if (game.mode === 'ai' && w !== game.human) sfx('lose');
+    else { sfx('win'); confetti(); }
   }
 
   function canUndo() {
@@ -233,6 +250,7 @@
     focusIdx = game.moves.length ? game.moves[game.moves.length - 1] : E.CENTER;
     persist();
     renderAll();
+    sfx('move', { pitch: 0.8 });
     announce(tr('say.undo'));
     maybeAi();
   }
@@ -521,7 +539,7 @@
     else root.setAttribute('data-theme', settings.theme);
     const dark = settings.theme === 'dark'
       || (settings.theme === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    $('theme-color').setAttribute('content', dark ? '#0e0b09' : '#f6f2ea');
+    $('theme-color').setAttribute('content', dark ? '#090b14' : '#f3f4fb');
   }
 
   /* ---------------- Modal ---------------- */
@@ -653,6 +671,18 @@
       }
     });
   });
+  // Bật/tắt âm thanh: dùng chung khóa với cổng PlayNine; SDK không có âm thanh thì ẩn công tắc
+  const soundBox = $('set-sound');
+  if (PN && PN.sfx && typeof PN.sfx.setMuted === 'function') {
+    $('setting-sound').hidden = false;
+    const syncSound = () => { soundBox.checked = !PN.sfx.isMuted(); };
+    syncSound();
+    if (typeof PN.sfx.onChange === 'function') PN.sfx.onChange(syncSound);
+    soundBox.addEventListener('change', () => {
+      PN.sfx.setMuted(!soundBox.checked);
+      if (soundBox.checked) sfx('tap');
+    });
+  }
 
   /* --- Modal thống kê --- */
   function renderStats() {
@@ -707,6 +737,7 @@
     const w = game.over.winner;
     const badge = $('result-badge');
     badge.className = 'result-badge ' + (w === X ? 'x' : w === O ? 'o' : 'draw');
+    $('modal-result').querySelector('.modal-card').dataset.outcome = w === 0 ? 'draw' : game.mode === 'ai' && w !== game.human ? 'lose' : 'win';
     $('result-title').textContent = resultTitle();
     let text;
     if (w === 0) text = tr('result.drawText');
@@ -745,8 +776,8 @@
   function tryPlay(i) {
     if (!game) return;
     if (game.over) { renderBoard(); return; }
-    if (thinking || isAiTurn()) { toast(tr('toast.thinking')); return; }
-    if (game.board[i] !== E.EMPTY) { renderBoard(); return; }
+    if (thinking || isAiTurn()) { sfx('error', { volume: 0.6 }); toast(tr('toast.thinking')); return; }
+    if (game.board[i] !== E.EMPTY) { sfx('error'); renderBoard(); return; }
     playMove(i);
   }
 

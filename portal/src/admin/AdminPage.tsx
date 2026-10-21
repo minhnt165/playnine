@@ -7,12 +7,13 @@ import { AdminCollections } from './AdminCollections'
 import { AdminEvents } from './AdminEvents'
 import { AdminGames } from './AdminGames'
 import { AdminPlayers } from './AdminPlayers'
+import { AdminPosts } from './AdminPosts'
 import { AdminRuns } from './AdminRuns'
 
 const TAB_KEY = 'playnine-admin-tab'
 const store = safeStore(defaultSession())
 // Thứ tự các tab của trang.
-const TABS = ['games', 'events', 'collections', 'runs', 'players'] as const
+const TABS = ['games', 'events', 'collections', 'posts', 'runs', 'players'] as const
 type Tab = (typeof TABS)[number]
 
 function readTab(): Tab {
@@ -69,6 +70,8 @@ export function AdminPage({ onThemeApplied }: { onThemeApplied?: () => void }) {
             <AdminEvents />
           ) : tab === 'collections' ? (
             <AdminCollections />
+          ) : tab === 'posts' ? (
+            <AdminPosts />
           ) : tab === 'runs' ? (
             <AdminRuns />
           ) : (

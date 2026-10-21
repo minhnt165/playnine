@@ -133,6 +133,8 @@
       'settings.checkErrorsDesc': 'Mark wrong numbers in red as you enter them and count mistakes. Turn off to check yourself.',
       'settings.mistakeLimit': '3-mistake limit',
       'settings.mistakeLimitDesc': 'You lose after 3 mistakes. Requires "Instant error check".',
+      'settings.sound': 'Sound',
+      'settings.soundDesc': 'Sound effects when placing numbers, completing a row, column or box, and winning.',
       'settings.version': 'version',
 
       'stats.title': 'Statistics',
@@ -279,6 +281,8 @@
       'settings.checkErrorsDesc': 'Tô đỏ số sai ngay khi nhập và đếm lỗi. Tắt để tự kiểm tra.',
       'settings.mistakeLimit': 'Giới hạn 3 lỗi',
       'settings.mistakeLimitDesc': 'Thua khi mắc 3 lỗi. Cần bật "Báo lỗi ngay".',
+      'settings.sound': 'Âm thanh',
+      'settings.soundDesc': 'Hiệu ứng âm thanh khi điền số, hoàn thành hàng, cột hoặc vùng, và khi thắng.',
       'settings.version': 'phiên bản',
 
       'stats.title': 'Thống kê',

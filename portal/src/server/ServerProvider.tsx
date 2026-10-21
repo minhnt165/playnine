@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { ServerApi } from './api'
 import { restoreReturnHash } from './returnHash'
 import { createSupabaseApi } from './supabaseApi'
@@ -27,7 +27,14 @@ function defaultApi(): ServerApi | null {
 let sharedApi: ServerApi | null | undefined
 const getDefaultApi = () => (sharedApi === undefined ? (sharedApi = defaultApi()) : sharedApi)
 
-export function ServerProvider({ api: apiProp, children }: { api?: ServerApi | null; children: ReactNode }) {
+type Props = {
+  api?: ServerApi | null
+  /** Chưa đăng nhập thì tự tạo tài khoản khách (bản chạy thật bật; test mặc định tắt). */
+  autoGuest?: boolean
+  children: ReactNode
+}
+
+export function ServerProvider({ api: apiProp, autoGuest = false, children }: Props) {
   const api = apiProp === undefined ? getDefaultApi() : apiProp
   const [user, setUser] = useState<AuthUser | null>(null)
   const [authReady, setAuthReady] = useState(!api)
@@ -50,6 +57,16 @@ export function ServerProvider({ api: apiProp, children }: { api?: ServerApi | n
       off()
     }
   }, [api])
+
+  // Không có phiên: vào thẳng với tư cách khách. Mỗi lần mất phiên chỉ thử một lần (lỗi thì còn nút đăng nhập);
+  // bỏ qua khi đang quay về từ Google (?code=) để không tạo khách thừa.
+  const guestTried = useRef(false)
+  useEffect(() => {
+    if (user) guestTried.current = false
+    if (!autoGuest || !api || !authReady || user || guestTried.current || /[?&]code=/.test(location.search)) return
+    guestTried.current = true
+    api.signInAsGuest().catch(() => {})
+  }, [autoGuest, api, authReady, user])
 
   // Đăng nhập xong (quay về từ Google): trở lại trang game đã nhớ.
   useEffect(() => {

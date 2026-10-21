@@ -11,9 +11,12 @@
   'use strict';
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'codam' });
+  // Âm thanh dùng chung của SDK (bản SDK cũ chưa có sfx thì game vẫn chạy, chỉ im lặng)
+  const SFX = PN && PN.sfx && typeof PN.sfx.play === 'function' ? PN.sfx : null;
+  const sfx = (name, o) => { try { SFX && SFX.play(name, o); } catch (e) { /* bỏ qua */ } };
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.1.0';
   const KEYS = {
     settings: 'playnine-codam-settings-v1',
     save: 'playnine-codam-save-v1',
@@ -272,6 +275,7 @@
     render();
     renderLog();
     writeSummary();
+    sfx('start');
     PN && game.mode === 'ai' && PN.gameStart({ mode: game.level });
     scheduleAi();
   }
@@ -316,13 +320,14 @@
     const v = s.board[sq];
     if (E.isOwn(v, s.turn)) {
       if (sel && sel.from === sq) { sel = null; render(); return; } // bấm lại để bỏ chọn
-      if (movesFrom(sq).length) { select(sq); render(); return; }
+      if (movesFrom(sq).length) { select(sq); render(); sfx('tap'); return; }
       const all = legal();
+      sfx('error');
       toast(all.length && all[0].caps.length ? T('toast.mustCapture') : T('toast.cantMove'));
       return;
     }
-    if (sel) { sel = null; render(); return; }
-    if (v && E.isOwn(v, 1 - s.turn)) toast(game.mode === 'ai' ? T('toast.aiPiece') : T('toast.notYourTurn', { name: playerName(s.turn), side: SIDE_NAME[s.turn] }));
+    if (sel) { sel = null; render(); sfx('error'); return; }
+    if (v && E.isOwn(v, 1 - s.turn)) { sfx('error'); toast(game.mode === 'ai' ? T('toast.aiPiece') : T('toast.notYourTurn', { name: playerName(s.turn), side: SIDE_NAME[s.turn] })); }
   }
 
   // Ô sq có phải ô đến của quân đang chọn: đi luôn nếu chỉ còn một nước khớp,
@@ -331,10 +336,10 @@
     const k = sel.path.length;
     const next = sel.cands.filter((m) => m.path[k] === sq);
     if (next.length === 1) { commitMove(next[0]); return true; }
-    if (next.length > 1) { sel.path.push(sq); sel.cands = next; render(); return true; }
+    if (next.length > 1) { sel.path.push(sq); sel.cands = next; render(); sfx('tap'); return true; }
     const fin = sel.cands.filter((m) => m.to === sq && m.path.length > k + 1);
     if (fin.length === 1) { commitMove(fin[0]); return true; }
-    if (fin.length > 1) { toast(T('toast.manyRoutes')); return true; }
+    if (fin.length > 1) { sfx('error'); toast(T('toast.manyRoutes')); return true; }
     return false;
   }
 
@@ -425,6 +430,7 @@
     render();
     renderLog();
     writeSummary();
+    sfx('tap');
     toast(T('toast.undone'));
     scheduleAi();
   }
@@ -550,6 +556,12 @@
     return wait(ms);
   }
 
+  // Tiếng cả nước một lúc (khi tắt hiệu ứng hoặc bỏ qua giữa chừng): ăn quân / đi thường, lên vua thì thêm tiếng
+  function moveSound(m, vol) {
+    sfx(m.caps.length ? 'capture' : 'move', { volume: vol, pitch: m.caps.length > 1 ? 1.15 : 1 });
+    if (m.promoteAt >= 0) setTimeout(() => sfx('levelup', { volume: vol }), 120);
+  }
+
   async function animateMove(before, m, side) {
     const token = ++anim.token;
     anim.busy = true;
@@ -563,6 +575,9 @@
     render();
     const fl = makeFloater(m.piece, m.from);
     let king = E.isKing(m.piece);
+    // Máy đi nhỏ tiếng hơn một chút; mỗi bước nhảy ăn quân một tiếng, cao dần theo chuỗi ăn
+    const vol = game.mode === 'ai' && side !== game.human ? 0.7 : 1;
+    let sounded = false;
     for (let i = 1; i < m.path.length; i++) {
       if (token !== anim.token) return;
       if (anim.skip) break;
@@ -570,20 +585,24 @@
       const dist = Math.abs(E.rowOf(b) - E.rowOf(a));
       await slide(fl, a, b, step * (1 + 0.2 * (dist - 1))); // vua bay đi xa thì trượt lâu hơn một chút
       if (token !== anim.token) return;
+      if (!anim.skip) { sfx(m.caps.length ? 'capture' : 'move', { volume: vol, pitch: 1 + 0.12 * (i - 1) }); sounded = true; }
       if (m.caps.length) { anim.taken.add(m.caps[i - 1]); cellEls[m.caps[i - 1]].classList.add('taken'); }
       if (m.promoteAt === i && !king) {
         king = true;
+        if (sounded) sfx('levelup', { volume: vol });
         fl.innerHTML = pieceHtml(E.kingOf(side));
         fl.firstChild.classList.add('crown-pop');
         await wait(step * 1.2);
       } else if (m.caps.length && i < m.path.length - 1) await wait(step * 0.25);
     }
     if (token !== anim.token) return;
+    if (!sounded) moveSound(m, vol);
     removeFloater();
     // Quân đứng vào ô đích, sau đó các quân bị ăn mới mờ dần và biến mất
     if (!anim.skip && m.caps.length) {
       view[m.to] = game.state.board[m.to];
       render();
+      land(pieceEls[m.to]);
       for (const c of m.caps) cellEls[c].classList.add('fx-fade');
       await wait(Math.max(300, step * 1.4));
       if (token !== anim.token) return;
@@ -594,6 +613,14 @@
     anim.taken.clear();
     view = null;
     onAnimDone();
+    if (!m.caps.length) land(pieceEls[m.to]);
+  }
+  // Quân vừa tới ô đích nảy nhẹ một nhịp
+  function land(el) {
+    if (!el || reduceMotion.matches || settings.speed === 'off') return;
+    el.classList.remove('land');
+    void el.offsetWidth;
+    el.classList.add('land');
   }
 
   /* ================= 5. Render ================= */
@@ -890,7 +917,7 @@
     if (humanCanPlay() && !isTarget && movesFrom(sq).length) {
       // Quân đi được: chọn ngay, giữ con trỏ để có thể kéo thả
       const was = !!sel && sel.from === sq && sel.path.length === 1;
-      if (!was) { select(sq); render(); }
+      if (!was) { select(sq); render(); sfx('tap'); }
       drag = { sq, x: e.clientX, y: e.clientY, id: e.pointerId, was, ghost: null };
       try { boardEl.setPointerCapture(e.pointerId); } catch (err) {}
       e.preventDefault();
@@ -925,7 +952,7 @@
       d.ghost.remove();
       const t = cancel ? -1 : cellAt(e.clientX, e.clientY);
       if (t >= 0 && t !== d.sq && sel) {
-        if (!tryTarget(t)) { toast(T('toast.badTarget')); render(); }
+        if (!tryTarget(t)) { sfx('error'); toast(T('toast.badTarget')); render(); }
       }
       return;
     }
@@ -1120,9 +1147,13 @@
       $('result-line').textContent = T('result.linePvp', { rules: rulesShort(game.rules), p0: st.pvp.p0, p1: st.pvp.p1, d: st.pvp.drawn });
     }
     $('btn-result-new').textContent = ai ? T('btn.playAgain') : T('btn.new');
+    sfx(w === E.DRAW ? 'draw' : celebrate ? 'win' : 'lose');
     const conf = $('confetti');
     conf.innerHTML = '';
-    if (celebrate && !reduceMotion.matches) {
+    // Pháo giấy toàn màn hình của SDK khi có, không thì dùng pháo giấy trong hộp kết quả
+    if (celebrate && PN && PN.fx && typeof PN.fx.confetti === 'function') {
+      try { PN.fx.confetti(); } catch (e) { /* bỏ qua */ }
+    } else if (celebrate && !reduceMotion.matches) {
       const colors = ['var(--p0)', 'var(--p1)', 'var(--accent)', 'var(--text)'];
       for (let i = 0; i < 28; i++) {
         const p = document.createElement('i');
@@ -1197,8 +1228,16 @@
     setSegmented(settingGroup('speed'), settings.speed);
     setSegmented(settingGroup('lang'), I18N.lang);
     $('set-coords').checked = settings.coords;
+    if (!$('set-sound-row').hidden) $('set-sound').checked = !SFX.isMuted();
     openModal('modal-settings');
   });
+  // Bật / tắt tiếng: dùng chung khóa với cổng PlayNine; SDK không có sfx thì ẩn dòng này
+  if (SFX && typeof SFX.isMuted === 'function' && typeof SFX.setMuted === 'function') {
+    $('set-sound').addEventListener('change', (e) => { SFX.setMuted(!e.target.checked); if (e.target.checked) sfx('tap'); });
+    if (typeof SFX.onChange === 'function') SFX.onChange((muted) => { $('set-sound').checked = !muted; });
+  } else {
+    $('set-sound-row').hidden = true;
+  }
   $('btn-settings-help').addEventListener('click', () => { closeModal('modal-settings'); openHelp(); });
   if (window.matchMedia) {
     const mq = matchMedia('(prefers-color-scheme: dark)');

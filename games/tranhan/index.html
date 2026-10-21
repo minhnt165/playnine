@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" id="theme-color" content="#f6f2ea">
+  <meta name="theme-color" id="theme-color" content="#f3f4fb">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Nonogram">
@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
-  <link rel="stylesheet" href="style.css?v=1.0.1">
+  <link rel="stylesheet" href="style.css?v=1.0.2">
 </head>
 <body>
   <!-- Biểu tượng dùng chung -->
@@ -183,6 +183,13 @@
           </div>
           <input type="checkbox" class="switch" data-setting="autoX">
         </label>
+        <label class="setting" id="setting-sound" hidden>
+          <div class="setting-text">
+            <span class="setting-name" data-i18n="settings.sound">Sound</span>
+            <span class="setting-desc" data-i18n="settings.soundDesc">Sound effects when filling, marking X, completing a line and revealing the picture.</span>
+          </div>
+          <input type="checkbox" class="switch" id="sound-switch">
+        </label>
         <label class="setting">
           <div class="setting-text">
             <span class="setting-name" data-i18n="settings.vibrate">Vibrate on long press</span>
@@ -242,9 +249,9 @@
     </div>
   </div>
 
-  <script src="i18n.js?v=1.0.1"></script>
+  <script src="i18n.js?v=1.0.2"></script>
   <script src="engine.js?v=1.0.0"></script>
-  <script src="../sdk/playnine.js?v=1"></script>
-  <script src="app.js?v=1.0.2"></script>
+  <script src="../sdk/playnine.js?v=2"></script>
+  <script src="app.js?v=1.0.3"></script>
 </body>
 </html>

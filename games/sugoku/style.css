@@ -1,10 +1,10 @@
 :root {
-  --bg: #f3f5fb;
-  --bg-accent: radial-gradient(1200px 600px at 50% -200px, #dfe8ff 0%, transparent 70%);
+  --bg: #f3f4fb;
+  --bg-accent: radial-gradient(1200px 600px at 50% -200px, #e4ddff 0%, transparent 70%);
   --surface: #ffffff;
-  --surface-2: #f6f8fd;
-  --text: #182033;
-  --text-muted: #6b7489;
+  --surface-2: #f5f6fc;
+  --text: #14162b;
+  --text-muted: #5d6285;
   --given: #182033;
   --filled: #2f63e9;
   --error: #e0392f;
@@ -16,12 +16,12 @@
   --cell-highlight: #eaf0fc;
   --cell-same: #cfdcfa;
   --cell-selected: #b9ccf9;
-  --primary: #3b6cf6;
-  --primary-strong: #2f5be0;
+  --primary: #6a4cf5;
+  --primary-strong: #5a3be0;
   --primary-text: #ffffff;
-  --btn-bg: #edf2fd;
-  --btn-bg-hover: #e1e9fb;
-  --btn-text: #2f5be0;
+  --btn-bg: #eceefa;
+  --btn-bg-hover: #e2e5f7;
+  --btn-text: #4b34c9;
   --success: #17a36b;
   --lock: #9aa3b8;
   --hint-target: #c9f2dd;
@@ -29,9 +29,9 @@
   --hint-reason: #ffe9a8;
   --hint-elim: #fbd9d6;
   --hint-unit: #f2f5fa;
-  --overlay: rgba(243, 245, 251, 0.94);
-  --shadow: 0 12px 34px rgba(20, 32, 68, 0.14);
-  --shadow-sm: 0 3px 12px rgba(20, 32, 68, 0.08);
+  --overlay: rgba(243, 244, 251, 0.94);
+  --shadow: 0 12px 34px rgba(17, 20, 45, 0.14);
+  --shadow-sm: 0 3px 12px rgba(17, 20, 45, 0.08);
   --radius: 16px;
   --radius-sm: 12px;
   /* Chiều cao ước tính của các phần ngoài bàn cờ (topbar + status + tools + numpad + khoảng cách)
@@ -42,12 +42,12 @@
 /* Giao diện tối: theo hệ thống (trừ khi chọn Sáng) hoặc khi chọn Tối */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0f1217;
-    --bg-accent: radial-gradient(1200px 600px at 50% -200px, #1a2540 0%, transparent 70%);
-    --surface: #171c25;
-    --surface-2: #1d232e;
-    --text: #e8ebf2;
-    --text-muted: #98a1b5;
+    --bg: #090b14;
+    --bg-accent: radial-gradient(1200px 600px at 50% -200px, #1c1838 0%, transparent 70%);
+    --surface: #131626;
+    --surface-2: #1a1e33;
+    --text: #eef0ff;
+    --text-muted: #9096b8;
     --given: #f4f6fb;
     --filled: #86b3ff;
     --error: #ff7b72;
@@ -59,12 +59,12 @@
     --cell-highlight: #202836;
     --cell-same: #2b4574;
     --cell-selected: #3a5ea0;
-    --primary: #4d7cf7;
-    --primary-strong: #3b6cf6;
+    --primary: #8b6cff;
+    --primary-strong: #a48bff;
     --primary-text: #ffffff;
-    --btn-bg: #222a38;
-    --btn-bg-hover: #2a3444;
-    --btn-text: #9bbcff;
+    --btn-bg: #1a1e33;
+    --btn-bg-hover: #22274a;
+    --btn-text: #c9bcff;
     --success: #34c48a;
     --lock: #5b6478;
     --hint-target: #1e4a3a;
@@ -72,19 +72,19 @@
     --hint-reason: #5a4a14;
     --hint-elim: #4a2a2a;
     --hint-unit: #1d2330;
-    --overlay: rgba(15, 18, 23, 0.94);
+    --overlay: rgba(9, 11, 20, 0.94);
     --shadow: 0 12px 34px rgba(0, 0, 0, 0.55);
     --shadow-sm: 0 3px 12px rgba(0, 0, 0, 0.35);
   }
 }
 
 :root[data-theme="dark"] {
-    --bg: #0f1217;
-    --bg-accent: radial-gradient(1200px 600px at 50% -200px, #1a2540 0%, transparent 70%);
-    --surface: #171c25;
-    --surface-2: #1d232e;
-    --text: #e8ebf2;
-    --text-muted: #98a1b5;
+    --bg: #090b14;
+    --bg-accent: radial-gradient(1200px 600px at 50% -200px, #1c1838 0%, transparent 70%);
+    --surface: #131626;
+    --surface-2: #1a1e33;
+    --text: #eef0ff;
+    --text-muted: #9096b8;
     --given: #f4f6fb;
     --filled: #86b3ff;
     --error: #ff7b72;
@@ -96,12 +96,12 @@
     --cell-highlight: #202836;
     --cell-same: #2b4574;
     --cell-selected: #3a5ea0;
-    --primary: #4d7cf7;
-    --primary-strong: #3b6cf6;
+    --primary: #8b6cff;
+    --primary-strong: #a48bff;
     --primary-text: #ffffff;
-    --btn-bg: #222a38;
-    --btn-bg-hover: #2a3444;
-    --btn-text: #9bbcff;
+    --btn-bg: #1a1e33;
+    --btn-bg-hover: #22274a;
+    --btn-text: #c9bcff;
     --success: #34c48a;
     --lock: #5b6478;
     --hint-target: #1e4a3a;
@@ -109,7 +109,7 @@
     --hint-reason: #5a4a14;
     --hint-elim: #4a2a2a;
     --hint-unit: #1d2330;
-    --overlay: rgba(15, 18, 23, 0.94);
+    --overlay: rgba(9, 11, 20, 0.94);
     --shadow: 0 12px 34px rgba(0, 0, 0, 0.55);
     --shadow-sm: 0 3px 12px rgba(0, 0, 0, 0.35);
 }
@@ -196,7 +196,7 @@ button:disabled { cursor: default; }
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(59, 108, 246, 0.35);
+  box-shadow: 0 4px 12px rgba(106, 76, 245, 0.35);
 }
 .brand-mark svg { width: 20px; height: 20px; }
 .logo {
@@ -222,7 +222,7 @@ button:disabled { cursor: default; }
 .btn-primary {
   background: var(--primary);
   color: var(--primary-text);
-  box-shadow: 0 6px 16px rgba(59, 108, 246, 0.3);
+  box-shadow: 0 6px 16px rgba(106, 76, 245, 0.3);
 }
 .btn-ghost { background: var(--btn-bg); color: var(--btn-text); }
 .btn-new { padding: 9px 14px; }
@@ -470,7 +470,7 @@ button:disabled { cursor: default; }
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 26px rgba(59, 108, 246, 0.4);
+  box-shadow: 0 10px 26px rgba(106, 76, 245, 0.4);
   margin-bottom: 6px;
   transition: transform 0.12s;
 }
@@ -619,7 +619,7 @@ button:disabled { cursor: default; }
   font-weight: 600;
 }
 .num.done { visibility: hidden; opacity: 0; }
-.num.active { background: var(--primary); color: var(--primary-text); box-shadow: 0 6px 16px rgba(59, 108, 246, 0.3); }
+.num.active { background: var(--primary); color: var(--primary-text); box-shadow: 0 6px 16px rgba(106, 76, 245, 0.3); }
 .num.active .count { color: rgba(255, 255, 255, 0.8); }
 .app.number-first .num { border: 1.5px solid transparent; }
 .app.notes-mode .num { font-size: clamp(1.15rem, 5.5vw, 1.6rem); color: var(--note); }
@@ -899,6 +899,68 @@ kbd {
 @supports (font-size: 1cqi) {
   .cell { font-size: clamp(1.25rem, 7cqi, 2.2rem); }
   .notes { font-size: clamp(0.56rem, 2.7cqi, 0.82rem); }
+}
+
+/* ---------- Hiệu ứng sống động: vùng hoàn thành, bộ đếm lỗi, màn hình kết quả ---------- */
+/* Hàng / cột / vùng 3x3 vừa đủ 9 ô: tỏa sáng tím rồi tắt, lan dần theo --unit-delay */
+.cell.unit-done { animation: unit-glow 0.7s ease-out var(--unit-delay, 0ms) both; }
+.cell.unit-done .value { animation: unit-text 0.7s ease-out var(--unit-delay, 0ms) both; }
+/* Ô vừa đủ 9 số vừa xong vùng: chạy cả hai hiệu ứng, không để cái sau đè mất cái trước */
+.cell.digit-done.unit-done {
+  animation: digit-fill 0.75s ease-in-out var(--fill-delay, 0ms) both, unit-glow 0.7s ease-out var(--unit-delay, 0ms) both;
+}
+.cell.digit-done.unit-done .value {
+  animation: digit-text 0.75s ease-in-out var(--fill-delay, 0ms) both, unit-text 0.7s ease-out var(--unit-delay, 0ms) both;
+}
+@keyframes unit-glow {
+  0% { box-shadow: inset 0 0 0 0 rgba(106, 76, 245, 0); }
+  35% { box-shadow: inset 0 0 0 2px rgba(106, 76, 245, 0.55), inset 0 0 0 99px rgba(106, 76, 245, 0.16); }
+  100% { box-shadow: inset 0 0 0 0 rgba(106, 76, 245, 0); }
+}
+@keyframes unit-text {
+  35% { transform: scale(1.14); color: var(--primary); }
+}
+.status-value.bump { animation: bump 0.32s ease-out; }
+@keyframes bump {
+  40% { transform: scale(1.25); }
+}
+.progress-fill { box-shadow: 0 0 10px rgba(106, 76, 245, 0.45); }
+
+/* Màn hình kết quả: thẻ phóng to vào, biểu tượng nảy, thời gian nổi bật, chỉ số hiện lần lượt, nút chính tỏa sáng */
+.modal-card.modal-result { animation: result-in 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.2); transform-origin: 50% 70%; }
+.result-emoji { animation: emoji-in 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.5) 0.1s both; }
+#modal-win .result-emoji { filter: drop-shadow(0 6px 14px rgba(106, 76, 245, 0.35)); }
+.modal-result .result-stats div { animation: stat-in 0.36s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+.modal-result .result-stats div:nth-child(1) { animation-delay: 0.12s; }
+.modal-result .result-stats div:nth-child(2) { animation-delay: 0.19s; background: rgba(106, 76, 245, 0.12); }
+.modal-result .result-stats div:nth-child(3) { animation-delay: 0.26s; }
+#win-time { color: var(--primary); font-size: 1.3rem; }
+.modal-result .btn-primary { animation: cta 2.2s ease-in-out 1s infinite; }
+@keyframes result-in {
+  0% { transform: scale(0.86) translateY(14px); opacity: 0; }
+  100% { transform: none; opacity: 1; }
+}
+@keyframes emoji-in {
+  0% { transform: scale(0.3) rotate(-20deg); opacity: 0; }
+  70% { transform: scale(1.15) rotate(6deg); opacity: 1; }
+  100% { transform: none; }
+}
+@keyframes stat-in {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes cta {
+  0%, 100% { box-shadow: 0 6px 16px rgba(106, 76, 245, 0.3); }
+  50% { box-shadow: 0 6px 16px rgba(106, 76, 245, 0.3), 0 0 0 5px rgba(106, 76, 245, 0.18); }
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(106, 76, 245, 0.38); }
+  .btn-primary:active { transform: scale(0.97); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cell.unit-done, .cell.unit-done .value, .cell.digit-done.unit-done, .cell.digit-done.unit-done .value, .status-value.bump,
+  .modal-card.modal-result, .result-emoji, .modal-result .result-stats div, .modal-result .btn-primary { animation: none !important; }
+  .btn-primary:hover { transform: none; }
 }
 
 /* ---------- Desktop tweaks ---------- */

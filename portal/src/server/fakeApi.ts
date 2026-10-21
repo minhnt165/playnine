@@ -1,8 +1,8 @@
 // Chỉ dùng trong test; không được import từ code chạy thật.
 import type { ServerApi } from './api'
 import type {
-  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, FinishResult, GameEvent, GameMeta, LeaderRow, Period,
-  Profile, RunResult,
+  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, FeedItem, FinishResult, GameEvent, GameMeta, LeaderRow, Period,
+  PlayerRow, PointsSummary, Post, Profile, RatingSummary, RunResult, TopRow,
 } from './types'
 
 export type FakeRun = { id: string; gameId: string; mode: string; result?: RunResult }
@@ -16,6 +16,21 @@ export type FakeState = {
   bests: Record<string, BestRow[]>
   runs: FakeRun[]
   myRanks: Record<string, { rank: number; value: number }>
+  /** Xếp hạng người chơi, khóa `${kind}|${period}`. */
+  playerBoards: Record<string, PlayerRow[]>
+  /** Bảng điểm theo game, khóa `${gameId}|${period}`. */
+  gamePoints: Record<string, LeaderRow[]>
+  myGamePoints: Record<string, { rank: number; value: number }>
+  ratings: Record<string, RatingSummary>
+  myRatings: Record<string, number>
+  /** Mọi bài (kể cả nháp); posts() chỉ trả bài đã đăng. */
+  posts: Post[]
+  /** Mọi tin tự động (kể cả đã ẩn); newsFeed() chỉ trả tin chưa ẩn. */
+  feed: FeedItem[]
+  /** Điểm theo id người chơi. */
+  points: Record<string, PointsSummary>
+  /** Top mọi game theo kỳ. */
+  topBoards: Partial<Record<Period, TopRow[]>>
   finish: FinishResult
   events: GameEvent[]
   /** Bảng xếp hạng sự kiện theo id sự kiện. */
@@ -41,6 +56,7 @@ export type FakeApi = ServerApi & {
 export function createFakeApi(seed: Partial<FakeState> = {}): FakeApi {
   const state: FakeState = {
     user: null, games: defaultGames(), boards: {}, totals: {}, profiles: {}, bests: {}, runs: [], myRanks: {},
+    playerBoards: {}, topBoards: {}, points: {}, posts: [], feed: [], gamePoints: {}, myGamePoints: {}, ratings: {}, myRatings: {},
     finish: { status: 'finished', reason: null, ranks: {} },
     events: [], eventBoards: {}, collections: [], badges: {}, adminRuns: [], adminPlayers: [],
     ...seed,
@@ -70,6 +86,12 @@ export function createFakeApi(seed: Partial<FakeState> = {}): FakeApi {
       return () => listeners.delete(cb)
     },
     signInWithGoogle: () => run('signInWithGoogle', [], () => undefined),
+    signInAsGuest: () =>
+      run('signInAsGuest', [], () => {
+        state.user = { id: 'guest-1', displayName: 'Guest-ABCD', avatarUrl: null, isGuest: true }
+        listeners.forEach((l) => l(state.user))
+      }),
+    linkGoogle: () => run('linkGoogle', [], () => undefined),
     signOut: () =>
       run('signOut', [], () => {
         state.user = null
@@ -99,6 +121,20 @@ export function createFakeApi(seed: Partial<FakeState> = {}): FakeApi {
       ),
     myRank: (gameId, mode, period) =>
       run('myRank', [gameId, mode, period], () => state.myRanks[`${gameId}|${mode}|${period}`] ?? null),
+    playerLeaderboard: (kind, period, limit) =>
+      run('playerLeaderboard', [kind, period, limit], () => (state.playerBoards[`${kind}|${period}`] ?? []).slice(0, limit ?? 50)),
+    gamePointsBoard: (gameId, period, limit) =>
+      run('gamePointsBoard', [gameId, period, limit], () => (state.gamePoints[`${gameId}|${period}`] ?? []).slice(0, limit ?? 50)),
+    myGamePoints: (gameId, period) => run('myGamePoints', [gameId, period], () => state.myGamePoints[`${gameId}|${period}`] ?? null),
+    ratingSummary: () => run('ratingSummary', [], () => state.ratings),
+    myRatings: () => run('myRatings', [], () => state.myRatings),
+    rateGame: (gameId, stars) =>
+      run('rateGame', [gameId, stars], () => {
+        if (stars === null) delete state.myRatings[gameId]
+        else state.myRatings[gameId] = stars
+      }),
+    playerPoints: (userId) => run('playerPoints', [userId], () => state.points[userId] ?? {}),
+    topBoards: (period, limit) => run('topBoards', [period, limit], () => state.topBoards[period] ?? []),
     profile: (userId) => run('profile', [userId], () => state.profiles[userId] ?? null),
     profileBests: (userId) => run('profileBests', [userId], () => state.bests[userId] ?? []),
     updateDisplayName: (name) =>
@@ -111,15 +147,57 @@ export function createFakeApi(seed: Partial<FakeState> = {}): FakeApi {
       run('eventLeaderboard', [eventId, limit], () => (state.eventBoards[eventId] ?? []).slice(0, limit ?? 50)),
     collections: () => run('collections', [], () => state.collections),
     profileBadges: (userId) => run('profileBadges', [userId], () => state.badges[userId] ?? []),
-    adminUpdateGame: (gameId, hidden, rules) =>
-      run('adminUpdateGame', [gameId, hidden, rules], () => {
+    posts: () =>
+      run('posts', [], () =>
+        state.posts
+          .filter((p) => p.publishedAt !== null && Date.parse(p.publishedAt) <= Date.now())
+          .sort((a, b) => Number(b.pinned) - Number(a.pinned) || Date.parse(b.publishedAt!) - Date.parse(a.publishedAt!)),
+      ),
+    post: (slug) =>
+      run('post', [slug], () => state.posts.find((p) => p.slug === slug && p.publishedAt !== null && Date.parse(p.publishedAt) <= Date.now()) ?? null),
+    adminPosts: () => run('adminPosts', [], () => state.posts),
+    adminSavePost: (p) =>
+      run('adminSavePost', [p], () => {
+        const id = p.id ?? `post-${state.posts.length + 1}`
+        const saved: Post = { ...p, id, updatedAt: new Date().toISOString() }
+        state.posts = state.posts.some((x) => x.id === id) ? state.posts.map((x) => (x.id === id ? saved : x)) : [...state.posts, saved]
+        return id
+      }),
+    adminDeletePost: (id) =>
+      run('adminDeletePost', [id], () => {
+        state.posts = state.posts.filter((p) => p.id !== id)
+      }),
+    newsFeed: (limit) =>
+      run('newsFeed', [limit], () =>
+        state.feed
+          .filter((f) => !f.hidden)
+          .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
+          .slice(0, limit ?? 60),
+      ),
+    adminNewsFeed: () => run('adminNewsFeed', [], () => state.feed),
+    adminHideNews: (id, hidden) =>
+      run('adminHideNews', [id, hidden], () => {
+        if (!state.feed.some((f) => f.id === id)) throw new Error('not_found')
+        state.feed = state.feed.map((f) => (f.id === id ? { ...f, hidden } : f))
+      }),
+    adminUpdateGame: (gameId, hidden, rules, points, modePoints) =>
+      // Ghi đúng số tham số đã truyền (bỏ các tham số cuối undefined).
+      run('adminUpdateGame', modePoints !== undefined ? [gameId, hidden, rules, points, modePoints] : points === undefined ? [gameId, hidden, rules] : [gameId, hidden, rules, points], () => {
         state.games = state.games.map((g) =>
           g.id !== gameId
             ? g
             : {
                 ...g,
                 hidden: hidden ?? g.hidden,
-                modes: g.modes.map((m) => (rules[m.key] ? { ...m, rules: rules[m.key] } : m)),
+                ...(points != null ? { points } : {}),
+                modes: g.modes.map((m0) => {
+                  const m = rules[m0.key] ? { ...m0, rules: rules[m0.key] } : m0
+                  if (!modePoints || !(m.key in modePoints)) return m
+                  const v = modePoints[m.key]
+                  if (v !== null) return { ...m, points: v }
+                  const { points: _drop, ...rest } = m
+                  return rest
+                }),
               },
         )
       }),

@@ -11,7 +11,7 @@
   PN && PN.init({ gameId: 'co9o' });
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.1.0';
   const KEYS = {
     settings: 'playnine-co9o-settings-v1',
     save: 'playnine-co9o-save-v1',
@@ -36,6 +36,10 @@
 
   const $ = (id) => document.getElementById(id);
   const reduceMotion = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  // Âm thanh + pháo giấy từ SDK PlayNine; SDK cũ hoặc không có SDK thì im lặng, không lỗi
+  const sfx = (name, o) => { try { PN && PN.sfx && PN.sfx.play(name, o); } catch (e) { /* bỏ qua */ } };
+  const hasConfetti = !!(PN && PN.fx && typeof PN.fx.confetti === 'function');
+  let booted = false; // ván dựng lúc mở trang thì không phát tiếng bắt đầu
 
   /* ================= 1. Lưu trữ ================= */
   function readJSON(key) {
@@ -193,6 +197,7 @@
     render();
     writeSummary();
     PN && game.mode === 'ai' && PN.gameStart({ mode: game.level });
+    if (booted) sfx('start');
     scheduleAi();
   }
 
@@ -203,11 +208,17 @@
   function makeMove(m) {
     const s = game.state;
     const before = s.boards.slice();
+    const mover = s.turn;
     Co9o.play(s, m);
     game.moves.push(m);
     const closed = [];
     for (let b = 0; b < 9; b++) if (before[b] !== s.boards[b]) closed.push(b);
     fx = { move: m, closed, line: true };
+    // Tiếng đánh: nước của máy trầm và nhỏ hơn; thắng bàn nhỏ: bạn nghe tiếng "ăn", máy ăn thì tiếng trầm
+    const byAi = game.mode === 'ai' && mover !== game.human;
+    sfx('place', byAi ? { pitch: 0.82, volume: 0.8 } : game.mode === 'pvp' && mover === O ? { pitch: 1.12 } : undefined);
+    if (closed.some((b) => s.boards[b] === X || s.boards[b] === O)) setTimeout(() => sfx(byAi ? 'capture' : 'clear'), 150);
+    else if (closed.length) setTimeout(() => sfx('flip', { volume: 0.7 }), 150);
     saveGame();
     render();
     writeSummary();
@@ -217,11 +228,12 @@
 
   function handleCell(m) {
     if (!game || game.state.winner) return;
-    if (thinking) { toast(tr('toast.thinking')); return; }
+    if (thinking) { sfx('error', { volume: 0.6 }); toast(tr('toast.thinking')); return; }
     if (!humanCanPlay()) return;
     const s = game.state;
-    if (s.cells[m]) return;
+    if (s.cells[m]) { sfx('error', { volume: 0.6 }); return; }
     if (!Co9o.isLegal(s, m)) {
+      sfx('error');
       toast(s.forced >= 0 ? tr('toast.forced', { pos: POS[s.forced] }) : tr('toast.closed'));
       nudgePlayable();
       return;
@@ -280,6 +292,7 @@
     saveGame();
     render();
     writeSummary();
+    sfx('move', { pitch: 0.8 });
     scheduleAi();
   }
 
@@ -298,6 +311,7 @@
     render();
     writeSummary();
     toast(tr('toast.swap', { mark: MARK[human] }));
+    sfx('flip');
     scheduleAi();
   }
 
@@ -306,7 +320,16 @@
     saveGame();
     writeSummary();
     clearTimeout(resultTimer);
-    resultTimer = setTimeout(showResult, reduceMotion.matches ? 250 : 1350);
+    resultTimer = setTimeout(() => { outcomeFx(); showResult(); }, reduceMotion.matches ? 250 : 1350);
+  }
+
+  // Âm thanh kết thúc ván, kèm pháo giấy khi thắng (ván hai người: luôn mừng người thắng)
+  function outcomeFx() {
+    const w = game && game.state.winner;
+    if (!w) return;
+    if (w === DRAW) sfx('draw');
+    else if (game.mode === 'ai' && w !== game.human) sfx('lose');
+    else { sfx('win'); if (hasConfetti) { try { PN.fx.confetti(); } catch (e) { /* bỏ qua */ } } }
   }
 
   function recordResult() {
@@ -437,6 +460,13 @@
           } else {
             el.className = 'sb-mark ' + (s.boards[b] === X ? 'x' : 'o') + (fx.closed.includes(b) ? ' new' : '');
             el.innerHTML = markSvg(s.boards[b]);
+            // Bàn nhỏ vừa bị thắng: lóe sáng theo màu bên thắng
+            if (fx.closed.includes(b) && !reduceMotion.matches) {
+              sb.style.setProperty('--won', s.boards[b] === X ? 'var(--x)' : 'var(--o)');
+              sb.classList.remove('flash');
+              void sb.offsetWidth; // khởi động lại hiệu ứng
+              sb.classList.add('flash');
+            }
           }
           el.setAttribute('aria-hidden', 'true');
           sb.appendChild(el);
@@ -740,6 +770,7 @@
     const ai = game.mode === 'ai';
     const lv = levelLabel(game.level);
     const markEl = $('result-mark');
+    document.querySelector('#modal-result .modal-card').dataset.outcome = w === DRAW ? 'draw' : ai && w !== game.human ? 'lose' : 'win';
     let title, sub, celebrate = false;
     if (w === DRAW) {
       title = tr('result.draw');
@@ -773,7 +804,7 @@
     $('btn-result-new').textContent = ai ? tr('result.playAgain') : tr('controls.new');
     const conf = $('confetti');
     conf.innerHTML = '';
-    if (celebrate && !reduceMotion.matches) {
+    if (celebrate && !reduceMotion.matches && !hasConfetti) { // SDK mới đã bắn pháo giấy toàn màn hình
       const colors = ['var(--x)', 'var(--o)', 'var(--accent)', 'var(--text)'];
       for (let i = 0; i < 28; i++) {
         const p = document.createElement('i');
@@ -835,6 +866,18 @@
   // Ngôn ngữ: lưu ván rồi lưu khóa chung 'playnine-lang' và tải lại trang
   const langGroup = document.querySelector('#modal-settings [data-setting="lang"]');
   bindSegmented(langGroup, (v) => { saveGame(); I18N.set(v); });
+  // Bật/tắt âm thanh: dùng chung khóa với cổng PlayNine; SDK không có âm thanh thì ẩn mục này
+  const soundGroup = document.querySelector('#modal-settings [data-setting="sound"]');
+  if (PN && PN.sfx && typeof PN.sfx.setMuted === 'function') {
+    $('field-sound').hidden = false;
+    const syncSound = () => setSegmented(soundGroup, PN.sfx.isMuted() ? 'off' : 'on');
+    syncSound();
+    if (typeof PN.sfx.onChange === 'function') PN.sfx.onChange(syncSound);
+    bindSegmented(soundGroup, (v) => {
+      PN.sfx.setMuted(v === 'off');
+      if (v === 'on') sfx('tap');
+    });
+  }
   $('btn-settings').addEventListener('click', () => { setSegmented(themeGroup, settings.theme); setSegmented(langGroup, I18N.lang); openModal('modal-settings'); });
   $('btn-settings-help').addEventListener('click', () => { closeModal('modal-settings'); openHelp(); });
   if (window.matchMedia) {
@@ -1001,6 +1044,7 @@
   } else {
     startGame({ mode: settings.mode, level: settings.level, human: settings.side });
   }
+  booted = true;
   // Lần đầu vào game: tự mở hướng dẫn (đánh dấu đã xem ngay để chỉ hiện một lần)
   if (!settings.guideSeen) {
     settings.guideSeen = true;

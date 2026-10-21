@@ -26,6 +26,7 @@ Làm cho từng project (dev và prod đều cần).
 7. Vào **Google Auth Platform → Audience** (hoặc OAuth consent screen → Publishing status) và bấm **Publish app** để chuyển sang **In production**. App chỉ dùng scope `openid`, `email`, `profile` nên không cần Google xác minh. Nếu để ở **Testing** thì chỉ các test user đã thêm mới đăng nhập được.
 8. Nên dùng **một OAuth client duy nhất** cho cả hai project: thêm cả hai redirect URI (`https://<ref-dev>.supabase.co/auth/v1/callback` và `https://<ref-prod>.supabase.co/auth/v1/callback`) vào client đó, rồi dán cùng Client ID/Secret vào Provider Google của cả hai project.
 9. Trong Supabase: **Authentication → Providers → Email** → tắt (disable). Chỉ dùng đăng nhập Google.
+10. Trong Supabase: **Authentication → Sign In / Providers** → bật **Allow anonymous sign-ins** (cổng tự tạo tài khoản khách cho người chưa đăng nhập) và bật **Allow manual linking** (để khách liên kết Google mà giữ điểm). Nên bật thêm CAPTCHA hoặc giữ rate limit cho anonymous sign-ins vì ai cũng tạo được tài khoản khách.
 
 ## 3. URL Configuration
 
@@ -57,6 +58,7 @@ npx --registry=https://registry.npmjs.org/ supabase db push
 - `login` mở trình duyệt để lấy access token (làm một lần).
 - `link` hỏi **mật khẩu database** của project đó (đặt ở bước 1; quên thì đặt lại ở **Project Settings → Database**); chạy lại với `<ref>` kia để chuyển sang project còn lại.
 - `db push` áp các file trong `migrations/` lên project đang link.
+- Luôn `db push` **trước** khi deploy cổng: cổng mới gọi các hàm của migration mới (điểm, bảng điểm theo game, tin tức, đánh giá); deploy cổng trước thì các mục đó báo lỗi tải.
 - Mạng công ty chặn TLS (lỗi chứng chỉ): thêm `--strict-ssl=false` vào lệnh `npx`, chỉ khi thật sự bị lỗi.
 
 ## Bật pg_cron
@@ -75,7 +77,11 @@ Trong GitHub repo: **Settings → Secrets and variables → Actions → New repo
 - `SUPABASE_URL`: Project URL của `playnine-prod`.
 - `SUPABASE_ANON_KEY`: anon key của `playnine-prod`.
 
-Hai secret này được dùng bởi `deploy.yml` (truyền vào build thành `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`) và `keepalive.yml` (gọi `ping()` mỗi ngày để project Free không bị tạm dừng). Job e2e cố ý không nhận hai biến này để test chạy trên bản không có server và không ghi dữ liệu lên prod. Chưa đặt secret thì build vẫn chạy như giai đoạn 1 (không có nút đăng nhập) và keep-alive tự bỏ qua kèm cảnh báo.
+- `SUPABASE_SERVICE_ROLE_KEY`: service_role key của `playnine-prod` (**Project Settings → API Keys**). Chỉ `crawl-news.yml` dùng; key này bỏ qua RLS nên tuyệt đối không đưa vào build cổng.
+
+Hai secret đầu được dùng bởi `deploy.yml` (truyền vào build thành `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`) và `keepalive.yml` (gọi `ping()` mỗi ngày để project Free không bị tạm dừng). Job e2e cố ý không nhận hai biến này để test chạy trên bản không có server và không ghi dữ liệu lên prod. Chưa đặt secret thì build vẫn chạy như giai đoạn 1 (không có nút đăng nhập) và keep-alive tự bỏ qua kèm cảnh báo.
+
+`crawl-news.yml` chạy `scripts/crawl-news.mjs` mỗi 6 giờ: đọc RSS các trang tin game (danh sách ở `SOURCES` trong script), bỏ tin khớp bộ lọc `BLOCKED` (18+, cờ bạc…) rồi gọi `ingest_news()` để thêm tin mới vào bảng `news_feed` (giữ 30 ngày). Chỉ lưu tiêu đề, tóm tắt ngắn, ảnh và link bài gốc. Chạy tay: **Actions → Crawl game news → Run workflow**. Thiếu `SUPABASE_URL` hoặc `SUPABASE_SERVICE_ROLE_KEY` thì job tự bỏ qua kèm cảnh báo. Admin ẩn tin không phù hợp ở tab **Bài viết**.
 
 ## 6. Chạy local (dev)
 

@@ -78,3 +78,13 @@
 .admin-order { margin: 10px 0 0; padding-left: 22px; display: grid; gap: 6px; }
 .admin-order li span { display: inline-block; min-width: 140px; margin-right: 8px; }
 .admin-order .admin-btn { margin-right: 4px; padding: 2px 10px; }
+
+/* Bài viết: ô nội dung dài trải hết hàng của form */
+.admin-post-form .admin-field-cell:has(textarea[rows="12"]) { grid-column: 1 / -1; }
+.admin-post-form textarea { resize: vertical; font-family: inherit; line-height: 1.5; }
+
+/* Tin game tự động trong tab Bài viết */
+.admin-feed { margin-top: 28px; }
+.admin-feed h3 { margin: 0 0 4px; }
+.admin-feed .admin-hint { margin: 0 0 12px; }
+.admin-item-off { opacity: .6; }

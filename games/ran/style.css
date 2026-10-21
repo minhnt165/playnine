@@ -1,21 +1,21 @@
 /* ===================== Bảng màu PlayNine ===================== */
 :root {
-  --bg: #f6f2ea;
+  --bg: #f3f4fb;
   --surface: #ffffff;
-  --surface-2: #efe8db;
-  --text: #1d1711;
-  --muted: #6e6255;
-  --accent: #b07d1f;
-  --accent-strong: #946815;
+  --surface-2: #eceefa;
+  --text: #14162b;
+  --muted: #5d6285;
+  --accent: #6a4cf5;
+  --accent-strong: #5a3be0;
   --accent-text: #ffffff;
-  --accent-soft: rgba(176, 125, 31, 0.14);
+  --accent-soft: rgba(106, 76, 245, 0.12);
   --red: #b3261e;
-  --line: rgba(29, 23, 17, 0.1);
-  --focus: #b07d1f;
-  --shadow: 0 14px 40px rgba(60, 40, 15, 0.18);
-  --shadow-sm: 0 3px 12px rgba(60, 40, 15, 0.08);
-  --bg-glow: radial-gradient(900px 500px at 50% -260px, rgba(176, 125, 31, 0.16), transparent 70%);
-  --overlay-bg: rgba(246, 242, 234, 0.84);
+  --line: rgba(17, 20, 45, 0.1);
+  --focus: #6a4cf5;
+  --shadow: 0 14px 40px rgba(17, 20, 45, 0.18);
+  --shadow-sm: 0 3px 12px rgba(17, 20, 45, 0.08);
+  --bg-glow: radial-gradient(900px 500px at 50% -260px, rgba(106, 76, 245, 0.14), transparent 70%);
+  --overlay-bg: rgba(243, 244, 251, 0.84);
 
   /* Bàn chơi (canvas đọc các biến này) */
   --board-bg: #ebe1cc;
@@ -37,21 +37,21 @@
 /* Giao diện tối: theo hệ thống (trừ khi chọn Sáng) hoặc khi chọn Tối */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e0b09;
-    --surface: #1a1511;
-    --surface-2: #241d17;
-    --text: #f1e9da;
-    --muted: #a69684;
-    --accent: #e0b964;
-    --accent-strong: #ecc97c;
-    --accent-text: #1d1711;
-    --accent-soft: rgba(224, 185, 100, 0.16);
-    --line: rgba(241, 233, 218, 0.1);
-    --focus: #e0b964;
+    --bg: #090b14;
+    --surface: #131626;
+    --surface-2: #1a1e33;
+    --text: #eef0ff;
+    --muted: #9096b8;
+    --accent: #8b6cff;
+    --accent-strong: #a48bff;
+    --accent-text: #ffffff;
+    --accent-soft: rgba(139, 108, 255, 0.18);
+    --line: rgba(255, 255, 255, 0.1);
+    --focus: #22d3ee;
     --shadow: 0 14px 40px rgba(0, 0, 0, 0.6);
     --shadow-sm: 0 3px 12px rgba(0, 0, 0, 0.4);
-    --bg-glow: radial-gradient(900px 500px at 50% -260px, rgba(224, 185, 100, 0.12), transparent 70%);
-    --overlay-bg: rgba(14, 11, 9, 0.8);
+    --bg-glow: radial-gradient(900px 500px at 50% -260px, rgba(139, 108, 255, 0.2), transparent 70%);
+    --overlay-bg: rgba(9, 11, 20, 0.8);
     --board-bg: #1f1913;
     --board-alt: rgba(241, 233, 218, 0.035);
     --board-edge: #e0b964;
@@ -64,21 +64,21 @@
 }
 
 :root[data-theme="dark"] {
-  --bg: #0e0b09;
-  --surface: #1a1511;
-  --surface-2: #241d17;
-  --text: #f1e9da;
-  --muted: #a69684;
-  --accent: #e0b964;
-  --accent-strong: #ecc97c;
-  --accent-text: #1d1711;
-  --accent-soft: rgba(224, 185, 100, 0.16);
-  --line: rgba(241, 233, 218, 0.1);
-  --focus: #e0b964;
+  --bg: #090b14;
+  --surface: #131626;
+  --surface-2: #1a1e33;
+  --text: #eef0ff;
+  --muted: #9096b8;
+  --accent: #8b6cff;
+  --accent-strong: #a48bff;
+  --accent-text: #ffffff;
+  --accent-soft: rgba(139, 108, 255, 0.18);
+  --line: rgba(255, 255, 255, 0.1);
+  --focus: #22d3ee;
   --shadow: 0 14px 40px rgba(0, 0, 0, 0.6);
   --shadow-sm: 0 3px 12px rgba(0, 0, 0, 0.4);
-  --bg-glow: radial-gradient(900px 500px at 50% -260px, rgba(224, 185, 100, 0.12), transparent 70%);
-  --overlay-bg: rgba(14, 11, 9, 0.8);
+  --bg-glow: radial-gradient(900px 500px at 50% -260px, rgba(139, 108, 255, 0.2), transparent 70%);
+  --overlay-bg: rgba(9, 11, 20, 0.8);
   --board-bg: #1f1913;
   --board-alt: rgba(241, 233, 218, 0.035);
   --board-edge: #e0b964;
@@ -367,6 +367,19 @@ button:disabled { cursor: default; }
   from { opacity: 1; transform: translateY(0); }
   to { opacity: 0; transform: translateY(-26px); }
 }
+/* Ăn mồi: số điểm nảy nhẹ. Vượt kỷ lục: khung điểm sáng viền tím một nhịp */
+.score-box.bump .score-value { animation: score-bump 0.28s ease-out; transform-origin: left center; }
+.score-box.record { animation: record-glow 1.2s ease-out; }
+@keyframes score-bump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.12); color: var(--accent); }
+  100% { transform: scale(1); }
+}
+@keyframes record-glow {
+  0% { box-shadow: var(--shadow-sm), 0 0 0 0 var(--accent); }
+  30% { box-shadow: var(--shadow-sm), 0 0 0 3px var(--accent), 0 0 22px var(--accent-soft); }
+  100% { box-shadow: var(--shadow-sm), 0 0 0 0 transparent; }
+}
 
 .btn-pause {
   min-height: 52px;
@@ -412,6 +425,16 @@ button:disabled { cursor: default; }
   touch-action: none;
 }
 .board:focus-visible { outline-offset: 4px; }
+/* Va chạm: bàn chơi rung ngắn */
+.board.crash { animation: crash-shake 0.42s ease-out; }
+@keyframes crash-shake {
+  0%, 100% { transform: none; }
+  15% { transform: translate(-6px, 2px); }
+  30% { transform: translate(5px, -3px); }
+  45% { transform: translate(-4px, 1px); }
+  60% { transform: translate(3px, -1px); }
+  80% { transform: translate(-1px, 0); }
+}
 /* Viền bàn: tường liền (Cổ điển, Mê cung) hoặc nét đứt (Xuyên tường: đi qua được) */
 .board::after {
   content: "";
@@ -481,6 +504,16 @@ button:disabled { cursor: default; }
   text-align: center;
   width: 100%;
   max-width: 320px;
+  padding: 18px 16px 18px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  animation: result-in 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.25) 0.05s backwards;
+}
+@keyframes result-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.86); }
+  to { opacity: 1; transform: none; }
 }
 .overlay-title {
   margin: 0;
@@ -502,6 +535,14 @@ button:disabled { cursor: default; }
   flex-wrap: wrap;
 }
 .overlay-actions .btn { min-width: 112px; min-height: 46px; }
+.overlay-actions .btn-primary {
+  box-shadow: 0 6px 18px var(--accent-soft), 0 0 0 1px var(--accent-soft);
+  animation: cta-pulse 2.4s ease-in-out 1s infinite;
+}
+@keyframes cta-pulse {
+  0%, 100% { box-shadow: 0 6px 18px var(--accent-soft), 0 0 0 0 var(--accent-soft); }
+  50% { box-shadow: 0 6px 18px var(--accent-soft), 0 0 0 6px var(--accent-soft); }
+}
 #overlay-over.won .overlay-title { color: var(--accent); }
 
 .new-best {
@@ -536,6 +577,24 @@ button:disabled { cursor: default; }
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+/* Trong thẻ kết quả: ô số liệu nền phụ, điểm ván này nổi bật màu nhấn */
+.overlay-card .over-stats div { background: var(--surface-2); box-shadow: none; }
+.overlay-card .over-stats div:first-child { background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent-soft); }
+.overlay-card .over-stats div:first-child dd {
+  color: var(--accent);
+  font-size: 1.45rem;
+  animation: score-reveal 0.5s ease-out 0.3s backwards;
+}
+.overlay-card .new-best { animation: badge-pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.5) 0.25s backwards; }
+@keyframes score-reveal {
+  from { opacity: 0; transform: scale(0.6); }
+  60% { opacity: 1; transform: scale(1.12); }
+  to { transform: scale(1); }
+}
+@keyframes badge-pop {
+  from { opacity: 0; transform: scale(0.4) rotate(-8deg); }
+  to { opacity: 1; transform: none; }
 }
 
 /* ---------- Nút điều hướng (D-pad) ---------- */
@@ -630,7 +689,7 @@ kbd {
 .modal-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(14, 11, 9, 0.5);
+  background: rgba(9, 11, 20, 0.5);
   animation: fade-in 0.2s ease;
 }
 .modal-card {
@@ -707,9 +766,9 @@ kbd {
   box-shadow: var(--shadow-sm);
 }
 .start .segmented button[aria-checked="true"] { color: var(--accent-strong); }
-:root[data-theme="dark"] .segmented button[aria-checked="true"] { background: #3a2e24; }
+:root[data-theme="dark"] .segmented button[aria-checked="true"] { background: #2a2f52; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .segmented button[aria-checked="true"] { background: #3a2e24; }
+  :root:not([data-theme="light"]) .segmented button[aria-checked="true"] { background: #2a2f52; }
 }
 
 .switch {
@@ -837,6 +896,13 @@ kbd {
 /* ===================== Giảm chuyển động ===================== */
 @media (prefers-reduced-motion: reduce) {
   .overlay,
+  .overlay-card,
+  .overlay-card .over-stats dd,
+  .overlay-card .new-best,
+  .overlay-actions .btn-primary,
+  .board.crash,
+  .score-box,
+  .score-box .score-value,
   .modal-card,
   .modal-backdrop,
   .toast,

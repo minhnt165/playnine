@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { formatValue, periodsFor } from './leaderboardModel'
+import { formatValue, unitLabel } from './leaderboardModel'
 
 describe('leaderboardModel', () => {
-  it('periodsFor: daily chỉ có kỳ day, mode khác có week và all', () => {
-    expect(periodsFor('daily')).toEqual(['day'])
-    expect(periodsFor('4x4')).toEqual(['week', 'all'])
+  it('unitLabel: chọn số ít/nhiều theo n, hiện số đã định dạng', () => {
+    const t = (_k: string, p?: Record<string, string | number>) => (p?.n === 1 ? '1 pt' : `${p?.n} pts`)
+    expect(unitLabel(t, 'lbs.unit.points', 1, String)).toBe('1 pt')
+    expect(unitLabel(t, 'lbs.unit.points', 1234, (n) => n.toLocaleString('en-US'))).toBe('1,234 pts')
   })
 
   it('formatValue time_low: mm:ss, dưới 60s có 1 chữ số thập phân', () => {

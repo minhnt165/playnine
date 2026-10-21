@@ -97,6 +97,9 @@ var I18N = (() => {
       'settings.speedFast': 'Fast',
       'settings.speedOff': 'Off',
       'settings.speedDesc': 'When off, discs appear in place instantly with no drop animation.',
+      'settings.sound': 'Sound',
+      'settings.soundOn': 'On',
+      'settings.soundOff': 'Off',
       'settings.replayHelp': 'Show how to play again',
       'settings.version': 'Four in a Row · PlayNine · version',
 
@@ -275,6 +278,9 @@ var I18N = (() => {
       'settings.speedFast': 'Nhanh',
       'settings.speedOff': 'Tắt',
       'settings.speedDesc': 'Tắt thì quân hiện ngay vào ô, không có hiệu ứng rơi.',
+      'settings.sound': 'Âm thanh',
+      'settings.soundOn': 'Bật',
+      'settings.soundOff': 'Tắt',
       'settings.replayHelp': 'Xem lại cách chơi',
       'settings.version': 'Bốn Liên Tiếp · PlayNine · phiên bản',
 

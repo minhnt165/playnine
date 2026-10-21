@@ -8,6 +8,9 @@ import { errorCode, RULE_FIELDS, rulesFromForm } from './forms'
 type Values = Record<string, Record<keyof Rules, string>>
 type Bad = { mode: string; field: keyof Rules } | null
 
+const POINTS = /^\d{1,4}$/
+const okPoints = (s: string) => POINTS.test(s.trim()) && Number(s) <= 1000
+
 const toValues = (meta: GameMeta): Values =>
   Object.fromEntries(
     meta.modes.map((m) => [
@@ -23,7 +26,15 @@ function GameRow({ id, name, meta }: { id: string; name: string; meta: GameMeta 
   const { t, loc } = useI18n()
   const { api, refreshGames } = useServer()
   const [hidden, setHidden] = useState(meta.hidden)
+  // Server chưa có cột points thì không hiện ô điểm.
+  const [points, setPoints] = useState(meta.points === undefined ? null : String(meta.points))
+  const [badPoints, setBadPoints] = useState(false)
   const [values, setValues] = useState<Values>(() => toValues(meta))
+  // Điểm riêng từng mode: '' = dùng điểm mặc định của game.
+  const [modePts, setModePts] = useState<Record<string, string>>(() =>
+    Object.fromEntries(meta.modes.map((m) => [m.key, m.points === undefined ? '' : String(m.points)])),
+  )
+  const [badModePts, setBadModePts] = useState<string | null>(null)
   const [bad, setBad] = useState<Bad>(null)
   const [msg, setMsg] = useState<{ kind: 'saved' } | { kind: 'error'; code: string } | null>(null)
   const [busy, setBusy] = useState(false)
@@ -41,10 +52,31 @@ function GameRow({ id, name, meta }: { id: string; name: string; meta: GameMeta 
       setBad({ mode: r.mode, field: r.field })
       return
     }
+    const p = points === null ? undefined : Number(points)
+    if (p !== undefined && !okPoints(points!)) {
+      setBadPoints(true)
+      return
+    }
+    const badMode = meta.modes.find((m) => modePts[m.key].trim() !== '' && !okPoints(modePts[m.key]))
+    if (badMode) {
+      setBadModePts(badMode.key)
+      return
+    }
+    // Chỉ mode đổi điểm: '' (bỏ điểm riêng) gửi null.
+    const modeChanges: Record<string, number | null> = {}
+    for (const m of meta.modes) {
+      const s = modePts[m.key].trim()
+      const next = s === '' ? null : Number(s)
+      if (next !== (m.points ?? null)) modeChanges[m.key] = next
+    }
+    const pChanged = p !== undefined && p !== meta.points
     setBusy(true)
     setMsg(null)
     try {
-      await api.adminUpdateGame(id, hidden, r.rules)
+      // Chỉ gửi điểm khi đổi; không đổi thì gọi như cũ.
+      if (Object.keys(modeChanges).length > 0) await api.adminUpdateGame(id, hidden, r.rules, pChanged ? p : null, modeChanges)
+      else if (!pChanged) await api.adminUpdateGame(id, hidden, r.rules)
+      else await api.adminUpdateGame(id, hidden, r.rules, p)
       setMsg({ kind: 'saved' })
       await refreshGames()
     } catch (e) {
@@ -64,6 +96,23 @@ function GameRow({ id, name, meta }: { id: string; name: string; meta: GameMeta 
           <input type="checkbox" checked={hidden} onChange={(e) => setHidden(e.target.checked)} />
           {t('admin.hidden')}
         </label>
+        {points !== null && (
+          <label className="admin-field admin-points">
+            <span>{t('admin.pointsDefault')}</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              value={points}
+              aria-invalid={badPoints || undefined}
+              onChange={(e) => {
+                setPoints(e.target.value)
+                setBadPoints(false)
+                setMsg(null)
+              }}
+            />
+            {badPoints && <span className="admin-field-error">{t('admin.invalid')}</span>}
+          </label>
+        )}
         <button type="button" className="admin-btn" disabled={busy} onClick={save}>
           {t('admin.save')}
         </button>
@@ -72,6 +121,29 @@ function GameRow({ id, name, meta }: { id: string; name: string; meta: GameMeta 
         {meta.modes.map((m) => (
           <fieldset key={m.key} className="admin-mode">
             <legend>{loc(m.label)}</legend>
+            {points !== null && (
+              <label className="admin-field">
+                <span>{t('admin.modePoints')}</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  data-mode-points={m.key}
+                  value={modePts[m.key] ?? ''}
+                  placeholder={meta.points === undefined ? undefined : String(meta.points)}
+                  aria-invalid={badModePts === m.key || undefined}
+                  onChange={(e) => {
+                    setModePts((cur) => ({ ...cur, [m.key]: e.target.value }))
+                    setBadModePts(null)
+                    setMsg(null)
+                  }}
+                />
+                {badModePts === m.key ? (
+                  <span className="admin-field-error">{t('admin.invalid')}</span>
+                ) : (
+                  <span className="admin-hint">{t('admin.modePointsHint', { n: meta.points ?? 0 })}</span>
+                )}
+              </label>
+            )}
             {RULE_FIELDS.map((f) => {
               const invalid = bad?.mode === m.key && bad.field === f
               return (

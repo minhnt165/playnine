@@ -5,6 +5,7 @@ import type { SudokuData } from '../data/sudoku'
 import type { XqData } from '../data/xiangqi'
 import { XQ_LEVEL } from '../data/xiangqi'
 import type { Summary } from '../data/summary'
+import type { RatingSummary } from '../server/types'
 import { useI18n } from '../i18n/i18n'
 import { readRaw, write } from '../lib/storage'
 import { fmtDuration } from '../lib/time'
@@ -15,6 +16,7 @@ import { mountPreviews } from '../legacy/previews'
 import { prefersReducedMotion } from './media'
 import { isPlaying } from '../player/playing'
 import { lastPlayedId, ribbonFor } from './ribbon'
+import { matchesQuery } from './search'
 
 const FILTER_KEY = 'game-portal-filter-v1'
 
@@ -30,9 +32,16 @@ type Props = {
   sums: Record<string, Summary>
   openIds: Set<string>
   now: Date
+  /** Từ khóa ở ô tìm trên thanh trên; rỗng thì không lọc. */
+  query?: string
+  onClearQuery?: () => void
+  /** Tổng lượt chơi từ server (Home tải một lần, dùng chung với dải "Chơi nhiều nhất"). */
+  totals?: Record<string, number>
+  /** Đánh giá trung bình theo game. */
+  ratings?: Record<string, RatingSummary>
 }
 
-export function GameGrid({ sd, xq, rec, sums, openIds, now }: Props) {
+export function GameGrid({ sd, xq, rec, sums, openIds, now, query = '', onClearQuery, totals = {}, ratings = {} }: Props) {
   const { t, loc } = useI18n()
   const [filter, setFilter] = useState<FilterKey>(initialFilter)
   const lastId = lastPlayedId(rec)
@@ -41,20 +50,8 @@ export function GameGrid({ sd, xq, rec, sums, openIds, now }: Props) {
   // Game bị admin ẩn thì bỏ hẳn khỏi lưới (phím số vẫn dùng chỉ số gốc trong GAMES).
   const shown = GAMES.filter((g) => !isHidden(games, g.id))
   const cardKey = shown.map((g) => g.id).join()
-
-  // Số lượt chơi tải một lần khi có server; lỗi thì thẻ chỉ không hiện số.
-  const [totals, setTotals] = useState<Record<string, number>>({})
-  useEffect(() => {
-    if (!api) return
-    let alive = true
-    api.playTotals().then(
-      (v) => alive && setTotals(v),
-      () => {},
-    )
-    return () => {
-      alive = false
-    }
-  }, [api])
+  const matched = new Set(shown.filter((g) => matchesQuery(g, query)).map((g) => g.id))
+  const visibleCount = shown.filter((g) => matched.has(g.id) && (filter === 'all' || g.cat === filter)).length
 
   // Chỉ gắn lại preview khi tập thẻ đổi (không phải mỗi lần render); dọn khi gỡ.
   useEffect(() => mountPreviews(listRef.current!, { isPlaying, reduceMotion: prefersReducedMotion() }), [cardKey])
@@ -68,7 +65,7 @@ export function GameGrid({ sd, xq, rec, sums, openIds, now }: Props) {
   return (
     <>
       <div className="section-head reveal" style={{ '--i': 4 } as CSSProperties}>
-        <h2>{t('games.title')}</h2>
+        <h2>{query.trim() ? t('games.results', { q: query.trim() }) : t('games.title')}</h2>
         <Filters
           filter={filter}
           games={shown}
@@ -84,13 +81,22 @@ export function GameGrid({ sd, xq, rec, sums, openIds, now }: Props) {
             key={g.id}
             game={g}
             index={GAMES.indexOf(g)}
-            hidden={filter !== 'all' && g.cat !== filter}
+            hidden={(filter !== 'all' && g.cat !== filter) || !matched.has(g.id)}
             plays={api ? totals[g.id] : undefined}
+            rating={ratings[g.id]}
             ribbon={ribbonFor(g, { openIds, lastId, rec, t, now: now.getTime() })}
             note={notes[g.id] || (sums[g.id]?.note ? String(sums[g.id].note) : loc(g.note))}
           />
         ))}
       </ul>
+      {query.trim() !== '' && visibleCount === 0 && (
+        <div className="games-empty">
+          <p>{t('games.noMatch', { q: query.trim() })}</p>
+          <button type="button" onClick={onClearQuery}>
+            {t('games.clear')}
+          </button>
+        </div>
+      )}
     </>
   )
 }

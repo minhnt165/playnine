@@ -1,5 +1,6 @@
 import type { CSSProperties, PointerEvent } from 'react'
 import type { GameDef } from '../games/catalog'
+import type { RatingSummary } from '../server/types'
 import { useI18n } from '../i18n/i18n'
 import { detailHref } from '../player/route'
 import { formatCount } from '../lib/format'
@@ -13,9 +14,11 @@ type Props = {
   hidden: boolean
   /** Tổng số lượt chơi từ server; undefined thì không hiện. */
   plays?: number
+  /** Đánh giá trung bình; undefined thì không hiện. */
+  rating?: RatingSummary
 }
 
-export function GameCard({ game: g, index: i, ribbon, note, hidden, plays }: Props) {
+export function GameCard({ game: g, index: i, ribbon, note, hidden, plays, rating }: Props) {
   const { t, loc, lang } = useI18n()
   const tilt = !prefersReducedMotion() && canHover()
 
@@ -45,7 +48,8 @@ export function GameCard({ game: g, index: i, ribbon, note, hidden, plays }: Pro
       >
         <div className={'preview pv-' + g.id} data-game={g.id} aria-hidden="true">
           {ribbon && (
-            <span className="ribbon">
+            // Gần như mọi game đều "Mới" nên nhãn này nhạt hơn nhãn "đang mở"/"gần nhất".
+            <span className={'ribbon' + (ribbon[0] === t('ribbon.new') ? ' ribbon-new' : '')}>
               <span className="r-long">{ribbon[0]}</span>
               <span className="r-short">{ribbon[1]}</span>
             </span>
@@ -69,6 +73,11 @@ export function GameCard({ game: g, index: i, ribbon, note, hidden, plays }: Pro
           <div className="card-foot">
             <div className="card-meta">
               <span className="card-note">{note}</span>
+              {rating && (
+                <span className="card-rating" aria-label={t('rate.short', { avg: rating.average.toFixed(1) })}>
+                  ★ {rating.average.toFixed(1)}
+                </span>
+              )}
               {plays !== undefined && <span className="plays">{t('card.plays', { n: formatCount(plays, lang === 'vi' ? 'vi-VN' : 'en-US') })}</span>}
             </div>
             <span className="play">

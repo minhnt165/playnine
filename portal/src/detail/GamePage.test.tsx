@@ -41,7 +41,7 @@ describe('GamePage', () => {
   it('có server: hiện bảng xếp hạng với các hàng', async () => {
     const api = createFakeApi({
       games: GAMES,
-      boards: { '2048|classic|week': [{ rank: 1, userId: 'u1', displayName: 'An', avatarUrl: null, value: 500, achievedAt: '' }] },
+      gamePoints: { '2048|week': [{ rank: 1, userId: 'u1', displayName: 'An', avatarUrl: null, value: 500, achievedAt: '' }] },
     })
     mount(api)
     expect(await screen.findByRole('heading', { name: en('lb.title') })).toBeInTheDocument()

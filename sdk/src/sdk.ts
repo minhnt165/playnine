@@ -1,12 +1,19 @@
 // SDK cho game: báo ván bắt đầu/kết thúc cho cổng qua postMessage. Không bao giờ ném lỗi;
 // không có cổng (mở trực tiếp, không iframe, hết thời gian chờ) thì chạy độc lập.
 import { PROTOCOL_VERSION, type GameResult, type GameToPortal } from './protocol'
+import { createFx, createSfx, type FxApi, type SfxApi } from './sfx'
+
+export { SOUND_KEY, type SfxName, type SfxOptions } from './sfx'
 
 export type PlayNineApi = {
   init(o: { gameId: string }): void
   gameStart(o: { mode: string; resume?: boolean }): void
   gameEnd(o: { mode: string } & GameResult): void
   isConnected(): boolean
+  /** Âm thanh dùng chung (tự im khi người chơi tắt tiếng ở cổng). */
+  sfx: SfxApi
+  /** Hiệu ứng dùng chung (pháo giấy khi thắng). */
+  fx: FxApi
 }
 
 const MAX_QUEUE = 20
@@ -98,6 +105,8 @@ export function createPlayNine(env: { win: Window; parent: Window | null; timeou
       }
     },
     isConnected: () => state === 'connected',
+    sfx: createSfx({ win }),
+    fx: createFx({ win }),
   }
 }
 

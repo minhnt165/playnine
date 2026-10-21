@@ -12,7 +12,7 @@
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'phagach' });
 
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.0.2';
   const E = window.PhaGach;
   const I18N = window.I18N;
   const t = I18N.t;
@@ -42,6 +42,25 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const coarsePointer = window.matchMedia('(pointer: coarse)');
   const fmt = (n) => I18N.fmtNumber(n);
+  // Âm thanh / pháo giấy của SDK: SDK cũ hoặc thiếu thì bỏ qua, không bao giờ làm hỏng game
+  const sfx = (name, o) => { try { window.PlayNine?.sfx?.play(name, o); } catch (e) { /* bỏ qua */ } };
+  const confetti = () => { try { window.PlayNine?.fx?.confetti(); } catch (e) { /* bỏ qua */ } };
+  // Nhiều bước vật lý trong một khung hình dồn tiếng lại: mỗi loại một tiếng / khung, cách nhau tối thiểu SFX_GAP ms
+  const SFX_GAP = 45;
+  const sfxQueue = new Map();
+  const sfxLast = {};
+  const queueSfx = (name, o) => { if (!sfxQueue.has(name)) sfxQueue.set(name, o); };
+  function flushSfx() {
+    if (!sfxQueue.size) return;
+    const now = performance.now();
+    sfxQueue.forEach((o, name) => {
+      if (now - (sfxLast[name] || 0) < SFX_GAP) return;
+      sfxLast[name] = now;
+      sfx(name, o);
+    });
+    sfxQueue.clear();
+  }
+  let comboMult = 1; // hệ số combo đã báo bằng tiếng; về 1 khi bóng chạm thanh đỡ
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 
   /* ---------------- localStorage (mọi truy cập đều bọc try/catch) ---------------- */
@@ -672,6 +691,17 @@
     hudCache[key] = text;
     hudEls[key].textContent = text;
   }
+  /** Điểm vừa tăng: số điểm nảy nhẹ (tối đa ~10 lần / giây). */
+  let bumpAt = 0;
+  function bumpScore() {
+    const now = performance.now();
+    if (reduceMotion.matches || now - bumpAt < 90) return;
+    bumpAt = now;
+    const el = hudEls.score;
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    el.classList.add('bump');
+  }
   function updateHud() {
     setText('score', fmt(game.score));
     setText('best', fmt(Math.max(stats.best, counted ? game.score : 0)));
@@ -767,6 +797,8 @@
     closeModal();
     clearTimeout(overTimer);
     game = E.newGame();
+    sfx('start');
+    comboMult = 1;
     PN && PN.gameStart({ mode: 'default' });
     counted = false;
     bestAtStart = stats.best;
@@ -801,6 +833,7 @@
   function pause(focus) {
     if (mode !== 'playing') return;
     mode = 'paused';
+    if (focus) sfx('tap', { pitch: 0.85 });
     releaseInput();
     $('pause-sub').textContent = detailText();
     showOverlay('pause');
@@ -814,6 +847,7 @@
   function resume() {
     if (mode !== 'paused' || modalOpen()) return;
     mode = 'playing';
+    sfx('tap', { pitch: 1.15 });
     showOverlay(null);
     releaseInput();
     updateHud();
@@ -838,6 +872,9 @@
     $('over-score').textContent = fmt(game.score);
     $('over-level').textContent = String(game.level);
     $('over-bricks').textContent = fmt(game.broken);
+    // Đã phá đảo trong ván thì kết thúc bằng tiếng thắng, không thì tiếng thua
+    sfxQueue.clear();
+    sfx(game.cleared >= E.LEVELS.length ? 'win' : 'lose');
     updateHud();
     persist(); // ván đã xong: xóa ván lưu, resume = null
     vibrate([70, 50, 110]);
@@ -874,6 +911,25 @@
 
   /** Xử lý sự kiện của một bước vật lý: hiệu ứng, thống kê, thông báo. */
   function handleEvents(ev) {
+    // Tiếng: bóng nảy thanh đỡ / tường / thép, gạch vỡ cao dần theo hàng (hàng trên cao hơn), combo tăng bậc
+    if (ev.launched) queueSfx('pop', { pitch: 0.8 });
+    if (ev.paddle) {
+      queueSfx('tap', { pitch: 0.8 });
+      comboMult = 1;
+    }
+    if (ev.wall) queueSfx('tick');
+    if (ev.steel) queueSfx('tick', { pitch: 0.7 });
+    const rowPitch = (y) => clamp(1.55 - ((y - E.GRID_Y) / 18) * 0.06, 0.85, 1.6);
+    if (ev.broken.length) queueSfx('pop', { pitch: rowPitch(Math.min(...ev.broken.map((b) => b.y))) });
+    if (ev.cracked.length) queueSfx('place', { pitch: rowPitch(ev.cracked[0].y) + 0.3 });
+    const topMult = Math.max(1, ...ev.broken.map((b) => b.mult || 1), ...ev.cracked.map((c) => c.mult || 1));
+    if (topMult > comboMult) {
+      comboMult = topMult;
+      queueSfx('combo', { pitch: 1 + (topMult - 2) * 0.12 });
+    }
+    if (ev.caught.length) queueSfx('coin');
+    if (ev.ballLost && !ev.lifeLost) queueSfx('drop', { pitch: 0.8 });
+    if (ev.gained) bumpScore();
     if (ev.launched) {
       countGame();
       hideBanner();
@@ -909,6 +965,9 @@
       vibrate([30, 50, 30]);
       floatScore(ev.bonus);
       const done = game.level === E.LEVELS.length;
+      sfxQueue.clear();
+      sfx(done ? 'win' : 'levelup');
+      if (done) confetti();
       showBanner(done ? t('banner.won') : t('banner.cleared', { n: game.level }), t('banner.bonus', { n: fmt(ev.bonus) }));
       announce((done ? t('say.won') : t('say.cleared', { n: game.level })) + t('say.bonus', { n: fmt(ev.bonus) }));
       updateRecords();
@@ -921,6 +980,9 @@
         return;
       }
       vibrate([60, 40, 90]);
+      sfxQueue.clear();
+      sfx('error');
+      comboMult = 1;
       bricksDirty = true;
       updateHud();
       persist();
@@ -980,6 +1042,7 @@
           n++;
           physicsStep();
         }
+        flushSfx();
         if (acc > E.STEP_MS || game.phase === 'clear') acc = 0; // máy quá chậm: bỏ bớt, không dồn bước
       }
       saveAcc += dt;
@@ -1120,6 +1183,20 @@
       if (sw.dataset.setting === 'vibrate' && sw.checked) vibrate(20);
     });
   });
+
+  /* ---------------- Âm thanh: công tắc trong Cài đặt, dùng chung trạng thái tắt tiếng với cổng ---------------- */
+  const SFX = window.PlayNine && window.PlayNine.sfx;
+  if (SFX && typeof SFX.isMuted === 'function' && typeof SFX.setMuted === 'function') {
+    const sw = $('sound-switch');
+    const sync = () => { sw.checked = !SFX.isMuted(); };
+    $('setting-sound').hidden = false;
+    sync();
+    if (typeof SFX.onChange === 'function') SFX.onChange(sync);
+    sw.addEventListener('change', () => {
+      SFX.setMuted(!sw.checked);
+      if (sw.checked) sfx('tap');
+    });
+  }
 
   /* ---------------- Thống kê (modal) ---------------- */
   function renderStats() {

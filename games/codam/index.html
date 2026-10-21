@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" id="theme-color" content="#f6f2ea">
+  <meta name="theme-color" id="theme-color" content="#f3f4fb">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Checkers">
@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
-  <link rel="stylesheet" href="style.css?v=1.0.0">
+  <link rel="stylesheet" href="style.css?v=1.1.0">
 </head>
 <body>
   <div class="app" id="app">
@@ -193,6 +193,13 @@
         </div>
         <span class="field-desc" data-i18n-html="settings.speedDesc">While a piece is moving, tap the board (or press <kbd>Space</kbd>) to skip the animation.</span>
       </div>
+      <label class="setting" id="set-sound-row">
+        <span class="setting-text">
+          <span class="setting-name" data-i18n="settings.sound">Sound</span>
+          <span class="setting-desc" data-i18n="settings.soundDesc">Sound effects for moves, captures, crowning and results. Shared with PlayNine.</span>
+        </span>
+        <input type="checkbox" class="switch" id="set-sound" checked>
+      </label>
       <label class="setting">
         <span class="setting-text">
           <span class="setting-name" data-i18n="settings.coords">Show coordinates</span>
@@ -252,9 +259,9 @@
     </div>
   </div>
 
-  <script src="i18n.js?v=1.0.1"></script>
+  <script src="i18n.js?v=1.1.0"></script>
   <script src="engine.js?v=1.0.1"></script>
-  <script src="../sdk/playnine.js?v=1"></script>
-  <script src="app.js?v=1.0.2"></script>
+  <script src="../sdk/playnine.js?v=2"></script>
+  <script src="app.js?v=1.1.0"></script>
 </body>
 </html>

@@ -5,22 +5,22 @@
  * theo khung (iframe) để không phải cuộn khi chơi.
  * ===================================================================== */
 :root {
-  --bg: #f6f2ea;
+  --bg: #f3f4fb;
   --surface: #ffffff;
-  --text: #1d1711;
-  --muted: #6e6255;
-  --accent: #b07d1f;
-  --accent-strong: #946815;
+  --text: #14162b;
+  --muted: #5d6285;
+  --accent: #6a4cf5;
+  --accent-strong: #5a3be0;
   --on-accent: #ffffff;
   --red: #b3261e;
   --p0: #b3261e;     /* quân đỏ phía dưới: bạn / Người 1 */
   --p1: #2f5d93;     /* quân xanh phía trên: máy / Người 2 */
   --on-p0: #ffffff;
   --on-p1: #ffffff;
-  --line: rgba(29, 23, 17, 0.12);
-  --overlay: rgba(29, 23, 17, 0.42);
-  --shadow: 0 18px 44px rgba(52, 36, 14, 0.16);
-  --shadow-sm: 0 3px 12px rgba(52, 36, 14, 0.08);
+  --line: rgba(17, 20, 45, 0.12);
+  --overlay: rgba(20, 22, 43, 0.42);
+  --shadow: 0 18px 44px rgba(17, 20, 45, 0.16);
+  --shadow-sm: 0 3px 12px rgba(17, 20, 45, 0.08);
   /* Bàn gỗ */
   --wood-1: #d9b077;
   --wood-2: #c08d52;
@@ -36,7 +36,7 @@
   --pc1-hi: #c3d6f0;
   --pc1: #3d68a6;
   --pc1-lo: #162a46;
-  --fig-arrow: #1d1711;
+  --fig-arrow: #14162b;
   --font: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
 
   --gut: 8px;
@@ -59,19 +59,19 @@
 /* Giao diện tối: theo hệ thống (trừ khi chọn Sáng) hoặc khi chọn Tối */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e0b09;
-    --surface: #1a1511;
-    --text: #f1e9da;
-    --muted: #a69684;
-    --accent: #e0b964;
-    --accent-strong: #ecca7f;
-    --on-accent: #1d1711;
+    --bg: #090b14;
+    --surface: #131626;
+    --text: #eef0ff;
+    --muted: #9096b8;
+    --accent: #8b6cff;
+    --accent-strong: #a48bff;
+    --on-accent: #ffffff;
     --red: #e5534b;
     --p0: #ef6a62;
     --p1: #8fb3e6;
     --on-p0: #1d1711;
     --on-p1: #1d1711;
-    --line: rgba(241, 233, 218, 0.12);
+    --line: rgba(255, 255, 255, 0.12);
     --overlay: rgba(0, 0, 0, 0.6);
     --shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
     --shadow-sm: 0 3px 12px rgba(0, 0, 0, 0.35);
@@ -84,24 +84,24 @@
     --ring: #fff3d6;
     --pc1: #4c7cc0;
     --pc1-lo: #1b3150;
-    --fig-arrow: #f1e9da;
+    --fig-arrow: #eef0ff;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0e0b09;
-  --surface: #1a1511;
-  --text: #f1e9da;
-  --muted: #a69684;
-  --accent: #e0b964;
-  --accent-strong: #ecca7f;
-  --on-accent: #1d1711;
+  --bg: #090b14;
+  --surface: #131626;
+  --text: #eef0ff;
+  --muted: #9096b8;
+  --accent: #8b6cff;
+  --accent-strong: #a48bff;
+  --on-accent: #ffffff;
   --red: #e5534b;
   --p0: #ef6a62;
   --p1: #8fb3e6;
   --on-p0: #1d1711;
   --on-p1: #1d1711;
-  --line: rgba(241, 233, 218, 0.12);
+  --line: rgba(255, 255, 255, 0.12);
   --overlay: rgba(0, 0, 0, 0.6);
   --shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
   --shadow-sm: 0 3px 12px rgba(0, 0, 0, 0.35);
@@ -114,7 +114,7 @@
   --ring: #fff3d6;
   --pc1: #4c7cc0;
   --pc1-lo: #1b3150;
-  --fig-arrow: #f1e9da;
+  --fig-arrow: #eef0ff;
   color-scheme: dark;
 }
 
@@ -429,6 +429,28 @@ button { font: inherit; color: inherit; }
 @keyframes fx-cap {
   0%, 100% { box-shadow: 0 0 0 3px var(--red), 0 0 18px 6px color-mix(in srgb, var(--red) 70%, transparent); }
   50% { box-shadow: 0 0 0 5px var(--red), 0 0 28px 10px color-mix(in srgb, var(--red) 55%, transparent); }
+}
+/* Vòng sóng đỏ lan ra quanh quân bị gánh / vây */
+.pt.fx-cap::before {
+  content: "";
+  position: absolute;
+  inset: 14%;
+  border-radius: 50%;
+  border: 3px solid var(--red);
+  opacity: 0;
+  pointer-events: none;
+  animation: burst 0.65s ease-out;
+}
+@keyframes burst {
+  from { transform: scale(0.7); opacity: 1; }
+  to { transform: scale(1.7); opacity: 0; }
+}
+/* Quân vừa tới nơi: nảy nhẹ như vừa đặt xuống bàn */
+.pt.land .pc { animation: land 0.34s cubic-bezier(0.3, 1.5, 0.5, 1); }
+@keyframes land {
+  from { transform: scale(1.3); }
+  55% { transform: scale(0.92); }
+  to { transform: none; }
 }
 
 /* Quân đang trượt hoặc đang kéo */
@@ -878,6 +900,25 @@ kbd {
   .log-box { min-height: 0; }
 }
 
+/* ---------------- Màn kết quả + phản hồi khi bấm ---------------- */
+.modal-card.modal-result { animation: result-in 0.42s cubic-bezier(0.2, 1.25, 0.35, 1); }
+.modal-result .result-mark { animation: mark-in 0.55s cubic-bezier(0.2, 1.6, 0.4, 1) 0.1s both; }
+.modal-result[data-outcome="win"] .result-mark { filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 50%, transparent)); }
+.modal-result[data-outcome="win"] h2 { color: var(--accent-strong); }
+.modal-result .btn-primary { box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 40%, transparent); animation: cta-in 0.4s ease-out 0.25s both; }
+.modal-result .result-score div { animation: cta-in 0.35s ease-out 0.12s both; }
+.modal-result .result-score div + div { animation-delay: 0.2s; }
+@keyframes result-in { from { opacity: 0; transform: scale(0.8) translateY(14px); } }
+@keyframes result-up { from { opacity: 0; transform: translateY(30%); } 70% { transform: translateY(-2%); } }
+@keyframes mark-in { from { opacity: 0; transform: scale(0.2) rotate(-30deg); } }
+@keyframes cta-in { from { opacity: 0; transform: translateY(8px); } }
+@media (max-width: 479px) {
+  .modal-card.modal-result { animation-name: result-up; } /* bottom sheet: trồi lên thay vì phóng to */
+}
+.btn { transition: background 0.15s, border-color 0.15s, transform 0.08s; }
+.btn-icon { transition: background 0.15s, transform 0.08s; }
+.btn:active:not(:disabled), .btn-icon:active, .segmented button:active { transform: scale(0.95); }
+
 /* ---------------- Giảm chuyển động ---------------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
@@ -886,4 +927,6 @@ kbd {
   .pt.fx-cap .pc { box-shadow: 0 0 0 4px var(--red); }
   .pt.forced .pc { box-shadow: 0 0 0 3px var(--ring), 0 0 0 7px var(--accent); }
   .lines .hint-line { stroke-dasharray: none; }
+  .pt.fx-cap::before, .pt.land .pc, .modal-card.modal-result, .modal-result .result-mark, .modal-result .btn-primary, .modal-result .result-score div { animation: none !important; }
+  .btn:active:not(:disabled), .btn-icon:active, .segmented button:active { transform: none; }
 }

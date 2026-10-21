@@ -1,10 +1,14 @@
 export type Metric = 'score_high' | 'time_low' | 'wins'
 export type Period = 'day' | 'week' | 'all'
 export type Profile = { id: string; displayName: string; avatarUrl: string | null }
-export type AuthUser = Profile & { isAdmin?: boolean }
+/** `isGuest`: tài khoản khách (ẩn danh Supabase), có thể liên kết Google sau để giữ điểm. */
+export type AuthUser = Profile & { isAdmin?: boolean; isGuest?: boolean }
 export type Rules = { min_duration_ms?: number; max_score?: number; max_score_per_sec?: number; min_time_ms?: number }
-export type ModeMeta = { key: string; label: { en: string; vi: string }; rules?: Rules }
-export type GameMeta = { id: string; metric: Metric; modes: ModeMeta[]; hidden: boolean }
+/** `points`: điểm mỗi ván xong của riêng mode này; thiếu thì dùng `GameMeta.points`. */
+export type ModeMeta = { key: string; label: { en: string; vi: string }; rules?: Rules; points?: number }
+/** `points`: điểm mặc định mỗi ván xong của game cho mode không có điểm riêng (thắng không trợ giúp được gấp đôi);
+ * thiếu khi server chưa có cột này. */
+export type GameMeta = { id: string; metric: Metric; modes: ModeMeta[]; hidden: boolean; points?: number }
 export type LeaderRow = {
   rank: number
   userId: string
@@ -13,6 +17,13 @@ export type LeaderRow = {
   value: number
   achievedAt: string
 }
+/** Xếp hạng người chơi toàn cổng: điểm tích lũy, số ván xong, số ván thắng (không trợ giúp), số huy hiệu sự kiện. */
+export type PlayerKind = 'points' | 'runs' | 'wins' | 'badges'
+/** Điểm và hạng điểm của một người chơi theo kỳ; rank null khi chưa có điểm. */
+export type PointsSummary = Partial<Record<Period, { points: number; rank: number | null }>>
+export type PlayerRow = Omit<LeaderRow, 'achievedAt'>
+/** Một hàng của bảng "top mọi game": mode là mode đầu tiên hợp với kỳ (daily chỉ cho kỳ ngày). */
+export type TopRow = LeaderRow & { gameId: string; mode: string }
 export type RunResult = { score?: number; timeMs?: number; won: boolean; assisted: boolean }
 export type FinishResult = {
   status: 'finished' | 'rejected'
@@ -41,6 +52,34 @@ export type EventInput = Omit<GameEvent, 'id' | 'status'> & { id?: string }
 export type EventPatch = Partial<Omit<EventInput, 'id'>> & { id: string }
 export type Collection = { id: string; title: Text; gameIds: string[]; startsAt: string; endsAt: string | null; sort: number }
 export type CollectionInput = Omit<Collection, 'id'> & { id?: string }
+/** Bài tin tức: `publishedAt` null là nháp, ở tương lai là hẹn giờ; `body` là văn bản có markdown nhẹ. */
+export type Post = {
+  id: string
+  slug: string
+  title: Text
+  summary: Partial<Text>
+  body: Partial<Text>
+  gameId: string | null
+  tags: string[]
+  pinned: boolean
+  publishedAt: string | null
+  updatedAt: string
+}
+export type PostInput = Omit<Post, 'id' | 'updatedAt'> & { id?: string }
+/** Tin game lấy tự động từ RSS (scripts/crawl-news.mjs): chỉ tiêu đề, tóm tắt, ảnh và link bài gốc. */
+export type FeedItem = {
+  id: string
+  url: string
+  source: string
+  lang: 'en' | 'vi'
+  title: string
+  summary: string | null
+  imageUrl: string | null
+  publishedAt: string
+  hidden: boolean
+}
+/** Đánh giá trung bình (1 chữ số thập phân) và số lượt đánh giá của một game. */
+export type RatingSummary = { average: number; count: number }
 export type Badge = { eventId: string; rank: number; awardedAt: string; title: Text; gameId: string; mode: string }
 export type RunStatusDb = 'started' | 'finished' | 'rejected'
 export type AdminRun = {

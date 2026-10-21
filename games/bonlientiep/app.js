@@ -10,9 +10,14 @@
   'use strict';
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'bonlientiep' });
+  // Âm thanh từ SDK: SDK cũ / thiếu thì im lặng, không bao giờ làm hỏng game
+  const SFX = PN && PN.sfx && typeof PN.sfx.play === 'function' ? PN.sfx : null;
+  const sfx = (name, opts) => { try { SFX && SFX.play(name, opts); } catch (e) {} };
+  const hasFx = () => !!(PN && PN.fx && typeof PN.fx.confetti === 'function');
+  const sdkConfetti = () => { try { hasFx() && PN.fx.confetti({ count: 150 }); } catch (e) {} };
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.1.0';
   const KEYS = {
     settings: 'playnine-bonlientiep-settings-v1',
     save: 'playnine-bonlientiep-save-v1',
@@ -236,6 +241,7 @@
     renderLog();
     writeSummary();
     PN && game.mode === 'ai' && PN.gameStart({ mode: game.level });
+    sfx('start');
     scheduleAi();
   }
 
@@ -257,6 +263,7 @@
     render();
     const dur = dropDisc(res);
     dropEndAt = Date.now() + dur;
+    onLand(res, p, dur);
     renderLog();
     if (s.over) {
       // Quân cuối rơi xong mới tô đường thắng, rồi hiện bảng kết quả
@@ -265,6 +272,7 @@
       revealTimer = setTimeout(() => {
         winShown = true;
         render();
+        playEndSound();
         resultTimer = setTimeout(showResult, reduceMotion.matches || settings.speed === 'off' ? 500 : 1100);
       }, dur + 40);
     } else {
@@ -276,10 +284,10 @@
   function handleCol(c) {
     if (!game) return;
     const s = game.state;
-    if (s.over) { toast(T('toast.over')); return; }
-    if (thinking) { toast(T('toast.thinking')); return; }
+    if (s.over) { sfx('error', { volume: 0.6 }); toast(T('toast.over')); return; }
+    if (thinking) { sfx('error', { volume: 0.6 }); toast(T('toast.thinking')); return; }
     if (!humanCanPlay()) return;
-    if (s.heights[c] >= ROWS) { toast(T('toast.colFull', { c: c + 1 })); return; }
+    if (s.heights[c] >= ROWS) { sfx('error'); flashCol(c); toast(T('toast.colFull', { c: c + 1 })); return; }
     commitMove(c);
   }
 
@@ -349,6 +357,7 @@
     render();
     renderLog();
     writeSummary();
+    sfx('tap');
     toast(T('toast.undone'));
     scheduleAi();
   }
@@ -424,13 +433,52 @@
     const fall = base * Math.sqrt(rows / (ROWS + 0.2)); // rơi tự do: thời gian tỉ lệ căn quãng đường
     const total = Math.round(fall / 0.74);
     const bounce = Math.min(dy * 0.1, a.height * 0.2);
+    // Chạm đáy thì quân bẹt nhẹ (gốc biến dạng ở đáy quân, đặt trong style.css) rồi nảy lên
     el.animate([
       { transform: `translateY(${-dy}px)`, easing: 'cubic-bezier(0.5, 0, 0.9, 0.45)' },
-      { transform: 'translateY(0)', offset: 0.74, easing: 'cubic-bezier(0.2, 0.6, 0.4, 1)' },
-      { transform: `translateY(${-bounce}px)`, offset: 0.87, easing: 'cubic-bezier(0.6, 0, 0.8, 0.4)' },
+      { transform: 'translateY(0) scale(1.07, 0.9)', offset: 0.74, easing: 'cubic-bezier(0.2, 0.6, 0.4, 1)' },
+      { transform: `translateY(${-bounce}px) scale(0.98, 1.03)`, offset: 0.87, easing: 'cubic-bezier(0.6, 0, 0.8, 0.4)' },
       { transform: 'translateY(0)' },
     ], { duration: total });
     return total;
+  }
+
+  // Quân chạm đáy: tiếng "cạch" (hàng càng cao thì rơi càng ngắn, tiếng càng cao), máy thả nhỏ tiếng hơn,
+  // kèm vòng gợn quanh ô vừa rơi vào
+  let landTimer = 0;
+  function onLand(res, p, dur) {
+    const opts = { pitch: 0.9 + res.row * 0.07, volume: game.mode === 'ai' && p === 1 ? 0.7 : 1 };
+    const hit = () => { sfx('drop', opts); ripple(res.idx, p); };
+    clearTimeout(landTimer);
+    if (dur) landTimer = setTimeout(hit, Math.round(dur * 0.74));
+    else hit();
+  }
+  function ripple(idx, p) {
+    if (reduceMotion.matches || settings.speed === 'off') return;
+    const el = document.createElement('i');
+    el.className = 'ripple';
+    placeCell(el, idx);
+    el.style.setProperty('--rc', p === 0 ? 'var(--p0)' : 'var(--p1)');
+    rimsEl.appendChild(el);
+    setTimeout(() => el.remove(), 650);
+  }
+  // Cột đầy: cột nháy đỏ một nhịp
+  function flashCol(c) {
+    const b = colEls[c];
+    if (!b || reduceMotion.matches) return;
+    b.classList.remove('nope');
+    void b.offsetWidth;
+    b.classList.add('nope');
+    setTimeout(() => b.classList.remove('nope'), 480);
+  }
+  // Hết ván: tiếng nối bốn quân rồi tiếng thắng / thua / hòa; có người thắng (trừ khi máy thắng) thì bắn pháo giấy
+  function playEndSound() {
+    const w = game.state.winner;
+    if (w === E.DRAW) { sfx('draw'); return; }
+    const lost = game.mode === 'ai' && w === 1;
+    sfx('clear');
+    setTimeout(() => sfx(lost ? 'lose' : 'win'), 260);
+    if (!lost) sdkConfetti();
   }
 
   // Kết thúc ngay mọi hiệu ứng rơi đang chạy (đi lại, ván mới)
@@ -439,6 +487,7 @@
       if (el && el.getAnimations) for (const an of el.getAnimations()) an.finish();
     }
     clearTimeout(revealTimer);
+    clearTimeout(landTimer);
   }
 
   /* ================= 5. Render ================= */
@@ -522,7 +571,7 @@
       rim.classList.toggle('win', w);
       if (discEls[i]) discEls[i].classList.toggle('win', w);
     }
-    if (won) rimsEl.style.setProperty('--wc', s.winner === 0 ? 'var(--p0)' : 'var(--p1)');
+    if (won) boardEl.style.setProperty('--wc', s.winner === 0 ? 'var(--p0)' : 'var(--p1)');
     renderWinLine(won ? s.win : null);
     colsEl.classList.toggle('locked', !can);
     for (let c = 0; c < COLS; c++) {
@@ -878,7 +927,9 @@
     $('btn-result-new').textContent = ai ? T('btn.playAgain') : T('btn.new');
     const conf = $('confetti');
     conf.innerHTML = '';
-    if (celebrate && !reduceMotion.matches) {
+    document.querySelector('.modal-card.modal-result').classList.toggle('celebrate', celebrate);
+    // SDK có pháo giấy (đã bắn lúc tô đường thắng) thì không rắc thêm pháo giấy trong bảng
+    if (celebrate && !reduceMotion.matches && !hasFx()) {
       const colors = ['#e0b964', '#b3261e', 'var(--accent)', 'var(--text)'];
       for (let i = 0; i < 28; i++) {
         const p = document.createElement('i');
@@ -939,10 +990,21 @@
   bindSegmented(settingGroup('speed'), (v) => { settings.speed = v; saveSettings(); });
   // Đổi ngôn ngữ: lưu ván + cài đặt rồi tải lại trang
   bindSegmented(settingGroup('lang'), (v) => { saveGame(); saveSettings(); I18N.set(v); });
+  // Âm thanh: bật / tắt dùng chung với cổng PlayNine (SDK lưu); SDK không có âm thanh thì ẩn mục này
+  let syncSound = () => {};
+  if (SFX && typeof SFX.isMuted === 'function' && typeof SFX.setMuted === 'function') {
+    const soundGroup = settingGroup('sound');
+    syncSound = () => setSegmented(soundGroup, SFX.isMuted() ? 'off' : 'on');
+    $('field-sound').hidden = false;
+    bindSegmented(soundGroup, (v) => { SFX.setMuted(v === 'off'); if (v === 'on') sfx('tap'); });
+    if (typeof SFX.onChange === 'function') SFX.onChange(() => syncSound());
+    syncSound();
+  }
   $('btn-settings').addEventListener('click', () => {
     setSegmented(settingGroup('theme'), settings.theme);
     setSegmented(settingGroup('speed'), settings.speed);
     setSegmented(settingGroup('lang'), I18N.lang);
+    syncSound();
     openModal('modal-settings');
   });
   $('btn-settings-help').addEventListener('click', () => { closeModal('modal-settings'); openHelp(); });

@@ -9,8 +9,11 @@
   const N = window.Nonogram;
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'tranhan' });
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.0.2';
   const t = I18N.t;
+  // Âm thanh / pháo giấy của SDK: SDK cũ hoặc thiếu thì bỏ qua, không bao giờ làm hỏng game
+  const sfx = (name, o) => { try { window.PlayNine?.sfx?.play(name, o); } catch (e) { /* bỏ qua */ } };
+  const confetti = () => { try { window.PlayNine?.fx?.confetti(); } catch (e) { /* bỏ qua */ } };
   I18N.apply();
 
   /* Mọi khóa localStorage đều có tiền tố playnine-tranhan- */
@@ -31,6 +34,7 @@
 
   const $ = (id) => document.getElementById(id);
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let booted = false; // chỉ phát tiếng "bắt đầu" khi người chơi chọn tranh, không phát lúc mở trang
 
   /* ---------------- localStorage (luôn bọc try/catch) ---------------- */
   function readJSON(key) {
@@ -253,6 +257,7 @@
     buildBoard();
     renderAll();
     writeSummary();
+    if (booted) sfx('start');
     PN && PN.gameStart({ mode: 's' + session.size });
   }
 
@@ -595,8 +600,11 @@
     for (let i = 0; i < cellEls.length; i++) renderCell(i);
   }
 
-  /** Xám gợi ý của các dòng đã đủ số. Không truyền gì thì xét mọi dòng. */
-  function updateDone(idxs) {
+  /**
+   * Xám gợi ý của các dòng đã đủ số. Không truyền gì thì xét mọi dòng.
+   * celebrate: dòng vừa mới đủ số thì tỏa sáng; trả về số dòng vừa mới đủ.
+   */
+  function updateDone(idxs, celebrate) {
     const g = game();
     const rows = new Set();
     const cols = new Set();
@@ -609,8 +617,48 @@
       for (let r = 0; r < g.h; r++) rows.add(r);
       for (let c = 0; c < g.w; c++) cols.add(c);
     }
-    rows.forEach((r) => rowClueEls[r].classList.toggle('done', N.isLineDone(g, 'row', r)));
-    cols.forEach((c) => colClueEls[c].classList.toggle('done', N.isLineDone(g, 'col', c)));
+    const lines = [];
+    rows.forEach((r) => lines.push([rowClueEls[r], 'row', r]));
+    cols.forEach((c) => lines.push([colClueEls[c], 'col', c]));
+    let fresh = 0;
+    lines.forEach(([el, axis, k]) => {
+      const done = N.isLineDone(g, axis, k);
+      if (celebrate && done && !el.classList.contains('done')) {
+        fresh++;
+        glowLine(el, axis, k);
+      }
+      el.classList.toggle('done', done);
+    });
+    return fresh;
+  }
+
+  /** Dòng vừa đủ số: dải gợi ý và các ô của dòng sáng lên lần lượt từ đầu dòng. */
+  function glowLine(clueEl, axis, k) {
+    if (reduceMotion.matches) return;
+    const g = game();
+    const n = axis === 'row' ? g.w : g.h;
+    const nodes = [clueEl];
+    for (let j = 0; j < n; j++) nodes.push(cellEls[axis === 'row' ? k * g.w + j : j * g.w + k]);
+    nodes.forEach((el, j) => {
+      if (!el) return;
+      el.style.setProperty('--lg-d', j * 25 + 'ms');
+      el.classList.remove('line-glow');
+      void el.offsetWidth;
+      el.classList.add('line-glow');
+    });
+    setTimeout(() => nodes.forEach((el) => el && el.classList.remove('line-glow')), n * 25 + 700);
+  }
+
+  // Tiếng khi tô: tối đa một tiếng mỗi 40ms (kéo nhanh qua nhiều ô không dồn tiếng), cao dần theo độ dài nét
+  let lastPaintSound = 0;
+  function paintSound(to, n) {
+    const now = performance.now();
+    if (now - lastPaintSound < 40) return;
+    lastPaintSound = now;
+    const pitch = 1 + Math.min(n, 15) * 0.04;
+    if (to === N.FILL) sfx('place', { pitch });
+    else if (to === N.EMPTY) sfx('tap', { pitch: 0.75 });
+    else sfx('tap', { pitch });
   }
 
   /** Tô sáng hàng + cột của ô idx (và dải gợi ý tương ứng). */
@@ -807,7 +855,10 @@
     }
     s.changes.push(...N.setCells(g, [[idx, to]]));
     renderCell(idx);
-    updateDone([idx]);
+    const fresh = updateDone([idx], true);
+    if (to === N.MISS) sfx('error');
+    else if (fresh) sfx(fresh > 1 ? 'combo' : 'clear');
+    else paintSound(to, s.changes.length);
     schedulePreview();
     if (to === N.MISS) renderHud();
   }
@@ -891,6 +942,7 @@
     if (!session || stroke) return;
     const ch = N.undo(game());
     if (!ch) return;
+    sfx('move', { pitch: 0.8 });
     if (settings.check) flagWrong(false);
     afterAction(ch);
   }
@@ -898,6 +950,7 @@
     if (!session || stroke) return;
     const ch = N.redo(game());
     if (!ch) return;
+    sfx('move', { pitch: 1.1 });
     if (settings.check) flagWrong(false);
     afterAction(ch);
   }
@@ -912,6 +965,7 @@
     const h = N.hint(g);
     if (!h) return;
     session.hintsUsed++;
+    sfx('pop');
     let changes = N.setCells(g, [[h.idx, h.value]]);
     if (settings.autoX) changes = changes.concat(N.autoCross(g, [h.idx]));
     N.commit(g, changes);
@@ -955,6 +1009,7 @@
     hlIdx = -1;
     rowClueEls.concat(colClueEls).forEach((el) => el.classList.remove('hl'));
     boardEl.classList.add('solved');
+    sfx('win');
     const delay = paintPicture(true);
     renderBoard();
     renderHud();
@@ -1024,7 +1079,10 @@
     if (kind === 'pack') next.textContent = nextUnsolved(session.size, session.pid) ? t('result.next') : t('result.viewPack');
     else if (kind === 'random') next.textContent = t('result.newRandom');
     else next.textContent = t('result.choose');
-    resultTimer = setTimeout(() => openModal('modal-result'), delay);
+    resultTimer = setTimeout(() => {
+      openModal('modal-result');
+      confetti();
+    }, delay);
   }
 
   function goNext() {
@@ -1430,6 +1488,7 @@
   function setMode(m) {
     if (m === mode) return;
     mode = m;
+    sfx('tap', { pitch: m === 'fill' ? 1.15 : 0.9 });
     renderMode();
   }
   function toggleMode() {
@@ -1612,6 +1671,20 @@
   });
   $('btn-result-next').addEventListener('click', goNext);
 
+  /* ---------------- Âm thanh: công tắc trong Cài đặt, dùng chung trạng thái tắt tiếng với cổng ---------------- */
+  const SFX = window.PlayNine && window.PlayNine.sfx;
+  if (SFX && typeof SFX.isMuted === 'function' && typeof SFX.setMuted === 'function') {
+    const sw = $('sound-switch');
+    const sync = () => { sw.checked = !SFX.isMuted(); };
+    $('setting-sound').hidden = false;
+    sync();
+    if (typeof SFX.onChange === 'function') SFX.onChange(sync);
+    sw.addEventListener('change', () => {
+      SFX.setMuted(!sw.checked);
+      if (sw.checked) sfx('tap');
+    });
+  }
+
   /* ---------------- Đồng hồ, ẩn tab, lưu định kỳ ---------------- */
   setInterval(() => {
     if (!session) return;
@@ -1661,4 +1734,5 @@
   } else {
     startDefault();
   }
+  booted = true;
 })();

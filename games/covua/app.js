@@ -10,9 +10,12 @@
   'use strict';
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'covua' });
+  // Âm thanh dùng chung của SDK (bản SDK cũ chưa có sfx thì game vẫn chạy, chỉ im lặng)
+  const SFX = PN && PN.sfx && typeof PN.sfx.play === 'function' ? PN.sfx : null;
+  const sfx = (name, o) => { try { SFX && SFX.play(name, o); } catch (e) { /* bỏ qua */ } };
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.1.0';
   const KEYS = {
     settings: 'playnine-covua-settings-v1',
     save: 'playnine-covua-save-v1',
@@ -231,6 +234,7 @@
     render();
     renderLog();
     writeSummary();
+    sfx('start');
     if (cfg.mode === 'ai' && cfg.color === 'random') toast(human === WHITE ? tr('toast.randomWhite') : tr('toast.randomBlack'));
     PN && game.mode === 'ai' && PN.gameStart({ mode: game.level });
     scheduleAi();
@@ -243,6 +247,7 @@
   // Đi một nước (người hoặc máy): cập nhật ván ngay, hiệu ứng chạy sau
   function commitMove(m, instant) {
     const rec = E.play(game.state, m);
+    moveSound(rec);
     game.moves.push(rec.uci);
     game.legal = E.legalMoves(game.state);
     selected = -1;
@@ -253,6 +258,16 @@
     renderLog();
     // Máy bắt đầu nghĩ ngay trong lúc quân đang trượt
     scheduleAi();
+  }
+
+  // Tiếng nước đi: phong cấp / nhập thành / ăn quân / đi thường; máy đi nhỏ tiếng hơn; chiếu thì thêm tiếng báo
+  function moveSound(rec) {
+    const o = { volume: game.mode === 'ai' && rec.color !== game.human ? 0.7 : 1 };
+    if (rec.promo) sfx('levelup', o);
+    else if (rec.flags & E.F_CASTLE) sfx('coin', o);
+    else if (rec.captured) sfx('capture', o);
+    else sfx('move', o);
+    if (rec.check && !rec.mate) setTimeout(() => sfx('error', { pitch: 1.8, volume: 0.6 }), 120);
   }
 
   // Đi từ ô from tới ô to. Có nhiều nước (phong cấp) thì hỏi chọn quân.
@@ -277,18 +292,21 @@
       if (!movesFrom(sq).length) {
         selected = -1;
         render();
+        sfx('error');
         toast(tr(s.check ? 'toast.checkStuck' : 'toast.noMoves', { piece: PIECE_LC[E.typeOf(p)] }));
         return;
       }
       selected = sq;
       render();
+      sfx('tap');
       return;
     }
     if (p && selected < 0) {
+      sfx('error');
       toast(game.mode === 'ai' ? tr('toast.aiPiece') : tr('toast.turnOf', { color: COLOR_NAME[s.turn] }));
       return;
     }
-    if (selected >= 0) { selected = -1; render(); }
+    if (selected >= 0) { selected = -1; render(); sfx('error'); }
   }
 
   function scheduleAi() {
@@ -370,6 +388,7 @@
     render();
     renderLog();
     writeSummary();
+    sfx('tap');
     toast(tr('toast.undone'));
     scheduleAi();
   }
@@ -475,8 +494,16 @@
       if (token !== anim.token) return;
       anim.busy = false;
       syncPieces();
+      land(pieceAt.get(rec.to));
       onAnimDone();
     }, ms + 30);
+  }
+  // Quân vừa tới ô mới nảy nhẹ một nhịp
+  function land(el) {
+    if (!el || reduceMotion.matches || settings.speed === 'off') return;
+    el.classList.remove('land');
+    void el.offsetWidth;
+    el.classList.add('land');
   }
   function slide(from, to) {
     const el = pieceAt.get(from);
@@ -787,7 +814,7 @@
     endDrag();
     drag = { sq, id: e.pointerId, x0: e.clientX, y0: e.clientY, moving: false, picked: false, el: null, over: -1 };
     if (canPick(sq)) {
-      if (selected !== sq) { selected = sq; drag.picked = true; render(); }
+      if (selected !== sq) { selected = sq; drag.picked = true; render(); sfx('tap'); }
       try { boardEl.setPointerCapture(e.pointerId); } catch (err) {}
     }
     focusSq = sq;
@@ -816,6 +843,7 @@
       boardEl.classList.remove('dragging');
       drag = null;
       if (to >= 0 && to !== d.sq && humanCanPlay() && tryMove(d.sq, to, true)) return;
+      if (to >= 0 && to !== d.sq) sfx('error');
       // Thả ra ngoài hoặc vào ô không đi được: quân về chỗ cũ, vẫn đang cầm
       d.el.classList.remove('dragging');
       d.el.style.transform = '';
@@ -1068,9 +1096,13 @@
       $('result-line').textContent = tr('result.pvpLine', { w: stats.pvp.white, b: stats.pvp.black, d: stats.pvp.drawn });
     }
     $('btn-result-new').textContent = ai ? tr('result.again') : tr('btn.new');
+    sfx(mark);
     const conf = $('confetti');
     conf.innerHTML = '';
-    if (celebrate && !reduceMotion.matches) {
+    // Pháo giấy toàn màn hình của SDK khi có, không thì dùng pháo giấy trong hộp kết quả
+    if (celebrate && PN && PN.fx && typeof PN.fx.confetti === 'function') {
+      try { PN.fx.confetti(); } catch (e) { /* bỏ qua */ }
+    } else if (celebrate && !reduceMotion.matches) {
       const colors = ['var(--p0)', 'var(--p1)', 'var(--accent)', 'var(--text)'];
       for (let i = 0; i < 28; i++) {
         const p = document.createElement('i');
@@ -1143,8 +1175,16 @@
     setSegmented(settingGroup('lang'), I18N.lang);
     $('set-hints').checked = settings.hints;
     $('set-autoflip').checked = settings.autoFlip;
+    if (!$('set-sound-row').hidden) $('set-sound').checked = !SFX.isMuted();
     openModal('modal-settings');
   });
+  // Bật / tắt tiếng: dùng chung khóa với cổng PlayNine; SDK không có sfx thì ẩn dòng này
+  if (SFX && typeof SFX.isMuted === 'function' && typeof SFX.setMuted === 'function') {
+    $('set-sound').addEventListener('change', (e) => { SFX.setMuted(!e.target.checked); if (e.target.checked) sfx('tap'); });
+    if (typeof SFX.onChange === 'function') SFX.onChange((muted) => { $('set-sound').checked = !muted; });
+  } else {
+    $('set-sound-row').hidden = true;
+  }
   $('btn-settings-help').addEventListener('click', () => { closeModal('modal-settings'); openHelp(); });
   if (window.matchMedia) {
     const mq = matchMedia('(prefers-color-scheme: dark)');

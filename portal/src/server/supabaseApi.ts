@@ -1,8 +1,8 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import type { ServerApi } from './api'
 import type {
-  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, EventInput, EventPatch, FinishResult, GameEvent, GameMeta,
-  LeaderRow, Metric, ModeMeta, Period, Profile, RunResult, Rules, Text,
+  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, EventInput, EventPatch, FeedItem, FinishResult, GameEvent, GameMeta,
+  LeaderRow, Metric, ModeMeta, Period, PlayerRow, PointsSummary, Post, Profile, RunResult, Rules, Text, TopRow,
 } from './types'
 
 type Row = Record<string, unknown>
@@ -50,6 +50,33 @@ const toCollection = (r: Row): Collection => ({
 
 const numOrNull = (v: unknown): number | null => (v == null ? null : Number(v))
 
+const toPost = (r: Row): Post => ({
+  id: String(r.id),
+  slug: String(r.slug),
+  title: r.title as Text,
+  summary: (r.summary ?? {}) as Post['summary'],
+  body: (r.body ?? {}) as Post['body'],
+  gameId: r.game_id == null ? null : String(r.game_id),
+  tags: Array.isArray(r.tags) ? r.tags.map(String) : [],
+  pinned: Boolean(r.pinned),
+  publishedAt: r.published_at == null ? null : String(r.published_at),
+  updatedAt: String(r.updated_at),
+})
+const POST_COLS = 'id, slug, title, summary, body, game_id, tags, pinned, published_at, updated_at'
+
+const toFeedItem = (r: Row): FeedItem => ({
+  id: String(r.id),
+  url: String(r.url),
+  source: String(r.source),
+  lang: r.lang === 'vi' ? 'vi' : 'en',
+  title: String(r.title),
+  summary: r.summary == null ? null : String(r.summary),
+  imageUrl: r.image_url == null ? null : String(r.image_url),
+  publishedAt: String(r.published_at),
+  hidden: Boolean(r.hidden),
+})
+const FEED_COLS = 'id, url, source, lang, title, summary, image_url, published_at, hidden'
+
 const toAdminRun = (r: Row): AdminRun => ({
   id: String(r.id),
   userId: String(r.user_id),
@@ -85,18 +112,21 @@ export function createApiFromClient(sb: SupabaseClient): ServerApi {
     return data ? toProfile(data as Row) : null
   }
 
-  async function userOf(sessionUser: { id: string; user_metadata?: Record<string, unknown> } | undefined): Promise<AuthUser | null> {
+  async function userOf(
+    sessionUser: { id: string; is_anonymous?: boolean; user_metadata?: Record<string, unknown> } | undefined,
+  ): Promise<AuthUser | null> {
     if (!sessionUser) return null
+    const isGuest = sessionUser.is_anonymous === true
     const p = await loadProfile(sessionUser.id)
     // RPC lỗi thì coi như không phải admin (không chặn đăng nhập).
     const isAdmin = await sb.rpc('is_admin').then(
       ({ data, error }) => !error && data === true,
       () => false,
     )
-    if (p) return { ...p, isAdmin }
+    if (p) return { ...p, isAdmin, isGuest }
     // Hàng profiles có thể chưa kịp tạo ngay sau lần đăng nhập đầu.
     const name = sessionUser.user_metadata?.name
-    return { id: sessionUser.id, displayName: typeof name === 'string' && name ? name : 'Player', avatarUrl: null, isAdmin }
+    return { id: sessionUser.id, displayName: typeof name === 'string' && name ? name : 'Player', avatarUrl: null, isAdmin, isGuest }
   }
 
   async function rpc<T>(fn: string, args?: Record<string, unknown>): Promise<T> {
@@ -127,12 +157,25 @@ export function createApiFromClient(sb: SupabaseClient): ServerApi {
       })
       if (error) fail('signInWithGoogle', error)
     },
+    async signInAsGuest() {
+      const { error } = await sb.auth.signInAnonymously()
+      if (error) fail('signInAsGuest', error)
+    },
+    async linkGoogle() {
+      const { error } = await sb.auth.linkIdentity({
+        provider: 'google',
+        options: { redirectTo: location.origin + location.pathname },
+      })
+      if (error) fail('linkGoogle', error)
+    },
     async signOut() {
       const { error } = await sb.auth.signOut()
       if (error) fail('signOut', error)
     },
     async gameMeta() {
-      const { data, error } = await sb.from('games').select('id, metric, modes, hidden')
+      // Server chưa chạy migration điểm thì chưa có cột points: đọc lại như cũ để cổng vẫn chạy.
+      let { data, error } = await sb.from('games').select('id, metric, modes, hidden, points')
+      if (error) ({ data, error } = await sb.from('games').select('id, metric, modes, hidden'))
       if (error) fail('gameMeta', error)
       return ((data ?? []) as Row[]).map(
         (r): GameMeta => ({
@@ -142,8 +185,10 @@ export function createApiFromClient(sb: SupabaseClient): ServerApi {
             key: String(m.key),
             label: m.label as ModeMeta['label'],
             ...(m.rules && typeof m.rules === 'object' ? { rules: m.rules as Rules } : {}),
+            ...(typeof m.points === 'number' ? { points: m.points } : {}),
           })),
           hidden: Boolean(r.hidden),
+          ...(r.points != null ? { points: Number(r.points) } : {}),
         }),
       )
     },
@@ -182,6 +227,50 @@ export function createApiFromClient(sb: SupabaseClient): ServerApi {
       const rows = await rpc<Row[] | null>('my_rank', { p_game_id: gameId, p_mode: mode, p_period: period })
       const r = rows?.[0]
       return r ? { rank: Number(r.rank), value: Number(r.value) } : null
+    },
+    async playerLeaderboard(kind, period, limit = 50) {
+      const rows = await rpc<Row[] | null>('player_leaderboard', { p_kind: kind, p_period: period, p_limit: limit })
+      return (rows ?? []).map((r): PlayerRow => {
+        const { achievedAt: _, ...row } = toLeaderRow(r)
+        return row
+      })
+    },
+    async gamePointsBoard(gameId, period, limit = 50) {
+      const rows = await rpc<Row[] | null>('game_points_board', { p_game_id: gameId, p_period: period, p_limit: limit })
+      return (rows ?? []).map(toLeaderRow)
+    },
+    async myGamePoints(gameId, period) {
+      const rows = await rpc<Row[] | null>('my_game_points', { p_game_id: gameId, p_period: period })
+      const r = rows?.[0]
+      return r ? { rank: Number(r.rank), value: Number(r.value) } : null
+    },
+    async ratingSummary() {
+      const out: Record<string, { average: number; count: number }> = {}
+      for (const r of (await rpc<Row[] | null>('game_rating_summary')) ?? []) {
+        out[String(r.game_id)] = { average: Number(r.average), count: Number(r.count) }
+      }
+      return out
+    },
+    async myRatings() {
+      const out: Record<string, number> = {}
+      for (const r of (await rpc<Row[] | null>('my_ratings')) ?? []) out[String(r.game_id)] = Number(r.stars)
+      return out
+    },
+    async rateGame(gameId, stars) {
+      await rpc('rate_game', { p_game_id: gameId, p_stars: stars })
+    },
+    async playerPoints(userId) {
+      const rows = await rpc<Row[] | null>('player_points', { p_user_id: userId })
+      const out: PointsSummary = {}
+      for (const r of rows ?? []) {
+        const p = r.period as Period
+        if (p === 'day' || p === 'week' || p === 'all') out[p] = { points: Number(r.points), rank: r.rank == null ? null : Number(r.rank) }
+      }
+      return out
+    },
+    async topBoards(period, limit = 3) {
+      const rows = await rpc<Row[] | null>('top_boards', { p_period: period, p_limit: limit })
+      return (rows ?? []).map((r): TopRow => ({ ...toLeaderRow(r), gameId: String(r.game_id), mode: String(r.mode) }))
     },
     profile: loadProfile,
     async profileBests(userId) {
@@ -229,8 +318,63 @@ export function createApiFromClient(sb: SupabaseClient): ServerApi {
         }),
       )
     },
-    async adminUpdateGame(gameId, hidden, rules) {
-      await rpc('admin_update_game', { p_game_id: gameId, p_hidden: hidden, p_rules: rules })
+    async posts() {
+      const { data, error } = await sb
+        .from('posts')
+        .select(POST_COLS)
+        .order('pinned', { ascending: false })
+        .order('published_at', { ascending: false })
+      if (error) fail('posts', error)
+      return ((data ?? []) as Row[]).map(toPost)
+    },
+    async post(slug) {
+      const { data, error } = await sb.from('posts').select(POST_COLS).eq('slug', slug).maybeSingle()
+      if (error) fail('post', error)
+      return data ? toPost(data as Row) : null
+    },
+    async adminPosts() {
+      return ((await rpc<Row[] | null>('admin_posts')) ?? []).map(toPost)
+    },
+    async adminSavePost(p) {
+      return String(
+        await rpc<string>('admin_save_post', {
+          p_post: {
+            ...(p.id ? { id: p.id } : {}),
+            slug: p.slug,
+            title: p.title,
+            summary: p.summary,
+            body: p.body,
+            game_id: p.gameId,
+            tags: p.tags,
+            pinned: p.pinned,
+            published_at: p.publishedAt,
+          },
+        }),
+      )
+    },
+    async adminDeletePost(id) {
+      await rpc('admin_delete_post', { p_id: id })
+    },
+    async newsFeed(limit = 60) {
+      const { data, error } = await sb.from('news_feed').select(FEED_COLS).order('published_at', { ascending: false }).limit(limit)
+      if (error) fail('newsFeed', error)
+      return ((data ?? []) as Row[]).map(toFeedItem)
+    },
+    async adminNewsFeed() {
+      return ((await rpc<Row[] | null>('admin_news_feed')) ?? []).map(toFeedItem)
+    },
+    async adminHideNews(id, hidden) {
+      await rpc('admin_hide_news', { p_id: id, p_hidden: hidden })
+    },
+    async adminUpdateGame(gameId, hidden, rules, points, modePoints) {
+      // Chỉ gửi p_points / p_mode_points khi đổi, để vẫn gọi được hàm cũ trên server chưa có tham số này.
+      await rpc('admin_update_game', {
+        p_game_id: gameId,
+        p_hidden: hidden,
+        p_rules: rules,
+        ...(points != null ? { p_points: points } : {}),
+        ...(modePoints && Object.keys(modePoints).length > 0 ? { p_mode_points: modePoints } : {}),
+      })
     },
     async adminSaveEvent(e: EventInput | EventPatch) {
       // Không có id = tạo mới; không thêm khóa undefined (khóa thiếu nghĩa là giữ giá trị cũ khi sửa).

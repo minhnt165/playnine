@@ -7,10 +7,13 @@
   'use strict';
 
   const M = window.Minesweeper;
-  const APP_VERSION = '1.0.3';
+  const APP_VERSION = '1.0.4';
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'minesweeper' });
   const t = I18N.t;
+  // Âm thanh / pháo giấy của SDK: SDK cũ hoặc thiếu thì bỏ qua, không bao giờ làm hỏng game
+  const sfx = (name, o) => { try { window.PlayNine?.sfx?.play(name, o); } catch (e) { /* bỏ qua */ } };
+  const confetti = () => { try { window.PlayNine?.fx?.confetti(); } catch (e) { /* bỏ qua */ } };
 
   // Điền chữ tĩnh theo ngôn ngữ trước khi vẽ phần động
   I18N.apply();
@@ -166,6 +169,7 @@
   let cursor = 0; // ô (chỉ số logic) con trỏ bàn phím đang đứng
   let lastSaveAt = 0;
   let resultTimer = null;
+  let booted = false; // chỉ phát tiếng "bắt đầu" khi người chơi chọn ván mới, không phát lúc mở trang
 
   const game = () => session.game;
   const isOver = () => session.game.status === 'won' || session.game.status === 'lost';
@@ -224,6 +228,7 @@
     buildBoard();
     renderAll();
     writeSummary();
+    if (booted) sfx('start');
     PN && session.kind !== 'custom' && PN.gameStart({ mode: session.daily ? 'daily' : session.kind });
   }
 
@@ -446,6 +451,7 @@
     if (kind === faceKind) return;
     faceKind = kind;
     $('face-svg').innerHTML = faceSvg(kind);
+    $('btn-restart').dataset.face = kind;
   }
 
   function cellView(idx) {
@@ -487,10 +493,17 @@
     for (let i = 0; i < cellEls.length; i++) renderCell(i);
   }
 
+  let shownLeft = null;
   function renderHud() {
     const g = game();
     const left = M.minesLeft(g);
     const ml = $('mines-left');
+    if (shownLeft !== null && left !== shownLeft && !reduceMotion.matches) {
+      ml.classList.remove('bump');
+      void ml.offsetWidth;
+      ml.classList.add('bump');
+    }
+    shownLeft = left;
     ml.textContent = String(left);
     ml.classList.toggle('neg', left < 0);
     $('level-label').textContent = sessionLabel();
@@ -559,7 +572,33 @@
     renderHud();
     if (g.status === 'won') onWin(from);
     else if (g.status === 'lost') onLose();
-    else persist();
+    else {
+      if (res && res.opened.length) {
+        // Mở một ô: tiếng gõ (cao dần theo số); loang nhiều ô: tiếng lật, càng rộng càng cao
+        const n = res.opened.length;
+        if (n > 1) sfx('flip', { pitch: 1 + Math.min(n, 60) / 120 });
+        else sfx('tap', { pitch: 1 + (g.adj[res.opened[0]] || 0) * 0.06 });
+        animateOpen(res.opened, from);
+      }
+      persist();
+    }
+  }
+
+  /** Ô vừa mở bật lên và sáng nhẹ, lan từ ô được bấm (tối đa 400 ô để không nặng máy). */
+  function animateOpen(list, from) {
+    if (reduceMotion.matches) return;
+    let maxD = 0;
+    list.slice(0, 400).forEach((i) => {
+      const el = cellEls[i];
+      if (!el) return;
+      const d = Math.min(distance(from, i) * 22, 330);
+      if (d > maxD) maxD = d;
+      el.style.setProperty('--d', d + 'ms');
+      el.classList.remove('anim-open');
+      void el.offsetWidth;
+      el.classList.add('anim-open');
+    });
+    setTimeout(() => list.forEach((i) => cellEls[i] && cellEls[i].classList.remove('anim-open')), maxD + 420);
   }
 
   function openCell(idx) {
@@ -578,6 +617,7 @@
     if (!res) return;
     if (res.blocked) {
       // Số cờ chưa khớp: nháy nhẹ các ô kề chưa mở để báo
+      sfx('error', { volume: 0.5 });
       if (!reduceMotion.matches) {
         M.neighbors(g.w, g.h, idx).forEach((j) => {
           if (g.state[j] === M.HIDDEN || g.state[j] === M.QUESTION) {
@@ -600,7 +640,13 @@
     const next = M.toggleFlag(g, idx, settings.question);
     if (next === null) return;
     if (fromLongPress) vibrate(25);
+    sfx(next === M.FLAG ? 'place' : 'tap', next === M.FLAG ? undefined : { pitch: next === M.QUESTION ? 1.3 : 0.8 });
     renderCell(idx);
+    if (next === M.FLAG && !reduceMotion.matches && cellEls[idx]) {
+      const el = cellEls[idx];
+      el.classList.add('anim-flag');
+      setTimeout(() => el.classList.remove('anim-flag'), 320);
+    }
     renderHud();
     persist();
   }
@@ -642,6 +688,7 @@
     writeSummary();
     renderBoard();
     renderHud();
+    sfx('win');
     const delay = animateWin(fromIdx);
     showResult(true, sec, record, delay);
   }
@@ -654,6 +701,7 @@
     writeSummary();
     renderBoard();
     renderHud();
+    sfx('capture', { pitch: 0.7 }); // tiếng nổ; giai điệu thua phát khi hiện kết quả
     const delay = animateLose();
     showResult(false, Math.round(elapsedMs() / 1000), false, delay);
   }
@@ -748,7 +796,11 @@
     }
     $('btn-result-retry').hidden = !(kind === 'daily' && !won);
     $('btn-result-new').textContent = t('result.new');
-    resultTimer = setTimeout(() => openModal('modal-result'), delay);
+    resultTimer = setTimeout(() => {
+      openModal('modal-result');
+      if (won) confetti();
+      else sfx('lose');
+    }, delay);
   }
 
   /* ---------------- Chạm / chuột ---------------- */
@@ -1159,6 +1211,7 @@
   });
   $('btn-flag-mode').addEventListener('click', () => {
     flagMode = !flagMode;
+    sfx('tap', { pitch: flagMode ? 1.2 : 0.9 });
     renderHud();
     toast(flagMode ? t('toast.flagMode') : t('toast.openMode'));
   });
@@ -1176,6 +1229,20 @@
     closeModal('modal-result');
     newGame('daily', { date: session.daily || todayKey() });
   });
+
+  /* ---------------- Âm thanh: công tắc trong Cài đặt, dùng chung trạng thái tắt tiếng với cổng ---------------- */
+  const SFX = window.PlayNine && window.PlayNine.sfx;
+  if (SFX && typeof SFX.isMuted === 'function' && typeof SFX.setMuted === 'function') {
+    const sw = $('sound-switch');
+    const sync = () => { sw.checked = !SFX.isMuted(); };
+    $('setting-sound').hidden = false;
+    sync();
+    if (typeof SFX.onChange === 'function') SFX.onChange(sync);
+    sw.addEventListener('change', () => {
+      SFX.setMuted(!sw.checked);
+      if (sw.checked) sfx('tap');
+    });
+  }
 
   /* ---------------- Đồng hồ, ẩn tab, lưu định kỳ ---------------- */
   setInterval(() => {
@@ -1228,4 +1295,5 @@
   } else {
     newGame(settings.level === 'custom' || LEVEL_ORDER.indexOf(settings.level) >= 0 ? settings.level : 'easy');
   }
+  booted = true;
 })();

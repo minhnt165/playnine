@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#14100d">
+<meta name="theme-color" content="#090b14">
 <meta name="apple-mobile-web-app-title" content="Xiangqi">
 <title>Xiangqi - Chinese chess</title>
 <!-- Icon: file PNG tĩnh cho iOS / Android / Safari (xuất từ Favicon.svg bằng tools/make-icons.js);
@@ -207,14 +207,14 @@ const I18N = (() => {
 </script>
 <style>
   :root {
-    --bg1: #1d1711;
-    --bg2: #0e0b09;
-    --gold: #e0b964;
-    --gold-soft: rgba(224, 185, 100, .35);
+    --bg1: #131626;
+    --bg2: #090b14;
+    --gold: #a48bff;
+    --gold-soft: rgba(139, 108, 255, .35);
     --card: rgba(255, 255, 255, .045);
     --card-border: rgba(255, 255, 255, .09);
-    --text: #f1e9da;
-    --muted: #a69684;
+    --text: #eef0ff;
+    --muted: #9096b8;
     --red: #c62828;
     --black: #222;
     --green: #4caf50;
@@ -227,8 +227,8 @@ const I18N = (() => {
     color: var(--text);
     font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", sans-serif;
     background:
-      radial-gradient(900px 600px at 15% -10%, rgba(224, 185, 100, .14), transparent 60%),
-      radial-gradient(700px 500px at 100% 100%, rgba(198, 40, 40, .12), transparent 60%),
+      radial-gradient(900px 600px at 15% -10%, rgba(139, 108, 255, .2), transparent 60%),
+      radial-gradient(700px 500px at 100% 100%, rgba(34, 211, 238, .1), transparent 60%),
       linear-gradient(180deg, var(--bg1), var(--bg2));
     background-attachment: fixed;
     -webkit-tap-highlight-color: transparent; user-select: none;
@@ -239,7 +239,7 @@ const I18N = (() => {
   header { display: flex; align-items: baseline; gap: 12px; }
   header h1 {
     margin: 0; font-size: 1.7rem; font-weight: 700; letter-spacing: .5px;
-    background: linear-gradient(180deg, #f3d98a, #c2933a); -webkit-background-clip: text; background-clip: text; color: transparent;
+    background: linear-gradient(110deg, #8b6cff, #22d3ee); -webkit-background-clip: text; background-clip: text; color: transparent;
   }
   header .sub { color: var(--muted); font-size: .9rem; }
   .layout { display: flex; gap: 20px; align-items: center; justify-content: center; }
@@ -249,18 +249,25 @@ const I18N = (() => {
   /* ---- Lớp phủ kết thúc ván ---- */
   .overlay {
     position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    background: rgba(10, 7, 5, .55); backdrop-filter: blur(3px); border-radius: 14px;
+    background: rgba(9, 11, 20, .6); backdrop-filter: blur(3px); border-radius: 14px;
     animation: fadeIn .35s ease;
   }
   .overlay[hidden] { display: none; }
   .overlay-card {
-    background: linear-gradient(180deg, #2a2119, #171210); border: 1px solid var(--gold-soft);
+    background: linear-gradient(180deg, #1a1e33, #131626); border: 1px solid var(--gold-soft);
     border-radius: 16px; padding: 22px 28px; text-align: center; min-width: 230px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, .6);
     animation: pop .4s cubic-bezier(.2, .9, .3, 1.3);
   }
   .overlay-card .ov-title { font-size: 1.6rem; font-weight: 800; color: var(--gold); }
   .overlay-card .ov-sub { color: var(--muted); margin: 6px 0 16px; }
+  /* Thắng: viền và quầng tím sáng hơn, tiêu đề chuyển màu như logo */
+  .overlay.win .overlay-card { border-color: rgba(164, 139, 255, .7); box-shadow: 0 20px 50px rgba(0, 0, 0, .6), 0 0 0 4px rgba(139, 108, 255, .14), 0 0 44px rgba(139, 108, 255, .35); }
+  .overlay.win .ov-title { background: linear-gradient(110deg, #a48bff, #22d3ee); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .overlay.lose .ov-title { color: #ff8a80; }
+  .overlay-card .ov-title { animation: ovRise .45s .1s ease-out both; }
+  @keyframes ovRise { from { transform: translateY(8px); opacity: 0 } }
+  #btnOverlayNew { box-shadow: 0 8px 22px rgba(139, 108, 255, .45); }
   @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
   @keyframes pop { from { transform: scale(.8); opacity: 0 } to { transform: scale(1); opacity: 1 } }
 
@@ -269,7 +276,7 @@ const I18N = (() => {
   .card { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 12px 14px; }
   .player { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; border: 1px solid transparent; transition: all .25s; }
   .player + .player { margin-top: 6px; }
-  .player.active { border-color: var(--gold-soft); background: rgba(224, 185, 100, .08); box-shadow: inset 0 0 0 1px rgba(224, 185, 100, .15); }
+  .player.active { border-color: var(--gold-soft); background: rgba(139, 108, 255, .1); box-shadow: inset 0 0 0 1px rgba(139, 108, 255, .18); }
   .avatar {
     width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex: 0 0 auto;
     font-family: KaiTi, STKaiti, "Kaiti SC", BiauKai, "Noto Serif CJK SC", "Microsoft YaHei", serif; font-weight: 700; font-size: 22px;
@@ -312,9 +319,9 @@ const I18N = (() => {
   /* Icon SVG trong nút: vẽ bằng nét, lấy màu chữ hiện tại (xem ICONS trong khối ui) */
   button svg.ic { width: 1.2em; height: 1.2em; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
   button:hover { background: rgba(255, 255, 255, .11); transform: translateY(-1px); }
-  button:active { transform: translateY(0); }
+  button:active { transform: translateY(0) scale(.97); }
   button:disabled { opacity: .4; cursor: default; transform: none; }
-  button.primary { background: linear-gradient(180deg, #e5c06a, #b8882f); color: #1d1507; border-color: transparent; }
+  button.primary { background: linear-gradient(180deg, #8b6cff, #6a4cf5); color: #ffffff; border-color: transparent; }
   button.primary:hover { filter: brightness(1.08); }
   .field { display: flex; flex-direction: column; gap: 6px; }
   .field + .field { margin-top: 10px; }
@@ -322,7 +329,7 @@ const I18N = (() => {
   .seg { display: flex; background: rgba(0, 0, 0, .25); border: 1px solid var(--card-border); border-radius: 10px; padding: 3px; gap: 3px; }
   .seg button { flex: 1; padding: 7px 6px; border: none; background: transparent; border-radius: 8px; font-size: .88rem; color: var(--muted); transform: none; }
   .seg button:hover { background: rgba(255, 255, 255, .06); }
-  .seg button.on { background: rgba(224, 185, 100, .18); color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold-soft); }
+  .seg button.on { background: rgba(139, 108, 255, .18); color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold-soft); }
   .seg.disabled { opacity: .4; pointer-events: none; }
 
   .moves { font-size: .83rem; color: var(--muted); max-height: 170px; overflow: auto; line-height: 1.6; }
@@ -330,7 +337,7 @@ const I18N = (() => {
   .moves .no { color: var(--gold); font-weight: 700; display: inline-block; width: 2em; }
   .moves .mv { display: inline-block; min-width: 7.6em; cursor: pointer; border-radius: 4px; padding: 0 3px; }
   .moves .mv:hover { background: rgba(255, 255, 255, .07); }
-  .moves .mv.cur { background: rgba(224, 185, 100, .2); color: var(--gold); }
+  .moves .mv.cur { background: rgba(139, 108, 255, .2); color: var(--gold); }
   .moves .mv.red { color: #ef9a9a; } .moves .mv.black { color: #ddd; }
   .nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; }
   .nav button { padding: 7px 4px; }
@@ -342,9 +349,11 @@ const I18N = (() => {
   #layerPieces g { transition: transform .32s cubic-bezier(.2, .8, .2, 1), opacity .3s; cursor: pointer; }
   #layerPieces g.captured { opacity: 0; }
   #layerPieces .halo { fill: none; stroke: #ff5252; stroke-width: 3; opacity: 0; }
-  #layerPieces g.in-check .halo { animation: pulse 1s ease-in-out infinite; }
+  #layerPieces g.in-check .halo { animation: pulse 1s ease-in-out infinite; stroke-width: 4; filter: url(#glow); }
   @keyframes pulse { 0%, 100% { opacity: .2 } 50% { opacity: 1 } }
   .sel-ring { fill: none; stroke: var(--gold); stroke-width: 3.5; filter: url(#glow); }
+  .sel-ring { animation: selPulse .9s ease-in-out infinite alternate; }
+  @keyframes selPulse { from { stroke-opacity: 1 } to { stroke-opacity: .5 } }
   .hint-dot { fill: #43a047; stroke: #e8f5e9; stroke-width: 1.5; opacity: .9; }
   .hint-cap { fill: none; stroke: #ef5350; stroke-width: 3.5; stroke-dasharray: 9 6; animation: spin 8s linear infinite; }
   @keyframes spin { to { stroke-dashoffset: -150 } }
@@ -360,6 +369,13 @@ const I18N = (() => {
     .board-wrap { width: min(100%, 580px); }
     .panel { width: min(100%, 580px); }
     .moves { max-height: 110px; }
+  }
+  /* Giảm chuyển động: tắt hiệu ứng trượt, nhấp nháy và bật lớp phủ */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: .001ms !important; }
+    #layerPieces g.in-check .halo { animation: none; opacity: 1; }
+    .sel-ring, .hint-cap, .badge.check { animation: none; }
+    button:hover, button:active { transform: none; }
   }
 </style>
 </head>
@@ -1059,7 +1075,7 @@ const DIFFICULTY = {
 <!-- ===================================================================== -->
 <!-- PHẦN 3: GIAO DIỆN (UI) - vẽ SVG, âm thanh, xử lý click, điều khiển ván -->
 <!-- ===================================================================== -->
-<script src="../sdk/playnine.js?v=1"></script>
+<script src="../sdk/playnine.js?v=2"></script>
 <script id="ui">
 'use strict';
 const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
@@ -1104,9 +1120,22 @@ function initIcons() {
 }
 
 // ---- Âm thanh (Web Audio API, tổng hợp trực tiếp, không cần file) ----------
+// Bật/tắt tiếng đồng bộ với khóa dùng chung của cổng PlayNine (qua PlayNine.sfx khi SDK có,
+// không thì đọc/ghi thẳng localStorage); khóa riêng 'xiangqi.sound' vẫn được ghi theo.
+const SOUND_KEY = 'playnine-sound-v1';
+const SFX = PN && PN.sfx && typeof PN.sfx.isMuted === 'function' && typeof PN.sfx.setMuted === 'function' ? PN.sfx : null;
+function sharedMuted() {
+  try { return localStorage.getItem(SOUND_KEY) === 'off'; } catch (e) { return false; }
+}
+function saveSound() {
+  try { localStorage.setItem('xiangqi.sound', Sound.enabled ? '1' : '0'); } catch (e) { /* bỏ qua */ }
+  if (SFX) SFX.setMuted(!Sound.enabled);
+  else try { localStorage.setItem(SOUND_KEY, Sound.enabled ? 'on' : 'off'); } catch (e) { /* bỏ qua */ }
+}
 const Sound = {
   enabled: true,
   ctx: null,
+  vol: 1, // hệ số âm lượng của tiếng đang phát (máy đi nhỏ tiếng hơn)
   // Khởi tạo lười, phải gọi trong một thao tác của người dùng (click/touch)
   init() {
     if (!this.ctx) {
@@ -1122,7 +1151,7 @@ const Sound = {
     osc.type = type || 'sine';
     osc.frequency.setValueAtTime(freq, t0);
     if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
-    g.gain.setValueAtTime(gain, t0);
+    g.gain.setValueAtTime(gain * this.vol, t0);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
     osc.connect(g).connect(c.destination);
     osc.start(t0); osc.stop(t0 + dur + 0.02);
@@ -1137,13 +1166,14 @@ const Sound = {
     const src = c.createBufferSource(); src.buffer = buf;
     const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = freq; bp.Q.value = 1.2;
     const g = c.createGain();
-    g.gain.setValueAtTime(gain, t0);
+    g.gain.setValueAtTime(gain * this.vol, t0);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
     src.connect(bp).connect(g).connect(c.destination);
     src.start(t0);
   },
-  play(name) {
-    if (!this.enabled || !this.ctx) return;
+  play(name, vol) {
+    if (!this.enabled || !this.ctx || sharedMuted()) return;
+    this.vol = vol > 0 ? Math.min(vol, 1) : 1;
     try {
       switch (name) {
         case 'select':  this.tone(1200, 0.04, 'square', 0.03); break;
@@ -1154,6 +1184,8 @@ const Sound = {
         case 'lose':    [392, 330, 262].forEach((f, i) => this.tone(f, 0.35, 'triangle', 0.18, i * 0.2)); break;
         case 'draw':    [440, 440].forEach((f, i) => this.tone(f, 0.25, 'triangle', 0.15, i * 0.3)); break;
         case 'undo':    this.tone(500, 0.08, 'sine', 0.12, 0, 350); break;
+        case 'start':   this.tone(392, 0.16, 'triangle', 0.14, 0, 784); this.tone(988, 0.12, 'sine', 0.09, 0.15); break;
+        case 'illegal': this.tone(196, 0.08, 'square', 0.05); this.tone(156, 0.11, 'square', 0.05, 0.09); break;
       }
     } catch (e) { /* bỏ qua lỗi âm thanh */ }
   },
@@ -1547,6 +1579,8 @@ function renderPanel(v) {
   // Lớp phủ kết thúc (ẩn khi đang xem lại để có thể xem bàn cờ)
   const ov = $('overlay');
   ov.hidden = !st.over || !v.live;
+  ov.classList.toggle('win', st.over && st.winner !== null && (!isAi || st.winner === RED));
+  ov.classList.toggle('lose', st.over && isAi && st.winner === BLACK);
   if (st.over) {
     const youWin = isAi && st.winner === RED, youLose = isAi && st.winner === BLACK;
     $('ovTitle').textContent = st.winner === null ? t('status.draw') : youWin ? t('result.youWin') : youLose ? t('result.aiWins') : t('result.colorWins', { color: COLOR_NAME[st.winner] });
@@ -1612,6 +1646,7 @@ function newGame() {
   layers.layerPieces.innerHTML = '';
   refreshStatus();
   render();
+  Sound.play('start');
   maybeAiMove();
 }
 
@@ -1647,6 +1682,7 @@ function onSquareClick(sq) {
     const m = game.legalForSelected.find(x => x.to === sq);
     if (m) { playMove(m); return; }
     if (sq === game.selected) { clearSelection(); render(); return; }
+    if (p === EMPTY || colorOf(p) !== game.turn) Sound.play('illegal'); // bấm ô không đi được
   }
   // Chọn quân của bên đang đi
   if (p !== EMPTY && colorOf(p) === game.turn) {
@@ -1682,12 +1718,16 @@ function playMove(m) {
   if (st.over) {
     const humanLost = game.mode === 'ai' && st.winner === BLACK;
     Sound.play(st.winner === null ? 'draw' : humanLost ? 'lose' : 'win');
+    // Pháo giấy của SDK khi người chơi thắng (hai người: bên nào thắng cũng bắn)
+    if (st.winner !== null && !humanLost && PN && PN.fx && typeof PN.fx.confetti === 'function') {
+      try { PN.fx.confetti(); } catch (e) { /* bỏ qua */ }
+    }
     if (game.pnRun && game.mode === 'ai') PN.gameEnd({ mode: game.pnRun, won: st.winner === RED, assisted: game.assisted });
     game.pnRun = null;
   } else if (st.inCheck) {
     Sound.play('check');
   } else {
-    Sound.play(captured ? 'capture' : 'move');
+    Sound.play(captured ? 'capture' : 'move', game.mode === 'ai' && colorOf(piece) === BLACK ? 0.7 : 1);
   }
   maybeAiMove();
 }
@@ -1768,7 +1808,7 @@ document.addEventListener('keydown', e => {
 $('btnSound').addEventListener('click', () => {
   Sound.init();
   Sound.enabled = !Sound.enabled;
-  try { localStorage.setItem('xiangqi.sound', Sound.enabled ? '1' : '0'); } catch (e) { /* bỏ qua */ }
+  saveSound();
   if (Sound.enabled) Sound.play('select');
   renderPanel(viewState());
 });
@@ -1808,10 +1848,23 @@ I18N.onChange = () => renderPanel(viewState());
 
 // Khôi phục tuỳ chọn đã lưu (nếu có)
 try {
-  if (localStorage.getItem('xiangqi.sound') === '0') Sound.enabled = false;
+  // Khóa dùng chung của cổng được ưu tiên; chưa có thì theo khóa riêng cũ của game
+  const shared = localStorage.getItem(SOUND_KEY);
+  if (shared === 'on' || shared === 'off') Sound.enabled = shared === 'on';
+  else if (localStorage.getItem('xiangqi.sound') === '0') Sound.enabled = false;
   const lv = localStorage.getItem('xiangqi.level');
   if (lv && DIFFICULTY[lv]) game.level = lv;
 } catch (e) { /* bỏ qua */ }
+
+// Tắt / bật tiếng ở cổng hoặc tab khác: nút loa của game đổi theo
+function onSharedSound(muted) {
+  if (Sound.enabled === !muted) return;
+  Sound.enabled = !muted;
+  try { localStorage.setItem('xiangqi.sound', Sound.enabled ? '1' : '0'); } catch (e) { /* bỏ qua */ }
+  renderPanel(viewState());
+}
+if (SFX && typeof SFX.onChange === 'function') SFX.onChange(onSharedSound);
+else window.addEventListener('storage', e => { if (e.key === SOUND_KEY) onSharedSound(e.newValue === 'off'); });
 
 initIcons();
 initSvg();

@@ -2,24 +2,24 @@
  * Cờ Caro - Giao diện (mobile trước, dark mode, bàn cờ gỗ 15x15)
  * ===================================================================== */
 :root {
-  --bg: #f6f2ea;
+  --bg: #f3f4fb;
   --surface: #ffffff;
-  --surface-2: #f1ebdf;
-  --text: #1d1711;
-  --muted: #6e6255;
-  --accent: #b07d1f;
-  --accent-strong: #946815;
+  --surface-2: #eceefa;
+  --text: #14162b;
+  --muted: #5d6285;
+  --accent: #6a4cf5;
+  --accent-strong: #5a3be0;
   --accent-text: #ffffff;
-  --accent-soft: rgba(176, 125, 31, 0.12);
+  --accent-soft: rgba(106, 76, 245, 0.12);
   --red: #b3261e;
-  --line: #e6ddcd;
-  --btn-bg: #f1e9da;
-  --btn-bg-hover: #eadfca;
-  --btn-text: #7a5413;
-  --focus: #b07d1f;
-  --shadow: 0 14px 36px rgba(48, 32, 12, 0.18);
-  --shadow-sm: 0 3px 12px rgba(48, 32, 12, 0.08);
-  --backdrop: rgba(29, 23, 17, 0.45);
+  --line: #e3e5f2;
+  --btn-bg: #eceefa;
+  --btn-bg-hover: #e2e5f7;
+  --btn-text: #4b34c9;
+  --focus: #6a4cf5;
+  --shadow: 0 14px 36px rgba(17, 20, 45, 0.18);
+  --shadow-sm: 0 3px 12px rgba(17, 20, 45, 0.08);
+  --backdrop: rgba(20, 22, 43, 0.45);
   --radius: 16px;
   --radius-sm: 12px;
 
@@ -44,20 +44,20 @@
 /* Giao diện tối: theo hệ thống (trừ khi chọn Sáng) hoặc khi chọn Tối */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e0b09;
-    --surface: #1a1511;
-    --surface-2: #231c16;
-    --text: #f1e9da;
-    --muted: #a69684;
-    --accent: #e0b964;
-    --accent-strong: #ecc97e;
-    --accent-text: #1d1711;
-    --accent-soft: rgba(224, 185, 100, 0.14);
-    --line: #2f261e;
-    --btn-bg: #261f18;
-    --btn-bg-hover: #30271e;
-    --btn-text: #e0b964;
-    --focus: #e0b964;
+    --bg: #090b14;
+    --surface: #131626;
+    --surface-2: #1a1e33;
+    --text: #eef0ff;
+    --muted: #9096b8;
+    --accent: #8b6cff;
+    --accent-strong: #a48bff;
+    --accent-text: #ffffff;
+    --accent-soft: rgba(139, 108, 255, 0.18);
+    --line: #262a42;
+    --btn-bg: #1a1e33;
+    --btn-bg-hover: #22274a;
+    --btn-text: #c9bcff;
+    --focus: #22d3ee;
     --shadow: 0 14px 36px rgba(0, 0, 0, 0.6);
     --shadow-sm: 0 3px 12px rgba(0, 0, 0, 0.4);
     --backdrop: rgba(0, 0, 0, 0.6);
@@ -67,20 +67,20 @@
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0e0b09;
-  --surface: #1a1511;
-  --surface-2: #231c16;
-  --text: #f1e9da;
-  --muted: #a69684;
-  --accent: #e0b964;
-  --accent-strong: #ecc97e;
-  --accent-text: #1d1711;
-  --accent-soft: rgba(224, 185, 100, 0.14);
-  --line: #2f261e;
-  --btn-bg: #261f18;
-  --btn-bg-hover: #30271e;
-  --btn-text: #e0b964;
-  --focus: #e0b964;
+  --bg: #090b14;
+  --surface: #131626;
+  --surface-2: #1a1e33;
+  --text: #eef0ff;
+  --muted: #9096b8;
+  --accent: #8b6cff;
+  --accent-strong: #a48bff;
+  --accent-text: #ffffff;
+  --accent-soft: rgba(139, 108, 255, 0.18);
+  --line: #262a42;
+  --btn-bg: #1a1e33;
+  --btn-bg-hover: #22274a;
+  --btn-text: #c9bcff;
+  --focus: #22d3ee;
   --shadow: 0 14px 36px rgba(0, 0, 0, 0.6);
   --shadow-sm: 0 3px 12px rgba(0, 0, 0, 0.4);
   --backdrop: rgba(0, 0, 0, 0.6);
@@ -153,7 +153,7 @@ button:disabled { cursor: default; }
 /* ---------- Thanh trên ---------- */
 .topbar { grid-area: top; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.brand-mark { width: 34px; height: 34px; border-radius: 9px; box-shadow: 0 3px 10px rgba(120, 80, 20, 0.3); flex: none; }
+.brand-mark { width: 34px; height: 34px; border-radius: 9px; box-shadow: 0 3px 10px rgba(17, 20, 45, 0.3); flex: none; }
 .logo { margin: 0; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.2px; white-space: nowrap; }
 .topbar-actions { display: flex; align-items: center; gap: 6px; flex: none; }
 
@@ -171,7 +171,7 @@ button:disabled { cursor: default; }
 }
 .btn .icon { width: 18px; height: 18px; }
 .btn:active { transform: scale(0.97); }
-.btn-primary { background: var(--accent); color: var(--accent-text); box-shadow: 0 6px 16px rgba(176, 125, 31, 0.28); }
+.btn-primary { background: var(--accent); color: var(--accent-text); box-shadow: 0 6px 16px rgba(106, 76, 245, 0.28); }
 .btn-ghost { background: var(--btn-bg); color: var(--btn-text); }
 .btn-new { padding: 8px 14px; min-height: 40px; }
 .btn-icon {
@@ -348,9 +348,16 @@ html[lang="en"] .btn-new .icon { display: none; }
 .cell.x { --glyph: var(--glyph-x); color: var(--piece-x); cursor: default; }
 .cell.o { --glyph: var(--glyph-o); color: var(--piece-o); cursor: default; }
 .cell.x::before, .cell.o::before { opacity: 1; }
-.cell.fresh::before { animation: drop 0.18s ease-out; }
+.cell.fresh::before { animation: drop 0.3s cubic-bezier(0.3, 1.5, 0.5, 1); }
 @keyframes drop {
-  from { transform: scale(1.5); opacity: 0; }
+  from { transform: scale(1.7); opacity: 0; }
+  55% { transform: scale(0.9); opacity: 1; }
+  to { transform: scale(1); opacity: 1; }
+}
+/* Vòng sóng lan ra quanh quân vừa đặt */
+.cell.last.fresh::after { animation: ripple 0.45s ease-out; }
+@keyframes ripple {
+  from { transform: scale(1.9); opacity: 0; box-shadow: inset 0 0 0 3px var(--accent); }
   to { transform: scale(1); opacity: 1; }
 }
 
@@ -398,6 +405,10 @@ html[lang="en"] .btn-new .icon { display: none; }
   pointer-events: none;
 }
 .cell.win::before { animation: win-pulse 0.9s ease-in-out infinite alternate; }
+.cell.win { animation: win-flash 0.7s ease-out; }
+@keyframes win-flash {
+  from { background: #fff; box-shadow: inset -1px -1px 0 var(--grid-line), 0 0 14px 4px rgba(255, 236, 160, 0.95); }
+}
 @keyframes win-pulse {
   from { transform: scale(1); }
   to { transform: scale(1.14); }
@@ -735,6 +746,38 @@ kbd {
 .result-stats div { background: var(--surface-2); border-radius: 12px; padding: 10px 6px; text-align: center; }
 .result-stats dt { font-size: 0.7rem; color: var(--muted); font-weight: 600; }
 .result-stats dd { margin: 2px 0 0; font-weight: 800; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+/* Màn kết quả: thẻ phóng lên, huy hiệu nảy, nút chơi tiếp nổi bật */
+.modal-card.modal-result { animation: result-in 0.42s cubic-bezier(0.2, 1.25, 0.35, 1); }
+.modal-result .result-badge { animation: badge-in 0.55s cubic-bezier(0.2, 1.6, 0.4, 1) 0.1s both; }
+.modal-result[data-outcome="win"] .result-badge { box-shadow: 0 6px 16px rgba(60, 36, 10, 0.25), 0 0 0 6px var(--accent-soft), 0 0 26px 4px var(--accent-soft); }
+.modal-result[data-outcome="win"] h2 { color: var(--accent-strong); }
+.modal-result[data-outcome="lose"] .result-badge { filter: saturate(0.6); }
+.modal-result .btn-primary { box-shadow: 0 8px 22px rgba(106, 76, 245, 0.4); animation: cta-in 0.4s ease-out 0.25s both; }
+.modal-result .result-stats div { animation: cta-in 0.35s ease-out both; }
+.modal-result .result-stats div:nth-child(2) { animation-delay: 0.06s; }
+.modal-result .result-stats div:nth-child(3) { animation-delay: 0.12s; }
+@keyframes result-in {
+  from { transform: scale(0.8) translateY(14px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+@keyframes badge-in {
+  from { transform: scale(0.2) rotate(-30deg); opacity: 0; }
+  to { transform: scale(1) rotate(0); opacity: 1; }
+}
+@keyframes cta-in {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ---------- Phản hồi khi bấm, bàn cờ "thở" khi máy nghĩ ---------- */
+.btn-icon { transition: background-color 0.15s, transform 0.08s; }
+.btn-icon:active, .segmented button:active { transform: scale(0.93); }
+.btn-primary:active { filter: brightness(0.95); }
+.app.thinking .board-viewport { animation: think-glow 1.3s ease-in-out infinite alternate; }
+@keyframes think-glow {
+  from { box-shadow: 0 10px 28px rgba(60, 36, 10, 0.28), 0 0 0 1px rgba(60, 36, 10, 0.15); }
+  to { box-shadow: 0 10px 28px rgba(60, 36, 10, 0.28), 0 0 0 3px var(--accent-soft), 0 0 22px 2px var(--accent-soft); }
+}
 
 /* ---------- Giảm chuyển động ---------- */
 @media (prefers-reduced-motion: reduce) {
@@ -745,4 +788,7 @@ kbd {
     scroll-behavior: auto !important;
   }
   .cell.win::before { animation: none !important; }
+  .cell.fresh::before, .cell.last.fresh::after, .cell.win, .modal-card.modal-result, .modal-result .result-badge,
+  .modal-result .btn-primary, .modal-result .result-stats div, .app.thinking .board-viewport { animation: none !important; }
+  .btn-icon:active, .segmented button:active { transform: none; }
 }

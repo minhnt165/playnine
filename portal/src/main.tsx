@@ -11,7 +11,7 @@ import './styles/admin.css'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <I18nProvider>
-      <ServerProvider>
+      <ServerProvider autoGuest>
         <App />
       </ServerProvider>
     </I18nProvider>

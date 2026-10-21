@@ -3,6 +3,9 @@ import { AdminPage } from './admin/AdminPage'
 import { GamePage } from './detail/GamePage'
 import { EventPage } from './events/EventPage'
 import { EventsPage } from './events/EventsPage'
+import { LeaderboardsPage } from './leaderboards/LeaderboardsPage'
+import { NewsPage } from './news/NewsPage'
+import { PostPage } from './news/PostPage'
 import { Home } from './home/Home'
 import { prefersReducedMotion } from './home/media'
 import { markPlayed } from './data/recent'
@@ -21,7 +24,7 @@ const currentGame = (): GameDef | null => {
   const r = parseRoute(location.hash)
   return r.name === 'play' ? r.game : null
 }
-/** Route của trang không phải game (home, detail, profile, events, event, admin). */
+/** Route của trang không phải game (home, detail, profile, events, event, leaderboards, news, post, admin). */
 const currentPage = (): Route => {
   const r = parseRoute(location.hash)
   return r.name === 'play' ? { name: 'home' } : r
@@ -99,6 +102,12 @@ export function App() {
         <EventsPage onThemeApplied={recolor} />
       ) : page.name === 'event' ? (
         <EventPage eventId={page.eventId} onThemeApplied={recolor} />
+      ) : page.name === 'news' ? (
+        <NewsPage onThemeApplied={recolor} />
+      ) : page.name === 'post' ? (
+        <PostPage slug={page.slug} onThemeApplied={recolor} />
+      ) : page.name === 'leaderboards' ? (
+        <LeaderboardsPage onThemeApplied={recolor} />
       ) : page.name === 'admin' ? (
         <AdminPage onThemeApplied={recolor} />
       ) : (

@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
-  <link rel="stylesheet" href="style.css?v=1.0.0">
+  <link rel="stylesheet" href="style.css?v=1.2.0">
 </head>
 <body>
   <div class="app" id="app">
@@ -74,7 +74,7 @@
   <div class="modal" id="modal-lost" hidden>
     <div class="modal-backdrop"></div>
     <div class="modal-card modal-result" role="dialog" aria-modal="true" aria-labelledby="lost-title">
-      <div class="result-badge" aria-hidden="true">🧺</div>
+      <div class="result-badge" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="3" y="27" width="42" height="15" rx="5" fill="#a5652e"/><rect x="3" y="25" width="42" height="14" rx="5" fill="#d99a5b"/><g fill="#fff8ea" stroke="#b88c52" stroke-width="1.2"><rect x="5" y="15" width="12" height="13" rx="3"/><rect x="18" y="13" width="12" height="13" rx="3"/><rect x="31" y="15" width="12" height="13" rx="3"/></g><use href="#nh-icon-0" x="5.6" y="15.4" width="10.8" height="10.8"/><use href="#nh-icon-1" x="18.6" y="13.4" width="10.8" height="10.8"/><use href="#nh-icon-2" x="31.6" y="15.4" width="10.8" height="10.8"/></svg></div>
       <h2 id="lost-title" data-i18n="lost.title">The tray is full!</h2>
       <p data-i18n="lost.text">Use a helper to keep going, or try this level again.</p>
       <div class="modal-stack">
@@ -123,6 +123,13 @@
             <button type="button" role="radio" data-value="vi">Tiếng Việt</button>
           </div>
         </div>
+        <label class="setting" id="setting-sound">
+          <div class="setting-text">
+            <span class="setting-name" data-i18n="settings.sound">Sound</span>
+            <span class="setting-desc" data-i18n="settings.soundDesc">Sound effects for taps, matches and level clears.</span>
+          </div>
+          <input type="checkbox" class="switch" id="sw-sound">
+        </label>
         <label class="setting">
           <div class="setting-text">
             <span class="setting-name" data-i18n="settings.vibrate">Vibrate</span>
@@ -161,9 +168,9 @@
     </div>
   </div>
 
-  <script src="i18n.js?v=1.0.0"></script>
+  <script src="i18n.js?v=1.2.0"></script>
   <script src="engine.js?v=1.0.0"></script>
-  <script src="../sdk/playnine.js?v=1"></script>
-  <script src="app.js?v=1.0.0"></script>
+  <script src="../sdk/playnine.js?v=2"></script>
+  <script src="app.js?v=1.2.0"></script>
 </body>
 </html>

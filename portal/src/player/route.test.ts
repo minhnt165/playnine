@@ -27,6 +27,16 @@ describe('route', () => {
     expect(parseRoute('#/u/' + id)).toEqual({ name: 'profile', userId: id })
     expect(parseRoute('#/u/abc')).toEqual({ name: 'home' })
   })
+  it('#/news là danh sách tin, #/news/<slug> là bài; slug sai về danh sách', () => {
+    expect(parseRoute('#/news')).toEqual({ name: 'news' })
+    expect(parseRoute('#/news/meo-sudoku')).toEqual({ name: 'post', slug: 'meo-sudoku' })
+    expect(parseRoute('#/news/Bad_Slug')).toEqual({ name: 'news' })
+  })
+  it('#/leaderboards mở trang bảng xếp hạng, đuôi lạ vẫn vào trang đó', () => {
+    expect(parseRoute('#/leaderboards')).toEqual({ name: 'leaderboards' })
+    expect(parseRoute('#/leaderboards/x')).toEqual({ name: 'leaderboards' })
+    expect(parseRoute('#/leaderboardsx')).toEqual({ name: 'home' })
+  })
   it('#/events, #/events/<uuid>, #/events/<lạ>, #/admin', () => {
     const id = '7c9e6679-7425-40de-944b-e07fc1f90ae7'
     expect(parseRoute('#/events')).toEqual({ name: 'events' })

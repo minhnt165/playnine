@@ -12,7 +12,7 @@
   PN && PN.init({ gameId: 'coganh' });
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.1.0';
   const KEYS = {
     settings: 'playnine-coganh-settings-v1',
     save: 'playnine-coganh-save-v1',
@@ -35,6 +35,10 @@
   const $ = (id) => document.getElementById(id);
   const reduceMotion = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
   const coord = E.coord;
+  // Âm thanh + pháo giấy từ SDK PlayNine; SDK cũ hoặc không có SDK thì im lặng, không lỗi
+  const sfx = (name, o) => { try { PN && PN.sfx && PN.sfx.play(name, o); } catch (e) { /* bỏ qua */ } };
+  const hasConfetti = !!(PN && PN.fx && typeof PN.fx.confetti === 'function');
+  let booted = false; // ván dựng lúc mở trang thì không phát tiếng bắt đầu
 
   /* ================= 1. Lưu trữ ================= */
   function readJSON(key) {
@@ -265,6 +269,7 @@
     renderLog();
     writeSummary();
     PN && game.mode === 'ai' && PN.gameStart({ mode: game.level });
+    if (booted) sfx('start');
     scheduleAi();
   }
 
@@ -311,18 +316,20 @@
     if (anim.busy) { skipAnim(); return; }
     const s = game.state;
     if (s.over) { toast(t('toast.over')); return; }
-    if (thinking || aiPreview) { toast(t('toast.thinking')); return; }
+    if (thinking || aiPreview) { sfx('error', { volume: 0.6 }); toast(t('toast.thinking')); return; }
     if (!humanCanPlay()) return;
     const v = s.board[i];
     const legal = E.legalMoves(s);
     if (v === s.turn + 1) {
       if (!legal.some((m) => E.fromOf(m) === i)) {
+        sfx('error');
         const forced = E.forcedMoves(s);
         if (forced.length) toast(t('toast.mustOpen', { to: coord(E.toOf(forced[0])) }));
         else toast(t('toast.blocked'));
         if (selected >= 0) { selected = -1; render(); }
         return;
       }
+      sfx('tap', { pitch: selected === i ? 0.85 : 1.15 }); // nhấc quân lên / đặt lại
       selected = selected === i ? -1 : i;
       render();
       return;
@@ -330,9 +337,11 @@
     if (selected >= 0) {
       const m = E.encode(selected, i);
       if (legal.includes(m)) { commitMove(m); return; }
+      sfx('error');
       toast(v === 0 ? t('toast.oneStep') : t('toast.occupied'));
       return;
     }
+    sfx('error', { volume: 0.6 });
     if (v === 0) toast(game.mode === 'pvp' ? t('toast.tapColor', { color: COLOR_NAME[s.turn] }) : t('toast.tapRed'));
     else toast(game.mode === 'pvp' ? t('toast.pvpTurn', { name: playerName(s.turn), color: COLOR_NAME[s.turn] }) : t('toast.aiPiece'));
   }
@@ -417,6 +426,7 @@
     render();
     renderLog();
     writeSummary();
+    sfx('move', { pitch: 0.8 });
     toast(t('toast.undone'));
     scheduleAi();
   }
@@ -447,10 +457,19 @@
     renderLog();
     if (game.state.over) {
       clearTimeout(resultTimer);
-      resultTimer = setTimeout(showResult, reduceMotion.matches || settings.speed === 'off' ? 250 : 900);
+      resultTimer = setTimeout(() => { outcomeFx(); showResult(); }, reduceMotion.matches || settings.speed === 'off' ? 250 : 900);
     } else {
       maybePlayAi();
     }
+  }
+
+  // Âm thanh kết thúc ván, kèm pháo giấy khi thắng (ván hai người: luôn mừng người thắng)
+  function outcomeFx() {
+    if (!game || !game.state.over) return;
+    const w = game.state.winner;
+    if (w === E.DRAW) sfx('draw');
+    else if (game.mode === 'ai' && w === 1) sfx('lose');
+    else { sfx('win'); if (hasConfetti) { try { PN.fx.confetti(); } catch (e) { /* bỏ qua */ } } }
   }
 
   /* ---------------- Tóm tắt cho cổng PlayNine ---------------- */
@@ -522,6 +541,9 @@
     viewTaken = takenBefore;
     const step = stepMs();
     const motion = !reduceMotion.matches && !!document.body.animate;
+    // Âm thanh theo từng bước; bỏ qua hiệu ứng thì phát gộp một lần ở cuối
+    const placeOpt = game.mode === 'ai' && p === 1 ? { pitch: 0.82, volume: 0.8 } : game.mode === 'pvp' && p === 1 ? { pitch: 1.12 } : undefined;
+    const heard = { place: false, cap: false };
     render();
     for (const e of ev) {
       if (token !== anim.token) return;
@@ -540,11 +562,14 @@
         view.board[e.to] = p + 1;
         renderPoint(e.to);
         pointEls[e.to].classList.add('last-to');
+        if (motion) flash(e.to, 'land');
+        if (!anim.skip) { sfx('place', placeOpt); heard.place = true; }
       } else if (e.t === 'ganh' || e.t === 'vay') {
         setTurnText(e.t === 'ganh'
           ? t('turn.ganh', { name: playerName(p), pts: e.pts.map(coord).join(t('join.and')) })
           : t('turn.vay', { name: playerName(p), n: e.pts.length }));
         for (const q of e.pts) flash(q, 'fx-cap');
+        if (!anim.skip) { sfx('capture', e.t === 'vay' ? { pitch: 1.15 } : undefined); heard.cap = true; }
         await wait(step * 1.1);
         if (token !== anim.token || anim.skip) break;
         // Lật màu: thu hẹp quân lại, đổi màu, nở ra
@@ -553,6 +578,7 @@
         await wait(half);
         if (token !== anim.token) return;
         for (const q of e.pts) { view.board[q] = p + 1; renderPoint(q); }
+        if (!anim.skip) sfx('flip', { pitch: Math.min(1.5, 1 + 0.08 * (e.pts.length - 1)) });
         view.count[p] += e.pts.length;
         view.count[1 - p] -= e.pts.length;
         viewTaken[p] += e.pts.length;
@@ -562,6 +588,8 @@
       }
     }
     if (token !== anim.token) return;
+    if (!heard.place) sfx('place', placeOpt);
+    if (!heard.cap && ev.some((e) => e.t === 'ganh' || e.t === 'vay')) sfx('capture');
     anim.busy = false;
     anim.skip = false;
     view = null;
@@ -900,7 +928,7 @@
         const to = E.idx(rr, c);
         const m = E.encode(d.i, to);
         if (E.isLegal(game.state, m)) { setFocus(to, false); commitMove(m, true); return; }
-        if (to !== d.i) toast(t('toast.oneStep'));
+        if (to !== d.i) { sfx('error'); toast(t('toast.oneStep')); }
       }
     }
     render();
@@ -1099,6 +1127,7 @@
       sub = why;
       celebrate = true;
     }
+    document.querySelector('#modal-result .modal-card').dataset.outcome = w === E.DRAW ? 'draw' : ai && w === 1 ? 'lose' : 'win';
     $('result-mark').className = 'result-mark' + (w === E.DRAW ? ' draw' : ' p' + w);
     $('result-mark').innerHTML = w === E.DRAW ? '<i class="mini-piece" data-p="0"></i><i class="mini-piece" data-p="1"></i>' : `<i class="mini-piece" data-p="${w}"></i>`;
     $('result-title').textContent = title;
@@ -1114,7 +1143,7 @@
     $('btn-result-new').textContent = ai ? t('result.again') : t('btn.new');
     const conf = $('confetti');
     conf.innerHTML = '';
-    if (celebrate && !reduceMotion.matches) {
+    if (celebrate && !reduceMotion.matches && !hasConfetti) { // SDK mới đã bắn pháo giấy toàn màn hình
       const colors = ['var(--p0)', 'var(--p1)', 'var(--accent)', 'var(--text)'];
       for (let i = 0; i < 28; i++) {
         const p = document.createElement('i');
@@ -1175,6 +1204,18 @@
   // Đổi ngôn ngữ: lưu ván + cài đặt rồi tải lại trang
   bindSegmented(settingGroup('lang'), (v) => { saveGame(); saveSettings(); I18N.set(v); });
   $('set-openrule').addEventListener('change', (e) => { settings.openRule = e.target.checked; saveSettings(); onRulesChanged(); });
+  // Bật/tắt âm thanh: dùng chung khóa với cổng PlayNine; SDK không có âm thanh thì ẩn công tắc
+  const soundBox = $('set-sound');
+  if (PN && PN.sfx && typeof PN.sfx.setMuted === 'function') {
+    $('setting-sound').hidden = false;
+    const syncSound = () => { soundBox.checked = !PN.sfx.isMuted(); };
+    syncSound();
+    if (typeof PN.sfx.onChange === 'function') PN.sfx.onChange(syncSound);
+    soundBox.addEventListener('change', () => {
+      PN.sfx.setMuted(!soundBox.checked);
+      if (soundBox.checked) sfx('tap');
+    });
+  }
   // Luật mới áp dụng từ ván sau; ván hiện tại chưa đi nước nào thì áp ngay
   function onRulesChanged() {
     if (game && game.moves.length === 0 && !thinking) {
@@ -1374,6 +1415,7 @@
     startGame({ mode: settings.mode, level: settings.level, first: settings.first });
     renderLog();
   }
+  booted = true;
   // Lần đầu vào game: tự mở hướng dẫn (đánh dấu đã xem ngay để chỉ hiện một lần)
   if (!settings.guideSeen) {
     settings.guideSeen = true;

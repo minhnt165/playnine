@@ -1,5 +1,8 @@
+import type { ReactNode } from 'react'
 import { useI18n } from '../i18n/i18n'
 import { AuthButton } from './AuthButton'
+import { BrandMark } from './BrandMark'
+import { Sidebar } from './Sidebar'
 import { useTheme, type Theme } from '../theme/useTheme'
 
 const ICONS: Record<Theme, string> = {
@@ -8,55 +11,56 @@ const ICONS: Record<Theme, string> = {
   dark: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.7 14.6A8.5 8.5 0 0 1 9.4 3.3a8.5 8.5 0 1 0 11.3 11.3z"/></svg>',
 }
 
-export function Topbar({ onThemeApplied }: { onThemeApplied?: () => void }) {
+type Props = {
+  onThemeApplied?: () => void
+  /** Ô tìm kiếm của trang chủ, đặt ở đầu thanh trên. */
+  search?: ReactNode
+}
+
+/** Khung chung của mọi trang: sidebar điều hướng và thanh trên (logo trên điện thoại, ô tìm, tài khoản, ngôn ngữ, giao diện). */
+export function Topbar({ onThemeApplied, search }: Props) {
   const { t, lang, setLang } = useI18n()
   const { theme, cycle } = useTheme(onThemeApplied)
   const themeLabel = t('theme.' + theme)
   return (
-    <header className="topbar reveal">
-      <div className="brand">
-        <span className="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 64 64">
-            <rect width="64" height="64" fill="#e0b964" />
-            <circle cx="32" cy="32" r="22" fill="#14100d" />
-            <circle cx="32" cy="32" r="18.5" fill="none" stroke="#e0b964" strokeWidth="1.5" />
-            <g fill="none" stroke="#e0b964" strokeWidth="4.5" strokeLinecap="round">
-              <circle cx="32" cy="27.5" r="6.5" />
-              <path d="M38.5 27.5V35a7 7 0 0 1-7 7H28" />
-            </g>
-          </svg>
-        </span>
-        <span className="brand-name">
-          Play<span>Nine</span>
-        </span>
-      </div>
-      <div className="top-actions">
-        <AuthButton />
-        <button
-          className="theme-btn lang-btn"
-          id="lang-btn"
-          type="button"
-          aria-label={t('lang.label')}
-          title={t('lang.label')}
-          onClick={() => setLang(lang === 'vi' ? 'en' : 'vi')}
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M3.5 9h17M3.5 15h17M12 3c-2.4 2.6-3.6 5.6-3.6 9s1.2 6.4 3.6 9c2.4-2.6 3.6-5.6 3.6-9S14.4 5.6 12 3z" />
-          </svg>
-          <span className="code">{lang.toUpperCase()}</span>
-        </button>
-        <button
-          className="theme-btn"
-          id="theme-btn"
-          type="button"
-          aria-label={t('theme.label', { label: themeLabel })}
-          onClick={cycle}
-        >
-          <span style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: ICONS[theme] }} />
-          <span className="label">{themeLabel}</span>
-        </button>
-      </div>
-    </header>
+    <>
+      <Sidebar />
+      <header className="topbar reveal">
+        <a className="brand" href="#/">
+          <BrandMark />
+          <span className="brand-name">
+            Play<span>Nine</span>
+          </span>
+        </a>
+        {search}
+        <div className="top-actions">
+          <AuthButton />
+          <button
+            className="theme-btn lang-btn"
+            id="lang-btn"
+            type="button"
+            aria-label={t('lang.label')}
+            title={t('lang.label')}
+            onClick={() => setLang(lang === 'vi' ? 'en' : 'vi')}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M3.5 9h17M3.5 15h17M12 3c-2.4 2.6-3.6 5.6-3.6 9s1.2 6.4 3.6 9c2.4-2.6 3.6-5.6 3.6-9S14.4 5.6 12 3z" />
+            </svg>
+            <span className="code">{lang.toUpperCase()}</span>
+          </button>
+          <button
+            className="theme-btn"
+            id="theme-btn"
+            type="button"
+            aria-label={t('theme.label', { label: themeLabel })}
+            onClick={cycle}
+          >
+            <span style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: ICONS[theme] }} />
+            <span className="label">{themeLabel}</span>
+          </button>
+        </div>
+      </header>
+    </>
   )
 }

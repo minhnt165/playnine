@@ -7,9 +7,12 @@
  * ===================================================================== */
 (() => {
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html để trình duyệt tải file mới
-  const APP_VERSION = '1.1.3';
+  const APP_VERSION = '1.1.4';
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'sudoku' });
+  // Âm thanh / pháo giấy của SDK: SDK cũ hoặc thiếu thì bỏ qua, không bao giờ làm hỏng game
+  const sfx = (name, o) => { try { window.PlayNine?.sfx?.play(name, o); } catch (e) { /* bỏ qua */ } };
+  const confetti = () => { try { window.PlayNine?.fx?.confetti(); } catch (e) { /* bỏ qua */ } };
   const STORAGE_KEY = 'sudoku-vn-save-v1';
   const PROGRESS_KEY = 'sudoku-vn-progress-v1';
   const SETTINGS_KEY = 'sudoku-vn-settings-v1';
@@ -561,6 +564,7 @@
     if (settings.inputMode === 'number') {
       closeHint();
       activeDigit = activeDigit === d ? 0 : d;
+      sfx('tap', { pitch: activeDigit ? 1 + d * 0.03 : 0.8 });
       renderBoard();
       renderNumpad();
       return;
@@ -603,6 +607,7 @@
       if (state.board[idx] !== 0) return; // có số thì không ghi chú
       pushHistory({ idx, prevValue: 0, prevNotes: state.notes[idx], peers: [] });
       state.notes[idx] ^= 1 << (d - 1);
+      sfx('tap', { pitch: state.notes[idx] & (1 << (d - 1)) ? 1.25 : 0.85 });
       save();
       renderBoard();
       renderTools();
@@ -619,10 +624,13 @@
     if (!right && settings.checkErrors) {
       state.mistakes++;
       animateCell(idx, 'shake');
+      bump(mistakesLabel);
+      if (!(settings.mistakeLimit && state.mistakes >= MAX_MISTAKES)) sfx('error');
     } else {
       entry.peers = clearPeerNotes(idx, d);
       animateCell(idx, 'pop');
-      celebrateDigit(d, idx);
+      const digitDone = celebrateDigit(d, idx);
+      if (!isSolved()) placedSound(d, celebrateUnits(idx), digitDone);
     }
     pushHistory(entry);
 
@@ -650,6 +658,7 @@
     pushHistory({ idx, prevValue: state.board[idx], prevNotes: state.notes[idx], peers: [] });
     state.board[idx] = 0;
     state.notes[idx] = 0;
+    sfx('tap', { pitch: 0.7 });
     save();
     renderAll();
   }
@@ -659,6 +668,7 @@
     closeHint();
     const entry = state.history.pop();
     if (!entry) return;
+    sfx('move', { pitch: 0.8 });
     if (entry.hint) {
       state.puzzle[entry.idx] = 0;
       state.hintCells = state.hintCells.filter((c) => c !== entry.idx);
@@ -865,6 +875,7 @@
     hintValue.textContent = String(h.value);
     legendElim.hidden = h.elimCells.length === 0;
     hintPanel.hidden = false;
+    sfx('pop');
     save();
     renderAll();
     hintPanel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -899,7 +910,8 @@
     pushHistory(entry);
     selected = idx;
     animateCell(idx, 'pop');
-    celebrateDigit(d, idx);
+    const digitDone = celebrateDigit(d, idx);
+    if (!isSolved()) placedSound(d, celebrateUnits(idx), digitDone);
 
     if (isSolved()) {
       finishWin();
@@ -920,7 +932,7 @@
   function celebrateDigit(d, origin) {
     const cells = [];
     for (let i = 0; i < Sudoku.CELLS; i++) if (state.board[i] === d && isFilled(i)) cells.push(i);
-    if (cells.length !== 9) return;
+    if (cells.length !== 9) return false;
     for (const i of cells) {
       const el = cellEls[i];
       const dist = Math.max(Math.abs(Sudoku.ROW[i] - Sudoku.ROW[origin]), Math.abs(Sudoku.COL[i] - Sudoku.COL[origin]));
@@ -929,11 +941,47 @@
       void el.offsetWidth;
       el.classList.add('digit-done');
     }
+    return true;
+  }
+
+  /** Hàng / cột / vùng 3x3 chứa idx vừa đủ 9 ô: các ô tỏa sáng lan từ ô vừa điền. Trả về số vùng vừa xong. */
+  function celebrateUnits(idx) {
+    let done = 0;
+    for (const key of [Sudoku.ROW, Sudoku.COL, Sudoku.BOX]) {
+      const cells = [];
+      for (let i = 0; i < Sudoku.CELLS; i++) if (key[i] === key[idx]) cells.push(i);
+      if (!cells.every(isFilled)) continue;
+      done++;
+      for (const i of cells) {
+        const el = cellEls[i];
+        const dist = Math.max(Math.abs(Sudoku.ROW[i] - Sudoku.ROW[idx]), Math.abs(Sudoku.COL[i] - Sudoku.COL[idx]));
+        el.style.setProperty('--unit-delay', `${dist * 45}ms`);
+        el.classList.remove('unit-done');
+        void el.offsetWidth;
+        el.classList.add('unit-done');
+      }
+    }
+    return done;
+  }
+
+  /** Tiếng khi điền đúng: xong nhiều vùng một lúc → combo, xong một vùng / đủ 9 ô một số → clear, còn lại → place. */
+  function placedSound(d, units, digitDone) {
+    if (units >= 2) sfx('combo');
+    else if (units === 1 || digitDone) sfx('clear', { pitch: units ? 1 : 1.12 });
+    else sfx('place', { pitch: 0.9 + d * 0.025 });
+  }
+
+  /** Chạy lại hiệu ứng nảy ngắn trên một phần tử (bộ đếm lỗi). */
+  function bump(el) {
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    el.classList.add('bump');
   }
 
   function toggleNotes() {
     if (!state || state.status !== 'playing') return;
     notesMode = !notesMode;
+    sfx('tap', { pitch: notesMode ? 1.2 : 0.9 });
     renderTools();
   }
 
@@ -987,6 +1035,7 @@
       save();
       renderAll();
       startTimer();
+      sfx('start');
       PN && PN.gameStart({ mode: state.daily ? 'daily' : state.difficulty });
     }, 30);
   }
@@ -1010,6 +1059,7 @@
     save();
     renderAll();
     startTimer();
+    sfx('start');
     PN && PN.gameStart({ mode: state.daily ? 'daily' : state.difficulty });
   }
 
@@ -1040,6 +1090,8 @@
     saveStats();
     save();
     renderAll();
+    sfx('win');
+    confetti();
     showWin();
   }
 
@@ -1053,6 +1105,7 @@
     }
     save();
     renderAll();
+    sfx('lose');
     showLose();
   }
 
@@ -1273,6 +1326,7 @@
   $('btn-stats-reset').addEventListener('click', resetStats);
   btnPause.addEventListener('click', () => {
     if (!state) return;
+    sfx('tap', { pitch: state.status === 'playing' ? 0.85 : 1.15 });
     if (state.status === 'playing') pauseGame();
     else if (state.status === 'paused') resumeGame();
   });
@@ -1307,6 +1361,20 @@
   modalSettings.querySelectorAll('input[data-setting]').forEach((input) => {
     input.addEventListener('change', () => updateSetting(input.dataset.setting, input.checked));
   });
+
+  /* ---------------- Âm thanh: công tắc trong Cài đặt, dùng chung trạng thái tắt tiếng với cổng ---------------- */
+  const SFX = window.PlayNine && window.PlayNine.sfx;
+  if (SFX && typeof SFX.isMuted === 'function' && typeof SFX.setMuted === 'function') {
+    const sw = $('sound-switch');
+    const sync = () => { sw.checked = !SFX.isMuted(); };
+    $('setting-sound').hidden = false;
+    sync();
+    if (typeof SFX.onChange === 'function') SFX.onChange(sync);
+    sw.addEventListener('change', () => {
+      SFX.setMuted(!sw.checked);
+      if (sw.checked) sfx('tap');
+    });
+  }
 
   $('btn-win-new').addEventListener('click', () => {
     hideModal(modalWin);

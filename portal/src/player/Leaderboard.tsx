@@ -3,62 +3,55 @@ import { EventPanel } from '../events/EventBoard'
 import { liveEventsFor } from '../events/model'
 import { useNow } from '../events/useNow'
 import { useI18n } from '../i18n/i18n'
-import { readRaw, write } from '../lib/storage'
+import { Podium, PODIUM } from '../leaderboards/Podium'
 import { useServer } from '../server/ServerProvider'
 import type { GameEvent, GameMeta, LeaderRow, Period } from '../server/types'
-import { formatValue, periodsFor } from './leaderboardModel'
+import { perRunText, unitLabel } from './leaderboardModel'
 import { Row } from './LeaderRow'
 
 const TOP = 50
-const modeKeyOf = (gameId: string) => 'playnine-lb-mode-' + gameId
+const PERIODS: Period[] = ['week', 'day', 'all']
 const PERIOD_LABEL: Record<Period, string> = { day: 'lb.day', week: 'lb.week', all: 'lb.all' }
 
 type Loaded = { key: string; rows: LeaderRow[]; mine: LeaderRow | null; error: boolean }
 
-type Props = { gameId: string; refreshKey: number }
+/** `podium`: top 3 lên bục như trang bảng xếp hạng (trang giới thiệu game giữ dạng danh sách). */
+type Props = { gameId: string; refreshKey: number; podium?: boolean }
 
-/** Bảng xếp hạng trên trang giới thiệu game; chỉ render khi có server và game có trong metadata. */
-export function Leaderboard({ gameId, refreshKey }: Props) {
+/** Bảng xếp hạng điểm của một game (không chia độ khó); chỉ render khi có server và game có trong metadata. */
+export function Leaderboard({ gameId, refreshKey, podium = false }: Props) {
   const { api, games } = useServer()
   const meta = games[gameId]
-  if (!api || !meta || meta.modes.length === 0) return null
-  return <Board key={gameId} meta={meta} refreshKey={refreshKey} />
+  if (!api || !meta) return null
+  return <Board key={gameId} meta={meta} refreshKey={refreshKey} podium={podium} />
 }
 
-function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
+function Board({ meta, refreshKey, podium }: { meta: GameMeta; refreshKey: number; podium: boolean }) {
   const { api, user } = useServer()
-  const { t, lang, fmtNumber } = useI18n()
+  const { t, fmtNumber } = useI18n()
   const gameId = meta.id
-  const [savedMode, setSavedMode] = useState(() => readRaw(modeKeyOf(gameId)))
-  const [savedPeriod, setSavedPeriod] = useState<Period | null>(null)
+  const [period, setPeriod] = useState<Period>('week')
   const [loaded, setLoaded] = useState<Loaded | null>(null)
   const titleId = useId()
   const [events, setEvents] = useState<GameEvent[]>([])
   const [showEvent, setShowEvent] = useState(false)
   const now = useNow(10000)
 
-  // Mode mặc định: mode đã lưu, nếu chưa có thì mode của sự kiện đang diễn ra, cuối cùng là mode đầu tiên.
-  const liveEvents = liveEventsFor(events, gameId, now)
-  const mode = meta.modes.some((m) => m.key === savedMode)
-    ? (savedMode as string)
-    : (liveEvents.find((e) => meta.modes.some((m) => m.key === e.mode))?.mode ?? meta.modes[0].key)
-  const event = liveEvents.find((e) => e.mode === mode) ?? null
+  // Sự kiện đang diễn ra của game (mode nào cũng được) hiện thành một tab riêng.
+  const event = liveEventsFor(events, gameId, now)[0] ?? null
   const eventOn = showEvent && event !== null
-  const periods = periodsFor(mode)
-  const period = savedPeriod && periods.includes(savedPeriod) ? savedPeriod : periods[0]
-  const viewKey = `${mode}|${period}`
   const userId = user?.id ?? null
 
   useEffect(() => {
     if (!api) return
     let alive = true
-    const key = `${mode}|${period}`
+    const key = period
     ;(async () => {
       try {
-        const rows = await api.leaderboard(gameId, mode, period, TOP)
+        const rows = await api.gamePointsBoard(gameId, period, TOP)
         let mine: LeaderRow | null = null
         if (user && !rows.some((r) => r.userId === user.id)) {
-          const r = await api.myRank(gameId, mode, period)
+          const r = await api.myGamePoints(gameId, period)
           if (r) mine = { rank: r.rank, userId: user.id, displayName: user.displayName, avatarUrl: user.avatarUrl, value: r.value, achievedAt: '' }
         }
         if (alive) setLoaded({ key, rows, mine, error: false })
@@ -71,9 +64,9 @@ function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
     }
     // user đổi theo userId; displayName đổi không cần tải lại bảng.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, gameId, mode, period, refreshKey, userId])
+  }, [api, gameId, period, refreshKey, userId])
 
-  // Tải sự kiện một lần; lỗi thì coi như không có sự kiện, bảng thường vẫn chạy.
+  // Tải sự kiện một lần; lỗi thì coi như không có sự kiện, bảng điểm vẫn chạy.
   useEffect(() => {
     if (!api) return
     let alive = true
@@ -86,36 +79,23 @@ function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
     }
   }, [api])
 
-  const pickMode = (key: string) => {
-    write(modeKeyOf(gameId), key)
-    setSavedMode(key)
-    setSavedPeriod(null)
-    setShowEvent(false)
-  }
-
-  const fmt = (v: number) => formatValue(meta.metric, v, fmtNumber)
-  const data = loaded && loaded.key === viewKey ? loaded : null
+  const fmt = (v: number) => unitLabel(t, 'lbs.unit.points', v, fmtNumber)
+  const data = loaded && loaded.key === period ? loaded : null
   return (
     <section className="lb-panel" aria-labelledby={titleId}>
       <div className="section-head">
         <h2 id={titleId}>{t('lb.title')}</h2>
-      </div>
-      <div className="lb-tabs" role="tablist">
-        {meta.modes.map((m) => (
-          <button key={m.key} type="button" role="tab" aria-selected={m.key === mode} onClick={() => pickMode(m.key)}>
-            {m.label[lang]}
-          </button>
-        ))}
+        {perRunText(t, meta) && <span>{perRunText(t, meta)}</span>}
       </div>
       <div className="lb-tabs lb-periods" role="tablist">
-        {periods.map((p) => (
+        {PERIODS.map((p) => (
           <button
             key={p}
             type="button"
             role="tab"
             aria-selected={!eventOn && p === period}
             onClick={() => {
-              setSavedPeriod(p)
+              setPeriod(p)
               setShowEvent(false)
             }}
           >
@@ -137,19 +117,22 @@ function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
       ) : data && data.rows.length === 0 && !data.mine ? (
         <p className="lb-note">{t('lb.empty')}</p>
       ) : data ? (
-        <ol className="lb-list">
-          {data.rows.map((r) => (
-            <Row key={r.userId} r={r} me={r.userId === userId} value={fmt(r.value)} you={t('lb.you')} />
-          ))}
-          {data.mine && (
-            <>
-              <li className="lb-gap" aria-hidden="true">
-                …
-              </li>
-              <Row r={data.mine} me value={fmt(data.mine.value)} you={t('lb.you')} />
-            </>
-          )}
-        </ol>
+        <>
+          {podium && <Podium rows={data.rows} meId={userId} value={fmt} />}
+          <ol className="lb-list" start={podium ? PODIUM + 1 : undefined}>
+            {(podium ? data.rows.slice(PODIUM) : data.rows).map((r) => (
+              <Row key={r.userId} r={r} me={r.userId === userId} value={fmt(r.value)} you={t('lb.you')} />
+            ))}
+            {data.mine && (
+              <>
+                <li className="lb-gap" aria-hidden="true">
+                  …
+                </li>
+                <Row r={data.mine} me value={fmt(data.mine.value)} you={t('lb.you')} />
+              </>
+            )}
+          </ol>
+        </>
       ) : null}
     </section>
   )

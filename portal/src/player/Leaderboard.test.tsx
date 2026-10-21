@@ -7,9 +7,10 @@ import { ServerProvider } from '../server/ServerProvider'
 import type { GameEvent, GameMeta, LeaderRow } from '../server/types'
 import { Leaderboard } from './Leaderboard'
 
+const en = (k: string) => DICT.en[k] as string
 const GAMES: GameMeta[] = [
   {
-    id: '2048', metric: 'score_high', hidden: false,
+    id: '2048', metric: 'score_high', hidden: false, points: 5,
     modes: [
       { key: 'classic', label: { en: 'Classic', vi: 'Cổ điển' } },
       { key: 'daily', label: { en: 'Daily', vi: 'Hằng ngày' } },
@@ -20,6 +21,7 @@ const row = (rank: number, name: string, value: number, userId = `u${rank}`): Le
   rank, userId, displayName: name, avatarUrl: null, value, achievedAt: '2026-10-21T00:00:00Z',
 })
 const U = { id: 'me', displayName: 'Minh', avatarUrl: null }
+const boardCalls = (api: ReturnType<typeof createFakeApi>) => api.calls.filter((c) => c.method === 'gamePointsBoard')
 
 const mount = (api: ReturnType<typeof createFakeApi> | null, key = 0) =>
   render(
@@ -38,126 +40,91 @@ afterEach(() => {
 })
 
 describe('Leaderboard', () => {
-  it('tab mode theo metadata với nhãn đúng ngôn ngữ', async () => {
-    localStorage.setItem('playnine-lang', 'vi')
-    mount(createFakeApi({ games: GAMES }))
-    expect(await screen.findByRole('tab', { name: 'Cổ điển' })).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: 'Hằng ngày' })).toBeInTheDocument()
-  })
-
-  it('mode daily chỉ có tab "Hôm nay"; mode thường có tuần và mọi lúc', async () => {
-    mount(createFakeApi({ games: GAMES }))
-    await screen.findByRole('tab', { name: 'Classic' })
-    expect(screen.getByRole('tab', { name: DICT.en['lb.week'] as string })).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: DICT.en['lb.all'] as string })).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('tab', { name: 'Daily' }))
-    expect(screen.getByRole('tab', { name: DICT.en['lb.day'] as string })).toBeInTheDocument()
-    expect(screen.queryByRole('tab', { name: DICT.en['lb.week'] as string })).toBeNull()
-  })
-
-  it('hiện các hàng đúng thứ tự với giá trị đã định dạng', async () => {
-    const api = createFakeApi({
-      games: GAMES,
-      boards: { '2048|classic|week': [row(1, 'An', 12345), row(2, 'Binh', 900), row(3, 'Chi', 12)] },
-    })
+  it('không chia mode: chỉ có tab tuần, hôm nay, mọi lúc; mặc định tuần; hiện điểm mỗi ván', async () => {
+    const api = createFakeApi({ games: GAMES })
     mount(api)
-    const items = await screen.findAllByRole('listitem')
-    expect(items.map((li) => li.textContent)).toEqual([
-      expect.stringContaining('An'), expect.stringContaining('Binh'), expect.stringContaining('Chi'),
-    ])
-    expect(items[0].textContent).toContain('12,345')
-    expect(items[0].textContent).toContain('1')
-    expect(api.calls.find((c) => c.method === 'leaderboard')!.args).toEqual(['2048', 'classic', 'week', 50])
+    const tabs = await screen.findAllByRole('tab')
+    expect(tabs.map((x) => x.textContent)).toEqual([en('lb.week'), en('lb.day'), en('lb.all')])
+    expect(screen.queryByRole('tab', { name: 'Classic' })).toBeNull()
+    await waitFor(() => expect(boardCalls(api)[0]?.args).toEqual(['2048', 'week', 50]))
+    expect(screen.getByText('5 pts / game')).toBeInTheDocument()
   })
 
-  it('tên người chơi là liên kết tới #/u/<userId>', async () => {
-    mount(createFakeApi({ games: GAMES, boards: { '2048|classic|week': [row(1, 'An', 100, 'u-an')] } }))
-    const link = await screen.findByRole('link', { name: 'An' })
-    expect(link).toHaveAttribute('href', '#/u/u-an')
+  it('hiện các hàng đúng thứ tự, giá trị là điểm đã định dạng, tên là liên kết hồ sơ', async () => {
+    const api = createFakeApi({ games: GAMES, gamePoints: { '2048|week': [row(1, 'An', 1234), row(2, 'Bình', 1)] } })
+    const { container } = mount(api)
+    await screen.findByText('An')
+    const rows = [...container.querySelectorAll('.lb-list li')].map((li) => li.textContent)
+    expect(rows).toEqual(['1An1,234 pts', '2Bình1 pt'])
+    expect(screen.getByRole('link', { name: 'An' })).toHaveAttribute('href', '#/u/u1')
   })
 
-  it('người dùng hạng 72 ngoài top: có dấu … và hàng của mình được đánh dấu', async () => {
-    const api = createFakeApi({
-      user: U, games: GAMES,
-      boards: { '2048|classic|week': [row(1, 'An', 100)] },
-      myRanks: { '2048|classic|week': { rank: 72, value: 5 } },
-    })
+  it('đổi kỳ thì tải bảng của kỳ đó', async () => {
+    const api = createFakeApi({ games: GAMES, gamePoints: { '2048|day': [row(1, 'Day', 10)] } })
     mount(api)
-    const mine = await screen.findByText('72')
-    const li = mine.closest('li')!
-    expect(li).toHaveClass('me')
-    expect(li.textContent).toContain('Minh')
-    expect(li.textContent).toContain(DICT.en['lb.you'] as string)
-    expect(screen.getByText('…')).toBeInTheDocument()
+    fireEvent.click(await screen.findByRole('tab', { name: en('lb.day') }))
+    expect(await screen.findByText('Day')).toBeInTheDocument()
+    expect(boardCalls(api).at(-1)!.args).toEqual(['2048', 'day', 50])
+  })
+
+  it('người dùng ngoài top: có dấu … và hàng của mình được đánh dấu', async () => {
+    const api = createFakeApi({
+      user: U, games: GAMES, gamePoints: { '2048|week': [row(1, 'An', 100)] }, myGamePoints: { '2048|week': { rank: 72, value: 15 } },
+    })
+    const { container } = mount(api)
+    await screen.findByText('Minh')
+    expect(container.querySelector('.lb-gap')).not.toBeNull()
+    expect(container.querySelector('li.me')!.textContent).toContain('72')
   })
 
   it('người dùng đã nằm trong danh sách: đánh dấu, không thêm dòng …', async () => {
-    const api = createFakeApi({
-      user: U, games: GAMES,
-      boards: { '2048|classic|week': [row(1, 'An', 100), row(2, 'Minh', 50, 'me')] },
-    })
+    const api = createFakeApi({ user: U, games: GAMES, gamePoints: { '2048|week': [row(1, 'Minh', 100, 'me')] } })
     const { container } = mount(api)
-    await screen.findByText('An')
-    await waitFor(() => expect(container.querySelectorAll('li.me')).toHaveLength(1))
-    expect(screen.queryByText('…')).toBeNull()
+    await screen.findByText('Minh')
+    expect(container.querySelector('li.me')).not.toBeNull()
+    expect(container.querySelector('.lb-gap')).toBeNull()
+    expect(api.calls.some((c) => c.method === 'myGamePoints')).toBe(false)
   })
 
   it('tên chứa HTML hiện dạng text', async () => {
-    const evil = '<img src=x onerror=alert(1)>'
-    const api = createFakeApi({ games: GAMES, boards: { '2048|classic|week': [row(1, evil, 5)] } })
+    const api = createFakeApi({ games: GAMES, gamePoints: { '2048|week': [row(1, '<b>x</b>', 5)] } })
     const { container } = mount(api)
-    expect(await screen.findByText(evil)).toBeInTheDocument()
-    expect(container.querySelector('img')).toBeNull()
+    await screen.findByText('<b>x</b>')
+    expect(container.querySelector('.lb-list b')).toBeNull()
   })
 
   it('bảng rỗng hiện lb.empty', async () => {
     mount(createFakeApi({ games: GAMES }))
-    expect(await screen.findByText(DICT.en['lb.empty'] as string)).toBeInTheDocument()
+    expect(await screen.findByText(en('lb.empty'))).toBeInTheDocument()
   })
 
-  it('leaderboard lỗi: ẩn danh sách, hiện lb.error, không lỗi chưa bắt', async () => {
-    const api = createFakeApi({ games: GAMES, boards: { '2048|classic|week': [row(1, 'An', 1)] } })
-    api.fail('leaderboard')
-    const { container } = mount(api)
-    expect(await screen.findByText(DICT.en['lb.error'] as string)).toBeInTheDocument()
-    expect(container.querySelector('li')).toBeNull()
-  })
-
-  it('myRank lỗi cũng chỉ hiện lb.error', async () => {
-    const api = createFakeApi({ user: U, games: GAMES })
-    api.fail('myRank')
+  it('bảng lỗi hoặc myGamePoints lỗi: hiện lb.error', async () => {
+    const api = createFakeApi({ games: GAMES })
+    api.fail('gamePointsBoard')
     mount(api)
-    expect(await screen.findByText(DICT.en['lb.error'] as string)).toBeInTheDocument()
+    expect(await screen.findByRole('alert')).toHaveTextContent(en('lb.error'))
+    cleanup()
+    const api2 = createFakeApi({ user: U, games: GAMES, gamePoints: { '2048|week': [row(1, 'An', 1)] } })
+    api2.fail('myGamePoints')
+    mount(api2)
+    expect(await screen.findByRole('alert')).toHaveTextContent(en('lb.error'))
   })
 
-  it('không server → không render gì', () => {
+  it('không server hoặc game chưa có trong metadata → không render', async () => {
     const { container } = mount(null)
     expect(container.innerHTML).toBe('')
-  })
-
-  it('game chưa có trong metadata → không render', async () => {
-    const { container } = mount(createFakeApi({ games: [] }))
-    await new Promise((r) => setTimeout(r, 10))
-    expect(container.innerHTML).toBe('')
-  })
-
-  it('đổi tab mode lưu playnine-lb-mode-2048 và nhớ cho lần sau', async () => {
-    const api = createFakeApi({ games: GAMES })
-    mount(api)
-    fireEvent.click(await screen.findByRole('tab', { name: 'Daily' }))
-    expect(localStorage.getItem('playnine-lb-mode-2048')).toBe('daily')
     cleanup()
-    mount(createFakeApi({ games: GAMES }))
-    const tab = await screen.findByRole('tab', { name: 'Daily' })
-    expect(tab).toHaveAttribute('aria-selected', 'true')
+    const api = createFakeApi({ games: [] })
+    const view = mount(api)
+    await waitFor(() => expect(api.calls.some((c) => c.method === 'gameMeta')).toBe(true))
+    expect(view.container.querySelector('.lb-panel')).toBeNull()
   })
 
   it('refreshKey đổi thì tải lại bảng', async () => {
     const api = createFakeApi({ games: GAMES })
     const view = mount(api)
-    await screen.findByText(DICT.en['lb.empty'] as string)
-    const n = () => api.calls.filter((c) => c.method === 'leaderboard').length
-    const before = n()
+    await waitFor(() => expect(boardCalls(api).length).toBeGreaterThan(0))
+    const before = boardCalls(api).length
     view.rerender(
       <I18nProvider>
         <ServerProvider api={api}>
@@ -165,52 +132,42 @@ describe('Leaderboard', () => {
         </ServerProvider>
       </I18nProvider>,
     )
-    await waitFor(() => expect(n()).toBe(before + 1))
+    await waitFor(() => expect(boardCalls(api).length).toBe(before + 1))
   })
 })
 
 describe('Leaderboard tab sự kiện', () => {
   const evt = (over: Partial<GameEvent> = {}): GameEvent => ({
-    id: 'e1', title: { en: 'Spring cup' }, description: {}, gameId: '2048', mode: 'classic', agg: 'best',
+    id: 'e1', title: { en: 'Spring cup' }, description: {}, gameId: '2048', mode: 'daily', agg: 'best',
     startsAt: new Date(Date.now() - 3600_000).toISOString(), endsAt: new Date(Date.now() + 3600_000).toISOString(),
     awardTop: 3, status: 'live', ...over,
   })
   const eventCalls = (api: ReturnType<typeof createFakeApi>) => api.calls.filter((c) => c.method === 'eventLeaderboard')
 
-  it('sự kiện live khớp mode đang chọn: có tab ev.tab, bấm vào thì tải bảng sự kiện', async () => {
+  it('game có sự kiện live (mode nào cũng được): có tab ev.tab, bấm vào thì tải bảng sự kiện', async () => {
     const api = createFakeApi({ games: GAMES, events: [evt()], eventBoards: { e1: [row(1, 'Zed', 777)] } })
     mount(api)
-    const tab = await screen.findByRole('tab', { name: DICT.en['ev.tab'] as string })
+    const tab = await screen.findByRole('tab', { name: en('ev.tab') })
     expect(eventCalls(api)).toHaveLength(0)
     fireEvent.click(tab)
     expect(await screen.findByText('Zed')).toBeInTheDocument()
     expect(eventCalls(api)[0].args[0]).toBe('e1')
     expect(tab).toHaveAttribute('aria-selected', 'true')
-    expect(screen.getByRole('link', { name: DICT.en['ev.details'] as string })).toHaveAttribute('href', '#/events/e1')
-    expect(screen.getByText(/^Ends in \d\d:\d\d:\d\d$/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: en('ev.details') })).toHaveAttribute('href', '#/events/e1')
   })
 
-  it('mode đang chọn khác mode sự kiện: không có tab', async () => {
-    localStorage.setItem('playnine-lb-mode-2048', 'daily')
-    const api = createFakeApi({ games: GAMES, events: [evt()] })
+  it('sự kiện của game khác: không có tab', async () => {
+    const api = createFakeApi({ games: GAMES, events: [evt({ gameId: 'sudoku' })] })
     mount(api)
-    await screen.findByRole('tab', { name: 'Daily' })
     await waitFor(() => expect(api.calls.some((c) => c.method === 'events')).toBe(true))
-    expect(screen.queryByRole('tab', { name: DICT.en['ev.tab'] as string })).toBeNull()
+    expect(screen.queryByRole('tab', { name: en('ev.tab') })).toBeNull()
   })
 
-  it('chưa có mode đã lưu: mặc định chọn mode của sự kiện đang live', async () => {
-    const api = createFakeApi({ games: GAMES, events: [evt({ mode: 'daily' })] })
-    mount(api)
-    await screen.findByRole('tab', { name: DICT.en['ev.tab'] as string })
-    expect(screen.getByRole('tab', { name: 'Daily' })).toHaveAttribute('aria-selected', 'true')
-  })
-
-  it('events lỗi: bảng thường vẫn chạy, không có tab', async () => {
-    const api = createFakeApi({ games: GAMES, boards: { '2048|classic|week': [row(1, 'An', 5)] } })
+  it('events lỗi: bảng điểm vẫn chạy, không có tab', async () => {
+    const api = createFakeApi({ games: GAMES, gamePoints: { '2048|week': [row(1, 'An', 5)] } })
     api.fail('events')
     mount(api)
     expect(await screen.findByText('An')).toBeInTheDocument()
-    expect(screen.queryByRole('tab', { name: DICT.en['ev.tab'] as string })).toBeNull()
+    expect(screen.queryByRole('tab', { name: en('ev.tab') })).toBeNull()
   })
 })

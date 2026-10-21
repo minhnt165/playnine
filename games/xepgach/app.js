@@ -11,8 +11,21 @@
   'use strict';
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'xepgach' });
+  // Âm thanh / pháo giấy của SDK: SDK cũ hoặc chạy không có SDK thì im lặng, không lỗi.
+  // Trọng lực / thả nhanh / tự lặp khi giữ phím không phát tiếng, chỉ thao tác của người chơi mới có tiếng.
+  const SFX = PN && PN.sfx ? PN.sfx : null;
+  const sfx = (name, opts) => {
+    try {
+      SFX && SFX.play(name, opts);
+    } catch (e) {}
+  };
+  const confetti = () => {
+    try {
+      PN && PN.fx && PN.fx.confetti();
+    } catch (e) {}
+  };
 
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.1.0';
   const E = window.XepGach;
   const T = window.I18N.t;
   // Điền chữ tĩnh theo ngôn ngữ trước khi vẽ phần động
@@ -470,8 +483,16 @@
     pauseBtn.title = label;
   }
 
+  /** Chạy lại một hiệu ứng CSS (gỡ lớp, ép reflow, gắn lại). */
+  function replayClass(el, cls) {
+    el.classList.remove(cls);
+    void el.offsetWidth;
+    el.classList.add(cls);
+  }
+
   function floatScore(n) {
     if (!n || reduceMotion.matches) return;
+    replayClass($('score-box'), 'bump');
     const el = document.createElement('span');
     el.className = 'score-float';
     el.textContent = '+' + fmt(n);
@@ -544,7 +565,9 @@
     PN && PN.gameStart({ mode: 'lv' + game.startLevel });
     counted = false;
     bestAtStart = stats.best;
+    recordCheered = false;
     mode = 'playing';
+    sfx('start');
     resetEffects();
     releaseAll();
     showOverlay(null);
@@ -579,12 +602,14 @@
     updateHud();
     persist();
     drawAll();
+    if (focus) sfx('tap', { pitch: 0.8 });
     if (focus && !modalOpen()) $('btn-resume').focus();
   }
 
   function resume() {
     if (mode !== 'paused' || modalOpen()) return;
     mode = 'playing';
+    sfx('tap');
     showOverlay(null);
     updateHud();
     boardEl.focus();
@@ -600,7 +625,10 @@
     updateRecords();
     const record = counted && game.score > bestAtStart && game.score > 0;
     $('over-record').hidden = !record;
-    $('over-sub').textContent = detailText();
+    $('over-score').textContent = fmt(game.score);
+    $('over-sub').textContent = T('detail.rest', { level: game.level, lines: linesText(game.lines) });
+    sfx('lose');
+    if (record) confetti();
     showOverlay('over');
     updateHud();
     persist();
@@ -608,9 +636,33 @@
     announce(T(record ? 'announce.overRecord' : 'announce.over', { detail: detailText() }));
   }
 
+  let recordCheered = false; // đã báo vượt kỷ lục trong ván này chưa
+
+  /**
+   * Tiếng khi khóa khối: thả thẳng / đặt khối; xóa hàng cao dần theo số hàng và combo;
+   * xếp 4 hàng hoặc liên tiếp: tiếng combo; lên cấp: tiếng lên cấp ngay sau.
+   */
+  function lockSound(res, hard) {
+    const n = res.lines;
+    if (!n) {
+      sfx(hard ? 'drop' : 'place', { volume: hard ? 1 : 0.6 });
+      return;
+    }
+    if (hard) sfx('drop', { volume: 0.7 });
+    const pitch = 1 + (n - 1) * 0.08 + Math.min(res.combo || 0, 8) * 0.05;
+    sfx(n === 4 || res.b2b ? 'combo' : 'clear', { pitch });
+    if (res.levelUp) {
+      setTimeout(() => sfx('levelup'), 260);
+      replayClass($('level').parentElement, 'bump');
+    }
+  }
+
   /** Xử lý kết quả khóa khối từ engine (thả thẳng hoặc hết trễ khóa). */
   function onLock(res, t, hard) {
     if (!res) return;
+    lockSound(res, hard);
+    if (res.lines && !reduceMotion.matches) replayClass(boardEl, res.lines === 4 ? 'quake' : 'thump');
+    else if (hard && !reduceMotion.matches) replayClass(boardEl, 'thump');
     if (!counted) {
       counted = true;
       stats.played++;
@@ -654,6 +706,11 @@
 
     updateRecords();
     updateHud();
+    if (!recordCheered && bestAtStart > 0 && game.score > bestAtStart && !(res.over || game.over)) {
+      recordCheered = true;
+      replayClass($('score-box'), 'record');
+      setTimeout(() => sfx('coin'), 380);
+    }
     if (res.over || game.over) gameOver();
     else if (n) saveStats();
     kick();
@@ -679,7 +736,10 @@
     held.push({ src, dir });
     das.t = 0;
     das.arr = 0;
-    if (canAct() && E.move(game, dir)) drawAll();
+    if (canAct() && E.move(game, dir)) {
+      sfx('move', { volume: 0.3 });
+      drawAll();
+    }
   }
 
   function releaseDir(src, silent) {
@@ -713,15 +773,21 @@
   function act(name) {
     if (!canAct()) return;
     if (name === 'cw' || name === 'ccw') {
-      if (E.rotate(game, name === 'cw' ? 1 : -1) >= 0) drawAll();
+      if (E.rotate(game, name === 'cw' ? 1 : -1) >= 0) {
+        sfx('flip', { volume: 0.5, pitch: name === 'cw' ? 1 : 0.9 });
+        drawAll();
+      }
     } else if (name === 'hard') {
       const res = E.hardDrop(game);
       onLock(res, now(), true);
       drawAll();
     } else if (name === 'hold') {
       if (E.hold(game)) {
+        sfx('pop', { volume: 0.7 });
         if (game.over) gameOver();
         drawAll();
+      } else {
+        sfx('error', { volume: 0.5 });
       }
     }
   }
@@ -848,7 +914,7 @@
       });
     });
     document.querySelectorAll('input.switch').forEach((input) => {
-      input.checked = !!settings[input.dataset.setting];
+      input.checked = input.dataset.setting === 'sound' ? !!SFX && !SFX.isMuted() : !!settings[input.dataset.setting];
     });
   }
 
@@ -896,8 +962,17 @@
     });
   });
 
+  // Âm thanh: lưu ở khóa chung với cổng (qua SDK), không vào settings; không có SDK âm thanh thì ẩn hàng này
+  $('setting-sound').hidden = !SFX;
+  if (SFX && SFX.onChange) SFX.onChange(syncSettingsUI);
+
   document.querySelectorAll('input.switch').forEach((input) => {
     input.addEventListener('change', () => {
+      if (input.dataset.setting === 'sound') {
+        if (SFX) SFX.setMuted(!input.checked);
+        sfx('tap');
+        return;
+      }
       settings[input.dataset.setting] = input.checked;
       saveSettings();
       if (input.dataset.setting === 'showPad') applyPadVisibility();

@@ -8,10 +8,15 @@ export type Route =
   | { name: 'events' }
   | { name: 'event'; eventId: string }
   | { name: 'admin' }
+  | { name: 'leaderboards' }
+  | { name: 'news' }
+  | { name: 'post'; slug: string }
 
+/** Khớp ràng buộc slug của bảng posts. */
+const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
-/** Địa chỉ #/play/<id>, #/game/<id> (trang giới thiệu), #/u/<uuid>, #/events, #/events/<uuid> hoặc #/admin; id lạ thì về trang chủ (khớp như cổng cũ). */
+/** Địa chỉ #/play/<id>, #/game/<id> (trang giới thiệu), #/u/<uuid>, #/events, #/events/<uuid>, #/leaderboards, #/news, #/news/<slug> hoặc #/admin; id lạ thì về trang chủ (khớp như cổng cũ). */
 export function parseRoute(hash: string): Route {
   const u = hash.match(/^#\/u\/([^/?#]+)/)
   if (u) {
@@ -34,6 +39,9 @@ export function parseRoute(hash: string): Route {
     return UUID.test(id) ? { name: 'event', eventId: id } : { name: 'events' }
   }
   if (/^#\/admin(?:[/?#]|$)/.test(hash)) return { name: 'admin' }
+  if (/^#\/leaderboards(?:[/?#]|$)/.test(hash)) return { name: 'leaderboards' }
+  const news = hash.match(/^#\/news(?:\/([^/?#]+))?(?:[/?#]|$)/)
+  if (news) return news[1] && SLUG.test(news[1]) ? { name: 'post', slug: news[1] } : { name: 'news' }
   const m = hash.match(/^#\/(play|game)\/([\w-]+)/)
   const game = m ? GAMES.find((x) => x.id === m[2]) : undefined
   if (!m || !game) return { name: 'home' }
@@ -41,6 +49,8 @@ export function parseRoute(hash: string): Route {
 }
 
 export const eventHref = (id: string): string => '#/events/' + id
+
+export const postHref = (slug: string): string => '#/news/' + slug
 
 export const playHref = (g: GameDef): string => '#/play/' + g.id
 

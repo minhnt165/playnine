@@ -3,10 +3,11 @@ import { localized } from '../events/model'
 import { gameById } from '../games/catalog'
 import { Topbar } from '../home/Topbar'
 import { useI18n } from '../i18n/i18n'
+import { usePoints } from '../leaderboards/usePoints'
 import { formatValue } from '../player/leaderboardModel'
 import { eventHref } from '../player/route'
 import { useServer } from '../server/ServerProvider'
-import type { Badge, BestRow, Profile } from '../server/types'
+import type { Badge, BestRow, Period, Profile } from '../server/types'
 
 const NAME_MIN = 2
 const NAME_MAX = 24
@@ -22,6 +23,7 @@ export function ProfilePage({ userId, onThemeApplied }: { userId: string; onThem
   const [draft, setDraft] = useState('')
   const [problem, setProblem] = useState<'rule' | 'server' | null>(null)
   const [saving, setSaving] = useState(false)
+  const points = usePoints(userId)
 
   useEffect(() => {
     if (!api) return
@@ -136,6 +138,28 @@ export function ProfilePage({ userId, onThemeApplied }: { userId: string; onThem
               </span>
             )}
           </form>
+        )}
+        {points?.all && (
+          <section>
+            <div className="section-head">
+              <h2>{t('points.title')}</h2>
+              <a className="section-link" href="#/leaderboards">
+                {t('top.all')} <span aria-hidden="true">→</span>
+              </a>
+            </div>
+            <div className="stats profile-points">
+              {(['day', 'week', 'all'] as Period[]).map((p) => (
+                <div key={p} className="stat">
+                  <b>{fmtNumber(points[p]?.points ?? 0)}</b>
+                  <span>
+                    {t(p === 'day' ? 'lb.day' : p === 'week' ? 'lb.week' : 'lb.all')} ·{' '}
+                    {points[p]?.rank != null ? t('points.rank', { rank: points[p]!.rank! }) : t('points.unranked')}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="profile-hint">{t('points.rules')}</p>
+          </section>
         )}
         {data.badges.length > 0 && (
           <section>

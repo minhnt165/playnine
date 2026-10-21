@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" id="theme-color" content="#f6f2ea">
+  <meta name="theme-color" id="theme-color" content="#f3f4fb">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="2048">
@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
-  <link rel="stylesheet" href="style.css?v=1.0.0">
+  <link rel="stylesheet" href="style.css?v=1.1.0">
 </head>
 <body>
   <div class="app" id="app">
@@ -72,6 +72,7 @@
         <div class="overlay" id="overlay-win" hidden>
           <div class="overlay-card">
             <p class="overlay-title" data-i18n="win.title">You reached 2048!</p>
+            <p class="overlay-score"><span class="overlay-score-label" data-i18n="hud.score">Score</span><span class="overlay-score-value" id="win-score">0</span></p>
             <p class="overlay-sub" id="win-sub">Score 0</p>
             <div class="overlay-actions">
               <button class="btn btn-ghost" type="button" id="btn-win-new" data-i18n="top.newGame">New game</button>
@@ -83,6 +84,8 @@
         <div class="overlay" id="overlay-over" hidden>
           <div class="overlay-card">
             <p class="overlay-title" data-i18n="over.title">No moves left</p>
+            <p class="overlay-score"><span class="overlay-score-label" data-i18n="hud.score">Score</span><span class="overlay-score-value" id="over-score">0</span></p>
+            <p class="overlay-badge" id="over-best" data-i18n="game.newBest" hidden>New best!</p>
             <p class="overlay-sub" id="over-sub">Score 0</p>
             <div class="overlay-actions">
               <button class="btn btn-ghost" type="button" id="btn-over-undo" data-i18n="hud.undo">Undo</button>
@@ -125,6 +128,13 @@
             <button type="button" role="radio" data-value="3">3x3</button>
             <button type="button" role="radio" data-value="4">4x4</button>
             <button type="button" role="radio" data-value="5">5x5</button>
+          </div>
+        </div>
+        <div class="setting" id="setting-sound">
+          <span class="setting-name" id="lbl-sound" data-i18n="settings.sound">Sound</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="lbl-sound" data-setting="sound">
+            <button type="button" role="radio" data-value="on" data-i18n="settings.soundOn">On</button>
+            <button type="button" role="radio" data-value="off" data-i18n="settings.soundOff">Off</button>
           </div>
         </div>
         <div class="setting">
@@ -173,9 +183,9 @@
     </div>
   </div>
 
-  <script src="i18n.js?v=1.0.1"></script>
+  <script src="i18n.js?v=1.1.0"></script>
   <script src="engine.js?v=1.0.0"></script>
-  <script src="../sdk/playnine.js?v=1"></script>
-  <script src="app.js?v=1.0.2"></script>
+  <script src="../sdk/playnine.js?v=2"></script>
+  <script src="app.js?v=1.1.0"></script>
 </body>
 </html>

@@ -83,6 +83,8 @@
       'settings.gestures': 'Board gestures',
       'settings.gesturesDesc':
         'Tap to rotate, drag sideways to move, drag down slowly to soft drop, swipe down fast to hard drop, swipe up to hold.',
+      'settings.sound': 'Sound',
+      'settings.soundDesc': 'Sound effects for moves, line clears and level-ups.',
       'settings.vibrate': 'Vibrate on line clear',
       'settings.vibrateDesc': 'Gentle vibration when clearing lines (if supported).',
       'settings.done': 'Done',
@@ -105,6 +107,7 @@
       'confirm.cancel': 'Cancel',
 
       'detail.full': 'Score {score} · level {level} · {lines}',
+      'detail.rest': 'Level {level} · {lines}',
       'detail.lines': { one: '{n} line', other: '{n} lines' },
       'announce.start': 'New game started at level {level}',
       'announce.over': 'Game over. {detail}',
@@ -193,6 +196,8 @@
       'settings.gestures': 'Cử chỉ trên bàn chơi',
       'settings.gesturesDesc':
         'Chạm để xoay, kéo ngang để di chuyển, kéo chậm xuống để thả nhanh, vuốt nhanh xuống để thả thẳng, vuốt lên để giữ khối.',
+      'settings.sound': 'Âm thanh',
+      'settings.soundDesc': 'Hiệu ứng âm thanh khi di chuyển, xóa hàng và lên cấp.',
       'settings.vibrate': 'Rung khi xóa hàng',
       'settings.vibrateDesc': 'Rung nhẹ khi xóa hàng (nếu máy hỗ trợ).',
       'settings.done': 'Xong',
@@ -215,6 +220,7 @@
       'confirm.cancel': 'Hủy',
 
       'detail.full': 'Điểm {score} · cấp {level} · {lines}',
+      'detail.rest': 'Cấp {level} · {lines}',
       'detail.lines': '{n} hàng',
       'announce.start': 'Bắt đầu ván mới từ cấp {level}',
       'announce.over': 'Hết chỗ xếp. {detail}',

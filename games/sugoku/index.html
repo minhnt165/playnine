@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" id="theme-color" content="#f3f5fb">
+  <meta name="theme-color" id="theme-color" content="#f3f4fb">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Sudoku">
@@ -19,7 +19,7 @@
       if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
     } catch (e) {}
   </script>
-  <link rel="stylesheet" href="style.css?v=1.1.2">
+  <link rel="stylesheet" href="style.css?v=1.1.3">
 </head>
 <body>
   <div class="app" id="app">
@@ -205,6 +205,13 @@
           </div>
           <input type="checkbox" class="switch" data-setting="mistakeLimit">
         </label>
+        <label class="setting" id="setting-sound" hidden>
+          <div class="setting-text">
+            <span class="setting-name" data-i18n="settings.sound">Sound</span>
+            <span class="setting-desc" data-i18n="settings.soundDesc">Sound effects when placing numbers, completing a row, column or box, and winning.</span>
+          </div>
+          <input type="checkbox" class="switch" id="sound-switch">
+        </label>
       </div>
       <button class="btn btn-primary" type="button" data-close="modal-settings" data-i18n="game.done">Done</button>
       <p class="app-version">Sudoku · <span data-i18n="settings.version">version</span> <span id="app-version">—</span></p>
@@ -265,9 +272,9 @@
     </div>
   </div>
 
-  <script src="i18n.js?v=1.1.2"></script>
+  <script src="i18n.js?v=1.1.3"></script>
   <script src="engine.js?v=1.1.2"></script>
-  <script src="../sdk/playnine.js?v=1"></script>
-  <script src="app.js?v=1.1.3"></script>
+  <script src="../sdk/playnine.js?v=2"></script>
+  <script src="app.js?v=1.1.4"></script>
 </body>
 </html>

@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { GameToPortal } from '@playnine/sdk/protocol'
+import { SOUND_KEY } from '@playnine/sdk/sound'
 import { sudokuData } from '../data/sudoku'
 import { readSummary } from '../data/summary'
 import { gameById, GAMES, type GameDef } from '../games/catalog'
 import { useI18n } from '../i18n/i18n'
+import { readRaw, write } from '../lib/storage'
 import { createRunManager, type RunStatus } from '../server/runs'
 import { rememberReturnHash } from '../server/returnHash'
 import { useServer } from '../server/ServerProvider'
@@ -53,6 +55,12 @@ export function Player({ game, heldIds, portalSeen }: Props) {
   const [frame, setFrame] = useState<HTMLIFrameElement | null>(null)
   const [runStatus, setRunStatus] = useState<RunStatus>({ kind: 'idle' })
   const [notice, setNotice] = useState<Notice | null>(null)
+  // Tắt tiếng lưu ở khóa chung với SDK: game trong iframe nghe sự kiện storage nên im ngay.
+  const [muted, setMuted] = useState(() => readRaw(SOUND_KEY) === 'off')
+  const toggleSound = () => {
+    write(SOUND_KEY, muted ? 'on' : 'off')
+    setMuted(!muted)
+  }
   const noticeSeq = useRef(0)
   const alive = useRef(true)
   useEffect(() => {
@@ -243,6 +251,25 @@ export function Player({ game, heldIds, portalSeen }: Props) {
         </a>
         <button
           className="pbtn icon-only"
+          id="p-sound"
+          type="button"
+          aria-pressed={!muted}
+          aria-label={t('player.sound')}
+          title={t('player.sound')}
+          onClick={toggleSound}
+        >
+          {muted ? (
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M4 9h4l5-4v14l-5-4H4zM16.3 9.7l1.4-1.4 2.1 2.1 2.1-2.1 1.4 1.4-2.1 2.1 2.1 2.1-1.4 1.4-2.1-2.1-2.1 2.1-1.4-1.4 2.1-2.1z" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M4 9h4l5-4v14l-5-4H4zM16 8.5a5 5 0 0 1 0 7l-1.4-1.4a3 3 0 0 0 0-4.2zm2.8-2.8a9 9 0 0 1 0 12.6l-1.4-1.4a7 7 0 0 0 0-9.8z" />
+            </svg>
+          )}
+        </button>
+        <button
+          className="pbtn icon-only"
           id="p-full"
           type="button"
           aria-label={t('player.full')}
@@ -270,6 +297,9 @@ export function Player({ game, heldIds, portalSeen }: Props) {
                 }}
               >
                 {t('auth.signIn')}
+              </button>
+              <button type="button" onClick={() => api.signInAsGuest().catch(() => {})}>
+                {t('auth.guest')}
               </button>
             </>
           )}

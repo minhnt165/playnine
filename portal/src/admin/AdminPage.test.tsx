@@ -35,7 +35,7 @@ describe('AdminPage', () => {
     expect(adminCalls(api)).toEqual([])
   })
 
-  it('admin: 5 tab, đổi tab ghi sessionStorage, đặt tiêu đề trang', async () => {
+  it('admin: 6 tab, đổi tab ghi sessionStorage, đặt tiêu đề trang', async () => {
     const api = createFakeApi({ games: GAMES_META, user: ADMIN })
     mountWith(api, <AdminPage />)
     const tabs = await screen.findAllByRole('tab')
@@ -43,6 +43,7 @@ describe('AdminPage', () => {
       en('admin.tab.games'),
       en('admin.tab.events'),
       en('admin.tab.collections'),
+      en('admin.tab.posts'),
       en('admin.tab.runs'),
       en('admin.tab.players'),
     ])
