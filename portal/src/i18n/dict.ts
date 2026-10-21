@@ -84,6 +84,11 @@ export const DICT: Record<Lang, Record<string, string | { one: string; other: st
     'player.full': 'Full screen',
     'player.loading': 'Loading game…',
     'player.streak': { one: '🔥 1 day', other: '🔥 {n} days' },
+    'auth.signIn': 'Sign in with Google',
+    'auth.signOut': 'Sign out',
+    'auth.profile': 'My profile',
+    'auth.menu': 'Account menu',
+    'auth.failed': 'Something went wrong. Please try again.',
   },
   vi: {
     'meta.description': 'PlayNine: chín ô, chín đường, một nước hay. Sudoku và Cờ Tướng chơi ngay trên trình duyệt, xem tiến độ và chuỗi ngày của bạn.',
@@ -167,5 +172,10 @@ export const DICT: Record<Lang, Record<string, string | { one: string; other: st
     'player.full': 'Toàn màn hình',
     'player.loading': 'Đang tải game…',
     'player.streak': '🔥 {n} ngày',
+    'auth.signIn': 'Đăng nhập bằng Google',
+    'auth.signOut': 'Đăng xuất',
+    'auth.profile': 'Hồ sơ của tôi',
+    'auth.menu': 'Menu tài khoản',
+    'auth.failed': 'Có lỗi xảy ra. Vui lòng thử lại.',
   },
 };

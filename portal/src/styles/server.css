@@ -1,0 +1,23 @@
+/* Giao diện lớp server: nút đăng nhập, avatar và menu trên thanh trên cùng. */
+.auth-wrap { position: relative; display: inline-flex; }
+.auth-btn { width: auto; padding: 0 14px; }
+.auth-avatar {
+  width: 38px; height: 38px; border-radius: 50%; padding: 0; overflow: hidden;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border); background: var(--chip); color: var(--text);
+  font: inherit; font-weight: 700; cursor: pointer;
+}
+.auth-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.auth-avatar:focus-visible, .auth-menu a:focus-visible, .auth-menu button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.auth-menu {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; min-width: 200px;
+  display: flex; flex-direction: column; gap: 2px; padding: 8px;
+  background: var(--surface-solid); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow);
+}
+.auth-name { padding: 6px 10px; font-weight: 700; color: var(--text); overflow-wrap: anywhere; }
+.auth-menu a, .auth-menu button {
+  display: block; width: 100%; padding: 8px 10px; border: 0; border-radius: 8px; background: none;
+  color: var(--text); font: inherit; text-align: left; text-decoration: none; cursor: pointer;
+}
+.auth-menu a:hover, .auth-menu button:hover { background: var(--chip); }
+.auth-error { color: var(--fire); font-size: .8rem; }

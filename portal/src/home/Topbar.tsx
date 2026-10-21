@@ -1,4 +1,5 @@
 import { useI18n } from '../i18n/i18n'
+import { AuthButton } from './AuthButton'
 import { useTheme, type Theme } from '../theme/useTheme'
 
 const ICONS: Record<Theme, string> = {
@@ -30,6 +31,7 @@ export function Topbar({ onThemeApplied }: { onThemeApplied?: () => void }) {
         </span>
       </div>
       <div className="top-actions">
+        <AuthButton />
         <button
           className="theme-btn lang-btn"
           id="lang-btn"
