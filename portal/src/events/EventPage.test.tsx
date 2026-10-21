@@ -1,7 +1,9 @@
-import { cleanup, screen, within } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DICT } from '../i18n/dict'
+import { I18nProvider } from '../i18n/i18n'
 import { createFakeApi } from '../server/fakeApi'
+import { ServerProvider } from '../server/ServerProvider'
 import { EventPage } from './EventPage'
 import { ev, GAMES, mountWith, NOW, row } from './testUtil'
 
@@ -94,5 +96,36 @@ describe('EventPage', () => {
     api.fail('events')
     mountWith(api, <EventPage eventId="e1" />)
     expect(await screen.findByText(en('ev.error'))).toBeInTheDocument()
+  })
+
+  it('awardTop lớn hơn 50: liệt kê đủ người nhận huy hiệu', async () => {
+    vi.setSystemTime(new Date('2026-10-21T13:00:00Z'))
+    const big = Array.from({ length: 60 }, (_, i) => row(i + 1, 'P' + (i + 1), 1000 - i))
+    const api = createFakeApi({ games: GAMES, events: [ev({ status: 'closed', awardTop: 55 })], eventBoards: { e1: big } })
+    mountWith(api, <EventPage eventId="e1" />)
+    const head = await screen.findByRole('heading', { name: en('ev.winners') })
+    expect(within(head.closest('section')!).getAllByRole('listitem')).toHaveLength(55)
+  })
+
+  it('đổi sự kiện thì không hiện người nhận huy hiệu của sự kiện cũ', async () => {
+    vi.setSystemTime(new Date('2026-10-21T13:00:00Z'))
+    const api = createFakeApi({
+      games: GAMES,
+      events: [ev({ status: 'closed' }), ev({ id: 'e2', status: 'closed' })],
+      eventBoards: { e1: BOARD, e2: [row(1, 'Zed', 5)] },
+    })
+    const ui = (id: string) => (
+      <I18nProvider>
+        <ServerProvider api={api}>
+          <EventPage eventId={id} />
+        </ServerProvider>
+      </I18nProvider>
+    )
+    const view = render(ui('e1'))
+    const head = await screen.findByRole('heading', { name: en('ev.winners') })
+    expect(within(head.closest('section')!).getByText('An')).toBeInTheDocument()
+    view.rerender(ui('e2'))
+    expect(screen.queryByText('An')).toBeNull()
+    expect((await screen.findAllByText('Zed')).length).toBe(2)
   })
 })

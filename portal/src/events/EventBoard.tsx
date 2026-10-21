@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n/i18n'
 import { formatValue } from '../player/leaderboardModel'
+import { Row } from '../player/LeaderRow'
 import { eventHref } from '../player/route'
 import { useServer } from '../server/ServerProvider'
 import type { GameEvent, LeaderRow } from '../server/types'
@@ -54,19 +55,9 @@ export function EventBoard({ event, limit = 50, onRows }: Props) {
   if (data.rows.length === 0) return <p className="lb-note">{t('lb.empty')}</p>
   return (
     <ol className="lb-list">
-      {data.rows.map((r) => {
-        const me = r.userId === userId
-        return (
-          <li key={r.userId} className={me ? 'me' : undefined}>
-            <span className="lb-rank">{r.rank}</span>
-            <span className="lb-name">
-              <a href={`#/u/${encodeURIComponent(r.userId)}`}>{r.displayName}</a>
-              {me && <em className="lb-you">{t('lb.you')}</em>}
-            </span>
-            <span className="lb-value">{formatValue(metric, r.value, fmtNumber)}</span>
-          </li>
-        )
-      })}
+      {data.rows.map((r) => (
+        <Row key={r.userId} r={r} me={r.userId === userId} value={formatValue(metric, r.value, fmtNumber)} you={t('lb.you')} />
+      ))}
     </ol>
   )
 }

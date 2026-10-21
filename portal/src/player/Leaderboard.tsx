@@ -7,6 +7,7 @@ import { readRaw, write } from '../lib/storage'
 import { useServer } from '../server/ServerProvider'
 import type { GameEvent, GameMeta, LeaderRow, Period } from '../server/types'
 import { formatValue, periodsFor } from './leaderboardModel'
+import { Row } from './LeaderRow'
 
 const TOP = 50
 const modeKeyOf = (gameId: string) => 'playnine-lb-mode-' + gameId
@@ -24,18 +25,6 @@ export function Leaderboard({ gameId, refreshKey }: Props) {
   return <Board key={gameId} meta={meta} refreshKey={refreshKey} />
 }
 
-function Row({ r, me, value, you }: { r: LeaderRow; me: boolean; value: string; you: string }) {
-  return (
-    <li className={me ? 'me' : undefined}>
-      <span className="lb-rank">{r.rank}</span>
-      <span className="lb-name">
-        <a href={`#/u/${encodeURIComponent(r.userId)}`}>{r.displayName}</a>
-        {me && <em className="lb-you">{you}</em>}
-      </span>
-      <span className="lb-value">{value}</span>
-    </li>
-  )
-}
 function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
   const { api, user } = useServer()
   const { t, lang, fmtNumber } = useI18n()
@@ -120,7 +109,16 @@ function Board({ meta, refreshKey }: { meta: GameMeta; refreshKey: number }) {
       </div>
       <div className="lb-tabs lb-periods" role="tablist">
         {periods.map((p) => (
-          <button key={p} type="button" role="tab" aria-selected={!eventOn && p === period} onClick={() => { setSavedPeriod(p); setShowEvent(false) }}>
+          <button
+            key={p}
+            type="button"
+            role="tab"
+            aria-selected={!eventOn && p === period}
+            onClick={() => {
+              setSavedPeriod(p)
+              setShowEvent(false)
+            }}
+          >
             {t(PERIOD_LABEL[p])}
           </button>
         ))}

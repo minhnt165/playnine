@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import { gameById } from '../games/catalog'
 import { Topbar } from '../home/Topbar'
 import { useI18n } from '../i18n/i18n'
+import { formatValue } from '../player/leaderboardModel'
+import { Row } from '../player/LeaderRow'
+import { useServer } from '../server/ServerProvider'
 import type { LeaderRow } from '../server/types'
 import { EventBoard } from './EventBoard'
 import { useEventText } from './eventText'
@@ -13,11 +16,13 @@ type Props = { eventId: string; onThemeApplied?: () => void }
 
 /** Trang #/events/<id>: luật, thời gian, đếm ngược, bảng xếp hạng và người nhận huy hiệu. */
 export function EventPage({ eventId, onThemeApplied }: Props) {
-  const { t } = useI18n()
+  const { t, fmtNumber } = useI18n()
+  const { user, games } = useServer()
   const text = useEventText()
   const state = useEvents()
   const now = useNow()
-  const [rows, setRows] = useState<LeaderRow[]>([])
+  // Hàng đã tải kèm id sự kiện, để đổi sự kiện thì không hiện nhầm người nhận huy hiệu của sự kiện cũ.
+  const [loaded, setLoaded] = useState<{ id: string; rows: LeaderRow[] } | null>(null)
 
   const event = state.status === 'ready' ? (state.events.find((e) => e.id === eventId) ?? null) : null
   const title = event ? text.title(event) : ''
@@ -40,7 +45,9 @@ export function EventPage({ eventId, onThemeApplied }: Props) {
     const phase = eventPhase(event, now)
     const game = gameById(event.gameId)
     const desc = text.description(event)
+    const rows = loaded && loaded.id === event.id ? loaded.rows : []
     const winners = rows.filter((r) => r.rank <= event.awardTop)
+    const metric = games[event.gameId]?.metric ?? 'score_high'
     body = (
       <>
         <header className="ev-head">
@@ -82,7 +89,7 @@ export function EventPage({ eventId, onThemeApplied }: Props) {
           <div className="section-head">
             <h2>{t('lb.title')}</h2>
           </div>
-          <EventBoard event={event} onRows={setRows} />
+          <EventBoard event={event} limit={Math.max(50, event.awardTop)} onRows={(r) => setLoaded({ id: event.id, rows: r })} />
         </section>
         {phase === 'ended' && event.status === 'closed' && winners.length > 0 && (
           <section>
@@ -91,12 +98,13 @@ export function EventPage({ eventId, onThemeApplied }: Props) {
             </div>
             <ol className="lb-list">
               {winners.map((r) => (
-                <li key={r.userId}>
-                  <span className="lb-rank">{r.rank}</span>
-                  <span className="lb-name">
-                    <a href={`#/u/${encodeURIComponent(r.userId)}`}>{r.displayName}</a>
-                  </span>
-                </li>
+                <Row
+                  key={r.userId}
+                  r={r}
+                  me={r.userId === user?.id}
+                  value={formatValue(metric, r.value, fmtNumber)}
+                  you={t('lb.you')}
+                />
               ))}
             </ol>
           </section>

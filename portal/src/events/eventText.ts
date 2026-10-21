@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { gameById } from '../games/catalog'
 import { useI18n } from '../i18n/i18n'
 import { useServer } from '../server/ServerProvider'
@@ -8,7 +9,7 @@ import { localized } from './model'
 export function useEventText() {
   const { lang, loc } = useI18n()
   const { games } = useServer()
-  const fmt = new Intl.DateTimeFormat(lang, { dateStyle: 'medium', timeStyle: 'short' })
+  const fmt = useMemo(() => new Intl.DateTimeFormat(lang, { dateStyle: 'medium', timeStyle: 'short' }), [lang])
   return {
     title: (e: GameEvent) => localized(e.title, lang),
     description: (e: GameEvent) => localized(e.description, lang),
