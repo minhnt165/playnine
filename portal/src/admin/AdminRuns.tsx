@@ -24,10 +24,14 @@ export function AdminRuns() {
   const [more, setMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const seq = useRef(0)
+  const paging = useRef(false)
+  const [moreBusy, setMoreBusy] = useState(false)
 
   useEffect(() => {
     if (!api) return
     const mine = ++seq.current
+    paging.current = false
+    setMoreBusy(false)
     api.adminRuns({ ...applied, limit: PAGE }).then(
       (list) => {
         if (mine !== seq.current) return
@@ -42,16 +46,26 @@ export function AdminRuns() {
   }, [api, applied])
 
   const loadMore = async () => {
-    if (!api || !rows || rows.length === 0) return
+    if (!api || !rows || rows.length === 0 || paging.current) return
+    paging.current = true
+    setMoreBusy(true)
+    const mine = seq.current
     // startedAt giữ nguyên chuỗi nhận được: SQL so sánh ở độ chính xác micro giây.
     const before = rows[rows.length - 1].startedAt
     try {
       const list = await api.adminRuns({ ...applied, before, limit: PAGE })
+      // Bộ lọc đã đổi trong lúc chờ: bỏ kết quả cũ.
+      if (mine !== seq.current) return
       setRows((cur) => (cur ? [...cur, ...list] : list))
       setMore(list.length >= PAGE)
       setError(null)
     } catch (e) {
-      setError(errorCode(e))
+      if (mine === seq.current) setError(errorCode(e))
+    } finally {
+      if (mine === seq.current) {
+        paging.current = false
+        setMoreBusy(false)
+      }
     }
   }
 
@@ -62,6 +76,8 @@ export function AdminRuns() {
     if (gameId && mode) f.mode = mode
     if (userId.trim()) f.userId = userId.trim()
     if (status) f.status = status as RunStatusDb
+    setRows(null)
+    setMore(false)
     setApplied(f)
   }
 
@@ -196,7 +212,7 @@ export function AdminRuns() {
         </div>
       )}
       {more && (
-        <button type="button" className="admin-btn admin-more" onClick={() => void loadMore()}>
+        <button type="button" className="admin-btn admin-more" disabled={moreBusy} onClick={() => void loadMore()}>
           {t('admin.more')}
         </button>
       )}

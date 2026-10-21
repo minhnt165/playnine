@@ -29,7 +29,7 @@ describe('AdminGames', () => {
     await waitFor(() => expect(rowOf(container, '2048')).not.toBeNull())
     const row = within(rowOf(container, '2048'))
     const g44 = within(row.getByRole('group', { name: '4x4' }))
-    expect(g44.getByLabelText('min_duration_ms')).toHaveValue(1000)
+    expect(g44.getByLabelText('min_duration_ms')).toHaveValue('1000')
     fireEvent.change(g44.getByLabelText('max_score'), { target: { value: '' } })
     fireEvent.click(row.getByRole('button', { name: en('admin.save') }))
     expect(await screen.findByRole('status')).toHaveTextContent(en('admin.saved'))
@@ -63,6 +63,30 @@ describe('AdminGames', () => {
     fireEvent.click(row.getByRole('button', { name: en('admin.save') }))
     expect(input).toHaveAttribute('aria-invalid', 'true')
     expect(api.calls.some((c) => c.method === 'adminUpdateGame')).toBe(false)
+  })
+
+  it('nhập dở dang như 1e vẫn báo lỗi, ô thập phân có thông báo riêng', async () => {
+    const api = createFakeApi({ games: GAMES_META })
+    const { container } = mountWith(api, <AdminGames />)
+    await waitFor(() => expect(rowOf(container, '2048')).not.toBeNull())
+    const row = within(rowOf(container, '2048'))
+    const g33 = within(row.getByRole('group', { name: '3x3' }))
+    const maxScore = g33.getByLabelText('max_score')
+    const perSec = g33.getByLabelText('max_score_per_sec')
+    fireEvent.change(maxScore, { target: { value: '1e' } })
+    fireEvent.click(row.getByRole('button', { name: en('admin.save') }))
+    expect(maxScore).toHaveAttribute('aria-invalid', 'true')
+    expect(g33.getByText(en('admin.invalid'))).toBeInTheDocument()
+    fireEvent.change(maxScore, { target: { value: '5' } })
+    fireEvent.change(perSec, { target: { value: 'x' } })
+    fireEvent.click(row.getByRole('button', { name: en('admin.save') }))
+    expect(g33.getByText(en('admin.invalidDecimal'))).toBeInTheDocument()
+    expect(api.calls.some((c) => c.method === 'adminUpdateGame')).toBe(false)
+  })
+
+  it('không có metadata game: báo không tải được', () => {
+    mountWith(createFakeApi({ games: [] }), <AdminGames />)
+    expect(screen.getByText(en('admin.noGames'))).toBeInTheDocument()
   })
 
   it('adminUpdateGame lỗi forbidden: hiện mã lỗi', async () => {

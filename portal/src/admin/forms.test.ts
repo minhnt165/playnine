@@ -33,6 +33,18 @@ describe('rulesFromForm', () => {
     expect(rulesFromForm({ a: { ...blank, max_score: '1.5' } })).toEqual({ ok: false, mode: 'a', field: 'max_score' })
   })
 
+  it("max_score_per_sec nhận '.5' và '0.5', không nhận '1.' hoặc '.'", () => {
+    for (const v of ['.5', '0.5']) {
+      expect(rulesFromForm({ a: { ...blank, max_score_per_sec: v } })).toEqual({
+        ok: true,
+        rules: { a: { max_score_per_sec: 0.5 } },
+      })
+    }
+    for (const v of ['1.', '.', '1e']) {
+      expect(rulesFromForm({ a: { ...blank, max_score_per_sec: v } }).ok).toBe(false)
+    }
+  })
+
   it('số 0 là hợp lệ', () => {
     expect(rulesFromForm({ a: { ...blank, min_time_ms: '0' } })).toEqual({ ok: true, rules: { a: { min_time_ms: 0 } } })
   })

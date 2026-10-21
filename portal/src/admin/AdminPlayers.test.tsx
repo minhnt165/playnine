@@ -53,6 +53,18 @@ describe('AdminPlayers', () => {
     expect(api.calls.find((c) => c.method === 'adminSetBanned')!.args).toEqual(['p2', true])
   })
 
+  it('câu hỏi xác nhận đúng chiều: khóa hỏi khóa, mở khóa hỏi mở khóa', async () => {
+    const ask = vi.fn(() => true)
+    vi.stubGlobal('confirm', ask)
+    const api = createFakeApi({ user: ADMIN, adminPlayers: [...seed(), player('p4', 'Cara', { banned: true })] })
+    const { container } = mountWith(api, <AdminPlayers />)
+    await screen.findByText('Anna')
+    fireEvent.click(rowOf(container, 'p4').getByRole('button', { name: en('admin.unban') }))
+    expect(ask).toHaveBeenLastCalledWith('Unban Cara?')
+    fireEvent.click(rowOf(container, 'p2').getByRole('button', { name: en('admin.ban') }))
+    expect(ask).toHaveBeenLastCalledWith('Ban Anna?')
+  })
+
   it('confirm false: không gọi', async () => {
     vi.stubGlobal('confirm', vi.fn(() => false))
     const api = createFakeApi({ user: ADMIN, adminPlayers: seed() })

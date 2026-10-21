@@ -41,7 +41,7 @@ export function AdminPlayers() {
   }
 
   const toggleBan = async (p: AdminPlayer) => {
-    if (!api || !confirm(t('admin.banConfirm', { name: p.displayName }))) return
+    if (!api || !confirm(t(p.banned ? 'admin.unbanConfirm' : 'admin.banConfirm', { name: p.displayName }))) return
     try {
       await api.adminSetBanned(p.id, !p.banned)
       setRows((cur) => cur && cur.map((x) => (x.id === p.id ? { ...x, banned: !p.banned } : x)))

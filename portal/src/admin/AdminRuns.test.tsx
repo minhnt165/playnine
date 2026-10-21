@@ -90,6 +90,49 @@ describe('AdminRuns', () => {
     expect(screen.queryByRole('button', { name: en('admin.more') })).toBeNull()
   })
 
+  it('bấm "Xem thêm" hai lần khi đang chờ chỉ gửi một yêu cầu, nút bị khóa', async () => {
+    const rows = many()
+    const api = createFakeApi({ user: ADMIN, games: GAMES_META, adminRuns: rows })
+    const orig = api.adminRuns
+    let release: () => void = () => {}
+    api.adminRuns = (f) =>
+      f.before === undefined
+        ? orig(f)
+        : new Promise((res) => {
+            release = () => res(orig(f))
+          })
+    const { container } = mountWith(api, <AdminRuns />)
+    const btn = await screen.findByRole('button', { name: en('admin.more') })
+    fireEvent.click(btn)
+    fireEvent.click(btn)
+    expect(btn).toBeDisabled()
+    expect(calls(api).length).toBe(1)
+    release()
+    await waitFor(() => expect(container.querySelectorAll('[data-run]').length).toBe(60))
+    expect(new Set([...container.querySelectorAll('[data-run]')].map((e) => e.getAttribute('data-run'))).size).toBe(60)
+  })
+
+  it('"Xem thêm" trả về sau khi đã lọc lại thì không thêm hàng của bộ lọc cũ', async () => {
+    const rows = many()
+    const api = createFakeApi({ user: ADMIN, games: GAMES_META, adminRuns: rows })
+    const orig = api.adminRuns
+    let release: () => void = () => {}
+    api.adminRuns = (f) =>
+      f.before === undefined
+        ? orig(f)
+        : new Promise((res) => {
+            release = () => res(orig(f))
+          })
+    const { container } = mountWith(api, <AdminRuns />)
+    fireEvent.click(await screen.findByRole('button', { name: en('admin.more') }))
+    fireEvent.change(screen.getByLabelText(en('admin.filter.status')), { target: { value: 'finished' } })
+    fireEvent.click(screen.getByRole('button', { name: en('admin.filter.apply') }))
+    await waitFor(() => expect(container.querySelectorAll('[data-run]').length).toBe(50))
+    release()
+    await new Promise((r) => setTimeout(r, 20))
+    expect(container.querySelectorAll('[data-run]').length).toBe(50)
+  })
+
   it('RPC lỗi: hiện mã lỗi', async () => {
     const api = createFakeApi({ user: ADMIN, games: GAMES_META })
     api.fail('adminRuns', new Error('admin_runs: forbidden'))

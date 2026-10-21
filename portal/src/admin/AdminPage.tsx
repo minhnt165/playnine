@@ -1,23 +1,21 @@
 import { useEffect, useState } from 'react'
 import { Topbar } from '../home/Topbar'
 import { useI18n } from '../i18n/i18n'
+import { defaultSession, safeStore } from '../lib/safeStorage'
 import { useServer } from '../server/ServerProvider'
 import { AdminGames } from './AdminGames'
 import { AdminPlayers } from './AdminPlayers'
 import { AdminRuns } from './AdminRuns'
 
 const TAB_KEY = 'playnine-admin-tab'
+const store = safeStore(defaultSession())
 // Thứ tự tab; Task 7 thay khung tạm của events và collections bằng trình soạn thật.
 const TABS = ['games', 'events', 'collections', 'runs', 'players'] as const
 type Tab = (typeof TABS)[number]
 
 function readTab(): Tab {
-  try {
-    const v = sessionStorage.getItem(TAB_KEY)
-    return TABS.find((x) => x === v) ?? 'games'
-  } catch {
-    return 'games'
-  }
+  const v = store.get(TAB_KEY)
+  return TABS.find((x) => x === v) ?? 'games'
 }
 
 /** Trang #/admin: chỉ admin mới thấy; người khác không bị gọi admin_* nào. */
@@ -36,11 +34,7 @@ export function AdminPage({ onThemeApplied }: { onThemeApplied?: () => void }) {
 
   const choose = (next: Tab) => {
     setTab(next)
-    try {
-      sessionStorage.setItem(TAB_KEY, next)
-    } catch {
-      /* không lưu được thì bỏ qua */
-    }
+    store.set(TAB_KEY, next)
   }
 
   let body = null

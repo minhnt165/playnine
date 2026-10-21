@@ -78,14 +78,13 @@ function GameRow({ id, name, meta }: { id: string; name: string; meta: GameMeta 
                 <label key={f} className="admin-field">
                   <span>{f}</span>
                   <input
-                    type="number"
-                    min="0"
-                    step={f === 'max_score_per_sec' ? 'any' : '1'}
+                    type="text"
+                    inputMode="decimal"
                     value={values[m.key]?.[f] ?? ''}
                     aria-invalid={invalid || undefined}
                     onChange={(e) => setField(m.key, f, e.target.value)}
                   />
-                  {invalid && <span className="admin-field-error">{t('admin.invalid')}</span>}
+                  {invalid && <span className="admin-field-error">{t(f === 'max_score_per_sec' ? 'admin.invalidDecimal' : 'admin.invalid')}</span>}
                 </label>
               )
             })}
@@ -108,8 +107,9 @@ function GameRow({ id, name, meta }: { id: string; name: string; meta: GameMeta 
 
 /** Tab Game: ẩn/hiện và luật chống gian lận theo từng mode, theo thứ tự catalog. */
 export function AdminGames() {
-  const { loc } = useI18n()
+  const { t, loc } = useI18n()
   const { games } = useServer()
+  if (Object.keys(games).length === 0) return <p className="lb-note">{t('admin.noGames')}</p>
   return (
     <div className="admin-games">
       {GAMES.map((g) => (games[g.id] ? <GameRow key={g.id} id={g.id} name={loc(g.name)} meta={games[g.id]} /> : null))}

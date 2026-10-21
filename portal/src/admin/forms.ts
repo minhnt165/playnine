@@ -4,7 +4,7 @@ import type { Rules } from '../server/types'
 export const RULE_FIELDS: (keyof Rules)[] = ['min_duration_ms', 'max_score', 'max_score_per_sec', 'min_time_ms']
 
 const INT = /^\d+$/
-const DECIMAL = /^\d+(\.\d+)?$/
+const DECIMAL = /^(\d+(\.\d+)?|\.\d+)$/
 
 export type RulesResult = { ok: true; rules: Record<string, Rules> } | { ok: false; mode: string; field: keyof Rules }
 
