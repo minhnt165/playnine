@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#0e0b09">
+  <meta name="description" content="PlayNine: nine cells, nine paths, one great move. Seventeen puzzle, strategy and arcade games right in your browser, with your progress and daily streaks.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="PlayNine">
+  <title>PlayNine</title>
+  <link rel="icon" type="image/svg+xml" href="%BASE_URL%brand/icon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="%BASE_URL%brand/icon-180.png">
+  <link rel="manifest" href="%BASE_URL%brand/manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Tải font không chặn việc vẽ trang (mạng di động chậm vẫn hiện trang ngay bằng font hệ thống) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"></noscript>
+  <script>
+    // Áp giao diện đã chọn trước khi vẽ trang để tránh nháy màu
+    try {
+      var t = localStorage.getItem('game-portal-theme-v1');
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      if (localStorage.getItem('playnine-lang') === 'vi') document.documentElement.lang = 'vi';
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

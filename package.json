@@ -1,0 +1,14 @@
+{
+  "name": "playnine",
+  "private": true,
+  "workspaces": ["portal"],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "assemble": "node scripts/assemble.mjs --portal portal/dist",
+    "test": "node --test \"scripts/*.test.mjs\" && npm test -w portal",
+    "e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}
