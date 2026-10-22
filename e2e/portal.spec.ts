@@ -80,6 +80,8 @@ test('switch game keeps history', async ({ page }) => {
 
 test('number shortcut opens game', async ({ page }) => {
   await page.goto('');
+  // Phím tắt gắn sau khi React render xong: đợi trang chủ hiện rồi mới bấm (CI chậm hơn máy dev).
+  await expect(page.locator('#games')).toBeVisible();
   await page.keyboard.press('1');
   await expect(page).toHaveURL(/#\/play\/co9o$/);
 });
