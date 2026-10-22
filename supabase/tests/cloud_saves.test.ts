@@ -23,14 +23,14 @@ describe('cloud saves', () => {
   it('my_saves(p_since) lọc theo giờ server nhận (kể cả bản đẩy lên có updated_at rất cũ); mỗi người chỉ thấy của mình', async () => {
     const db = await createDb()
     const a = await newUser(db, { full_name: 'An' })
-    const b = await newUser(db, { anonymous: true })
+    const b = await newUser(db, { full_name: 'Bình' })
     await put(db, a, [{ key: 'k1', value: 'a', updated_at: iso(-60_000) }])
     await db.query("update user_saves set synced_at = now() - interval '1 hour'")
     await put(db, a, [{ key: 'k2', value: 'b', updated_at: '1970-01-01T00:00:00Z' }])
     expect(await saves(db, a, iso(-30_000))).toEqual([['k2', 'b']])
     expect(await saves(db, b)).toEqual([])
-    await put(db, b, [{ key: 'k1', value: 'guest', updated_at: iso(0) }])
-    expect(await saves(db, b)).toEqual([['k1', 'guest']])
+    await put(db, b, [{ key: 'k1', value: 'bình', updated_at: iso(0) }])
+    expect(await saves(db, b)).toEqual([['k1', 'bình']])
     expect((await saves(db, a)).find((r) => r[0] === 'k1')![1]).toBe('a')
   })
 
@@ -61,5 +61,16 @@ describe('cloud saves', () => {
     await expect(asAnon(db, () => db.query("select put_saves('[]'::jsonb)"))).rejects.toThrow(/permission denied/)
     await expect(asAnon(db, () => db.query('select * from my_saves()'))).rejects.toThrow(/permission denied/)
     await expect(asAnon(db, () => db.query('select * from user_saves'))).rejects.toThrow(/permission denied/)
+  })
+})
+
+describe('chỉ tài khoản Google', () => {
+  it('khách không ghi được; liên kết Google xong thì ghi được', async () => {
+    const db = await createDb()
+    const g = await newUser(db, { anonymous: true })
+    await expect(put(db, g, [{ key: 'k', value: 'x' }])).rejects.toThrow(/guest_not_allowed/)
+    expect(await saves(db, g)).toEqual([])
+    await db.query('update auth.users set is_anonymous = false where id = $1', [g])
+    expect(await put(db, g, [{ key: 'k', value: 'x' }])).toBe(1)
   })
 })

@@ -57,3 +57,14 @@ describe('useCloudSync', () => {
     expect(await screen.findByText(/Couldn't save game progress/)).toBeInTheDocument()
   })
 })
+
+describe('useCloudSync: khách', () => {
+  it('khách không gọi server; menu nhắc liên kết Google', async () => {
+    localStorage.setItem('playnine-2048-stats-v1', '{"games":2}')
+    const api = createFakeApi({ user: { ...USER, displayName: 'Guest-ABCD', isGuest: true } })
+    mount(api)
+    fireEvent.click(await screen.findByRole('button', { name: /Guest-ABCD/ }))
+    expect(await screen.findByText(/Link Google to save it/)).toBeInTheDocument()
+    expect(api.calls.some((c) => c.method === 'mySaves' || c.method === 'putSaves')).toBe(false)
+  })
+})
