@@ -1,7 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import type { ServerApi } from './api'
 import type {
-  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, EventInput, EventPatch, FeedItem, FinishResult, GameEvent, GameMeta,
+  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, EventInput, EventPatch, FeedItem, FinishResult, HistoryRun, GameEvent, GameMeta,
   LeaderRow, Metric, ModeMeta, Period, PlayerRow, PointsSummary, Post, Profile, RunResult, Rules, Text, TopRow,
 } from './types'
 
@@ -354,6 +354,38 @@ export function createApiFromClient(sb: SupabaseClient): ServerApi {
     },
     async adminDeletePost(id) {
       await rpc('admin_delete_post', { p_id: id })
+    },
+    async favorites() {
+      return ((await rpc<unknown[] | null>('my_favorites')) ?? []).map((g) =>
+        // setof text: PostgREST trả mảng chuỗi (hoặc object có khóa tên hàm ở bản cũ).
+        typeof g === 'string' ? g : String((g as Row).my_favorites),
+      )
+    },
+    async setFavorite(gameId, on) {
+      await rpc('set_favorite', { p_game_id: gameId, p_on: on })
+    },
+    async myRuns(opts = {}) {
+      const rows = await rpc<Row[] | null>('my_runs', {
+        p_game_id: opts.gameId ?? null,
+        p_before: opts.before ?? null,
+        p_limit: opts.limit ?? 30,
+      })
+      return (rows ?? []).map(
+        (r): HistoryRun => ({
+          id: String(r.id),
+          gameId: String(r.game_id),
+          mode: String(r.mode),
+          status: r.status === 'rejected' ? 'rejected' : 'finished',
+          startedAt: String(r.started_at),
+          endedAt: String(r.ended_at),
+          score: numOrNull(r.score),
+          timeMs: numOrNull(r.time_ms),
+          won: r.won == null ? null : Boolean(r.won),
+          assisted: Boolean(r.assisted),
+          rejectReason: r.reject_reason == null ? null : String(r.reject_reason),
+          points: Number(r.points ?? 0),
+        }),
+      )
     },
     async newsFeed(limit = 60) {
       const { data, error } = await sb.from('news_feed').select(FEED_COLS).order('published_at', { ascending: false }).limit(limit)

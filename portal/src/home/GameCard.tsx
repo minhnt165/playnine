@@ -4,6 +4,7 @@ import type { RatingSummary } from '../server/types'
 import { useI18n } from '../i18n/i18n'
 import { detailHref } from '../player/route'
 import { formatCount } from '../lib/format'
+import { FavButton } from './FavButton'
 import { canHover, prefersReducedMotion } from './media'
 
 type Props = {
@@ -86,6 +87,7 @@ export function GameCard({ game: g, index: i, ribbon, note, hidden, plays, ratin
           </div>
         </div>
       </a>
+      <FavButton game={g} className="card-fav" />
     </li>
   )
 }

@@ -1,0 +1,56 @@
+/* Game yêu thích (nút trái tim trên thẻ, trang chi tiết, menu game) và nút lên đầu trang. */
+.fav-btn {
+  display: inline-grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid var(--border);
+  border-radius: 50%; background: var(--surface-solid); color: var(--muted); cursor: pointer;
+  transition: color .15s ease, border-color .15s ease, transform .15s ease;
+}
+.fav-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+.fav-btn:hover { color: #ff5c8a; border-color: #ff5c8a; }
+.fav-btn.on { color: #ff4d7d; border-color: color-mix(in srgb, #ff4d7d 55%, transparent); }
+.fav-btn.on svg { fill: currentColor; }
+.fav-btn:active { transform: scale(.92); }
+.fav-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.fav-btn.pop svg { animation: fav-pop .38s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes fav-pop { 0% { transform: scale(.6); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+/* Trên thẻ game: góc trên bên phải ảnh xem trước (dời sang trái khi có ô phím tắt số) */
+.games > li { position: relative; }
+.card-fav {
+  position: absolute; z-index: 3; top: 10px; right: 10px;
+  background: rgba(10, 12, 24, .45); border-color: rgba(255, 255, 255, .25); color: #fff;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.card-fav:hover { color: #ff8fb0; border-color: rgba(255, 143, 176, .7); }
+.card-fav.on { color: #ff4d7d; background: rgba(255, 255, 255, .92); border-color: transparent; }
+@media (hover: hover) and (pointer: fine) { .card-fav { right: 46px; } }
+
+/* Trang chi tiết: nút có chữ cạnh "Chơi ngay" */
+.detail-fav { width: auto; gap: 6px; padding: 0 14px; border-radius: 999px; font: inherit; font-size: .88rem; font-weight: 700; grid-auto-flow: column; height: 40px; }
+
+/* Menu game: trái tim nhỏ giữa tên game và nút chơi */
+.gmenu-fav { width: 36px; height: 36px; border-color: transparent; background: none; }
+.gmenu-fav:not(.on) { opacity: .7; }
+
+.fav-row { margin: 22px 0 26px; }
+.fav-row-icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: -3px; fill: #ff4d7d; }
+
+/* Nút lên đầu trang */
+.scroll-top {
+  position: fixed; z-index: 14; right: max(18px, env(safe-area-inset-right)); bottom: calc(22px + env(safe-area-inset-bottom));
+  display: grid; place-items: center; width: 46px; height: 46px; padding: 0; border: 0; border-radius: 50%;
+  background: var(--grad); color: #fff; box-shadow: 0 10px 26px rgba(70, 60, 200, .4); cursor: pointer;
+  opacity: 0; transform: translateY(12px) scale(.9); pointer-events: none; transition: opacity .2s ease, transform .2s ease;
+}
+.scroll-top.on { opacity: 1; transform: none; pointer-events: auto; }
+.scroll-top svg { width: 22px; height: 22px; }
+.scroll-top:hover { transform: translateY(-2px); }
+.scroll-top:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+/* Có thanh tab dưới đáy: nằm trên thanh */
+@media (max-width: 1024px) {
+  body:has(.sidenav-links > a + a) .scroll-top { bottom: calc(84px + env(safe-area-inset-bottom)); }
+}
+@media (pointer: coarse) { .fav-btn { width: 40px; height: 40px; } }
+@media (prefers-reduced-motion: reduce) {
+  .fav-btn, .scroll-top { transition: none; }
+  .fav-btn.pop svg { animation: none; }
+}

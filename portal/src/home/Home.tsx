@@ -15,6 +15,7 @@ import { MostPlayed } from './MostPlayed'
 import { buildStats } from './stats'
 import { SearchBox } from './SearchBox'
 import { Spotlight } from './Spotlight'
+import { FavoriteRow } from './FavoriteRow'
 import { Stats } from './StatsPanel'
 import { Today } from './Today'
 import { TopWeek } from './TopWeek'
@@ -76,6 +77,7 @@ export function Home({ openIds, refreshKey, onThemeApplied }: Props) {
         {!searching && (
           <>
             <Spotlight now={now} games={GAMES.filter((g) => !isHidden(games, g.id))} />
+            <FavoriteRow />
             <EventBanner />
             {tiles.length > 0 && (
               <div className="section-head reveal" style={{ '--i': 2 } as CSSProperties}>

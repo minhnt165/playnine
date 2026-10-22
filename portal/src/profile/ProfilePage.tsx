@@ -5,7 +5,7 @@ import { Topbar } from '../home/Topbar'
 import { useI18n } from '../i18n/i18n'
 import { usePoints } from '../leaderboards/usePoints'
 import { formatValue } from '../player/leaderboardModel'
-import { eventHref } from '../player/route'
+import { eventHref, historyHref } from '../player/route'
 import { useServer } from '../server/ServerProvider'
 import type { Badge, BestRow, Period, Profile } from '../server/types'
 
@@ -111,6 +111,11 @@ export function ProfilePage({ userId, onThemeApplied }: { userId: string; onThem
               >
                 {t('profile.edit')}
               </button>
+            )}
+            {isMe && (
+              <a className="profile-btn profile-history" href={historyHref}>
+                {t('history.title')}
+              </a>
             )}
           </div>
         </section>

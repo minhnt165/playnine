@@ -3,12 +3,15 @@ import { AdminPage } from './admin/AdminPage'
 import { GamePage } from './detail/GamePage'
 import { EventPage } from './events/EventPage'
 import { EventsPage } from './events/EventsPage'
+import { HistoryPage } from './history/HistoryPage'
 import { LeaderboardsPage } from './leaderboards/LeaderboardsPage'
 import { NewsPage } from './news/NewsPage'
 import { PostPage } from './news/PostPage'
 import { Home } from './home/Home'
 import { prefersReducedMotion } from './home/media'
 import { markPlayed } from './data/recent'
+import { useFavoritesSync } from './data/favorites'
+import { ScrollTop } from './home/ScrollTop'
 import type { GameDef } from './games/catalog'
 import { startGlyphs } from './legacy/glyphs'
 import { nextFrameIds } from './player/frames'
@@ -78,6 +81,7 @@ export function App() {
   }, [game, api])
 
   useShortcuts(game !== null)
+  useFavoritesSync()
 
   useEffect(() => {
     const canvas = document.getElementById('bg') as HTMLCanvasElement | null
@@ -108,11 +112,14 @@ export function App() {
         <PostPage slug={page.slug} onThemeApplied={recolor} />
       ) : page.name === 'leaderboards' ? (
         <LeaderboardsPage onThemeApplied={recolor} />
+      ) : page.name === 'history' ? (
+        <HistoryPage onThemeApplied={recolor} />
       ) : page.name === 'admin' ? (
         <AdminPage onThemeApplied={recolor} />
       ) : (
         <Home openIds={openIds} refreshKey={refreshKey} onThemeApplied={recolor} />
       )}
+      {!game && <ScrollTop />}
       <Player game={game} heldIds={heldIds} portalSeen={portalSeen} />
     </>
   )

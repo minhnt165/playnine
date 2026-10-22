@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { gameById } from '../games/catalog'
-import { detailHref, eventHref, gameHref, parseRoute, playHref } from './route'
+import { detailHref, eventHref, gameHref, historyHref, parseRoute, playHref } from './route'
 
 describe('route', () => {
   it('hash rỗng là trang chủ', () => {
@@ -36,6 +36,12 @@ describe('route', () => {
     expect(parseRoute('#/leaderboards')).toEqual({ name: 'leaderboards' })
     expect(parseRoute('#/leaderboards/x')).toEqual({ name: 'leaderboards' })
     expect(parseRoute('#/leaderboardsx')).toEqual({ name: 'home' })
+  })
+  it('#/history mở lịch sử chơi, đuôi lạ vẫn vào trang đó', () => {
+    expect(parseRoute('#/history')).toEqual({ name: 'history' })
+    expect(parseRoute('#/history?game=2048')).toEqual({ name: 'history' })
+    expect(parseRoute('#/historyx')).toEqual({ name: 'home' })
+    expect(parseRoute(historyHref)).toEqual({ name: 'history' })
   })
   it('#/events, #/events/<uuid>, #/events/<lạ>, #/admin', () => {
     const id = '7c9e6679-7425-40de-944b-e07fc1f90ae7'

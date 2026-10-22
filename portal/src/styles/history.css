@@ -1,0 +1,137 @@
+/* Lịch sử chơi #/history */
+.history { gap: 18px; }
+.profile-who a.profile-btn { text-decoration: none; }
+
+/* Thanh lọc game + ô tổng kết */
+.hist-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.hist-filter { display: inline-flex; align-items: center; gap: 10px; min-width: 0; max-width: 100%; color: var(--muted); font-size: .9rem; font-weight: 600; }
+.hist-filter select {
+  min-width: 0; max-width: 100%; height: 38px; padding: 0 36px 0 14px; border: 1px solid var(--border); border-radius: 12px;
+  background: var(--surface-solid) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%238b8fb0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+  color: var(--text); font: inherit; font-weight: 600; cursor: pointer; appearance: none; -webkit-appearance: none;
+}
+.hist-filter select:hover { border-color: var(--accent); }
+.hist-filter select:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.hist-filter option { background: var(--surface-solid); color: var(--text); }
+.hist-sum { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.hist-sum li {
+  display: inline-flex; align-items: baseline; gap: 6px; padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--chip); color: var(--muted); font-size: .85rem; white-space: nowrap;
+}
+.hist-sum b { color: var(--text); font-size: 1rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.hist-sum li:last-child { background: var(--spot); border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+.hist-sum li:last-child b { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* Nhóm theo ngày */
+.hist-day { display: flex; flex-direction: column; gap: 10px; }
+.hist-day-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 12px; }
+.hist-day-head h2 { margin: 0; font-size: 1.05rem; letter-spacing: -.01em; color: var(--text); }
+.hist-day-head h2::first-letter { text-transform: uppercase; }
+.hist-day-head span { flex: none; color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; }
+.hist-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+
+/* Một ván: icon · tên + mode/giờ · kết quả · điểm · chơi lại */
+.hist-row {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr) minmax(0, 240px) 88px auto;
+  grid-template-areas: "icon main res pts play"; align-items: center; column-gap: 14px; row-gap: 6px;
+  padding: 10px 12px 10px 14px; border: 1px solid var(--border); border-radius: 16px;
+  background: var(--surface-solid); color: var(--text);
+}
+.hist-icon { grid-area: icon; display: block; width: 40px; height: 40px; }
+.hist-icon .card-icon { width: 40px; height: 40px; background: var(--chip); }
+.hist-main { grid-area: main; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.hist-game {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: var(--text); font-weight: 700; text-decoration: none;
+}
+a.hist-game:hover { color: var(--accent); }
+.hist-meta { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: .85rem; }
+.hist-meta time { font-variant-numeric: tabular-nums; }
+.hist-res { grid-area: res; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-width: 0; }
+.hist-badge {
+  flex: none; padding: 3px 10px; border-radius: 999px; font-size: .78rem; font-weight: 700; letter-spacing: .01em;
+  background: var(--chip); color: var(--muted);
+}
+.is-won .hist-badge { background: color-mix(in srgb, var(--good) 16%, transparent); color: var(--good); }
+.is-lost .hist-badge { background: color-mix(in srgb, var(--fire) 12%, transparent); color: var(--fire); }
+.is-done .hist-badge { background: var(--spot); color: var(--accent); }
+.is-rejected .hist-badge { background: none; border: 1px dashed var(--border); padding: 2px 9px; }
+.hist-value { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hist-reason { min-width: 0; color: var(--muted); font-size: .82rem; overflow-wrap: anywhere; }
+.hist-pts { grid-area: pts; justify-self: end; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--accent); }
+.hist-pts.is-zero { color: var(--muted); font-weight: 600; opacity: .75; cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; }
+.hist-again, .hist-again-gap { grid-area: play; }
+.hist-again {
+  display: inline-flex; align-items: center; justify-content: center; height: 34px; padding: 0 14px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--chip); color: var(--text);
+  font-size: .85rem; font-weight: 700; text-decoration: none; white-space: nowrap;
+}
+.hist-again { gap: 6px; }
+.hist-again svg { flex: none; width: 12px; height: 12px; color: var(--accent); }
+.hist-again:hover { border-color: var(--accent); color: var(--accent); }
+.hist-again:focus-visible, .hist-game:focus-visible, .hist-more .profile-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.is-rejected .hist-main, .is-rejected .hist-icon { opacity: .7; }
+
+.hist-more { display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 4px; }
+.hist-more .profile-btn { min-width: 160px; height: 40px; font-weight: 700; }
+.hist-empty, .hist-signin {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 22px;
+  border: 1px dashed var(--border); border-radius: 18px; background: var(--surface);
+}
+.hist-empty .lb-note, .hist-signin p { margin: 0; color: var(--muted); }
+.hist-signin-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.hist-signin .profile-btn:first-child { background: var(--grad); color: #fff; border-color: transparent; font-weight: 700; }
+
+/* Khung chờ khi đang tải */
+.hist-skel { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.hist-skel li {
+  height: 62px; border-radius: 16px; border: 1px solid var(--border);
+  background: linear-gradient(90deg, var(--surface-solid) 0%, var(--chip) 50%, var(--surface-solid) 100%) 0 0 / 200% 100%;
+  animation: hist-shimmer 1.4s linear infinite;
+}
+@keyframes hist-shimmer { to { background-position: -200% 0; } }
+
+/* Tablet nhỏ: điểm và nút chơi lại xuống hàng dưới cùng kết quả */
+@media (max-width: 820px) {
+  .hist-row {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    grid-template-areas: "icon main pts" "icon res play";
+  }
+}
+/* Điện thoại */
+@media (max-width: 560px) {
+  .hist-bar { flex-direction: column; align-items: stretch; }
+  .hist-filter { display: flex; }
+  .hist-filter select { flex: 1; }
+  .hist-sum { flex-wrap: nowrap; }
+  .hist-sum li { flex: 1 1 0; min-width: 0; flex-direction: column; align-items: flex-start; gap: 0; padding: 8px 12px; border-radius: 14px; font-size: .75rem; white-space: normal; line-height: 1.25; }
+  .hist-sum b { font-size: 1.1rem; }
+  .hist-row { grid-template-columns: 36px minmax(0, 1fr) auto; column-gap: 10px; padding: 10px 10px 10px 12px; border-radius: 14px; }
+  .hist-icon, .hist-icon .card-icon { width: 36px; height: 36px; }
+  .hist-icon { align-self: start; }
+  .hist-empty, .hist-signin { padding: 18px 16px; }
+  .hist-empty .detail-play { align-self: stretch; justify-content: center; }
+}
+/* Điện thoại hẹp: nút chơi lại chỉ còn icon tròn để dòng kết quả không bị xuống hàng (chữ vẫn là tên cho trình đọc màn hình) */
+@media (max-width: 380px) {
+  /* Cột phải rộng theo nhãn điểm: cho kết quả trải sang cả phần trống bên trái nút chơi lại */
+  .hist-res { grid-area: 2 / 2 / 3 / 4; padding-right: 50px; column-gap: 8px; }
+  .hist-again { grid-area: 2 / 3 / 3 / 4; justify-self: end; }
+  .hist-badge { padding: 3px 8px; font-size: .74rem; }
+  .is-rejected .hist-badge { padding: 2px 7px; }
+  .hist-again { width: 40px; height: 40px; padding: 0; }
+  .hist-again svg { width: 14px; height: 14px; }
+  .hist-again-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+@media (pointer: coarse) {
+  .hist-filter select, .hist-again, .profile-history { min-height: 40px; }
+  .profile-history { display: inline-flex; align-items: center; }
+  .hist-again { height: 40px; }
+  /* Cả khối tên + mode/giờ bấm được (vùng chạm ≥ 40px) */
+  .hist-main { position: relative; }
+  .hist-game::after { content: ""; position: absolute; inset: -6px 0; }
+  .hist-signin .profile-btn, .hist-empty .profile-btn { min-height: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hist-skel li { animation: none; }
+}

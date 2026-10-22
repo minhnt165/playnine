@@ -6,6 +6,7 @@ import { useI18n } from '../i18n/i18n'
 import { detailHref } from '../player/route'
 import { useServer } from '../server/ServerProvider'
 import { BrandMark } from './BrandMark'
+import { useFavoriteGames } from './FavoriteRow'
 import { GameMenu } from './GameMenu'
 
 const MAX_RECENT = 5
@@ -66,6 +67,7 @@ function sectionOf(hash: string, profileHref: string | null): string | null {
 export function Sidebar() {
   const { t, loc } = useI18n()
   const [menuOpen, setMenuOpen] = useState(false)
+  const favs = useFavoriteGames().slice(0, MAX_RECENT)
   const { api, user, games } = useServer()
   // Sidebar vẽ lại cùng trang mỗi lần đổi route hoặc quay về từ game nên đọc hash và `recent` lúc vẽ là đủ.
   const hash = location.hash
@@ -110,6 +112,21 @@ export function Sidebar() {
         {api && item('news', '#/news', ICON_NEWS, t('news.title'))}
         {profileHref && item('profile', profileHref, ICON_PROFILE, t('nav.profile'))}
       </nav>
+      {favs.length > 0 && (
+        <section className="sidenav-recent sidenav-favs">
+          <h2>{t('nav.favorites')}</h2>
+          <ul>
+            {favs.map((g) => (
+              <li key={g.id}>
+                <a href={detailHref(g)}>
+                  <span className="card-icon" dangerouslySetInnerHTML={{ __html: g.icon(g.dir) }} />
+                  <span>{loc(g.name)}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       {played.length > 0 && (
         <section className="sidenav-recent">
           <h2>{t('nav.recent')}</h2>

@@ -66,6 +66,21 @@ export type Post = {
   updatedAt: string
 }
 export type PostInput = Omit<Post, 'id' | 'updatedAt'> & { id?: string }
+/** Một ván trong lịch sử chơi của chính người dùng; `points` là điểm thật sự được cộng (0 nếu quá 20 ván/ngày, bị từ chối...). */
+export type HistoryRun = {
+  id: string
+  gameId: string
+  mode: string
+  status: 'finished' | 'rejected'
+  startedAt: string
+  endedAt: string
+  score: number | null
+  timeMs: number | null
+  won: boolean | null
+  assisted: boolean
+  rejectReason: string | null
+  points: number
+}
 /** Tin game lấy tự động từ RSS (scripts/crawl-news.mjs): chỉ tiêu đề, tóm tắt, ảnh và link bài gốc. */
 export type FeedItem = {
   id: string

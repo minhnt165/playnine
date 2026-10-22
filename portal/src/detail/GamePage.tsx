@@ -11,6 +11,7 @@ import { isPlaying } from '../player/playing'
 import { detailHref, playHref } from '../player/route'
 import { rememberReturnHash } from '../server/returnHash'
 import { useServer } from '../server/ServerProvider'
+import { FavButton } from '../home/FavButton'
 import { GameRating } from './GameRating'
 import { similarGames } from './similar'
 
@@ -77,6 +78,7 @@ export function GamePage({ game, refreshKey, onThemeApplied }: Props) {
               <a className="detail-play" href={playHref(game)}>
                 {t('detail.play')} <span aria-hidden="true">→</span>
               </a>
+              <FavButton game={game} className="detail-fav" withLabel />
               {perRun && <span className="detail-points">{perRun}</span>}
               {api && authReady && !user && game.sdk && (
                 <span className="detail-signin">

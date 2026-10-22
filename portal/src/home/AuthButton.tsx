@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useI18n } from '../i18n/i18n'
 import { usePoints } from '../leaderboards/usePoints'
+import { historyHref } from '../player/route'
 import { rememberReturnHash } from '../server/returnHash'
 import { useServer } from '../server/ServerProvider'
 
@@ -130,6 +131,9 @@ export function AuthButton() {
           )}
           <a role="menuitem" href={`#/u/${encodeURIComponent(user.id)}`} onClick={() => setOpen(false)}>
             {t('auth.profile')}
+          </a>
+          <a role="menuitem" href={historyHref} onClick={() => setOpen(false)}>
+            {t('history.title')}
           </a>
           {user.isAdmin && (
             <a role="menuitem" href="#/admin" onClick={() => setOpen(false)}>

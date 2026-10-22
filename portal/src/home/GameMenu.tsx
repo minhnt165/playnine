@@ -5,6 +5,7 @@ import { CATS, GAMES, type Cat, type GameDef } from '../games/catalog'
 import { useI18n } from '../i18n/i18n'
 import { detailHref, playHref } from '../player/route'
 import { useServer } from '../server/ServerProvider'
+import { FavButton } from './FavButton'
 import { matchesQuery } from './search'
 
 function Row({ game, onPick }: { game: GameDef; onPick: () => void }) {
@@ -21,6 +22,7 @@ function Row({ game, onPick }: { game: GameDef; onPick: () => void }) {
           <span className="gmenu-sub">{loc(game.sub)}</span>
         </span>
       </a>
+      <FavButton game={game} className="gmenu-fav" />
       <a className="gmenu-play" href={playHref(game)} onClick={onPick} aria-label={t('menu.playName', { name })} title={t('detail.play')}>
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M8 5.5v13l10.5-6.5z" fill="currentColor" />
