@@ -49,7 +49,7 @@
 @media (max-width: 1024px) {
   body:has(.sidenav-links > a + a) .scroll-top { bottom: calc(84px + env(safe-area-inset-bottom)); }
 }
-@media (pointer: coarse) { .fav-btn { width: 40px; height: 40px; } }
+@media (pointer: coarse) { .fav-btn:not(.detail-fav) { width: 40px; height: 40px; } }
 @media (prefers-reduced-motion: reduce) {
   .fav-btn, .scroll-top { transition: none; }
   .fav-btn.pop svg { animation: none; }
