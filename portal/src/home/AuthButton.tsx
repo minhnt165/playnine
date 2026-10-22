@@ -1,9 +1,33 @@
 import { useEffect, useRef, useState } from 'react'
+import { useCloudStatus } from '../data/useCloudSync'
 import { useI18n } from '../i18n/i18n'
 import { usePoints } from '../leaderboards/usePoints'
 import { historyHref } from '../player/route'
 import { rememberReturnHash } from '../server/returnHash'
 import { useServer } from '../server/ServerProvider'
+
+/** Dòng trạng thái lưu tiến độ game lên tài khoản. */
+function CloudLine() {
+  const { t, fmtDate } = useI18n()
+  const s = useCloudStatus()
+  if (s.state === 'off') return null
+  const time = s.at ? fmtDate(new Date(s.at), { hour: '2-digit', minute: '2-digit' }) : ''
+  const text =
+    s.state === 'error' ? t('cloud.error') : s.state === 'syncing' && !s.at ? t('cloud.syncing') : t('cloud.saved', { time })
+  return (
+    <p className={'auth-cloud' + (s.state === 'error' ? ' is-error' : '')} role="status">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 18h10a4 4 0 0 0 .7-7.94A6 6 0 0 0 6.2 9.1 4.5 4.5 0 0 0 7 18z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+        {s.state === 'error' ? (
+          <path d="M12 10.5v3.5M12 16.2v.1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        ) : (
+          <path d="m9.5 13.5 1.8 1.8 3.4-3.6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        )}
+      </svg>
+      {text}
+    </p>
+  )
+}
 
 /** Điểm tuần và tổng điểm của chính mình trong menu tài khoản; chưa tải xong thì không hiện. */
 function MenuPoints({ userId }: { userId: string }) {
@@ -114,6 +138,7 @@ export function AuthButton() {
             {user.isGuest && <span className="auth-tag">{t('auth.guestTag')}</span>}
           </div>
           <MenuPoints userId={user.id} />
+          <CloudLine />
           {user.isGuest && (
             <button
               role="menuitem"

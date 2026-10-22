@@ -1,7 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import type { ServerApi } from './api'
 import type {
-  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, EventInput, EventPatch, FeedItem, FinishResult, HistoryRun, GameEvent, GameMeta,
+  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, EventInput, EventPatch, FeedItem, FinishResult, HistoryRun, SaveRow, GameEvent, GameMeta,
   LeaderRow, Metric, ModeMeta, Period, PlayerRow, PointsSummary, Post, Profile, RunResult, Rules, Text, TopRow,
 } from './types'
 
@@ -386,6 +386,23 @@ export function createApiFromClient(sb: SupabaseClient): ServerApi {
           points: Number(r.points ?? 0),
         }),
       )
+    },
+    async mySaves(since) {
+      const rows = await rpc<Row[] | null>('my_saves', { p_since: since })
+      return (rows ?? []).map(
+        (r): SaveRow => ({
+          key: String(r.key),
+          value: r.value == null ? null : String(r.value),
+          updatedAt: String(r.updated_at),
+          syncedAt: String(r.synced_at),
+        }),
+      )
+    },
+    async putSaves(items) {
+      const n = await rpc<number | null>('put_saves', {
+        p_items: items.map((i) => ({ key: i.key, value: i.value, updated_at: i.updatedAt })),
+      })
+      return Number(n ?? 0)
     },
     async newsFeed(limit = 60) {
       const { data, error } = await sb.from('news_feed').select(FEED_COLS).order('published_at', { ascending: false }).limit(limit)

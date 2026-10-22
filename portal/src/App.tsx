@@ -11,6 +11,7 @@ import { Home } from './home/Home'
 import { prefersReducedMotion } from './home/media'
 import { markPlayed } from './data/recent'
 import { useFavoritesSync } from './data/favorites'
+import { useCloudSync } from './data/useCloudSync'
 import { ScrollTop } from './home/ScrollTop'
 import type { GameDef } from './games/catalog'
 import { startGlyphs } from './legacy/glyphs'
@@ -95,6 +96,7 @@ export function App() {
   }, [])
 
   const openIds = useMemo(() => new Set(heldIds), [heldIds])
+  useCloudSync(openIds)
 
   return (
     <>

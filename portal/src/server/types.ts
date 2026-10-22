@@ -66,6 +66,9 @@ export type Post = {
   updatedAt: string
 }
 export type PostInput = Omit<Post, 'id' | 'updatedAt'> & { id?: string }
+/** Một khóa tiến độ game lưu trên tài khoản; `value` null = đã xóa. `syncedAt`: giờ server nhận (mốc để kéo phần mới). */
+export type SaveRow = { key: string; value: string | null; updatedAt: string; syncedAt: string }
+export type SaveItem = { key: string; value: string | null; updatedAt: string }
 /** Một ván trong lịch sử chơi của chính người dùng; `points` là điểm thật sự được cộng (0 nếu quá 20 ván/ngày, bị từ chối...). */
 export type HistoryRun = {
   id: string

@@ -1,6 +1,6 @@
 import type {
   AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, CollectionInput, EventInput, EventPatch, FinishResult, GameEvent,
-  FeedItem, GameMeta, HistoryRun, LeaderRow, Period, PlayerKind, PlayerRow, PointsSummary, Post, PostInput, Profile, RatingSummary, RunFilter, RunResult, Rules, TopRow,
+  FeedItem, GameMeta, HistoryRun, SaveItem, SaveRow, LeaderRow, Period, PlayerKind, PlayerRow, PointsSummary, Post, PostInput, Profile, RatingSummary, RunFilter, RunResult, Rules, TopRow,
 } from './types'
 
 /** Giao diện duy nhất cổng dùng để nói chuyện với server (Supabase thật hoặc fake khi test). */
@@ -57,6 +57,10 @@ export interface ServerApi {
   setFavorite(gameId: string, on: boolean): Promise<void>
   /** Lịch sử ván của người đang đăng nhập, mới nhất trước; `before` = endedAt của ván cuối trang trước. */
   myRuns(opts?: { gameId?: string; before?: string; limit?: number }): Promise<HistoryRun[]>
+  /** Tiến độ game trên tài khoản server nhận sau `since` (null = tất cả). */
+  mySaves(since: string | null): Promise<SaveRow[]>
+  /** Đẩy tối đa 100 khóa; server chỉ ghi khóa có updatedAt mới hơn bản đang có. */
+  putSaves(items: SaveItem[]): Promise<number>
   /** Tin game tự động chưa bị ẩn, mới nhất trước. */
   newsFeed(limit?: number): Promise<FeedItem[]>
   /** Mọi tin tự động kể cả đã ẩn (chỉ admin). */

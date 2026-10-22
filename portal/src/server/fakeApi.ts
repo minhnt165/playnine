@@ -1,7 +1,7 @@
 // Chỉ dùng trong test; không được import từ code chạy thật.
 import type { ServerApi } from './api'
 import type {
-  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, FeedItem, FinishResult, HistoryRun, GameEvent, GameMeta, LeaderRow, Period,
+  AdminPlayer, AdminRun, AuthUser, Badge, BestRow, Collection, FeedItem, FinishResult, HistoryRun, SaveRow, GameEvent, GameMeta, LeaderRow, Period,
   PlayerRow, PointsSummary, Post, Profile, RatingSummary, RunResult, TopRow,
 } from './types'
 
@@ -29,6 +29,8 @@ export type FakeState = {
   favorites: string[]
   /** Lịch sử ván của người đang đăng nhập (mới nhất trước). */
   history: HistoryRun[]
+  /** Tiến độ game trên tài khoản (như bảng user_saves). */
+  saves: SaveRow[]
   /** Mọi tin tự động (kể cả đã ẩn); newsFeed() chỉ trả tin chưa ẩn. */
   feed: FeedItem[]
   /** Điểm theo id người chơi. */
@@ -60,7 +62,7 @@ export type FakeApi = ServerApi & {
 export function createFakeApi(seed: Partial<FakeState> = {}): FakeApi {
   const state: FakeState = {
     user: null, games: defaultGames(), boards: {}, totals: {}, profiles: {}, bests: {}, runs: [], myRanks: {},
-    playerBoards: {}, topBoards: {}, points: {}, posts: [], feed: [], favorites: [], history: [], gamePoints: {}, myGamePoints: {}, ratings: {}, myRatings: {},
+    playerBoards: {}, topBoards: {}, points: {}, posts: [], feed: [], favorites: [], history: [], saves: [], gamePoints: {}, myGamePoints: {}, ratings: {}, myRatings: {},
     finish: { status: 'finished', reason: null, ranks: {} },
     events: [], eventBoards: {}, collections: [], badges: {}, adminRuns: [], adminPlayers: [],
     ...seed,
@@ -187,6 +189,26 @@ export function createFakeApi(seed: Partial<FakeState> = {}): FakeApi {
         return state.history
           .filter((r) => (!opts.gameId || r.gameId === opts.gameId) && (!opts.before || r.endedAt < opts.before))
           .slice(0, opts.limit ?? 30)
+      }),
+    mySaves: (since) =>
+      run('mySaves', [since], () => {
+        if (!state.user) throw new Error('not_authenticated')
+        return state.saves.filter((s) => since === null || s.syncedAt > since)
+      }),
+    putSaves: (items) =>
+      run('putSaves', [items], () => {
+        if (!state.user) throw new Error('not_authenticated')
+        let n = 0
+        for (const it of items) {
+          const cur = state.saves.find((s) => s.key === it.key)
+          if (cur && Date.parse(cur.updatedAt) >= Date.parse(it.updatedAt)) continue
+          // Giờ server nhận luôn tăng dần (như now() của các transaction nối tiếp).
+          const last = Math.max(0, ...state.saves.map((s) => Date.parse(s.syncedAt)))
+          const row: SaveRow = { key: it.key, value: it.value, updatedAt: it.updatedAt, syncedAt: new Date(Math.max(Date.now(), last + 1)).toISOString() }
+          state.saves = [...state.saves.filter((s) => s.key !== it.key), row]
+          n++
+        }
+        return n
       }),
     newsFeed: (limit) =>
       run('newsFeed', [limit], () =>

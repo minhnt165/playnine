@@ -336,6 +336,10 @@
 .auth-points-title { color: var(--accent); font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .auth-points b { font-variant-numeric: tabular-nums; }
 .auth-points em { margin-left: 6px; color: var(--muted); font-size: .8rem; font-style: normal; }
+/* Trạng thái lưu tiến độ game lên tài khoản */
+.auth-cloud { display: flex; align-items: center; gap: 6px; margin: 2px 0; padding: 6px 10px; color: var(--muted); font-size: .78rem; line-height: 1.35; }
+.auth-cloud svg { flex: none; width: 18px; height: 18px; color: #34c47c; }
+.auth-cloud.is-error svg { color: var(--fire); }
 .detail-points { padding: 6px 12px; border-radius: 999px; background: var(--spot); color: var(--accent); font-size: .85rem; font-weight: 700; }
 .detail-mode-points { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; color: var(--muted); font-size: .82rem; }
 .detail-mode-points ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
