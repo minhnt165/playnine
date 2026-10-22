@@ -894,6 +894,11 @@
       .empty { padding: 18px 14px; font-size: 13px; }
       .empty::before { width: 32px; height: 32px; margin-bottom: 6px; }
     }
+    /* Điện thoại hẹp: bỏ nút mở tab mới để tên game trên thanh chơi không bị cắt còn vài chữ */
+    @media (max-width: 400px) {
+      .pbar { gap: 6px; }
+      #p-newtab { display: none; }
+    }
     /* Điện thoại rất hẹp: tên game hai chữ vẫn vừa một dòng cạnh icon */
     @media (max-width: 360px) {
       .card-head { gap: 6px; }

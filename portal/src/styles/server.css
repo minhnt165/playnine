@@ -120,6 +120,27 @@
 .detail-play:hover { filter: brightness(1.06); }
 .detail-play:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 .detail-signin { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 10px; color: var(--muted); font-size: .9rem; }
+/* Điện thoại: ảnh thấp hơn, nút Chơi + Yêu thích ngay dưới tên game để thấy mà không cần cuộn */
+@media (max-width: 820px) {
+  .detail-preview { aspect-ratio: 16 / 9; }
+  .detail-head { order: -2; }
+  .detail-actions { order: -1; gap: 10px; }
+  .detail-play { flex: 1 1 auto; justify-content: center; padding: 12px 18px; }
+  .detail-signin { flex-basis: 100%; }
+}
+@media (max-width: 560px) {
+  .detail-head { gap: 12px; }
+  .detail-head .card-icon { width: 56px; height: 56px; border-radius: 15px; }
+  .detail-name { font-size: 1.5rem; }
+}
+/* 320px: Chơi và Yêu thích vẫn chung một hàng */
+@media (max-width: 360px) {
+  .detail-info { padding: 0 2px 8px; }
+  .detail-actions { gap: 8px; }
+  .detail-play { padding: 12px 14px; font-size: 1rem; }
+  .detail-play > [aria-hidden] { display: none; }
+  .detail-fav { padding: 0 12px; }
+}
 /* Trang hồ sơ người chơi. */
 .profile { display: flex; flex-direction: column; gap: 20px; padding-bottom: 40px; }
 .profile-back {
