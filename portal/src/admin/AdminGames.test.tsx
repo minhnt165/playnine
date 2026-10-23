@@ -23,6 +23,17 @@ describe('AdminGames', () => {
     )
   })
 
+  it('ô lọc tên và chọn thể loại thu hẹp danh sách game', async () => {
+    const api = createFakeApi({ games: GAMES.map((g) => ({ id: g.id, metric: 'score_high', hidden: false, modes: [] })) })
+    const { container } = mountWith(api, <AdminGames />)
+    await waitFor(() => expect(container.querySelectorAll('[data-game]').length).toBe(GAMES.length))
+    fireEvent.change(screen.getByRole('searchbox', { name: en('admin.filterGames') }), { target: { value: 'GOMOKU' } })
+    expect([...container.querySelectorAll('[data-game]')].map((e) => e.getAttribute('data-game'))).toEqual(['caro'])
+    fireEvent.change(screen.getByRole('searchbox', { name: en('admin.filterGames') }), { target: { value: '' } })
+    fireEvent.change(screen.getByRole('combobox', { name: en('admin.filterCat') }), { target: { value: 'arcade' } })
+    expect(container.querySelectorAll('[data-game]').length).toBe(GAMES.filter((g) => g.cat === 'arcade').length)
+  })
+
   it('bỏ trống một ô rồi lưu: gửi luật của mọi mode, làm mới danh sách game', async () => {
     const api = createFakeApi({ games: GAMES_META })
     const { container } = mountWith(api, <AdminGames />)

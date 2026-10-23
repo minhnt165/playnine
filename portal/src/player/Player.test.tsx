@@ -82,6 +82,22 @@ describe('Player', () => {
     expect(list).toHaveAttribute('hidden')
   })
 
+  it('menu đổi game có ô tìm: gõ "sudo" chỉ còn Sudoku; để trống thì nhóm theo thể loại', () => {
+    const { container } = mount()
+    fireEvent.click(container.querySelector('#p-menu')!)
+    const list = container.querySelector('#p-menu-list')!
+    const used = new Set(GAMES.map((g) => g.cat))
+    expect(list.querySelectorAll('h3')).toHaveLength(used.size)
+    expect(list.querySelectorAll('button')).toHaveLength(GAMES.length)
+    fireEvent.change(list.querySelector('input[type="search"]')!, { target: { value: 'sudo' } })
+    const names = [...list.querySelectorAll('button')].map((b) => b.textContent)
+    expect(names).toEqual(['Sudoku'])
+    expect(list.querySelectorAll('h3')).toHaveLength(0)
+    // Bấm vào ô tìm không đóng menu
+    fireEvent.click(list.querySelector('input[type="search"]')!)
+    expect(list).not.toHaveAttribute('hidden')
+  })
+
   it('đổi ngôn ngữ từ iframe: nhãn đổi, iframe giữ nguyên phần tử', () => {
     const { container } = mount()
     const before = container.querySelector('#frames iframe')

@@ -978,3 +978,8 @@
     .games-page-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 8px 0 6px; }
     .games-sort { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: .9rem; }
     .games-sort select { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 7px 10px; }
+
+    /* Menu đổi game trong khi chơi: ô tìm và tiêu đề nhóm theo thể loại */
+    .pmenu-search { font: inherit; font-size: 14px; padding: 8px 10px; margin-bottom: 4px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+    .pmenu-cat { display: grid; gap: 2px; }
+    .pmenu-cat h3 { margin: 6px 10px 2px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }

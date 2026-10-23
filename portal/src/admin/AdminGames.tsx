@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { GAMES } from '../games/catalog'
+import { CATS, GAMES, type Cat } from '../games/catalog'
+import { matchesQuery } from '../home/search'
 import { useI18n } from '../i18n/i18n'
 import { useServer } from '../server/ServerProvider'
 import type { GameMeta, Rules } from '../server/types'
@@ -181,10 +182,26 @@ function GameRow({ id, name, meta }: { id: string; name: string; meta: GameMeta 
 export function AdminGames() {
   const { t, loc } = useI18n()
   const { games } = useServer()
+  const [query, setQuery] = useState('')
+  const [cat, setCat] = useState<Cat | 'all'>('all')
   if (Object.keys(games).length === 0) return <p className="lb-note">{t('admin.noGames')}</p>
+  // Lọc theo id hoặc tên (en/vi, không dấu) và thể loại: danh sách dài khi có nhiều game.
+  const q = query.trim().toLowerCase()
+  const list = GAMES.filter((g) => (cat === 'all' || g.cat === cat) && (!q || g.id.includes(q) || matchesQuery(g, q)))
   return (
     <div className="admin-games">
-      {GAMES.map((g) => (games[g.id] ? <GameRow key={g.id} id={g.id} name={loc(g.name)} meta={games[g.id]} /> : null))}
+      <div className="admin-filters">
+        <input type="search" value={query} placeholder={t('admin.filterGames')} aria-label={t('admin.filterGames')} onChange={(e) => setQuery(e.target.value)} />
+        <select value={cat} aria-label={t('admin.filterCat')} onChange={(e) => setCat(e.target.value as Cat | 'all')}>
+          <option value="all">{t('cat.all')}</option>
+          {(Object.keys(CATS) as Cat[]).map((c) => (
+            <option key={c} value={c}>
+              {t(CATS[c])}
+            </option>
+          ))}
+        </select>
+      </div>
+      {list.map((g) => (games[g.id] ? <GameRow key={g.id} id={g.id} name={loc(g.name)} meta={games[g.id]} /> : null))}
     </div>
   )
 }

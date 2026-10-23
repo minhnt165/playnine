@@ -3,7 +3,8 @@ import type { GameToPortal } from '@playnine/sdk/protocol'
 import { SOUND_KEY } from '@playnine/sdk/sound'
 import { sudokuData } from '../data/sudoku'
 import { readSummary } from '../data/summary'
-import { gameById, GAMES, type GameDef } from '../games/catalog'
+import { CATS, gameById, GAMES, type Cat, type GameDef } from '../games/catalog'
+import { matchesQuery } from '../home/search'
 import { useI18n } from '../i18n/i18n'
 import { readRaw, write } from '../lib/storage'
 import { createRunManager, type RunStatus } from '../server/runs'
@@ -27,6 +28,7 @@ const icon = (g: GameDef) => ({ __html: g.icon(g.dir) })
 export function Player({ game, heldIds, portalSeen }: Props) {
   const { t, loc } = useI18n()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [menuQuery, setMenuQuery] = useState('')
   const [ready, setReady] = useState<Set<string>>(() => new Set())
   const playerRef = useRef<HTMLDivElement>(null)
   const frameRefs = useRef<Record<string, HTMLIFrameElement | null>>({})
@@ -168,6 +170,12 @@ export function Player({ game, heldIds, portalSeen }: Props) {
     // replace: chuyển game không thêm lịch sử, Back vẫn về thẳng cổng
     if (x !== game) location.replace(playHref(x))
   }
+  const menuItem = (x: GameDef) => (
+    <button key={x.id} type="button" aria-current={x === game} onClick={() => go(x)}>
+      <span className="card-icon" dangerouslySetInnerHTML={icon(x)} />
+      {loc(x.name)}
+    </button>
+  )
   const onBack = () => {
     if (portalSeen) history.back()
     else location.hash = ''
@@ -222,19 +230,37 @@ export function Player({ game, heldIds, portalSeen }: Props) {
           title={t('player.menu')}
           aria-expanded={menuOpen}
           aria-controls="p-menu-list"
-          onClick={() => setMenuOpen((o) => !o)}
+          onClick={() => {
+            setMenuQuery('')
+            setMenuOpen((o) => !o)
+          }}
         >
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z" />
           </svg>
         </button>
         <div className="pmenu" id="p-menu-list" hidden={!menuOpen}>
-          {GAMES.map((x) => (
-            <button key={x.id} type="button" aria-current={x === game} onClick={() => go(x)}>
-              <span className="card-icon" dangerouslySetInnerHTML={icon(x)} />
-              {loc(x.name)}
-            </button>
-          ))}
+          {/* Nhiều game: có ô tìm; để trống thì nhóm theo thể loại */}
+          <input
+            className="pmenu-search"
+            type="search"
+            value={menuQuery}
+            placeholder={t('games.search')}
+            aria-label={t('games.search')}
+            onChange={(e) => setMenuQuery(e.target.value)}
+          />
+          {menuQuery.trim()
+            ? GAMES.filter((x) => matchesQuery(x, menuQuery)).map(menuItem)
+            : (Object.keys(CATS) as Cat[]).map((cat) => {
+                const list = GAMES.filter((x) => x.cat === cat)
+                if (list.length === 0) return null
+                return (
+                  <section key={cat} className="pmenu-cat">
+                    <h3>{t(CATS[cat])}</h3>
+                    {list.map(menuItem)}
+                  </section>
+                )
+              })}
         </div>
         <a
           className="pbtn icon-only"
