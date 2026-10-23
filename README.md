@@ -41,8 +41,8 @@ Cổng tự đọc mọi `games/<dir>/game.json` (manifest: tên, mô tả, th�
 1. `npm run new-game -- <dir> --en "English name" --vi "Tên tiếng Việt" --cat puzzle|versus|arcade|card|brain`:
    chép `games/_template` (game mẫu dùng `games/_kit`) sang `games/<dir>/` và thêm id vào cuối `games/order.json`. Thư mục cũng là id game.
 2. Viết game trong `games/<dir>/` theo `games/<dir>/README.md`: engine + `test.js`, giao diện, `i18n.js`, `game.json` (bỏ hết `TODO`), `icon.svg`, `preview.svg`.
-3. `npm test` (có chạy `test.js` của mọi game).
-4. `npm run seed-sql -- <id> > supabase/migrations/<thời điểm>_<id>.sql` rồi áp file đó qua SQL Editor của Supabase.
+3. `npm run -s seed-sql -- <id> > supabase/migrations/<thời điểm>_<id>.sql` (`-s` để npm không ghi dòng thông báo vào file SQL), rồi áp file đó qua SQL Editor của Supabase.
+4. `npm test`: chạy `test.js` của mọi game, và test cơ sở dữ liệu so bảng `games` với mọi manifest (nên phải có migration ở bước 3).
 5. `npm run build && npm run assemble && npm run e2e`: e2e chung tự kiểm tra mọi game có trong manifest; URL game luôn là `/playnine/<dir>/`.
 
 Game có `package.json` thì assemble lấy `dist/` của game thay vì chép nguyên thư mục.

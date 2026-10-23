@@ -1,5 +1,5 @@
 // In câu SQL thêm game vào bảng public.games từ phần `server` trong games/<dir>/game.json.
-// Dùng: npm run seed-sql -- <id hoặc thư mục>... > supabase/migrations/<ts>_<tên>.sql (rồi áp qua SQL Editor).
+// Dùng: npm run -s seed-sql -- <id hoặc thư mục>... > supabase/migrations/<ts>_<tên>.sql (rồi áp qua SQL Editor).
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -42,7 +42,7 @@ export async function readManifest(root, idOrDir) {
 async function main() {
   const ids = process.argv.slice(2);
   if (!ids.length) {
-    console.error('Dùng: npm run seed-sql -- <id>...');
+    console.error('Dùng: npm run -s seed-sql -- <id>... > supabase/migrations/<ts>_<tên>.sql');
     process.exit(1);
   }
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');

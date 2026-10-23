@@ -283,7 +283,7 @@ Golf Mini, Bowling, Phi Tiêu (darts), Shogi, Cribbage, Golf Solitaire, Sudoku S
 
 ## 8. Mốc kiểm tra
 
-- **Sau đợt 0:** thêm một game thử bằng `new-game` chỉ cần tạo thư mục + một dòng trong `order.json` + chạy `seed-sql`; không file nào khác của cổng thay đổi.
+- **Sau đợt 0:** thêm một game thử bằng `new-game` chỉ cần tạo thư mục + một dòng trong `order.json` + chạy `seed-sql`; không file nào khác của cổng thay đổi. — Đạt ngày 2026-10-23 (thử với game `demo`: e2e tự có 3 test, toàn bộ test xanh).
 - **Mốc 50 game (sau đợt 4):** Lighthouse trang chủ điện thoại ≥ 85; e2e < 6 phút; xem lại 4.7 có cần thêm gì.
 - **Mốc 100:** cập nhật README, mô tả meta/manifest, bài viết "100 game" trên trang tin, sự kiện kỷ niệm.
 
