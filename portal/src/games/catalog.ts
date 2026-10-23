@@ -3,10 +3,9 @@
 // Game mới ghi tóm tắt cho cổng vào localStorage['playnine-<id>-summary-v1'] (xem readSummary).
 // `name`, `sub` (dòng phụ dưới tên), `desc`, `tags`, `note`, `daily` có dạng { en, vi }, đọc qua loc().
 import type { Localized } from '../i18n/types'
+import type { Cat } from './cats'
 
-export type Cat = 'puzzle' | 'versus' | 'arcade'
-
-export const CATS: Record<Cat, string> = { puzzle: 'cat.puzzle', versus: 'cat.versus', arcade: 'cat.arcade' } // khóa DICT
+export { CATS, type Cat } from './cats'
 
 export type GameDef = {
   id: string

@@ -19,7 +19,9 @@ describe('GameMenu', () => {
     fireEvent.click(btn)
     const dialog = screen.getByRole('dialog', { name: en('menu.title') })
     expect(btn).toHaveAttribute('aria-expanded', 'true')
-    expect(within(dialog).getAllByRole('heading', { level: 3 })).toHaveLength(Object.keys(CATS).length)
+    // Thể loại chưa có game thì không có tiêu đề.
+    const used = Object.keys(CATS).filter((c) => GAMES.some((g) => g.cat === c))
+    expect(within(dialog).getAllByRole('heading', { level: 3 })).toHaveLength(used.length)
     expect(dialog.querySelectorAll('.gmenu-item')).toHaveLength(GAMES.length)
     expect(within(dialog).getByRole('searchbox')).toHaveFocus()
     fireEvent.keyDown(document, { key: 'Escape' })
