@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: nhóm 5 khối vàng sáng lên, nổ, khối phía trên rơi xuống.
+       Hoạt hình bằng CSS bên trong file, tắt khi người dùng giảm chuyển động; nền trong suốt (nền thẻ lấy từ preview.bg). -->
+  <style>
+    rect { transform-box: fill-box; transform-origin: center; }
+    .scene { animation: scene 3.6s infinite; }
+    .g { animation: grp 3.6s infinite; }
+    .f2 { animation: f2 3.6s infinite; }
+    .f3 { animation: f3 3.6s infinite; }
+    .tag { animation: tag 3.6s infinite; }
+    .burst { animation: burst 3.6s infinite; transform-box: fill-box; transform-origin: center; }
+    @keyframes scene { 0%, 88% { opacity: 1; } 93%, 95% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes grp {
+      0%, 20% { transform: none; opacity: 1; }
+      24%, 44% { transform: scale(1.08); opacity: 1; stroke: #fff; }
+      52%, 94% { transform: scale(.1); opacity: 0; }
+      95%, 100% { transform: none; opacity: 1; }
+    }
+    @keyframes f2 { 0%, 52% { transform: none; } 64%, 94% { transform: translateY(36px); } 95%, 100% { transform: none; } }
+    @keyframes f3 { 0%, 52% { transform: none; } 66%, 94% { transform: translateY(54px); } 95%, 100% { transform: none; } }
+    @keyframes tag { 0%, 22% { opacity: 0; } 26%, 48% { opacity: 1; } 54%, 100% { opacity: 0; } }
+    @keyframes burst { 0%, 46% { opacity: 0; transform: scale(.4); } 52% { opacity: 1; } 62%, 100% { opacity: 0; transform: scale(1.4); } }
+    @media (prefers-reduced-motion: reduce) {
+      .scene, .g, .f2, .f3, .tag, .burst { animation: none; }
+      .g { stroke: #fff; }
+      .burst { opacity: 0; }
+    }
+  </style>
+  <g class="scene" stroke-width="1.6">
+    <rect x="27" y="16" width="16" height="16" rx="4" fill="#4d8dff" stroke="#2d64d8"/>
+    <rect x="45" y="16" width="16" height="16" rx="4" fill="#ff5d73" stroke="#d93a55"/>
+    <rect class="f2" x="63" y="16" width="16" height="16" rx="4" fill="#31c48d" stroke="#179a6a"/>
+    <rect class="f3" x="81" y="16" width="16" height="16" rx="4" fill="#ffb938" stroke="#e08e12"/>
+    <rect x="99" y="16" width="16" height="16" rx="4" fill="#4d8dff" stroke="#2d64d8"/>
+    <rect x="117" y="16" width="16" height="16" rx="4" fill="#31c48d" stroke="#179a6a"/>
+    <rect x="27" y="34" width="16" height="16" rx="4" fill="#31c48d" stroke="#179a6a"/>
+    <rect x="45" y="34" width="16" height="16" rx="4" fill="#4d8dff" stroke="#2d64d8"/>
+    <rect class="f2" x="63" y="34" width="16" height="16" rx="4" fill="#ff5d73" stroke="#d93a55"/>
+    <rect class="f3" x="81" y="34" width="16" height="16" rx="4" fill="#4d8dff" stroke="#2d64d8"/>
+    <rect x="99" y="34" width="16" height="16" rx="4" fill="#ffb938" stroke="#e08e12"/>
+    <rect x="117" y="34" width="16" height="16" rx="4" fill="#ff5d73" stroke="#d93a55"/>
+    <rect x="27" y="52" width="16" height="16" rx="4" fill="#ff5d73" stroke="#d93a55"/>
+    <rect x="45" y="52" width="16" height="16" rx="4" fill="#31c48d" stroke="#179a6a"/>
+    <rect class="g" x="63" y="52" width="16" height="16" rx="4" fill="#ffb938" stroke="#e08e12"/>
+    <rect class="g" x="81" y="52" width="16" height="16" rx="4" fill="#ffb938" stroke="#e08e12"/>
+    <rect x="99" y="52" width="16" height="16" rx="4" fill="#4d8dff" stroke="#2d64d8"/>
+    <rect x="117" y="52" width="16" height="16" rx="4" fill="#ffb938" stroke="#e08e12"/>
+    <rect x="27" y="70" width="16" height="16" rx="4" fill="#ffb938" stroke="#e08e12"/>
+    <rect x="45" y="70" width="16" height="16" rx="4" fill="#4d8dff" stroke="#2d64d8"/>
+    <rect class="g" x="63" y="70" width="16" height="16" rx="4" fill="#ffb938" stroke="#e08e12"/>
+    <rect class="g" x="81" y="70" width="16" height="16" rx="4" fill="#ffb938" stroke="#e08e12"/>
+    <rect x="99" y="70" width="16" height="16" rx="4" fill="#ff5d73" stroke="#d93a55"/>
+    <rect x="117" y="70" width="16" height="16" rx="4" fill="#31c48d" stroke="#179a6a"/>
+    <rect x="27" y="88" width="16" height="16" rx="4" fill="#31c48d" stroke="#179a6a"/>
+    <rect x="45" y="88" width="16" height="16" rx="4" fill="#ff5d73" stroke="#d93a55"/>
+    <rect x="63" y="88" width="16" height="16" rx="4" fill="#4d8dff" stroke="#2d64d8"/>
+    <rect class="g" x="81" y="88" width="16" height="16" rx="4" fill="#ffb938" stroke="#e08e12"/>
+    <rect x="99" y="88" width="16" height="16" rx="4" fill="#31c48d" stroke="#179a6a"/>
+    <rect x="117" y="88" width="16" height="16" rx="4" fill="#4d8dff" stroke="#2d64d8"/>
+  </g>
+  <g transform="translate(0 8)"><g class="burst" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
+    <path d="M80 50v-6M80 82v6M64 66h-6M96 66h6M69 55l-4-4M91 77l4 4M91 55l4-4M69 77l-4 4"/>
+  </g></g>
+  <g class="tag">
+    <rect x="66" y="31" width="28" height="15" rx="7.5" fill="#14162b" stroke="#fff" stroke-width="1"/>
+    <text x="80" y="42" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" font-weight="800" fill="#fff">+9</text>
+  </g>
+</svg>

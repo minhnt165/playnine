@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: mã bị che ở trên, hai lần đoán đã chấm, lần đoán thứ ba điền từng chốt,
+       được bốn chấm đặc rồi mã lộ ra. Hoạt hình CSS, tắt khi người dùng giảm chuyển động (hiện trạng thái cuối).
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt. -->
+  <style>
+    /* chốt và chấm của hàng 3 nằm trong nhóm đã dời tới tâm: phóng to quanh gốc (0,0) của nhóm */
+    .p3a, .p3b, .p3c, .p3d, .pins3 { transform-origin: 0 0; }
+    .p3a { animation: pa 6s ease-out infinite; }
+    .p3b { animation: pb 6s ease-out infinite; }
+    .p3c { animation: pc 6s ease-out infinite; }
+    .p3d { animation: pd 6s ease-out infinite; }
+    .pins3 { animation: pins 6s ease-out infinite; }
+    .cover { opacity: 0; animation: cover 6s ease-in-out infinite; }
+    .cur { animation: cur 6s linear infinite; }
+    @keyframes pa { 0%, 8% { opacity: 0; transform: scale(.4); } 12%, 94% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+    @keyframes pb { 0%, 17% { opacity: 0; transform: scale(.4); } 21%, 94% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+    @keyframes pc { 0%, 26% { opacity: 0; transform: scale(.4); } 30%, 94% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+    @keyframes pd { 0%, 35% { opacity: 0; transform: scale(.4); } 39%, 94% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+    @keyframes pins { 0%, 46% { opacity: 0; transform: scale(.3); } 52%, 94% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+    @keyframes cover { 0%, 56% { opacity: 1; } 64%, 94% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes cur { 0%, 44% { stroke: #8b6cff; } 50%, 100% { stroke: #4ade80; } }
+    @media (prefers-reduced-motion: reduce) {
+      .p3a, .p3b, .p3c, .p3d, .pins3, .cover, .cur { animation: none; }
+      .cover { opacity: 0; }
+      .cur { stroke: #4ade80; }
+    }
+  </style>
+  <defs>
+    <radialGradient id="hi" cx=".34" cy=".28" r=".6">
+      <stop offset="0" stop-color="#fff" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <!-- chốt màu kèm ký hiệu, tâm ở (0,0), bán kính 8.5 -->
+    <g id="r"><circle r="8.5" fill="#e5484d"/><circle r="8.5" fill="url(#hi)"/><path d="M0-4.2 4 3H-4z" fill="#fff"/></g>
+    <g id="o"><circle r="8.5" fill="#f7821b"/><circle r="8.5" fill="url(#hi)"/><path d="M-3.3-3.3h6.6v6.6h-6.6z" fill="#3b1a00"/></g>
+    <g id="y"><circle r="8.5" fill="#f5c518"/><circle r="8.5" fill="url(#hi)"/><path d="m0-4.6 1.3 2.8 3 .3-2.3 2.1.7 3L0 2.1l-2.7 1.5.7-3-2.3-2.1 3-.3z" fill="#3d2f00"/></g>
+    <g id="g"><circle r="8.5" fill="#22a35a"/><circle r="8.5" fill="url(#hi)"/><path d="M0-4.4 4.4 0 0 4.4-4.4 0z" fill="#fff"/></g>
+    <g id="b"><circle r="8.5" fill="#3b82f6"/><circle r="8.5" fill="url(#hi)"/><circle r="3.2" fill="#fff"/></g>
+    <g id="p"><circle r="8.5" fill="#8e4ec6"/><circle r="8.5" fill="url(#hi)"/><path d="M-1.2-4h2.4v2.8H4v2.4H1.2V4h-2.4V1.2H-4v-2.4h2.8z" fill="#fff"/></g>
+  </defs>
+
+  <!-- Mã bí mật: vàng, xanh dương, đỏ, tím (bị che đến khi phá xong) -->
+  <rect x="22" y="5" width="96" height="22" rx="8" fill="#ffffff" fill-opacity=".1"/>
+  <use href="#y" x="36" y="16"/><use href="#b" x="58" y="16"/><use href="#r" x="80" y="16"/><use href="#p" x="102" y="16"/>
+  <g class="cover">
+    <g fill="#2a2e55"><circle cx="36" cy="16" r="8.5"/><circle cx="58" cy="16" r="8.5"/><circle cx="80" cy="16" r="8.5"/><circle cx="102" cy="16" r="8.5"/></g>
+    <g fill="#d4d7f5" font-family="system-ui, sans-serif" font-size="10" font-weight="800" text-anchor="middle">
+      <text x="36" y="19.5">?</text><text x="58" y="19.5">?</text><text x="80" y="19.5">?</text><text x="102" y="19.5">?</text>
+    </g>
+  </g>
+
+  <!-- Lần đoán 1: đỏ cam vàng xanh lá → 2 sai chỗ -->
+  <rect x="22" y="32" width="124" height="22" rx="8" fill="#ffffff" fill-opacity=".1"/>
+  <use href="#r" x="36" y="43"/><use href="#o" x="58" y="43"/><use href="#y" x="80" y="43"/><use href="#g" x="102" y="43"/>
+  <g fill="none" stroke="#fff" stroke-width="1.6"><circle cx="126" cy="38.5" r="2.6"/><circle cx="135" cy="38.5" r="2.6"/></g>
+  <g fill="#fff" fill-opacity=".2"><circle cx="126" cy="47.5" r="1.6"/><circle cx="135" cy="47.5" r="1.6"/></g>
+
+  <!-- Lần đoán 2: vàng đỏ xanh dương tím → 2 đúng chỗ, 2 sai chỗ -->
+  <rect x="22" y="58" width="124" height="22" rx="8" fill="#ffffff" fill-opacity=".1"/>
+  <use href="#y" x="36" y="69"/><use href="#r" x="58" y="69"/><use href="#b" x="80" y="69"/><use href="#p" x="102" y="69"/>
+  <g fill="#fff"><circle cx="126" cy="64.5" r="3.2"/><circle cx="135" cy="64.5" r="3.2"/></g>
+  <g fill="none" stroke="#fff" stroke-width="1.6"><circle cx="126" cy="73.5" r="2.6"/><circle cx="135" cy="73.5" r="2.6"/></g>
+
+  <!-- Lần đoán 3 (đang nhập): vàng xanh dương đỏ tím → 4 đúng chỗ -->
+  <rect class="cur" x="22" y="84" width="124" height="22" rx="8" fill="#ffffff" fill-opacity=".14" stroke="#8b6cff" stroke-width="1.8"/>
+  <g fill="#ffffff" fill-opacity=".14"><circle cx="36" cy="95" r="8.5"/><circle cx="58" cy="95" r="8.5"/><circle cx="80" cy="95" r="8.5"/><circle cx="102" cy="95" r="8.5"/></g>
+  <g transform="translate(36 95)"><use class="p3a" href="#y"/></g>
+  <g transform="translate(58 95)"><use class="p3b" href="#b"/></g>
+  <g transform="translate(80 95)"><use class="p3c" href="#r"/></g>
+  <g transform="translate(102 95)"><use class="p3d" href="#p"/></g>
+  <g transform="translate(130.5 95)"><g class="pins3" fill="#fff"><circle cx="-4.5" cy="-4.5" r="3.2"/><circle cx="4.5" cy="-4.5" r="3.2"/><circle cx="-4.5" cy="4.5" r="3.2"/><circle cx="4.5" cy="4.5" r="3.2"/></g></g>
+</svg>

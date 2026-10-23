@@ -1,0 +1,154 @@
+/* =====================================================================
+ * Tắt Đèn - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bàn đèn: khung xanh đêm ở cả hai giao diện để đèn sáng nổi bật, đèn vàng ấm có quầng sáng
+ *   - Cỡ bàn theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
+ * ===================================================================== */
+:root {
+  --panel: linear-gradient(160deg, #2c3068, #1c1f48);
+  --panel-edge: rgba(255, 255, 255, 0.08);
+  --cell-off: linear-gradient(180deg, #383d80, #2c306a);
+  --lamp: radial-gradient(circle at 50% 36%, #fffef5 0%, #ffeaa0 22%, #ffc83f 58%, #f39a10 100%);
+  --glow: rgba(255, 190, 50, 0.7);
+  --ring: rgba(255, 236, 170, 0.95);
+  --sweep: #a48bff;
+  --cell-focus: #67e8f9;
+  --over: #c2410c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --panel: linear-gradient(160deg, #161936, #0c0e22);
+    --panel-edge: rgba(255, 255, 255, 0.06);
+    --cell-off: linear-gradient(180deg, #23274f, #1b1e40);
+    --glow: rgba(255, 186, 40, 0.75);
+    --over: #fb923c;
+  }
+}
+:root[data-theme="dark"] {
+  --panel: linear-gradient(160deg, #161936, #0c0e22);
+  --panel-edge: rgba(255, 255, 255, 0.06);
+  --cell-off: linear-gradient(180deg, #23274f, #1b1e40);
+  --glow: rgba(255, 186, 40, 0.75);
+  --over: #fb923c;
+}
+
+/* ===================== Thanh trên ===================== */
+.size-badge { cursor: pointer; font-size: 0.78rem; padding: 4px 9px; transition: background 0.15s; }
+@media (hover: hover) {
+  .size-badge:hover { background: var(--accent); color: var(--accent-text); }
+}
+.hud-value.over { color: var(--over); }
+
+/* ===================== Bàn đèn ===================== */
+.stage { container-type: size; }
+.board {
+  --bsize: min(100cqw, 100cqh);
+  --cell: calc(var(--bsize) / var(--n, 5));
+  width: var(--bsize);
+  height: var(--bsize);
+  display: grid;
+  grid-template-columns: repeat(var(--n, 5), 1fr);
+  grid-template-rows: repeat(var(--n, 5), 1fr);
+  gap: calc(var(--cell) * 0.12);
+  padding: calc(var(--cell) * 0.2);
+  border-radius: calc(var(--cell) * 0.34);
+  background: var(--panel);
+  box-shadow: var(--shadow), inset 0 1px 0 var(--panel-edge);
+  transition: box-shadow 0.4s;
+}
+.board.solved { box-shadow: var(--shadow), inset 0 1px 0 var(--panel-edge), 0 0 0 3px rgba(164, 139, 255, 0.55), 0 0 48px rgba(164, 139, 255, 0.4); }
+
+.cell {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 24%;
+  background: var(--cell-off);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+/* Lớp đèn: mờ dần bằng opacity (gradient không chuyển màu mượt được), quầng sáng đi theo */
+.cell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--lamp);
+  box-shadow: 0 0 calc(var(--cell) * 0.3) calc(var(--cell) * 0.02) var(--glow), inset 0 -3px 0 rgba(180, 90, 0, 0.35);
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+.cell.on::before { opacity: 1; transform: none; }
+/* Vòng sáng khi bấm */
+.cell::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  border: 2px solid var(--ring);
+  opacity: 0;
+  pointer-events: none;
+}
+.cell:focus-visible { outline: 3px solid var(--cell-focus); outline-offset: 2px; z-index: 1; }
+@media (hover: hover) {
+  .cell:hover { filter: brightness(1.18); }
+}
+
+/* Bấm: ô bấm lún rồi nảy, 4 ô kề rung theo ngay sau (đèn của chúng đổi trễ một nhịp) */
+.cell.hit { animation: td-hit 0.26s ease-out; }
+.cell.hit::after { animation: td-ring 0.5s ease-out; }
+.cell.wave { animation: td-wave 0.34s ease-out 0.06s both; }
+.cell.wave::before { transition-delay: 0.06s; }
+@keyframes td-hit { 35% { transform: scale(0.84); } }
+@keyframes td-ring { from { opacity: 0.95; transform: scale(0.92); } to { opacity: 0; transform: scale(1.45); } }
+@keyframes td-wave { 45% { transform: scale(1.08); } }
+
+/* Bàn mới / chơi lại: ô hiện dần theo đường chéo */
+.board.deal .cell { animation: td-deal 0.36s ease-out both; animation-delay: calc(var(--d) * 26ms); }
+@keyframes td-deal { from { opacity: 0; transform: scale(0.6); } }
+
+/* Thắng: một làn sáng tím quét chéo qua bàn */
+.board.solved .cell { animation: td-sweep 0.7s ease-out both; animation-delay: calc(var(--d) * 45ms); }
+@keyframes td-sweep {
+  40% { background: var(--sweep); box-shadow: 0 0 calc(var(--cell) * 0.3) rgba(164, 139, 255, 0.7); transform: scale(1.05); }
+}
+
+/* ===================== Nút dưới bàn ===================== */
+.controls { display: flex; gap: 10px; flex: none; }
+.controls .btn { flex: 1; min-height: 46px; }
+.btn .icon { width: 20px; height: 20px; }
+
+/* ===================== Hộp thoại ===================== */
+.win-score { margin: 0; font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.win-badge { margin: 0; font-weight: 700; color: var(--muted); }
+.win-badge.good { color: var(--accent); }
+.help-art { width: 150px; height: auto; align-self: center; flex: none; }
+.ha-off rect { fill: #2f3470; }
+.ha-on rect { fill: #ffc83f; }
+.ha-dot { fill: #ffffff; }
+.ha-arrow { fill: none; stroke: var(--muted); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.stat-grid dt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ===================== Màn hình ngang thấp: bàn bên trái, số liệu + nút bên phải ===================== */
+@media (max-height: 520px) and (min-aspect-ratio: 5/4) {
+  .app {
+    max-width: 860px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas: "top top" "stage hud" "stage ." "stage controls";
+    column-gap: 16px;
+  }
+  .topbar { grid-area: top; }
+  .hud { grid-area: hud; }
+  .stage { grid-area: stage; }
+  .controls { grid-area: controls; flex-direction: column; }
+  .help { display: none; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .board, .cell::before { transition: none; }
+  .cell.hit, .cell.wave, .board.deal .cell, .board.solved .cell, .cell.hit::after { animation: none; }
+  .cell.wave::before { transition-delay: 0s; }
+}

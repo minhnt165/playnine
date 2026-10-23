@@ -1,0 +1,48 @@
+{
+  "id": "xepkhoi",
+  "cat": "puzzle",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Block Fit",
+    "vi": "Xếp Khối"
+  },
+  "sub": {
+    "en": "10×10 block puzzle",
+    "vi": "Block Fit"
+  },
+  "desc": {
+    "en": "Drag blocks onto a 10×10 board and fill whole rows or columns to clear them. Clear several lines at once for big combos, and keep going until no piece fits.",
+    "vi": "Kéo khối vào bàn 10×10, lấp kín hàng hoặc cột để xóa. Xóa nhiều đường cùng lúc để ăn combo lớn, chơi tới khi không còn chỗ cho khối nào."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "High score"],
+    "vi": ["Giải đố", "1 người", "Kỷ lục"]
+  },
+  "note": {
+    "en": "Clear several lines at once for a combo",
+    "vi": "Xóa nhiều đường cùng lúc để ăn combo"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(31, 181, 214, .28), transparent 60%), linear-gradient(160deg, #1d2350, #0c0f24)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 40
+        },
+        "points": 5
+      }
+    ]
+  }
+}

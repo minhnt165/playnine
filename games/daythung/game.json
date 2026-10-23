@@ -1,0 +1,47 @@
+{
+  "id": "daythung",
+  "cat": "puzzle",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Box Pusher",
+    "vi": "Đẩy Thùng"
+  },
+  "sub": {
+    "en": "Warehouse puzzle",
+    "vi": "Box Pusher"
+  },
+  "desc": {
+    "en": "Push every box onto a goal in 36 warehouse puzzles that get harder level by level. You can only push, never pull, so plan ahead; undo and restart are free.",
+    "vi": "Đẩy mọi thùng vào đích qua 36 màn nhà kho khó dần. Chỉ đẩy được, không kéo được, nên phải tính trước; hoàn tác và chơi lại thoải mái."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Levels"],
+    "vi": ["Giải đố", "1 người", "Nhiều màn"]
+  },
+  "note": {
+    "en": "36 levels, every one solvable",
+    "vi": "36 màn, màn nào cũng giải được"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(232, 147, 12, .22), transparent 60%), linear-gradient(160deg, #2a2557, #110e26)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 6,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 6
+      }
+    ]
+  }
+}

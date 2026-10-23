@@ -1,0 +1,47 @@
+{
+  "id": "rotnuoc",
+  "cat": "puzzle",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Water Sort",
+    "vi": "Rót Nước"
+  },
+  "sub": {
+    "en": "One colour per tube",
+    "vi": "Mỗi ống một màu"
+  },
+  "desc": {
+    "en": "Tap a tube, then another, to pour the coloured water on top. Sort every colour into its own tube; levels add colours up to 12, with Undo and an extra tube to help.",
+    "vi": "Chạm một ống rồi chạm ống khác để rót phần nước màu trên cùng. Xếp mỗi màu vào một ống; lên màn thì thêm màu, tối đa 12, có Hoàn tác và thêm ống để gỡ rối."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Levels"],
+    "vi": ["Giải đố", "1 người", "Qua màn"]
+  },
+  "note": {
+    "en": "Every level can be solved",
+    "vi": "Màn nào cũng giải được"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(79, 155, 255, .32), transparent 60%), linear-gradient(160deg, #15295a, #0a1228)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 4,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 4
+      }
+    ]
+  }
+}

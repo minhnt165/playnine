@@ -52,7 +52,8 @@ describe('Giao diện cửa hàng', () => {
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'zzz' } })
     fireEvent.click(screen.getByRole('button', { name: en('games.clear') }))
     expect(container.querySelector('.spotlight')).not.toBeNull()
-    expect(container.querySelectorAll('#games > li:not([hidden])')).toHaveLength(GAMES.length)
+    // Trang chủ hiện tối đa 24 thẻ (phần còn lại ở #/games)
+    expect(container.querySelectorAll('#games > li:not([hidden])')).toHaveLength(Math.min(GAMES.length, 24))
   })
 
   it('sidebar liệt kê game chơi gần đây, mới nhất trước', () => {

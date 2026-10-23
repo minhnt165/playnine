@@ -1,0 +1,58 @@
+{
+  "id": "doanma",
+  "cat": "puzzle",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Code Breaker",
+    "vi": "Đoán Mã"
+  },
+  "sub": {
+    "en": "Colour code logic",
+    "vi": "Code Breaker"
+  },
+  "desc": {
+    "en": "Crack the hidden colour code. Every guess tells you how many pegs are in the right spot and how many are the right colour in the wrong spot.",
+    "vi": "Phá mã màu bí mật của máy. Mỗi lần đoán cho biết bao nhiêu chốt đúng chỗ và bao nhiêu chốt đúng màu nhưng sai chỗ."
+  },
+  "tags": {
+    "en": ["Puzzle", "Logic", "1 player"],
+    "vi": ["Giải đố", "Logic", "1 người"]
+  },
+  "note": {
+    "en": "Crack the colour code against the clock",
+    "vi": "Phá mã màu nhanh nhất có thể"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(139, 108, 255, .32), transparent 60%), linear-gradient(160deg, #22264a, #0d0f22)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 4,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_time_ms": 1500
+        },
+        "points": 3
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_time_ms": 1900
+        },
+        "points": 6
+      }
+    ]
+  }
+}

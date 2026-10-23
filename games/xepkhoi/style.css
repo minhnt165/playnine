@@ -1,0 +1,212 @@
+/* =====================================================================
+ * Xếp Khối - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Kích thước bàn / khay do app.js tính theo khung (.stage) và ghi vào --cell, --tcell, --board
+ *   - Màu khối --c1..--c8 (số màu trong engine), ô trống, bóng mờ chỗ đặt, đường sắp xóa
+ * ===================================================================== */
+:root {
+  --c1: #f5b301; /* vuông */
+  --c2: #1fb5d6; /* thẳng */
+  --c3: #3cb95a; /* góc nhỏ */
+  --c4: #4c6ef5; /* góc lớn */
+  --c5: #fb7d22; /* L */
+  --c6: #9b5cf6; /* T */
+  --c7: #ef4f5f; /* S */
+  --c8: #ec5fb4; /* ô đơn */
+  --board-bg: #dfe2f4;
+  --cell-empty: #eef0fa;
+  --hl: rgba(106, 76, 245, 0.2);
+  --bad: #e5484d;
+  --cell: 34px;
+  --tcell: 18px;
+  --board: 340px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --board-bg: #0d1020;
+    --cell-empty: #191d33;
+    --hl: rgba(139, 108, 255, 0.28);
+    --bad: #f87171;
+  }
+}
+:root[data-theme="dark"] {
+  --board-bg: #0d1020;
+  --cell-empty: #191d33;
+  --hl: rgba(139, 108, 255, 0.28);
+  --bad: #f87171;
+}
+
+/* Không chọn chữ / cuộn trang khi kéo khối */
+.stage { user-select: none; -webkit-user-select: none; }
+
+/* ===================== Bố cục: bàn + khay ===================== */
+.play { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.play.side { flex-direction: row; }
+.board-wrap { position: relative; width: var(--board); height: var(--board); flex: none; }
+
+.board {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  gap: calc(var(--cell) * 0.07);
+  padding: calc(var(--cell) * 0.1);
+  background: var(--board-bg);
+  border-radius: calc(var(--cell) * 0.36);
+  box-shadow: var(--shadow-sm), inset 0 0 0 1px var(--line);
+  touch-action: none;
+}
+
+/* Ô: trống / có khối (.f.cN) / bóng mờ chỗ đặt (.ghost) / đường sắp xóa (.hl) */
+.cell {
+  position: relative;
+  border-radius: calc(var(--cell) * 0.16);
+  background: var(--cell-empty);
+}
+.cell.f, .pc {
+  background: var(--cc);
+  box-shadow: inset 0 calc(var(--cell) * -0.09) 0 rgba(0, 0, 0, 0.2), inset 0 calc(var(--cell) * 0.07) 0 rgba(255, 255, 255, 0.35);
+}
+.c1 { --cc: var(--c1); } .c2 { --cc: var(--c2); } .c3 { --cc: var(--c3); } .c4 { --cc: var(--c4); }
+.c5 { --cc: var(--c5); } .c6 { --cc: var(--c6); } .c7 { --cc: var(--c7); } .c8 { --cc: var(--c8); }
+.cell.hl:not(.f):not(.ghost) { background: var(--hl); }
+.cell.hl.f {
+  filter: brightness(1.15) saturate(1.1);
+  box-shadow: inset 0 0 0 calc(var(--cell) * 0.09) rgba(255, 255, 255, 0.85), 0 0 calc(var(--cell) * 0.3) var(--cc);
+}
+.cell.ghost { background: var(--cc); opacity: 0.5; }
+.cell.ghost.bad { background: var(--bad); opacity: 0.45; }
+.cell.f.ghost.bad { opacity: 1; box-shadow: inset 0 0 0 3px var(--bad); }
+/* Ô bàn phím đang trỏ: viền nhấn */
+.board.kbd .cell.ghost { outline: 2px solid var(--focus); outline-offset: -2px; }
+
+/* Ô vừa đặt nảy nhẹ, ô bị xóa vỡ ra */
+.cell.drop { animation: cell-drop 0.22s ease-out; }
+@keyframes cell-drop { from { transform: scale(0.82); } }
+.cell.clearing { background: var(--cc); animation: cell-clear 0.42s ease-in forwards; z-index: 1; }
+@keyframes cell-clear {
+  0% { transform: scale(1); filter: brightness(1.6); }
+  40% { transform: scale(1.12); filter: brightness(1.9); }
+  100% { transform: scale(0.2) rotate(12deg); opacity: 0; }
+}
+
+/* Lớp hiệu ứng điểm bay trên bàn */
+.fx { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.pop {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-weight: 800;
+  font-size: calc(var(--cell) * 0.62);
+  color: var(--text);
+  text-shadow: 0 2px 0 var(--surface), 0 0 10px var(--surface);
+  white-space: nowrap;
+  animation: pop-up 0.9s ease-out forwards;
+}
+.pop.big { font-size: calc(var(--cell) * 0.8); color: var(--accent); }
+.pop small { display: block; font-size: 0.6em; text-align: center; }
+@keyframes pop-up {
+  0% { opacity: 0; transform: translate(-50%, -30%) scale(0.8); }
+  15% { opacity: 1; transform: translate(-50%, -60%) scale(1.05); }
+  100% { opacity: 0; transform: translate(-50%, -140%) scale(1); }
+}
+
+/* Hết chỗ: bàn rung, mờ đi, băng chữ giữa bàn */
+.board.over { animation: board-shake 0.45s ease-in-out; }
+.board.over .cell.f { filter: grayscale(0.75) brightness(0.85); }
+@keyframes board-shake {
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+.over-banner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.over-banner span {
+  padding: 10px 18px;
+  border-radius: 14px;
+  background: var(--bad);
+  color: #fff;
+  font-weight: 800;
+  font-size: calc(var(--cell) * 0.6);
+  box-shadow: var(--shadow);
+  animation: kit-sheet-in 0.25s ease-out;
+}
+
+/* ===================== Khay ba khối ===================== */
+.tray {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: var(--board);
+  height: calc(var(--board) * 0.3);
+  flex: none;
+}
+.play.side .tray { grid-template-columns: none; grid-template-rows: repeat(3, 1fr); width: calc(var(--board) * 0.36); height: var(--board); }
+.slot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  touch-action: none;
+  transition: background 0.15s, box-shadow 0.15s, opacity 0.15s;
+}
+.slot:disabled { opacity: 1; cursor: default; }
+.slot.sel { box-shadow: 0 0 0 3px var(--accent), var(--shadow-sm); background: var(--accent-soft); }
+.slot.lifted .piece { opacity: 0.2; }
+.slot .key {
+  position: absolute;
+  top: 5px;
+  left: 7px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+@media (hover: none) and (pointer: coarse) { .slot .key { display: none; } }
+/* Khối không còn chỗ: mờ, viền đỏ đứt */
+.slot.nofit .piece { opacity: 0.32; filter: grayscale(0.85); }
+.slot.nofit { box-shadow: inset 0 0 0 2px var(--bad); }
+.slot.nofit::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 10px;
+  border: 2px dashed var(--bad);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.slot.deal .piece { animation: deal-in 0.28s ease-out backwards; }
+.slot[data-slot="1"].deal .piece { animation-delay: 0.05s; }
+.slot[data-slot="2"].deal .piece { animation-delay: 0.1s; }
+@keyframes deal-in { from { transform: scale(0.4); opacity: 0; } }
+@media (hover: hover) { .slot:not(:disabled):hover { background: var(--surface-2); } }
+
+/* Khối (trong khay và khi kéo) */
+.piece { display: grid; gap: calc(var(--pc) * 0.07); --pc: var(--tcell); pointer-events: none; }
+.piece span { width: var(--pc); height: var(--pc); }
+.piece .pc { border-radius: calc(var(--pc) * 0.18); --cell: var(--pc); }
+
+.drag { position: fixed; left: 0; top: 0; z-index: 40; pointer-events: none; will-change: transform; }
+.drag .piece { --pc: var(--cell); filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.28)); }
+.drag.back { transition: transform 0.18s ease-in, opacity 0.18s ease-in; opacity: 0; }
+
+.over-best { color: var(--accent); font-weight: 700; }
+.help-kbd { font-size: 0.86rem; }
+@media (hover: none) and (pointer: coarse) { .help-kbd { display: none; } }
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .cell.drop, .slot.deal .piece, .board.over, .over-banner span { animation: none; }
+  .cell.clearing { animation: none; opacity: 0; }
+  .pop { animation: none; opacity: 0; }
+  .drag.back { transition: none; }
+  .slot { transition: none; }
+}

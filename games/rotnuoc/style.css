@@ -1,0 +1,238 @@
+/* =====================================================================
+ * Rót Nước - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Kích thước ống do app.js tính theo khung chơi: --tw (rộng ống), --lh (cao một lớp), --th (cao ống),
+ *     --gx / --gy (khoảng cách ống / hàng)
+ *   - Màu nước đặt trên từng lớp: --c (màu), --ink (màu ký hiệu)
+ * ===================================================================== */
+:root {
+  --accent: #2f7de1;
+  --accent-strong: #1f63c0;
+  --accent-soft: rgba(47, 125, 225, 0.12);
+  --focus: #2f7de1;
+  --bg-glow: radial-gradient(900px 520px at 50% -260px, rgba(47, 125, 225, 0.16), transparent 70%);
+  --glass-line: rgba(58, 70, 112, 0.42);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-shine: rgba(255, 255, 255, 0.55);
+  --cork: #b9824f;
+  --cork-dark: #8d5c31;
+  --tw: 48px;
+  --lh: 37px;
+  --th: 176px;
+  --gx: 16px;
+  --gy: 28px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --accent: #4f9bff;
+    --accent-strong: #7ab3ff;
+    --accent-soft: rgba(79, 155, 255, 0.18);
+    --focus: #22d3ee;
+    --bg-glow: radial-gradient(900px 520px at 50% -260px, rgba(79, 155, 255, 0.2), transparent 70%);
+    --glass-line: rgba(214, 224, 255, 0.4);
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-shine: rgba(255, 255, 255, 0.22);
+  }
+}
+:root[data-theme="dark"] {
+  --accent: #4f9bff;
+  --accent-strong: #7ab3ff;
+  --accent-soft: rgba(79, 155, 255, 0.18);
+  --focus: #22d3ee;
+  --bg-glow: radial-gradient(900px 520px at 50% -260px, rgba(79, 155, 255, 0.2), transparent 70%);
+  --glass-line: rgba(214, 224, 255, 0.4);
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-shine: rgba(255, 255, 255, 0.22);
+}
+
+/* ===================== Bàn chơi ===================== */
+.stage { overflow: visible; }
+.board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gy);
+  padding-top: calc(var(--tw) * 0.5);
+}
+.row { display: flex; gap: var(--gx); justify-content: center; }
+
+.tube {
+  position: relative;
+  width: var(--tw);
+  height: var(--th);
+  padding: 0;
+  border-radius: 6px 6px calc(var(--tw) / 2) calc(var(--tw) / 2);
+  transform-origin: 50% 0;
+  transition: transform 0.18s ease;
+}
+/* Miệng ống */
+.tube::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  top: -3px;
+  height: 6px;
+  border-radius: 4px;
+  background: var(--glass-line);
+  z-index: 2;
+}
+.glass {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow: hidden;
+  border: 3px solid var(--glass-line);
+  border-top: 0;
+  border-radius: 0 0 calc(var(--tw) / 2) calc(var(--tw) / 2);
+  background: var(--glass-bg);
+}
+/* Vệt sáng trên thủy tinh */
+.glass::after {
+  content: "";
+  position: absolute;
+  top: 10%;
+  bottom: 12%;
+  left: 16%;
+  width: 12%;
+  border-radius: 999px;
+  background: var(--glass-shine);
+  pointer-events: none;
+}
+.layer {
+  flex: none;
+  height: var(--lh);
+  background: var(--c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.layer.anim { transition: height var(--flow, 320ms) ease-in-out; }
+.sym { width: calc(min(var(--lh), var(--tw)) * 0.5); height: calc(min(var(--lh), var(--tw)) * 0.5); fill: var(--ink); flex: none; }
+.no-symbols .sym { display: none; }
+
+.tube.sel { transform: translateY(calc(var(--tw) * -0.45)); }
+.tube.sel .glass { border-color: var(--accent); }
+.tube.sel::before { background: var(--accent); }
+.tube.pouring { z-index: 5; }
+.tube:focus-visible { outline-offset: 4px; }
+
+/* Ống đã xong: nút bần + viền sáng */
+.tube.done::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  top: calc(var(--tw) * -0.22);
+  height: calc(var(--tw) * 0.34);
+  border-radius: 4px 4px 2px 2px;
+  background: linear-gradient(180deg, var(--cork), var(--cork-dark));
+  z-index: 3;
+}
+.tube.done .glass { box-shadow: 0 0 14px var(--glow, transparent); }
+.tube.done.pop { animation: tube-pop 0.4s ease-out; }
+@keyframes tube-pop { 40% { transform: translateY(calc(var(--tw) * -0.25)) scale(1.05); } }
+
+.tube.shake { animation: tube-shake 0.32s ease; }
+@keyframes tube-shake {
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+/* Dòng nước khi rót */
+.stream {
+  position: absolute;
+  z-index: 4;
+  width: calc(var(--tw) * 0.2);
+  border-radius: 3px;
+  background: var(--c);
+  transform-origin: 50% 0;
+  pointer-events: none;
+  animation: stream-in 0.12s ease-out;
+}
+@keyframes stream-in { from { transform: scaleY(0); } }
+
+/* ===================== Trợ giúp ===================== */
+.tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex: none; }
+.tool {
+  min-height: 48px;
+  min-width: 0;
+  padding: 0 8px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  position: relative;
+  transition: transform 0.1s, background 0.15s;
+}
+.tool:active:not(:disabled) { transform: scale(0.96); }
+.tool .icon { width: 20px; height: 20px; color: var(--accent); }
+.tool-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.tool-count {
+  position: absolute;
+  top: -6px;
+  right: -4px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 0.75rem;
+  font-weight: 800;
+  box-shadow: 0 0 0 2px var(--bg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.tool:disabled .tool-count { background: var(--muted); }
+.tool.used { animation: tool-used 0.3s ease-out; }
+@keyframes tool-used { 50% { transform: scale(1.06); } }
+@media (hover: hover) {
+  .tool:hover:not(:disabled) { background: var(--surface-2); }
+}
+
+/* Thông báo nhanh nằm trên thanh trợ giúp, không che nút */
+.toast { bottom: calc(92px + env(safe-area-inset-bottom)); }
+
+/* ===================== Modal ===================== */
+.help-list { margin: 0; padding-left: 1.2em; color: var(--muted); line-height: 1.5; display: flex; flex-direction: column; gap: 6px; }
+.modal-actions.stack { flex-direction: column; }
+.modal-actions.stack .btn { flex: none; width: 100%; }
+.stat-grid dd { white-space: nowrap; }
+
+/* ===================== Màn hình hẹp / thấp ===================== */
+@media (max-width: 360px) {
+  .tool { gap: 4px; padding: 0 6px; font-size: 0.85rem; }
+  .tool .icon { display: none; }
+}
+/* Điện thoại xoay ngang: thanh số liệu và trợ giúp sang cột trái, bàn chơi bên phải */
+@media (max-height: 520px) and (min-aspect-ratio: 3/2) {
+  :root { --app-max: 980px; }
+  .app { display: grid; grid-template-columns: 190px minmax(0, 1fr); grid-template-rows: auto auto 1fr; column-gap: 14px; }
+  .topbar { grid-column: 1 / -1; }
+  .hud { grid-column: 1; grid-row: 2; grid-auto-flow: row; gap: 6px; }
+  .hud-box { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 6px 10px; }
+  .hud-value { font-size: 1.1rem; }
+  .tools { grid-column: 1; grid-row: 3; grid-template-columns: 1fr; align-content: start; gap: 6px; }
+  .tool { min-height: 40px; justify-content: flex-start; }
+  .tool-count { position: static; margin-left: auto; box-shadow: none; }
+  .stage { grid-column: 2; grid-row: 2 / 4; min-height: 0; }
+  .help { display: none; }
+  .toast { bottom: calc(16px + env(safe-area-inset-bottom)); left: calc(50% + 100px); }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .tube, .tool { transition: none; }
+  .tube.shake, .tube.done.pop, .tool.used, .stream { animation: none; }
+  .layer.anim { transition: none; }
+}

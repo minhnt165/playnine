@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: người đẩy thùng hai ô vào đích, thùng chuyển xanh; lặp lại.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động. Nền ô xem trước lấy từ preview.bg. -->
+  <style>
+    .wall { fill: #3f3776; }
+    .stone { fill: #534a96; }
+    .floor { fill: #e7e4f6; opacity: .14; }
+    .goal { fill: rgba(251, 191, 36, .16); stroke: #fbbf24; stroke-width: 1.6; }
+    .dot { fill: #fbbf24; }
+    .who { animation: walk 4s ease-in-out infinite; }
+    .crate { animation: push 4s ease-in-out infinite; }
+    .green { opacity: 0; animation: done 4s ease-in-out infinite; }
+    @keyframes walk {
+      0%, 18% { transform: translate(0, 0); }
+      28%, 42% { transform: translate(20px, 0); }
+      52%, 90% { transform: translate(40px, 0); }
+      96%, 100% { transform: translate(0, 0); }
+    }
+    @keyframes push {
+      0%, 18% { transform: translate(0, 0); }
+      28%, 42% { transform: translate(20px, 0); }
+      52%, 90% { transform: translate(40px, 0); }
+      96%, 100% { transform: translate(0, 0); }
+    }
+    @keyframes done { 0%, 50% { opacity: 0; } 54%, 90% { opacity: 1; } 95%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .who, .crate, .green { animation: none; }
+    }
+  </style>
+  <!-- phòng 7 x 4 ô (ô 20), góc trên trái (10, 20) -->
+  <g>
+    <rect x="10" y="20" width="140" height="80" rx="6" class="wall"/>
+    <g class="stone">
+      <rect x="12" y="22" width="16" height="16" rx="3"/><rect x="32" y="22" width="16" height="16" rx="3"/>
+      <rect x="52" y="22" width="16" height="16" rx="3"/><rect x="72" y="22" width="16" height="16" rx="3"/>
+      <rect x="92" y="22" width="16" height="16" rx="3"/><rect x="112" y="22" width="16" height="16" rx="3"/>
+      <rect x="132" y="22" width="16" height="16" rx="3"/>
+      <rect x="12" y="82" width="16" height="16" rx="3"/><rect x="32" y="82" width="16" height="16" rx="3"/>
+      <rect x="52" y="82" width="16" height="16" rx="3"/><rect x="72" y="82" width="16" height="16" rx="3"/>
+      <rect x="92" y="82" width="16" height="16" rx="3"/><rect x="112" y="82" width="16" height="16" rx="3"/>
+      <rect x="132" y="82" width="16" height="16" rx="3"/>
+      <rect x="12" y="42" width="16" height="16" rx="3"/><rect x="12" y="62" width="16" height="16" rx="3"/>
+      <rect x="132" y="42" width="16" height="16" rx="3"/><rect x="132" y="62" width="16" height="16" rx="3"/>
+    </g>
+    <rect x="30" y="40" width="100" height="40" fill="#1c2040"/>
+    <rect x="30" y="40" width="100" height="40" class="floor"/>
+    <!-- đích -->
+    <circle cx="100" cy="50" r="5.5" class="goal"/><circle cx="100" cy="50" r="2" class="dot"/>
+    <circle cx="80" cy="70" r="5.5" class="goal"/>
+  </g>
+  <!-- thùng đã vào đích -->
+  <g transform="translate(70 60)">
+    <rect x="1.5" y="1.5" width="17" height="17" rx="3" fill="#1f9d63" stroke="#12704a" stroke-width="1"/>
+    <rect x="4.5" y="4.5" width="11" height="11" rx="1.5" fill="#3fc285"/>
+    <path d="M5 5l10 10M15 5L5 15" stroke="#12704a" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  <!-- thùng được đẩy: (2,1) → (4,1) -->
+  <g class="crate">
+    <g transform="translate(50 40)">
+      <rect x="1.5" y="1.5" width="17" height="17" rx="3" fill="#d9893a" stroke="#8f5016" stroke-width="1"/>
+      <rect x="4.5" y="4.5" width="11" height="11" rx="1.5" fill="#eeaa5c"/>
+      <path d="M5 5l10 10M15 5L5 15" stroke="#8f5016" stroke-width="1.5" stroke-linecap="round"/>
+      <g class="green">
+        <rect x="1.5" y="1.5" width="17" height="17" rx="3" fill="#1f9d63" stroke="#12704a" stroke-width="1"/>
+        <rect x="4.5" y="4.5" width="11" height="11" rx="1.5" fill="#3fc285"/>
+        <path d="M5 5l10 10M15 5L5 15" stroke="#12704a" stroke-width="1.5" stroke-linecap="round"/>
+      </g>
+    </g>
+  </g>
+  <!-- người -->
+  <g class="who">
+    <g transform="translate(30 40)">
+      <ellipse cx="10" cy="17" rx="6" ry="1.4" fill="#000" opacity=".25"/>
+      <circle cx="10" cy="10" r="6.8" fill="#a48bff"/>
+      <circle cx="9.6" cy="9.2" r="1.2" fill="#131626"/>
+      <circle cx="13.2" cy="9.2" r="1.2" fill="#131626"/>
+    </g>
+  </g>
+</svg>

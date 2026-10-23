@@ -1,0 +1,58 @@
+{
+  "id": "tatden",
+  "cat": "puzzle",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Lights Out",
+    "vi": "Tắt Đèn"
+  },
+  "sub": {
+    "en": "Flip the lights",
+    "vi": "Lights Out"
+  },
+  "desc": {
+    "en": "Tap a light to flip it and its four neighbours, and turn every light off. Each board can be solved within par, and every win scrambles the next one a little harder. 5x5 and 7x7 boards.",
+    "vi": "Chạm một bóng đèn để đảo nó và bốn đèn bên cạnh, tắt hết đèn là thắng. Bàn nào cũng giải được trong par, mỗi lần thắng bàn sau khó hơn một chút. Bàn 5x5 và 7x7."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Levels"],
+    "vi": ["Giải đố", "1 người", "Cấp độ"]
+  },
+  "note": {
+    "en": "Every board can be solved",
+    "vi": "Bàn nào cũng giải được"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 200, 61, .26), transparent 60%), linear-gradient(160deg, #262b60, #0e1027)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 4,
+    "modes": [
+      {
+        "key": "5x5",
+        "label": {
+          "en": "5x5",
+          "vi": "5x5"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 4
+      },
+      {
+        "key": "7x7",
+        "label": {
+          "en": "7x7",
+          "vi": "7x7"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 6
+      }
+    ]
+  }
+}

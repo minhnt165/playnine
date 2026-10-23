@@ -1,0 +1,111 @@
+/* =====================================================================
+ * Nối Màu - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - 12 màu đường (--c0 … --c11) đủ tách nhau trên nền sáng và tối
+ *   - Bàn chơi là một SVG vuông, cạnh = min(rộng, cao) của .stage (container query)
+ * ===================================================================== */
+:root {
+  --c0: #ef4444;
+  --c1: #3b82f6;
+  --c2: #22c55e;
+  --c3: #eab308;
+  --c4: #f97316;
+  --c5: #06b6d4;
+  --c6: #d946ef;
+  --c7: #8b5a2b;
+  --c8: #8b5cf6;
+  --c9: #f472b6;
+  --c10: #84cc16;
+  --c11: #64748b;
+  --board-bg: var(--surface);
+  --grid: rgba(17, 20, 45, 0.12);
+  --tint: 0.2;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --c7: #a8805a;
+    --c11: #cbd5e1;
+    --grid: rgba(255, 255, 255, 0.1);
+    --tint: 0.26;
+  }
+}
+:root[data-theme="dark"] {
+  --c7: #a8805a;
+  --c11: #cbd5e1;
+  --grid: rgba(255, 255, 255, 0.1);
+  --tint: 0.26;
+}
+
+/* Nhãn cỡ bàn cạnh tên game: bấm để mở Cài đặt */
+.mode-badge { cursor: pointer; font-variant-numeric: tabular-nums; }
+
+/* ===================== Bàn chơi ===================== */
+.stage { container-type: size; }
+.board-wrap {
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+  border-radius: var(--radius);
+  background: var(--board-bg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.board {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+}
+.board:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
+.board .cell { fill: transparent; }
+/* Chỉ ô nhận sự kiện (vị trí tính theo tọa độ bàn); đường, chấm, con trỏ để chuột xuyên qua */
+.board .grid, .board .pipe, .board .dot, .board .ring, .board .head, .board .cursor { pointer-events: none; }
+.board .tint { fill-opacity: var(--tint); }
+.board .grid { fill: none; stroke: var(--grid); stroke-width: 0.03; }
+.board .pipe { fill: none; stroke-width: 0.36; stroke-linecap: round; stroke-linejoin: round; }
+.board .dot { stroke: none; }
+.board .ring { fill: none; stroke-width: 0.07; opacity: 0.55; }
+.board .head { fill: var(--board-bg); opacity: 0.85; }
+.board .cursor { fill: none; stroke: var(--text); stroke-width: 0.07; stroke-dasharray: 0.18 0.1; }
+.board.won .pipe { animation: won-glow 1.2s ease-in-out 2; }
+@keyframes won-glow { 50% { stroke-width: 0.5; } }
+.board .pulse { animation: pulse 0.45s ease-out; transform-box: fill-box; transform-origin: center; }
+@keyframes pulse { 40% { transform: scale(1.35); } }
+
+/* ===================== Nút dưới bàn ===================== */
+.controls { display: flex; gap: 10px; justify-content: center; flex: none; }
+.controls .btn { flex: 1; max-width: 200px; }
+.controls .icon { width: 20px; height: 20px; }
+
+.win-note { color: var(--accent); font-weight: 700; text-align: center; }
+.help-kbd { font-size: 0.88rem; }
+
+/* Điện thoại hẹp: bỏ biểu tượng cạnh tên để đủ chỗ cho tên + cỡ bàn; HUD nhỏ lại một chút */
+@media (max-width: 420px) {
+  .brand-mark { display: none; }
+  .hud { gap: 6px; }
+  .hud-box { padding: 6px 8px 7px; }
+  .hud-label { font-size: 0.62rem; letter-spacing: 0.03em; }
+  .hud-value { font-size: 1.2rem; }
+}
+
+/* ===================== Màn hình ngang thấp: bàn bên trái, số liệu + nút bên phải ===================== */
+@media (orientation: landscape) and (max-height: 560px) {
+  .app {
+    max-width: 920px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 260px);
+    grid-template-rows: auto auto auto 1fr;
+    grid-template-areas: "top top" "stage hud" "stage ctrl" "stage .";
+  }
+  .topbar { grid-area: top; }
+  .hud { grid-area: hud; grid-auto-flow: row; grid-template-columns: 1fr 1fr; }
+  .stage { grid-area: stage; }
+  .controls { grid-area: ctrl; }
+  .controls .btn { max-width: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board.won .pipe, .board .pulse { animation: none; }
+}

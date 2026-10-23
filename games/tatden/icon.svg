@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#34397c"/>
+      <stop offset="1" stop-color="#15173a"/>
+    </linearGradient>
+    <radialGradient id="lamp" cx=".5" cy=".38" r=".7">
+      <stop offset="0" stop-color="#fffef5"/>
+      <stop offset=".3" stop-color="#ffe38a"/>
+      <stop offset=".7" stop-color="#ffc23d"/>
+      <stop offset="1" stop-color="#f29a10"/>
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.4"/>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Ô tắt ở bốn góc -->
+  <g fill="#3d4389">
+    <rect x="7" y="7" width="14" height="14" rx="4"/>
+    <rect x="43" y="7" width="14" height="14" rx="4"/>
+    <rect x="7" y="43" width="14" height="14" rx="4"/>
+    <rect x="43" y="43" width="14" height="14" rx="4"/>
+  </g>
+  <!-- Hình chữ thập sáng: một lần bấm ở giữa -->
+  <g fill="#ffb21f" opacity=".85" filter="url(#glow)">
+    <rect x="25" y="7" width="14" height="14" rx="4"/>
+    <rect x="7" y="25" width="14" height="14" rx="4"/>
+    <rect x="25" y="25" width="14" height="14" rx="4"/>
+    <rect x="43" y="25" width="14" height="14" rx="4"/>
+    <rect x="25" y="43" width="14" height="14" rx="4"/>
+  </g>
+  <g fill="url(#lamp)">
+    <rect x="25" y="7" width="14" height="14" rx="4"/>
+    <rect x="7" y="25" width="14" height="14" rx="4"/>
+    <rect x="25" y="25" width="14" height="14" rx="4"/>
+    <rect x="43" y="25" width="14" height="14" rx="4"/>
+    <rect x="25" y="43" width="14" height="14" rx="4"/>
+  </g>
+</svg>

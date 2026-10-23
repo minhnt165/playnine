@@ -1,0 +1,80 @@
+{
+  "id": "thaphanoi",
+  "cat": "puzzle",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Tower of Hanoi",
+    "vi": "Tháp Hà Nội"
+  },
+  "sub": {
+    "en": "Classic 3-peg puzzle",
+    "vi": "Tower of Hanoi"
+  },
+  "desc": {
+    "en": "Move the whole stack of disks from the left peg to the right one, one disk at a time, never a larger disk on a smaller one. Tap or drag, 4 to 7 disks, ranked by fastest time.",
+    "vi": "Chuyển cả chồng đĩa từ cọc trái sang cọc phải, mỗi lần một đĩa, không bao giờ đặt đĩa lớn lên đĩa nhỏ. Chạm hoặc kéo thả, từ 4 đến 7 đĩa, xếp hạng theo thời gian nhanh nhất."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Speed"],
+    "vi": ["Giải đố", "1 người", "Tốc độ"]
+  },
+  "note": {
+    "en": "The best solve takes 2ⁿ − 1 moves",
+    "vi": "Giải gọn nhất cần 2ⁿ − 1 nước"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(139, 108, 255, .32), transparent 60%), linear-gradient(160deg, #2a2150, #110d26)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 3,
+    "modes": [
+      {
+        "key": "d4",
+        "label": {
+          "en": "4 disks",
+          "vi": "4 đĩa"
+        },
+        "rules": {
+          "min_time_ms": 3000
+        },
+        "points": 2
+      },
+      {
+        "key": "d5",
+        "label": {
+          "en": "5 disks",
+          "vi": "5 đĩa"
+        },
+        "rules": {
+          "min_time_ms": 7000
+        },
+        "points": 3
+      },
+      {
+        "key": "d6",
+        "label": {
+          "en": "6 disks",
+          "vi": "6 đĩa"
+        },
+        "rules": {
+          "min_time_ms": 15000
+        },
+        "points": 5
+      },
+      {
+        "key": "d7",
+        "label": {
+          "en": "7 disks",
+          "vi": "7 đĩa"
+        },
+        "rules": {
+          "min_time_ms": 30000
+        },
+        "points": 7
+      }
+    ]
+  }
+}

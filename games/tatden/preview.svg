@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: bàn 5x5, chạm ô giữa làm cả hình chữ thập tắt rồi bật lại.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động; nền trong suốt (nền thẻ lấy từ preview.bg). -->
+  <style>
+    .lit { animation: lit 3.6s ease-in-out infinite; }
+    .lit.n { animation-delay: .08s; }
+    .ring { animation: ring 3.6s ease-out infinite; transform-origin: 80px 60px; opacity: 0; }
+    .dot { animation: dot 3.6s ease-out infinite; transform-origin: 80px 60px; opacity: 0; }
+    @keyframes lit { 0%, 42% { opacity: 1; } 50%, 88% { opacity: 0; } 96%, 100% { opacity: 1; } }
+    @keyframes ring { 0%, 40% { opacity: 0; transform: scale(.7); } 44% { opacity: .95; transform: scale(.8); } 60%, 100% { opacity: 0; transform: scale(1.5); } }
+    @keyframes dot { 0%, 34% { opacity: 0; transform: scale(1.4); } 40%, 46% { opacity: .9; transform: scale(1); } 52%, 100% { opacity: 0; transform: scale(1); } }
+    @media (prefers-reduced-motion: reduce) {
+      .lit, .ring, .dot { animation: none; }
+      .lit { opacity: 1; }
+    }
+  </style>
+  <defs>
+    <radialGradient id="lamp" cx=".5" cy=".38" r=".7">
+      <stop offset="0" stop-color="#fffef5"/>
+      <stop offset=".3" stop-color="#ffe38a"/>
+      <stop offset=".7" stop-color="#ffc23d"/>
+      <stop offset="1" stop-color="#f29a10"/>
+    </radialGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+    <!-- Một bóng đèn sáng: quầng mờ + mặt đèn -->
+    <g id="bulb">
+      <rect width="16" height="16" rx="4.5" fill="#ffb21f" opacity=".8" filter="url(#glow)"/>
+      <rect width="16" height="16" rx="4.5" fill="url(#lamp)"/>
+    </g>
+  </defs>
+  <!-- Khung bàn và 25 ô tắt -->
+  <rect x="31" y="11" width="98" height="98" rx="12" fill="#1b1e45"/>
+  <g fill="#353a7c">
+    <rect x="34" y="14" width="16" height="16" rx="4.5"/><rect x="53" y="14" width="16" height="16" rx="4.5"/><rect x="72" y="14" width="16" height="16" rx="4.5"/><rect x="91" y="14" width="16" height="16" rx="4.5"/><rect x="110" y="14" width="16" height="16" rx="4.5"/>
+    <rect x="34" y="33" width="16" height="16" rx="4.5"/><rect x="53" y="33" width="16" height="16" rx="4.5"/><rect x="72" y="33" width="16" height="16" rx="4.5"/><rect x="91" y="33" width="16" height="16" rx="4.5"/><rect x="110" y="33" width="16" height="16" rx="4.5"/>
+    <rect x="34" y="52" width="16" height="16" rx="4.5"/><rect x="53" y="52" width="16" height="16" rx="4.5"/><rect x="72" y="52" width="16" height="16" rx="4.5"/><rect x="91" y="52" width="16" height="16" rx="4.5"/><rect x="110" y="52" width="16" height="16" rx="4.5"/>
+    <rect x="34" y="71" width="16" height="16" rx="4.5"/><rect x="53" y="71" width="16" height="16" rx="4.5"/><rect x="72" y="71" width="16" height="16" rx="4.5"/><rect x="91" y="71" width="16" height="16" rx="4.5"/><rect x="110" y="71" width="16" height="16" rx="4.5"/>
+    <rect x="34" y="90" width="16" height="16" rx="4.5"/><rect x="53" y="90" width="16" height="16" rx="4.5"/><rect x="72" y="90" width="16" height="16" rx="4.5"/><rect x="91" y="90" width="16" height="16" rx="4.5"/><rect x="110" y="90" width="16" height="16" rx="4.5"/>
+  </g>
+  <!-- Hình chữ thập đang sáng: ô giữa tắt trước, 4 ô kề tắt theo ngay sau -->
+  <use href="#bulb" class="lit" x="72" y="52"/>
+  <use href="#bulb" class="lit n" x="72" y="33"/>
+  <use href="#bulb" class="lit n" x="53" y="52"/>
+  <use href="#bulb" class="lit n" x="91" y="52"/>
+  <use href="#bulb" class="lit n" x="72" y="71"/>
+  <!-- Chạm ô giữa -->
+  <circle class="ring" cx="80" cy="60" r="13" fill="none" stroke="#fff3c4" stroke-width="2.5"/>
+  <circle class="dot" cx="80" cy="60" r="5" fill="#ffffff"/>
+</svg>

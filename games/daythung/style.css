@@ -1,0 +1,179 @@
+/* =====================================================================
+ * Đẩy Thùng - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bàn chơi SVG: sàn ô cờ nhạt, tường tím than, đích vòng hổ phách, thùng gỗ (vào đích thì xanh lá)
+ *   - Màn hình ngang thấp (điện thoại xoay ngang): cột trái thanh trên + số liệu + nút, bàn chơi bên phải
+ * ===================================================================== */
+:root {
+  --floor: #e7e4f6;
+  --floor-alt: #dfdbf1;
+  --wall: #3f3776;
+  --wall-stone: #534a96;
+  --wall-hi: rgba(255, 255, 255, 0.14);
+  --goal: #e8930c;
+  --goal-fill: rgba(232, 147, 12, 0.14);
+  --box: #d9893a;
+  --box-inner: #eeaa5c;
+  --box-line: #a9621f;
+  --box-on: #1f9d63;
+  --box-on-inner: #3fc285;
+  --box-on-line: #12704a;
+  --player: #6a4cf5;
+  --player-eye: #ffffff;
+  --slide: 95ms;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --floor: #1c2040;
+    --floor-alt: #191c39;
+    --wall: #2a2557;
+    --wall-stone: #39326f;
+    --wall-hi: rgba(255, 255, 255, 0.08);
+    --goal: #fbbf24;
+    --goal-fill: rgba(251, 191, 36, 0.12);
+    --box: #c97b30;
+    --box-inner: #e0994b;
+    --box-line: #8f5016;
+    --box-on: #1c8f5a;
+    --box-on-inner: #34b87a;
+    --box-on-line: #0f5f3e;
+    --player: #a48bff;
+    --player-eye: #131626;
+  }
+}
+:root[data-theme="dark"] {
+  --floor: #1c2040;
+  --floor-alt: #191c39;
+  --wall: #2a2557;
+  --wall-stone: #39326f;
+  --wall-hi: rgba(255, 255, 255, 0.08);
+  --goal: #fbbf24;
+  --goal-fill: rgba(251, 191, 36, 0.12);
+  --box: #c97b30;
+  --box-inner: #e0994b;
+  --box-line: #8f5016;
+  --box-on: #1c8f5a;
+  --box-on-inner: #34b87a;
+  --box-on-line: #0f5f3e;
+  --player: #a48bff;
+  --player-eye: #131626;
+}
+
+/* ===================== Số liệu ===================== */
+.hud-level { text-align: left; color: var(--text); cursor: pointer; transition: background 0.15s; }
+.hud-level .hud-value { display: flex; align-items: center; }
+.hud-level small { font-size: 0.8rem; font-weight: 700; color: var(--muted); margin-left: 1px; }
+.hud-caret { width: 18px; height: 18px; fill: var(--muted); margin-left: auto; flex: none; }
+@media (hover: hover) {
+  .hud-level:hover { background: var(--surface-2); }
+}
+
+/* ===================== Bàn chơi ===================== */
+.stage { touch-action: none; user-select: none; -webkit-user-select: none; }
+.board { display: block; overflow: visible; cursor: pointer; }
+.floor { fill: var(--floor); }
+.floor.alt { fill: var(--floor-alt); }
+.goal { fill: var(--goal-fill); stroke: var(--goal); stroke-width: 0.07; }
+.goal-dot { fill: var(--goal); }
+.wall { fill: var(--wall); }
+.wall-stone { fill: var(--wall-stone); }
+.wall-hi { fill: var(--wall-hi); }
+
+.box, .player { transition: transform var(--slide) ease-out; }
+.box-body { fill: var(--box); stroke: var(--box-line); stroke-width: 0.05; }
+.box-inner { fill: var(--box-inner); }
+.box-cross { stroke: var(--box-line); stroke-width: 0.07; stroke-linecap: round; fill: none; }
+.box.on .box-body { fill: var(--box-on); stroke: var(--box-on-line); }
+.box.on .box-inner { fill: var(--box-on-inner); }
+.box.on .box-cross { stroke: var(--box-on-line); }
+.box.on .box-body, .box.on .box-inner { transition: fill 0.2s; }
+
+.player-shadow { fill: rgba(0, 0, 0, 0.18); }
+.player-body { fill: var(--player); }
+.player-eye { fill: var(--player-eye); }
+.player-face { transition: transform var(--slide) ease-out; }
+.no-anim .box, .no-anim .player, .no-anim .player-face { transition: none; }
+
+/* ===================== Nút công cụ ===================== */
+.tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex: none; }
+.tools .btn { min-height: 46px; padding: 0 10px; background: var(--surface); box-shadow: var(--shadow-sm); white-space: nowrap; }
+.tools .btn span { overflow: hidden; text-overflow: ellipsis; }
+@media (hover: hover) {
+  .tools .btn:not(:disabled):hover { background: var(--surface-2); }
+}
+
+/* Thông báo nhanh nằm trên hàng nút công cụ và không chặn chạm (bấm Chơi lại lần hai) */
+.toast { pointer-events: none; bottom: calc(100px + env(safe-area-inset-bottom)); width: max-content; }
+
+/* ===================== Hộp thoại ===================== */
+.win-result { color: var(--text); font-size: 1.1rem; font-weight: 700; }
+.win-best { color: var(--accent); font-weight: 700; }
+#modal-win .modal-actions .btn { padding: 0 10px; }
+#modal-win .btn-primary { flex: 1.4; }
+
+.help-legend { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+.help-legend svg { width: 96px; height: 32px; flex: none; border-radius: 6px; overflow: hidden; }
+
+#modal-levels .modal-card { max-width: 480px; }
+.level-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.level-btn {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  border: 2px solid transparent;
+}
+.level-num { font-size: 1.05rem; }
+.level-best { font-size: 0.62rem; font-weight: 700; color: var(--muted); }
+.level-btn.solved { background: var(--accent-soft); color: var(--accent); }
+.level-btn.solved .level-best { color: var(--accent); opacity: 0.8; }
+.level-btn.current { border-color: var(--accent); }
+.level-btn:disabled { opacity: 0.45; }
+.level-lock { width: 16px; height: 16px; fill: var(--muted); }
+.levels-note { font-size: 0.8rem; }
+@media (hover: hover) {
+  .level-btn:not(:disabled):hover { background: var(--accent-soft); }
+}
+
+/* ===================== Màn hình hẹp ===================== */
+@media (max-width: 420px) {
+  .hud { gap: 6px; }
+  .hud-box { padding: 6px 8px 7px; }
+  .hud-value { font-size: 1.2rem; }
+  .hud-label { font-size: 0.62rem; letter-spacing: 0.04em; }
+}
+
+/* ===================== Điện thoại xoay ngang ===================== */
+@media (orientation: landscape) and (max-height: 560px) {
+  .app {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(220px, 280px) 1fr;
+    grid-template-rows: auto auto auto 1fr;
+    grid-template-areas: "top stage" "hud stage" "tools stage" ". stage";
+    column-gap: 14px;
+    row-gap: 8px;
+  }
+  .topbar { grid-area: top; }
+  .hud { grid-area: hud; grid-auto-flow: row; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .tools { grid-area: tools; grid-template-columns: 1fr; gap: 6px; }
+  .tools .btn { min-height: 40px; justify-content: flex-start; }
+  .stage { grid-area: stage; }
+  .toast { bottom: calc(24px + env(safe-area-inset-bottom)); left: auto; right: 24px; transform: none; }
+  .brand-mark { width: 30px; height: 30px; }
+  .btn-icon { width: 38px; height: 38px; }
+  .logo { font-size: 1.1rem; }
+  #modal-levels .modal-card { max-width: 640px; }
+  .level-grid { grid-template-columns: repeat(12, 1fr); }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .box, .player, .player-face, .box.on .box-body, .box.on .box-inner, .hud-level { transition: none; }
+}

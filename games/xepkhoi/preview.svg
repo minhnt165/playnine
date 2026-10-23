@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước Xếp Khối: khối thẳng được kéo từ khay lên lấp chỗ trống, hàng dưới đầy thì lóe sáng và biến mất.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động. Nền lấy từ preview.bg trong game.json. -->
+  <style>
+    .piece { animation: lift 4s ease-in-out infinite; }
+    .ghost { animation: ghost 4s linear infinite; opacity: 0; }
+    .row { animation: clear 4s ease-in infinite; }
+    .hand { animation: hand 4s ease-in-out infinite; }
+    .score { animation: score 4s ease-out infinite; opacity: 0; }
+    @keyframes lift {
+      0%, 8% { transform: translateY(0); opacity: 1; }
+      34%, 46% { transform: translateY(-25px); opacity: 1; }
+      58% { transform: translateY(-25px); opacity: 0; }
+      90% { transform: translateY(0); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes hand {
+      0%, 8% { transform: translateY(0); opacity: .9; }
+      34% { transform: translateY(-25px); opacity: .9; }
+      44%, 100% { transform: translateY(-25px); opacity: 0; }
+    }
+    @keyframes ghost { 0%, 14% { opacity: 0; } 20%, 33% { opacity: .45; } 34%, 100% { opacity: 0; } }
+    @keyframes clear {
+      0%, 44% { opacity: 1; filter: none; }
+      50% { opacity: 1; filter: brightness(1.8); }
+      58%, 90% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @keyframes score {
+      0%, 46% { opacity: 0; transform: translateY(0); }
+      52% { opacity: 1; }
+      70%, 100% { opacity: 0; transform: translateY(-14px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .piece, .ghost, .row, .hand, .score { animation: none; }
+      .hand { opacity: 0; }
+    }
+  </style>
+  <!-- Bàn 8x6 -->
+  <rect x="25" y="4" width="110" height="84" rx="8" fill="#0b0e22" opacity=".55"/>
+  <g fill="#ffffff" opacity=".09">
+    <path d="M29 8h11v11H29zM42 8h11v11H42zM55 8h11v11H55zM68 8h11v11H68zM81 8h11v11H81zM94 8h11v11H94zM107 8h11v11h-11zM120 8h11v11h-11z"/>
+    <path d="M29 21h11v11H29zM42 21h11v11H42zM55 21h11v11H55zM68 21h11v11H68zM81 21h11v11H81zM94 21h11v11H94zM107 21h11v11h-11zM120 21h11v11h-11z"/>
+    <path d="M29 34h11v11H29zM42 34h11v11H42zM55 34h11v11H55zM68 34h11v11H68zM81 34h11v11H81zM94 34h11v11H94zM107 34h11v11h-11zM120 34h11v11h-11z"/>
+    <path d="M29 47h11v11H29zM42 47h11v11H42zM55 47h11v11H55zM68 47h11v11H68zM81 47h11v11H81zM94 47h11v11H94zM107 47h11v11h-11zM120 47h11v11h-11z"/>
+    <path d="M29 60h11v11H29zM42 60h11v11H42zM55 60h11v11H55zM68 60h11v11H68zM81 60h11v11H81zM94 60h11v11H94zM107 60h11v11h-11zM120 60h11v11h-11z"/>
+    <path d="M29 73h11v11H29zM42 73h11v11H42zM55 73h11v11H55zM68 73h11v11H68zM81 73h11v11H81zM94 73h11v11H94zM107 73h11v11h-11zM120 73h11v11h-11z"/>
+  </g>
+  <!-- Khối đã đặt -->
+  <g>
+    <rect x="29" y="34" width="11" height="11" rx="2.5" fill="#9b5cf6"/>
+    <rect x="29" y="47" width="11" height="11" rx="2.5" fill="#9b5cf6"/>
+    <rect x="42" y="47" width="11" height="11" rx="2.5" fill="#9b5cf6"/>
+    <rect x="29" y="60" width="11" height="11" rx="2.5" fill="#9b5cf6"/>
+    <rect x="107" y="47" width="11" height="11" rx="2.5" fill="#f5b301"/>
+    <rect x="120" y="47" width="11" height="11" rx="2.5" fill="#f5b301"/>
+    <rect x="107" y="60" width="11" height="11" rx="2.5" fill="#f5b301"/>
+    <rect x="120" y="60" width="11" height="11" rx="2.5" fill="#f5b301"/>
+    <rect x="81" y="21" width="11" height="11" rx="2.5" fill="#ec5fb4"/>
+    <rect x="68" y="60" width="11" height="11" rx="2.5" fill="#3cb95a"/>
+    <rect x="81" y="60" width="11" height="11" rx="2.5" fill="#3cb95a"/>
+  </g>
+  <!-- Hàng dưới: thiếu 3 ô giữa -->
+  <g class="row">
+    <rect x="29" y="73" width="11" height="11" rx="2.5" fill="#fb7d22"/>
+    <rect x="42" y="73" width="11" height="11" rx="2.5" fill="#fb7d22"/>
+    <rect x="55" y="73" width="11" height="11" rx="2.5" fill="#4c6ef5"/>
+    <rect x="107" y="73" width="11" height="11" rx="2.5" fill="#ef4f5f"/>
+    <rect x="120" y="73" width="11" height="11" rx="2.5" fill="#ef4f5f"/>
+  </g>
+  <!-- Bóng mờ chỗ sẽ đặt -->
+  <g class="ghost" fill="#1fb5d6">
+    <rect x="68" y="73" width="11" height="11" rx="2.5"/>
+    <rect x="81" y="73" width="11" height="11" rx="2.5"/>
+    <rect x="94" y="73" width="11" height="11" rx="2.5"/>
+  </g>
+  <!-- Khối thẳng trong khay, kéo lên bàn -->
+  <g class="piece">
+    <rect x="68" y="98" width="11" height="11" rx="2.5" fill="#1fb5d6"/>
+    <rect x="81" y="98" width="11" height="11" rx="2.5" fill="#1fb5d6"/>
+    <rect x="94" y="98" width="11" height="11" rx="2.5" fill="#1fb5d6"/>
+    <path d="M70 100h7v2h-7zM83 100h7v2h-7zM96 100h7v2h-7z" fill="#ffffff" opacity=".4"/>
+  </g>
+  <circle class="hand" cx="86.5" cy="114" r="5" fill="#ffffff" opacity=".9"/>
+  <text class="score" x="86.5" y="82" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="800" fill="#ffffff">+10</text>
+</svg>

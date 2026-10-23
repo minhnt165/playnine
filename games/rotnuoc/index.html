@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#f3f4fb">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Water Sort">
+  <meta name="description" content="Water Sort">
+  <title>Water Sort</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <script>
+    // Áp giao diện sáng/tối và bật/tắt ký hiệu màu đã chọn trước khi vẽ trang để tránh nháy
+    try {
+      var s = JSON.parse(localStorage.getItem('playnine-rotnuoc-settings-v1') || '{}');
+      if (s.theme === 'light' || s.theme === 'dark') document.documentElement.setAttribute('data-theme', s.theme);
+      if (s.symbols === false) document.documentElement.classList.add('no-symbols');
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../_kit/kit.css?v=1">
+  <link rel="stylesheet" href="style.css?v=1.0.0">
+</head>
+<body>
+  <!-- Ký hiệu cho từng màu (hỗ trợ người mù màu), dùng lại bằng <use href="#sym-N"> -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="sym-0" viewBox="0 0 20 20"><circle cx="10" cy="10" r="6"/></symbol>
+    <symbol id="sym-1" viewBox="0 0 20 20"><rect x="4.5" y="4.5" width="11" height="11" rx="1.2"/></symbol>
+    <symbol id="sym-2" viewBox="0 0 20 20"><path d="M10 3.2 17.2 16H2.8z"/></symbol>
+    <symbol id="sym-3" viewBox="0 0 20 20"><path d="M10 2.5 17.5 10 10 17.5 2.5 10z"/></symbol>
+    <symbol id="sym-4" viewBox="0 0 20 20"><path d="m10 2.3 2.3 4.8 5.2.7-3.8 3.6.9 5.2L10 14.1l-4.6 2.5.9-5.2-3.8-3.6 5.2-.7z"/></symbol>
+    <symbol id="sym-5" viewBox="0 0 20 20"><path d="M7.8 3h4.4v4.8H17v4.4h-4.8V17H7.8v-4.8H3V7.8h4.8z"/></symbol>
+    <symbol id="sym-6" viewBox="0 0 20 20"><path d="M10 17.2S2.8 12.8 2.8 7.9A3.8 3.8 0 0 1 10 6a3.8 3.8 0 0 1 7.2 1.9c0 4.9-7.2 9.3-7.2 9.3z"/></symbol>
+    <symbol id="sym-7" viewBox="0 0 20 20"><path d="m4.4 7.3 2.9-2.9L10 7.1l2.7-2.7 2.9 2.9-2.7 2.7 2.7 2.7-2.9 2.9-2.7-2.7-2.7 2.7-2.9-2.9L7.1 10z"/></symbol>
+    <symbol id="sym-8" viewBox="0 0 20 20"><path d="M13.2 2.8a7.3 7.3 0 1 0 4.2 10.6 5.8 5.8 0 0 1-4.2-10.6z"/></symbol>
+    <symbol id="sym-9" viewBox="0 0 20 20"><path d="m10 2.6 6.4 3.7v7.4L10 17.4l-6.4-3.7V6.3z"/></symbol>
+    <symbol id="sym-10" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 3.2a6.8 6.8 0 1 1 0 13.6 6.8 6.8 0 0 1 0-13.6zm0 3.4a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8z"/></symbol>
+    <symbol id="sym-11" viewBox="0 0 20 20"><path d="M3.5 4.5h13v3.6h-13zm0 7.4h13v3.6h-13z"/></symbol>
+  </svg>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-mark" src="icon.svg" alt="" width="34" height="34">
+        <h1 class="logo" data-i18n="app.name">Water Sort</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" type="button" data-open="modal-help" data-i18n-attr="aria-label:kit.help;title:kit.help">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 17h-2v-2h2v2zm2.1-7.7-.9.9c-.7.7-1.2 1.3-1.2 2.8h-2v-.5c0-1.1.5-2.1 1.2-2.8l1.2-1.3a2 2 0 1 0-3.4-1.4H8a4 4 0 1 1 7.1 2.3z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-stats" type="button" data-open="modal-stats" data-i18n-attr="aria-label:kit.stats;title:kit.stats">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
+        </button>
+        <button class="btn-icon" type="button" data-open="modal-settings" data-i18n-attr="aria-label:kit.settings;title:kit.settings">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="hud">
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.level">Level</div><div class="hud-value" id="level">1</div></div>
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.moves">Moves</div><div class="hud-value" id="moves">0</div></div>
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.time">Time</div><div class="hud-value" id="time">0:00</div></div>
+    </div>
+
+    <main class="stage" id="stage">
+      <div class="board" id="board" role="group" data-i18n-attr="aria-label:board.label"></div>
+      <div class="stream" id="stream" hidden></div>
+    </main>
+
+    <div class="tools">
+      <button class="tool" id="btn-undo" type="button" data-i18n-attr="title:tool.undoTitle">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.5 8c-2.6 0-5 1-6.9 2.6L2 7v9h9l-3.6-3.6A8 8 0 0 1 20.2 16l2.4-.8A10.5 10.5 0 0 0 12.5 8z"/></svg>
+        <span class="tool-name" data-i18n="tool.undo">Undo</span>
+        <span class="tool-count" id="undo-left">3</span>
+      </button>
+      <button class="tool" id="btn-extra" type="button" data-i18n-attr="title:tool.extraTitle">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h6v2h-1v12a3 3 0 0 1-6 0V5H5V3h2zm1 2v12a1 1 0 0 0 2 0V5H8zm10 3h2v3h3v2h-3v3h-2v-3h-3v-2h3V8z"/></svg>
+        <span class="tool-name" data-i18n="tool.extra">+1 tube</span>
+        <span class="tool-count" id="extra-left">1</span>
+      </button>
+      <button class="tool" id="btn-restart" type="button" data-i18n-attr="title:tool.restartTitle">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.7 6.3A8 8 0 1 0 20 12h-2a6 6 0 1 1-1.8-4.2L13 11h7V4l-2.3 2.3z"/></svg>
+        <span class="tool-name" data-i18n="tool.restart">Restart</span>
+      </button>
+    </div>
+
+    <p class="help"><span class="help-keys" data-i18n-html="help.keys"></span><span class="help-touch" data-i18n="help.touch"></span></p>
+  </div>
+
+  <div class="sr-only" id="live" aria-live="polite"></div>
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <!-- Qua màn -->
+  <div class="modal" id="modal-win" data-locked hidden>
+    <div class="modal-backdrop"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="win-title">
+      <h2 id="win-title"></h2>
+      <dl class="stat-grid">
+        <div><dt data-i18n="hud.moves">Moves</dt><dd id="win-moves">0</dd></div>
+        <div><dt data-i18n="hud.time">Time</dt><dd id="win-time">0:00</dd></div>
+      </dl>
+      <p class="modal-text" id="win-assisted" hidden data-i18n="win.assisted">You used the extra tube on this level.</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="btn-next" type="button" data-i18n="win.next">Next level</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hết nước đi -->
+  <div class="modal" id="modal-stuck" hidden>
+    <div class="modal-backdrop" data-close="modal-stuck"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stuck-title">
+      <h2 id="stuck-title" data-i18n="stuck.title">No moves left</h2>
+      <p class="modal-text" id="stuck-text"></p>
+      <div class="modal-actions stack">
+        <button class="btn btn-ghost" id="btn-stuck-undo" type="button"></button>
+        <button class="btn btn-ghost" id="btn-stuck-extra" type="button"></button>
+        <button class="btn btn-primary" id="btn-stuck-restart" type="button" data-i18n="stuck.restart">Restart level</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chơi lại màn khi đang dở -->
+  <div class="modal" id="modal-confirm" hidden>
+    <div class="modal-backdrop" data-close="modal-confirm"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+      <h2 id="confirm-title" data-i18n="confirm.title">Restart this level?</h2>
+      <p class="modal-text" data-i18n="confirm.text">This attempt will count as a loss.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" data-close="modal-confirm" data-i18n="kit.cancel">Cancel</button>
+        <button class="btn btn-primary" id="btn-confirm-restart" type="button" data-i18n="tool.restart">Restart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-help" hidden>
+    <div class="modal-backdrop" data-close="modal-help"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <h2 id="help-title" data-i18n="kit.help">How to play</h2>
+      <ul class="help-list">
+        <li data-i18n="help.rule1"></li>
+        <li data-i18n="help.rule2"></li>
+        <li data-i18n="help.rule3"></li>
+        <li data-i18n="help.rule4"></li>
+        <li data-i18n="help.rule5"></li>
+      </ul>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-help" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-backdrop" data-close="modal-stats"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
+      <h2 id="stats-title" data-i18n="kit.stats">Statistics</h2>
+      <dl class="stat-grid">
+        <div><dt data-i18n="stats.level">Current level</dt><dd id="stats-level">1</dd></div>
+        <div><dt data-i18n="stats.won">Levels cleared</dt><dd id="stats-won">0</dd></div>
+        <div><dt data-i18n="stats.played">Attempts</dt><dd id="stats-played">0</dd></div>
+        <div><dt data-i18n="stats.rate">Win rate</dt><dd id="stats-rate">–</dd></div>
+      </dl>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-stats" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-settings" hidden>
+    <div class="modal-backdrop" data-close="modal-settings"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h2 id="settings-title" data-i18n="kit.settings">Settings</h2>
+      <div class="settings-list">
+        <div class="setting">
+          <span class="setting-name" data-i18n="kit.theme">Theme</span>
+          <div class="segmented" data-setting="theme">
+            <button type="button" data-value="auto" data-i18n="kit.themeAuto">Auto</button>
+            <button type="button" data-value="light" data-i18n="kit.themeLight">Light</button>
+            <button type="button" data-value="dark" data-i18n="kit.themeDark">Dark</button>
+          </div>
+        </div>
+        <div class="setting">
+          <span class="setting-name" data-i18n="kit.lang">Language</span>
+          <div class="segmented" data-setting="lang">
+            <button type="button" data-value="en">English</button>
+            <button type="button" data-value="vi">Tiếng Việt</button>
+          </div>
+        </div>
+        <label class="setting-row">
+          <span class="setting-text"><span class="setting-name" data-i18n="settings.symbols">Colour symbols</span><span class="setting-desc" data-i18n="settings.symbolsDesc"></span></span>
+          <input class="switch" type="checkbox" id="sw-symbols" data-setting="symbols">
+        </label>
+        <label class="setting-row" id="setting-sound">
+          <span class="setting-text"><span class="setting-name" data-i18n="kit.sound">Sound</span><span class="setting-desc" data-i18n="kit.soundDesc"></span></span>
+          <input class="switch" type="checkbox" id="sw-sound">
+        </label>
+      </div>
+      <p class="app-version" id="app-version"></p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-settings" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <script src="../_kit/kit.js?v=1"></script>
+  <script src="i18n.js?v=1.0.0"></script>
+  <script src="engine.js?v=1.0.0"></script>
+  <script src="../sdk/playnine.js?v=2"></script>
+  <script src="app.js?v=1.0.0"></script>
+</body>
+</html>

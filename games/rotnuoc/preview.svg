@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: ống trái bay lên, nghiêng, rót hai lớp vàng sang ống giữa cho đủ một màu.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động. Nền lấy từ preview.bg trong game.json. -->
+  <style>
+    .tube { fill: rgba(255, 255, 255, .08); stroke: #dfe8ff; stroke-width: 2.2; stroke-linejoin: round; }
+    .rim { stroke: #dfe8ff; stroke-width: 2.6; stroke-linecap: round; }
+    .shine { fill: #fff; opacity: .35; }
+    .a { transform-origin: 40px 40px; animation: a 4s ease-in-out infinite; }
+    .drain { transform-box: fill-box; transform-origin: 50% 100%; animation: drain 4s ease-in-out infinite; }
+    .fill { transform-box: fill-box; transform-origin: 50% 100%; animation: fill 4s ease-in-out infinite; }
+    .stream { transform-box: fill-box; transform-origin: 50% 0; animation: stream 4s linear infinite; }
+    .cork { animation: cork 4s ease-in-out infinite; }
+    @keyframes a {
+      0%, 12% { transform: none; }
+      28%, 60% { transform: translate(37px, -13px) rotate(100deg); }
+      76%, 100% { transform: none; }
+    }
+    @keyframes drain { 0%, 30% { transform: scaleY(1); } 56%, 88% { transform: scaleY(0); } 97%, 100% { transform: scaleY(1); } }
+    @keyframes fill { 0%, 30% { transform: scaleY(0); } 56%, 88% { transform: scaleY(1); } 97%, 100% { transform: scaleY(0); } }
+    @keyframes stream { 0%, 29% { transform: scaleY(0); opacity: 0; } 33%, 54% { transform: scaleY(1); opacity: 1; } 58%, 100% { transform: scaleY(1); opacity: 0; } }
+    @keyframes cork { 0%, 60% { opacity: 0; transform: translateY(-6px); } 66%, 88% { opacity: 1; transform: none; } 94%, 100% { opacity: 0; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .a, .drain, .fill, .stream, .cork { animation: none; }
+      .fill, .stream { transform: scaleY(0); }
+      .cork { opacity: 0; }
+    }
+  </style>
+  <defs>
+    <clipPath id="ca"><path d="M31 40v42a9 9 0 0 0 18 0V40z"/></clipPath>
+    <clipPath id="cb"><path d="M71 40v42a9 9 0 0 0 18 0V40z"/></clipPath>
+    <clipPath id="cc"><path d="M111 40v42a9 9 0 0 0 18 0V40z"/></clipPath>
+  </defs>
+
+  <g transform="translate(0 7)">
+  <!-- Ống giữa: hai lớp vàng, nhận thêm hai lớp vàng -->
+  <g clip-path="url(#cb)">
+    <rect x="71" y="69" width="18" height="23" fill="#fbd338"/>
+    <rect class="fill" x="71" y="47" width="18" height="22" fill="#fbd338"/>
+  </g>
+  <path class="tube" d="M71 40v42a9 9 0 0 0 18 0V40"/>
+  <path class="rim" d="M68 40h24"/>
+  <rect class="shine" x="74" y="47" width="3" height="36" rx="1.5"/>
+  <rect class="cork" x="74" y="31" width="12" height="9" rx="2" fill="#c58a52"/>
+
+  <!-- Ống phải: đỏ / xanh -->
+  <g clip-path="url(#cc)">
+    <rect x="111" y="80" width="18" height="12" fill="#1f6fe5"/>
+    <rect x="111" y="69" width="18" height="11" fill="#1f6fe5"/>
+    <rect x="111" y="58" width="18" height="11" fill="#e53935"/>
+    <rect x="111" y="47" width="18" height="11" fill="#2e9e4a"/>
+  </g>
+  <path class="tube" d="M111 40v42a9 9 0 0 0 18 0V40"/>
+  <path class="rim" d="M108 40h24"/>
+  <rect class="shine" x="114" y="47" width="3" height="36" rx="1.5"/>
+
+  <!-- Dòng nước -->
+  <rect class="stream" x="75.5" y="27" width="3.5" height="43" rx="1.5" fill="#fbd338"/>
+
+  <!-- Ống trái: xanh lá, đỏ, rồi hai lớp vàng trên cùng được rót đi -->
+  <g class="a">
+    <g clip-path="url(#ca)">
+      <rect x="31" y="80" width="18" height="12" fill="#2e9e4a"/>
+      <rect x="31" y="69" width="18" height="11" fill="#e53935"/>
+      <rect class="drain" x="31" y="47" width="18" height="22" fill="#fbd338"/>
+    </g>
+    <path class="tube" d="M31 40v42a9 9 0 0 0 18 0V40"/>
+    <path class="rim" d="M28 40h24"/>
+    <rect class="shine" x="34" y="47" width="3" height="36" rx="1.5"/>
+  </g>
+  </g>
+</svg>

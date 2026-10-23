@@ -1,0 +1,187 @@
+/* =====================================================================
+ * Tháp Hà Nội - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bàn chơi: 3 cọc là nút chiếm cả cột; đĩa đặt tuyệt đối trong .board, vị trí tính trong app.js (transform)
+ *   - Kích thước theo biến --dh (cao đĩa), --pole-h, --base-h, --label-h do app.js đặt trên .board
+ * ===================================================================== */
+:root {
+  --pole: #c7a37c;
+  --pole-2: #a98058;
+  --base: #8f6a47;
+  --goal: #6a4cf5;
+  --peg-hover: rgba(106, 76, 245, 0.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --pole: #7a6450;
+    --pole-2: #5c4a3b;
+    --base: #4a3b2f;
+    --goal: #8b6cff;
+    --peg-hover: rgba(139, 108, 255, 0.08);
+  }
+}
+:root[data-theme="dark"] {
+  --pole: #7a6450;
+  --pole-2: #5c4a3b;
+  --base: #4a3b2f;
+  --goal: #8b6cff;
+  --peg-hover: rgba(139, 108, 255, 0.08);
+}
+
+/* Ô số nước: "12/31" với phần tối thiểu nhỏ và nhạt */
+.hud-min { font-size: 0.72em; font-weight: 700; color: var(--muted); margin-left: 1px; }
+
+/* Hàng chọn số đĩa + số nước tối thiểu */
+.modebar { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 34px; }
+.mode-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 8px 0 10px;
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.mode-chip .icon { width: 18px; height: 18px; color: var(--accent); }
+.mode-chip .chev { color: var(--muted); }
+.min-note { font-size: 0.85rem; font-weight: 600; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (hover: hover) {
+  .mode-chip:hover { background: var(--surface-2); }
+}
+
+/* ===================== Bàn chơi ===================== */
+.board {
+  position: relative;
+  width: 100%;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.peg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(100% / 3);
+  border-radius: 16px;
+  transition: background 0.15s;
+}
+.peg[data-peg="0"] { left: 0; }
+.peg[data-peg="1"] { left: calc(100% / 3); }
+.peg[data-peg="2"] { left: calc(200% / 3); }
+@media (hover: hover) {
+  .peg:hover { background: var(--peg-hover); }
+}
+.peg.over { background: var(--accent-soft); }
+
+.pole {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--label-h, 22px) + var(--base-h, 12px) - 2px);
+  width: clamp(6px, calc(var(--dh, 24px) * 0.34), 11px);
+  height: calc(var(--pole-h, 100px) + 2px);
+  transform: translateX(-50%);
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(90deg, var(--pole-2), var(--pole) 45%, var(--pole-2));
+  transition: box-shadow 0.15s, background 0.15s;
+}
+.base {
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  bottom: var(--label-h, 22px);
+  height: var(--base-h, 12px);
+  border-radius: 6px;
+  background: var(--base);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.18);
+}
+.peg-goal .base { background: linear-gradient(180deg, var(--goal), var(--accent-strong)); }
+.peg-num {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--label-h, 22px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+.peg-goal .peg-num { color: var(--goal); }
+.flag { width: 13px; height: 13px; fill: currentColor; }
+
+/* Đang nhấc đĩa: cọc đặt được thì sáng lên */
+.peg.can-drop .pole { background: linear-gradient(90deg, var(--accent-strong), var(--accent) 45%, var(--accent-strong)); box-shadow: 0 0 0 4px var(--accent-soft); }
+.peg.bad .pole, .peg.bad .base { animation: peg-bad 0.45s ease-out; }
+@keyframes peg-bad { 0%, 60% { background: var(--red); } }
+
+/* Đĩa: vị trí bằng transform (app.js), màu theo cỡ */
+.disk {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  pointer-events: none;
+  transition: transform 0.14s ease-out;
+  will-change: transform;
+}
+.disk.held { z-index: 3; }
+.disk.dragging { z-index: 4; transition: none; }
+.board.no-anim .disk { transition: none; }
+.disk-face {
+  display: block;
+  width: 100%;
+  height: calc(100% - 2px);
+  margin-top: 1px;
+  border-radius: calc(var(--dh, 24px) * 0.42);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 48%, rgba(0, 0, 0, 0.16)), var(--c);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.16), 0 2px 3px rgba(17, 20, 45, 0.18);
+  transition: box-shadow 0.15s;
+}
+.disk.held .disk-face, .disk.dragging .disk-face { box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.16), 0 10px 18px rgba(17, 20, 45, 0.3); }
+.disk-face.shake { animation: disk-shake 0.36s ease-in-out; }
+@keyframes disk-shake {
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(2px); }
+}
+.disk[data-size="1"] { --c: #f25f5c; }
+.disk[data-size="2"] { --c: #ff9f40; }
+.disk[data-size="3"] { --c: #f6c945; }
+.disk[data-size="4"] { --c: #5cc96b; }
+.disk[data-size="5"] { --c: #2ec4b6; }
+.disk[data-size="6"] { --c: #4c9bf0; }
+.disk[data-size="7"] { --c: #8b6cff; }
+
+/* ===================== Modal ===================== */
+.win-grid { grid-template-columns: 1fr 1fr; }
+.win-best-cell { grid-column: 1 / -1; }
+.win-min { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+.win-note { font-weight: 600; }
+.win-note.is-best { color: var(--accent); }
+.help-list { margin: 0; padding-left: 1.2em; color: var(--muted); line-height: 1.5; display: flex; flex-direction: column; gap: 6px; }
+.help-list b { color: var(--text); }
+.help-kbd { font-size: 0.88rem; }
+.stats-sub { margin: 0; font-size: 0.95rem; font-weight: 700; }
+
+/* ===================== Màn hình hẹp / thấp ===================== */
+@media (max-width: 420px) {
+  .hud-value { font-size: 1.2rem; }
+  /* Tên tiếng Anh dài hơn: thu chữ để không bị cắt cạnh 4 nút trên thanh trên */
+  .logo { font-size: 1.08rem; letter-spacing: -0.02em; }
+}
+@media (max-height: 560px) {
+  .modebar { min-height: 30px; }
+  .mode-chip { height: 30px; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .disk, .disk-face, .peg, .pole { transition: none; }
+  .disk-face.shake { animation: none; outline: 3px solid var(--red); outline-offset: 1px; }
+}

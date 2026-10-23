@@ -1,0 +1,189 @@
+/* =====================================================================
+ * Đoán Mã - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   Cỡ chốt --p do app.js tính theo chỗ trống (layout()); mọi kích thước bàn chơi theo --p.
+ *   Mỗi màu có ký hiệu riêng (sym-0 … sym-7 trong index.html) để không phụ thuộc vào màu.
+ * ===================================================================== */
+
+/* ===================== Bố cục ===================== */
+.play { width: 100%; height: 100%; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.board-wrap { flex: 1; min-height: 0; min-width: 0; display: flex; align-items: center; justify-content: center; }
+.controls { flex: none; display: flex; flex-direction: column; gap: 8px; }
+
+/* ===================== Bàn chơi ===================== */
+.board { --p: 30px; --per: 10; display: flex; flex-direction: column; align-items: center; gap: calc(var(--p) * 0.3); }
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-rows: repeat(var(--per), calc(var(--p) * 1.3));
+  grid-auto-flow: column;
+  row-gap: calc(var(--p) * 0.12);
+  column-gap: calc(var(--p) * 0.6);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--p) * 0.18);
+  height: calc(var(--p) * 1.3);
+  padding: 0 calc(var(--p) * 0.3);
+  border-radius: calc(var(--p) * 0.42);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+.row.future { background: transparent; box-shadow: inset 0 0 0 1px var(--line); }
+.row.future .peg, .row.future .pin { opacity: 0.55; }
+.row.current { background: var(--surface); box-shadow: 0 0 0 2px var(--accent), var(--shadow-sm); }
+.row.win { box-shadow: 0 0 0 2px var(--green), var(--shadow-sm); }
+.row-num {
+  width: calc(var(--p) * 0.7);
+  flex: none;
+  text-align: right;
+  font-size: calc(var(--p) * 0.4);
+  font-weight: 700;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.row.current .row-num { color: var(--accent); }
+.pegs { display: flex; gap: calc(var(--p) * 0.18); }
+
+/* Hàng mã bí mật: che bằng dấu ?, lộ ra khi ván xong */
+.secret-row { background: var(--surface-2); box-shadow: none; }
+.secret-row.open { background: var(--accent-soft); }
+.lock { width: calc(var(--p) * 0.5); height: calc(var(--p) * 0.5); fill: var(--muted); display: block; margin-left: auto; }
+.pins-spacer { width: calc(var(--p) * 1.25); flex: none; }
+
+/* ===================== Chốt màu ===================== */
+.peg {
+  width: var(--p);
+  height: var(--p);
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background: var(--surface-2);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.14);
+}
+.peg[class*=" c"] {
+  background: radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.55) 0 10%, transparent 46%), var(--peg);
+  box-shadow: inset 0 calc(var(--p) * -0.07) 0 rgba(0, 0, 0, 0.22), 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+.sym { width: 56%; height: 56%; fill: var(--sym); display: block; pointer-events: none; }
+.c0 { --peg: #e5484d; --sym: #ffffff; }
+.c1 { --peg: #f7821b; --sym: #3b1a00; }
+.c2 { --peg: #f5c518; --sym: #3d2f00; }
+.c3 { --peg: #22a35a; --sym: #ffffff; }
+.c4 { --peg: #3b82f6; --sym: #ffffff; }
+.c5 { --peg: #8e4ec6; --sym: #ffffff; }
+.c6 { --peg: #e93d82; --sym: #ffffff; }
+.c7 { --peg: #2ec8de; --sym: #06323a; }
+.peg.hidden {
+  background: linear-gradient(160deg, #474c78, #262a45);
+  color: #d4d7f5;
+  font-weight: 800;
+  font-size: calc(var(--p) * 0.48);
+  box-shadow: inset 0 calc(var(--p) * -0.07) 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Ô ở hàng đang nhập: chạm chốt để xóa; ô trống kế tiếp có viền nhấp nháy */
+.slot { cursor: pointer; }
+.slot.empty { cursor: default; box-shadow: inset 0 0 0 2px var(--line); background: transparent; }
+.slot.empty.next { box-shadow: inset 0 0 0 2px var(--accent); animation: next-pulse 1.4s ease-in-out infinite; }
+@keyframes next-pulse { 50% { box-shadow: inset 0 0 0 2px var(--accent), 0 0 0 4px var(--accent-soft); } }
+.slot.pop { animation: peg-pop 0.2s ease-out; }
+@keyframes peg-pop { from { transform: scale(0.6); } 70% { transform: scale(1.08); } }
+.peg.reveal { animation: peg-reveal 0.45s ease-out backwards; animation-delay: calc(var(--d) * 90ms); }
+@keyframes peg-reveal { from { transform: rotateY(90deg) scale(0.8); } }
+.row.shake { animation: row-shake 0.3s; }
+@keyframes row-shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+/* ===================== Chốt phản hồi ===================== */
+.pins {
+  width: calc(var(--p) * 1.25);
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(var(--pc), calc(var(--p) * 0.3));
+  gap: calc(var(--p) * 0.1);
+  justify-content: center;
+  align-content: center;
+}
+.pin { display: block; width: calc(var(--p) * 0.3); height: calc(var(--p) * 0.3); border-radius: 50%; }
+.pin.none { background: var(--line); transform: scale(0.6); }
+.pin.black { background: var(--text); }
+.pin.white { box-shadow: inset 0 0 0 max(2px, calc(var(--p) * 0.07)) var(--text); }
+.row.scored .pin.black, .row.scored .pin.white { animation: pin-in 0.3s ease-out backwards; animation-delay: calc(var(--d) * 70ms); }
+@keyframes pin-in { from { transform: scale(0); opacity: 0; } }
+
+/* ===================== Bảng màu + nút ===================== */
+.palette { --n: 6; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 6px; }
+.pal {
+  --p: min(36px, 9vw);
+  position: relative;
+  height: 52px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.1s, opacity 0.15s;
+}
+.pal:active:not(:disabled) { transform: scale(0.93); }
+.pal:disabled { opacity: 0.8; }
+.pal.used { opacity: 0.3; }
+.pal-key {
+  position: absolute;
+  top: 3px;
+  right: 6px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--muted);
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .pal-key { display: block; }
+  .pal:hover:not(:disabled) { background: var(--surface-2); }
+}
+.actions { display: grid; grid-template-columns: 1fr 3fr; gap: 8px; }
+.actions .btn { min-height: 48px; font-size: 1.02rem; }
+.btn-back .icon { width: 24px; height: 24px; }
+.btn-submit.ready { box-shadow: 0 0 0 4px var(--accent-soft); }
+
+/* ===================== Hộp thoại ===================== */
+.end-code { --p: 38px; display: flex; gap: 8px; justify-content: center; }
+.end-best { color: var(--accent); font-weight: 700; }
+.legend { --p: 34px; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.legend li { display: flex; align-items: center; gap: 10px; color: var(--muted); line-height: 1.45; }
+.legend b { color: var(--text); }
+.legend-pins {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--surface-2);
+  display: grid;
+  place-items: center;
+  grid-template-columns: auto;
+}
+
+/* Màn hẹp: mode đã hiện ở nhãn Kỷ lục, bỏ huy hiệu cạnh tên game cho tên không bị cắt */
+@media (max-width: 420px) {
+  #mode-badge { display: none; }
+}
+
+/* ===================== Màn hình ngang thấp: bảng màu sang phải ===================== */
+@media (orientation: landscape) and (max-height: 520px) {
+  :root { --app-max: 1000px; }
+  .play { flex-direction: row; gap: 14px; }
+  .controls { width: 232px; justify-content: center; }
+  .palette { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .palette[data-mode="easy"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pal { height: 48px; }
+  .hud-box { padding: 4px 10px 5px; }
+  .hud-value { font-size: 1.15rem; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .slot.empty.next, .slot.pop, .peg.reveal, .row.shake, .row.scored .pin.black, .row.scored .pin.white { animation: none; }
+  .pal { transition: none; }
+}

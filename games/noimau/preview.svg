@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: bàn 5x5, bốn đường lần lượt được vẽ nối các cặp chấm rồi phủ kín bàn.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động. Nền ô xem trước lấy từ preview.bg trong game.json. -->
+  <style>
+    .pipe { fill: none; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 1; animation: draw 6s ease-in-out infinite both; }
+    .p2 { animation-delay: 0.9s; }
+    .p3 { animation-delay: 1.8s; }
+    .p4 { animation-delay: 2.7s; }
+    @keyframes draw {
+      0% { stroke-dashoffset: 1; opacity: 1; }
+      14% { stroke-dashoffset: 0; opacity: 1; }
+      84% { stroke-dashoffset: 0; opacity: 1; }
+      94%, 100% { stroke-dashoffset: 0; opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) { .pipe { animation: none; stroke-dashoffset: 0; } }
+  </style>
+  <rect x="30" y="10" width="100" height="100" rx="10" fill="#ffffff" fill-opacity=".07"/>
+  <path d="M50 10V110M70 10V110M90 10V110M110 10V110M30 30H130M30 50H130M30 70H130M30 90H130" stroke="#ffffff" stroke-opacity=".12" stroke-width="1"/>
+  <path class="pipe" pathLength="1" d="M40 20H120V60" stroke="#ef4444"/>
+  <path class="pipe p2" pathLength="1" d="M40 40V100H60" stroke="#3b82f6"/>
+  <path class="pipe p3" pathLength="1" d="M60 40H100V80H120V100" stroke="#22c55e"/>
+  <path class="pipe p4" pathLength="1" d="M60 80V60H80V100H100" stroke="#facc15"/>
+  <circle cx="40" cy="20" r="7" fill="#ef4444"/>
+  <circle cx="120" cy="60" r="7" fill="#ef4444"/>
+  <circle cx="40" cy="40" r="7" fill="#3b82f6"/>
+  <circle cx="60" cy="100" r="7" fill="#3b82f6"/>
+  <circle cx="60" cy="40" r="7" fill="#22c55e"/>
+  <circle cx="120" cy="100" r="7" fill="#22c55e"/>
+  <circle cx="60" cy="80" r="7" fill="#facc15"/>
+  <circle cx="100" cy="100" r="7" fill="#facc15"/>
+</svg>

@@ -1,0 +1,48 @@
+{
+  "id": "nokhoi",
+  "cat": "puzzle",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Block Pop",
+    "vi": "Nổ Khối"
+  },
+  "sub": {
+    "en": "Pop colour groups",
+    "vi": "Block Pop"
+  },
+  "desc": {
+    "en": "Pop groups of two or more same-coloured blocks; a group of n scores (n − 2)², so let groups grow before you pop. Clear the whole board for a 1000-point bonus.",
+    "vi": "Nổ các nhóm từ 2 khối cùng màu; nhóm n khối được (n − 2)² điểm, nên hãy gom nhóm thật lớn rồi mới nổ. Dọn sạch bàn được thưởng 1000 điểm."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "High score"],
+    "vi": ["Giải đố", "1 người", "Điểm cao"]
+  },
+  "note": {
+    "en": "Bigger groups, far more points",
+    "vi": "Nhóm càng lớn, điểm càng cao"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(77, 141, 255, .3), transparent 60%), linear-gradient(160deg, #1f2a55, #0d1226)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 600
+        },
+        "points": 5
+      }
+    ]
+  }
+}

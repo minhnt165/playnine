@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: 3 đĩa giải trọn 7 nước sang cọc có cờ, lặp lại; tắt khi giảm chuyển động.
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt. -->
+  <style>
+    .d1 { transform: translate(30px, 62px); animation: m1 9s ease-in-out infinite; }
+    @keyframes m1 { 0% { transform: translate(30px, 62px); } 11.11% { transform: translate(30px, 62px); } 14.44% { transform: translate(30px, 22px); } 18% { transform: translate(130px, 22px); } 21.11% { transform: translate(130px, 86px); } 33.33% { transform: translate(130px, 86px); } 36.67% { transform: translate(130px, 22px); } 40.22% { transform: translate(80px, 22px); } 43.33% { transform: translate(80px, 74px); } 55.56% { transform: translate(80px, 74px); } 58.89% { transform: translate(80px, 22px); } 62.44% { transform: translate(30px, 22px); } 65.56% { transform: translate(30px, 86px); } 77.78% { transform: translate(30px, 86px); } 81.11% { transform: translate(30px, 22px); } 84.67% { transform: translate(130px, 22px); } 87.78% { transform: translate(130px, 62px); } 100% { transform: translate(130px, 62px); } }
+    .d2 { transform: translate(30px, 74px); animation: m2 9s ease-in-out infinite; }
+    @keyframes m2 { 0% { transform: translate(30px, 74px); } 22.22% { transform: translate(30px, 74px); } 25.56% { transform: translate(30px, 22px); } 29.11% { transform: translate(80px, 22px); } 32.22% { transform: translate(80px, 86px); } 66.67% { transform: translate(80px, 86px); } 70% { transform: translate(80px, 22px); } 73.56% { transform: translate(130px, 22px); } 76.67% { transform: translate(130px, 74px); } 100% { transform: translate(130px, 74px); } }
+    .d3 { transform: translate(30px, 86px); animation: m3 9s ease-in-out infinite; }
+    @keyframes m3 { 0% { transform: translate(30px, 86px); } 44.44% { transform: translate(30px, 86px); } 47.78% { transform: translate(30px, 22px); } 51.33% { transform: translate(130px, 22px); } 54.44% { transform: translate(130px, 86px); } 100% { transform: translate(130px, 86px); } }
+    @media (prefers-reduced-motion: reduce) { .d { animation: none; } }
+  </style>
+  <g fill="#c7a37c">
+    <rect x="27.5" y="44" width="5" height="56" rx="2.5"/>
+    <rect x="77.5" y="44" width="5" height="56" rx="2.5"/>
+    <rect x="127.5" y="44" width="5" height="56" rx="2.5"/>
+  </g>
+  <rect x="6" y="98" width="48" height="7" rx="3.5" fill="#8f6a47"/>
+  <rect x="56" y="98" width="48" height="7" rx="3.5" fill="#8f6a47"/>
+  <rect x="106" y="98" width="48" height="7" rx="3.5" fill="#8b6cff"/>
+  <path d="M132.5 45h11l-3 4.5 3 4.5h-11z" fill="#8b6cff"/>
+  <g class="d d3"><rect x="-23" y="0" width="46" height="11" rx="5.5" fill="#4c9bf0"/><rect x="-20" y="1.5" width="40" height="3" rx="1.5" fill="#fff" opacity=".4"/></g>
+  <g class="d d2"><rect x="-17" y="0" width="34" height="11" rx="5.5" fill="#f6c945"/><rect x="-14" y="1.5" width="28" height="3" rx="1.5" fill="#fff" opacity=".4"/></g>
+  <g class="d d1"><rect x="-11" y="0" width="22" height="11" rx="5.5" fill="#f25f5c"/><rect x="-8" y="1.5" width="16" height="3" rx="1.5" fill="#fff" opacity=".4"/></g>
+</svg>

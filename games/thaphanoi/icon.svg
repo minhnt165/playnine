@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4a3596"/>
+      <stop offset="1" stop-color="#1d1546"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Cọc + đế -->
+  <rect x="29.5" y="9" width="5" height="44" rx="2.5" fill="#d9b48c"/>
+  <rect x="7" y="50" width="50" height="6" rx="3" fill="#a98058"/>
+  <!-- Ba đĩa: lớn dưới, nhỏ trên -->
+  <rect x="10" y="39" width="44" height="11" rx="5.5" fill="#4c9bf0"/>
+  <rect x="16" y="28" width="32" height="11" rx="5.5" fill="#f6c945"/>
+  <rect x="22" y="17" width="20" height="11" rx="5.5" fill="#f25f5c"/>
+  <g fill="#fff" opacity=".38">
+    <rect x="14" y="41" width="36" height="3" rx="1.5"/>
+    <rect x="20" y="30" width="24" height="3" rx="1.5"/>
+    <rect x="26" y="19" width="12" height="3" rx="1.5"/>
+  </g>
+</svg>
