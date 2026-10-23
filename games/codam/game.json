@@ -1,0 +1,73 @@
+{
+  "id": "codam",
+  "cat": "versus",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Checkers",
+    "vi": "Cờ Đam"
+  },
+  "sub": {
+    "en": "Draughts",
+    "vi": "Checkers"
+  },
+  "desc": {
+    "en": "8x8 checkers with forced captures, multi-jumps and kings. Choose International flying kings or American/English rules; play the computer at 3 levels or two players.",
+    "vi": "Cờ đam 8x8 bắt buộc ăn quân, ăn liên tiếp, lên vua. Chọn luật Quốc tế vua bay hoặc kiểu Mỹ/Anh, đấu máy 3 mức hoặc hai người."
+  },
+  "tags": {
+    "en": [
+      "Strategy",
+      "Vs computer",
+      "2 players"
+    ],
+    "vi": [
+      "Chiến thuật",
+      "Đấu máy",
+      "2 người"
+    ]
+  },
+  "note": {
+    "en": "Guided tutorial on your first game",
+    "vi": "Lần đầu chơi có hướng dẫn"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

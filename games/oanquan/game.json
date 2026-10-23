@@ -1,0 +1,73 @@
+{
+  "id": "oanquan",
+  "cat": "versus",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "O An Quan",
+    "vi": "Ô Ăn Quan"
+  },
+  "sub": {
+    "en": "Vietnamese mancala",
+    "vi": "Trò chơi dân gian"
+  },
+  "desc": {
+    "en": "A Vietnamese folk game: sow stones around the board, capture the citizens and the mandarins. Play the computer at 3 levels or two players on one device.",
+    "vi": "Trò dân gian Việt: rải quân theo vòng, ăn dân, ăn quan. Đấu máy 3 mức hoặc hai người trên cùng máy."
+  },
+  "tags": {
+    "en": [
+      "Folk game",
+      "Vs computer",
+      "2 players"
+    ],
+    "vi": [
+      "Dân gian",
+      "Đấu máy",
+      "2 người"
+    ]
+  },
+  "note": {
+    "en": "Guided tutorial on your first game",
+    "vi": "Lần đầu chơi có hướng dẫn"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

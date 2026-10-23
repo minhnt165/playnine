@@ -1,0 +1,148 @@
+{
+  "id": "ran",
+  "cat": "arcade",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Snake",
+    "vi": "Rắn Săn Mồi"
+  },
+  "sub": {
+    "en": "Classic arcade",
+    "vi": "Snake"
+  },
+  "desc": {
+    "en": "Steer the snake to eat; the more it eats, the longer and faster it gets. Three modes: Classic, Wrap, Maze.",
+    "vi": "Điều khiển rắn ăn mồi, càng ăn càng dài và càng nhanh. Ba chế độ: Cổ điển, Xuyên tường, Mê cung."
+  },
+  "tags": {
+    "en": [
+      "Arcade",
+      "1 player",
+      "Swipe to play"
+    ],
+    "vi": [
+      "Phản xạ",
+      "1 người",
+      "Vuốt để chơi"
+    ]
+  },
+  "note": {
+    "en": "Swipe or use the arrow keys",
+    "vi": "Vuốt hoặc dùng phím mũi tên"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic-slow",
+        "label": {
+          "en": "Classic - Slow",
+          "vi": "Cổ điển - Chậm"
+        },
+        "rules": {
+          "min_duration_ms": 2000,
+          "max_score_per_sec": 50
+        },
+        "points": 4
+      },
+      {
+        "key": "classic-normal",
+        "label": {
+          "en": "Classic - Normal",
+          "vi": "Cổ điển - Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 2000,
+          "max_score_per_sec": 80
+        },
+        "points": 5
+      },
+      {
+        "key": "classic-fast",
+        "label": {
+          "en": "Classic - Fast",
+          "vi": "Cổ điển - Nhanh"
+        },
+        "rules": {
+          "min_duration_ms": 2000,
+          "max_score_per_sec": 120
+        },
+        "points": 7
+      },
+      {
+        "key": "wrap-slow",
+        "label": {
+          "en": "Wrap - Slow",
+          "vi": "Xuyên tường - Chậm"
+        },
+        "rules": {
+          "min_duration_ms": 2000,
+          "max_score_per_sec": 50
+        },
+        "points": 3
+      },
+      {
+        "key": "wrap-normal",
+        "label": {
+          "en": "Wrap - Normal",
+          "vi": "Xuyên tường - Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 2000,
+          "max_score_per_sec": 80
+        },
+        "points": 4
+      },
+      {
+        "key": "wrap-fast",
+        "label": {
+          "en": "Wrap - Fast",
+          "vi": "Xuyên tường - Nhanh"
+        },
+        "rules": {
+          "min_duration_ms": 2000,
+          "max_score_per_sec": 120
+        },
+        "points": 6
+      },
+      {
+        "key": "maze-slow",
+        "label": {
+          "en": "Maze - Slow",
+          "vi": "Mê cung - Chậm"
+        },
+        "rules": {
+          "min_duration_ms": 2000,
+          "max_score_per_sec": 50
+        },
+        "points": 5
+      },
+      {
+        "key": "maze-normal",
+        "label": {
+          "en": "Maze - Normal",
+          "vi": "Mê cung - Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 2000,
+          "max_score_per_sec": 80
+        },
+        "points": 6
+      },
+      {
+        "key": "maze-fast",
+        "label": {
+          "en": "Maze - Fast",
+          "vi": "Mê cung - Nhanh"
+        },
+        "rules": {
+          "min_duration_ms": 2000,
+          "max_score_per_sec": 120
+        },
+        "points": 8
+      }
+    ]
+  }
+}

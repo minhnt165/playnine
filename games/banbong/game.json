@@ -1,0 +1,52 @@
+{
+  "id": "banbong",
+  "cat": "arcade",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Bubble Shooter",
+    "vi": "Bắn Bóng"
+  },
+  "sub": {
+    "en": "Pop and drop",
+    "vi": "Bubble Shooter"
+  },
+  "desc": {
+    "en": "Aim, bounce off the walls and match 3 or more bubbles of the same colour. Cut clusters loose to drop them, clear the board for a big bonus, and keep the rows from reaching the line.",
+    "vi": "Ngắm, nảy tường và ghép từ 3 bóng cùng màu để nổ. Cắt rời cả chùm cho bóng rơi, dọn sạch bàn để nhận thưởng lớn và đừng để bóng chạm vạch."
+  },
+  "tags": {
+    "en": [
+      "Arcade",
+      "1 player",
+      "High score"
+    ],
+    "vi": [
+      "Phản xạ",
+      "1 người",
+      "Kỷ lục"
+    ]
+  },
+  "note": {
+    "en": "Drop whole clusters for bonus points",
+    "vi": "Làm rơi cả chùm bóng để ăn thưởng"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 600
+        },
+        "points": 5
+      }
+    ]
+  }
+}

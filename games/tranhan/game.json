@@ -1,0 +1,77 @@
+{
+  "id": "tranhan",
+  "cat": "puzzle",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Nonogram",
+    "vi": "Tranh Ẩn"
+  },
+  "sub": {
+    "en": "Picture logic puzzle",
+    "vi": "Nonogram"
+  },
+  "desc": {
+    "en": "Fill cells by the number clues on each row and column to reveal a picture. Hand-made sets, random pictures and a daily picture.",
+    "vi": "Tô ô theo gợi ý số ở hàng và cột để lộ ra bức tranh. Có bộ tranh vẽ sẵn, tranh ngẫu nhiên và tranh hằng ngày."
+  },
+  "tags": {
+    "en": [
+      "Puzzle",
+      "1 player",
+      "Daily picture"
+    ],
+    "vi": [
+      "Giải đố",
+      "1 người",
+      "Tranh hằng ngày"
+    ]
+  },
+  "note": {
+    "en": "Solve it to see what the picture is",
+    "vi": "Giải xong mới biết tranh gì"
+  },
+  "daily": {
+    "en": "A new picture every day",
+    "vi": "Mỗi ngày một bức tranh mới"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "wins",
+    "points": 10,
+    "modes": [
+      {
+        "key": "s5",
+        "label": {
+          "en": "5 ships",
+          "vi": "5 tàu"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 5
+      },
+      {
+        "key": "s10",
+        "label": {
+          "en": "10 ships",
+          "vi": "10 tàu"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 10
+      },
+      {
+        "key": "s15",
+        "label": {
+          "en": "15 ships",
+          "vi": "15 tàu"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 15
+      }
+    ]
+  }
+}

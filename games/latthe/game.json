@@ -1,0 +1,75 @@
+{
+  "id": "latthe",
+  "cat": "puzzle",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Memory Match",
+    "vi": "Lật Thẻ"
+  },
+  "sub": {
+    "en": "Find the pairs",
+    "vi": "Memory Match"
+  },
+  "desc": {
+    "en": "Flip two cards at a time and find every matching pair of Vietnamese icons. Three board sizes, a timer from the first flip and a best time for each.",
+    "vi": "Mỗi lượt lật hai thẻ, tìm hết các cặp hình mang chất Việt. Ba cỡ bàn, đồng hồ chạy từ lần lật đầu và kỷ lục riêng cho từng mức."
+  },
+  "tags": {
+    "en": [
+      "Puzzle",
+      "1 player",
+      "Memory",
+      "Fastest time"
+    ],
+    "vi": [
+      "Giải đố",
+      "1 người",
+      "Trí nhớ",
+      "Thi tốc độ"
+    ]
+  },
+  "note": {
+    "en": "The Easy board has just 6 pairs",
+    "vi": "Bàn Dễ chỉ có 6 cặp"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "time_low",
+    "points": 5,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_time_ms": 1500
+        },
+        "points": 3
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_time_ms": 2500
+        },
+        "points": 5
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_time_ms": 5000
+        },
+        "points": 8
+      }
+    ]
+  }
+}

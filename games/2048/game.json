@@ -1,0 +1,76 @@
+{
+  "id": "2048",
+  "cat": "puzzle",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "2048",
+    "vi": "2048"
+  },
+  "sub": {
+    "en": "Merge the tiles",
+    "vi": "Gộp số"
+  },
+  "desc": {
+    "en": "Swipe to merge matching tiles and reach the 2048 tile. With undo and board sizes from 3x3 to 5x5.",
+    "vi": "Vuốt để gộp các ô cùng số, chạm tới ô 2048. Có hoàn tác và chọn cỡ bàn từ 3x3 đến 5x5."
+  },
+  "tags": {
+    "en": [
+      "Puzzle",
+      "1 player",
+      "Quick play"
+    ],
+    "vi": [
+      "Giải đố",
+      "1 người",
+      "Chơi nhanh"
+    ]
+  },
+  "note": {
+    "en": "Swipe or use the arrow keys",
+    "vi": "Vuốt hoặc dùng phím mũi tên"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "3x3",
+        "label": {
+          "en": "3x3",
+          "vi": "3x3"
+        },
+        "rules": {
+          "min_duration_ms": 2000,
+          "max_score_per_sec": 2000
+        },
+        "points": 4
+      },
+      {
+        "key": "4x4",
+        "label": {
+          "en": "4x4",
+          "vi": "4x4"
+        },
+        "rules": {
+          "min_duration_ms": 2000,
+          "max_score_per_sec": 2000
+        },
+        "points": 5
+      },
+      {
+        "key": "5x5",
+        "label": {
+          "en": "5x5",
+          "vi": "5x5"
+        },
+        "rules": {
+          "min_duration_ms": 2000,
+          "max_score_per_sec": 3000
+        },
+        "points": 6
+      }
+    ]
+  }
+}

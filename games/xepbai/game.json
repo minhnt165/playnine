@@ -1,0 +1,77 @@
+{
+  "id": "xepbai",
+  "cat": "puzzle",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Solitaire",
+    "vi": "Xếp Bài"
+  },
+  "sub": {
+    "en": "Klondike",
+    "vi": "Solitaire"
+  },
+  "desc": {
+    "en": "Build all 52 cards onto the four foundations from A to K. Draw 1 or 3, drag or tap to move, unlimited undo.",
+    "vi": "Xếp 52 lá lên bốn ô đích từ A đến K. Rút 1 hoặc 3 lá, kéo thả hoặc chạm để đi, đi lại không giới hạn."
+  },
+  "tags": {
+    "en": [
+      "Puzzle",
+      "1 player",
+      "Daily deal"
+    ],
+    "vi": [
+      "Giải đố",
+      "1 người",
+      "Ván hằng ngày"
+    ]
+  },
+  "note": {
+    "en": "Tap a card and it finds its own spot",
+    "vi": "Chạm một lá để nó tự tìm chỗ"
+  },
+  "daily": {
+    "en": "One shared deal for everyone",
+    "vi": "Một ván chia chung cho mọi người"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "wins",
+    "points": 10,
+    "modes": [
+      {
+        "key": "draw1",
+        "label": {
+          "en": "Draw 1",
+          "vi": "Rút 1"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 8
+      },
+      {
+        "key": "draw3",
+        "label": {
+          "en": "Draw 3",
+          "vi": "Rút 3"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 12
+      },
+      {
+        "key": "daily",
+        "label": {
+          "en": "Daily",
+          "vi": "Hằng ngày"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 10
+      }
+    ]
+  }
+}

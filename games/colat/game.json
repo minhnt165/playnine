@@ -1,0 +1,73 @@
+{
+  "id": "colat",
+  "cat": "versus",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Reversi",
+    "vi": "Cờ Lật"
+  },
+  "sub": {
+    "en": "Flip to win",
+    "vi": "Reversi"
+  },
+  "desc": {
+    "en": "Place a disc to sandwich your opponent’s discs and flip them to your color, on an 8x8 board. Play the computer at 3 levels or two players on one device.",
+    "vi": "Đặt quân kẹp quân đối thủ để lật sang màu mình, bàn 8x8. Đấu máy 3 mức hoặc hai người trên cùng máy."
+  },
+  "tags": {
+    "en": [
+      "Strategy",
+      "Vs computer",
+      "2 players"
+    ],
+    "vi": [
+      "Chiến thuật",
+      "Đấu máy",
+      "2 người"
+    ]
+  },
+  "note": {
+    "en": "Guided tutorial on your first game",
+    "vi": "Lần đầu chơi có hướng dẫn"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

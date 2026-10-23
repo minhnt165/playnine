@@ -1,0 +1,51 @@
+{
+  "id": "noihinh",
+  "cat": "puzzle",
+  "addedAt": "2026-10-21",
+  "name": {
+    "en": "Tile Match",
+    "vi": "Nối Hình"
+  },
+  "sub": {
+    "en": "Match three",
+    "vi": "Tile Match"
+  },
+  "desc": {
+    "en": "Tap uncovered tiles to drop them into a 7-slot tray; three of a kind clear. Clear the layered board before the tray fills up, with Take out, Undo and Shuffle.",
+    "vi": "Chạm ô không bị che để đưa xuống khay 7 chỗ, đủ 3 hình giống nhau thì biến mất. Dọn sạch bàn nhiều lớp trước khi khay đầy, có Lấy ra, Hoàn tác và Xáo trộn."
+  },
+  "tags": {
+    "en": [
+      "Puzzle",
+      "1 player",
+      "Levels"
+    ],
+    "vi": [
+      "Giải đố",
+      "1 người",
+      "Qua màn"
+    ]
+  },
+  "note": {
+    "en": "Every level can be cleared",
+    "vi": "Cấp độ nào cũng có cách giải"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "wins",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 2000
+        },
+        "points": 5
+      }
+    ]
+  }
+}

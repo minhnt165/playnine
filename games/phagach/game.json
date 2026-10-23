@@ -1,0 +1,52 @@
+{
+  "id": "phagach",
+  "cat": "arcade",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Brick Breaker",
+    "vi": "Phá Gạch"
+  },
+  "sub": {
+    "en": "Arcade",
+    "vi": "Brick Breaker"
+  },
+  "desc": {
+    "en": "Bounce the ball off the paddle and break every wall of bricks across 10 levels. With tough bricks, steel bricks and 5 power-ups.",
+    "vi": "Đỡ bóng bằng thanh trượt, phá hết tường gạch qua 10 màn. Có gạch cứng, gạch thép và 5 loại vật phẩm."
+  },
+  "tags": {
+    "en": [
+      "Arcade",
+      "1 player",
+      "High score"
+    ],
+    "vi": [
+      "Phản xạ",
+      "1 người",
+      "Kỷ lục"
+    ]
+  },
+  "note": {
+    "en": "Break bricks back to back to multiply your score",
+    "vi": "Đập gạch liên tiếp để nhân điểm"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "default",
+        "label": {
+          "en": "Default",
+          "vi": "Mặc định"
+        },
+        "rules": {
+          "min_duration_ms": 2000,
+          "max_score_per_sec": 2000
+        },
+        "points": 5
+      }
+    ]
+  }
+}

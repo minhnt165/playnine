@@ -29,6 +29,7 @@ export default defineConfig({
   },
   plugins: [react(), serveGames(repoRoot)],
   // Tránh 5173 (máy dev đang có app khác chiếm); strictPort để không tự nhảy port, vì Redirect URL của Supabase Auth gắn với port này.
-  server: { port: 5180, strictPort: true },
+  // fs.allow: danh mục game nạp games/*/game.json và games/order.json nằm ngoài portal/.
+  server: { port: 5180, strictPort: true, fs: { allow: [repoRoot] } },
   test: { environment: 'jsdom', setupFiles: ['src/test-setup.ts'] },
 })

@@ -1,0 +1,73 @@
+{
+  "id": "truotso",
+  "cat": "puzzle",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Sliding Puzzle",
+    "vi": "Trượt Số"
+  },
+  "sub": {
+    "en": "15-puzzle",
+    "vi": "Sliding Puzzle"
+  },
+  "desc": {
+    "en": "Slide the numbered tiles back into order with the gap in the bottom corner. Tap a tile to slide a whole row or column, swipe or use the arrow keys. 3x3, 4x4 and 5x5 boards, ranked by fastest time.",
+    "vi": "Trượt các ô số về đúng thứ tự, chỗ trống ở góc dưới phải. Chạm một ô để trượt cả hàng hoặc cột, vuốt hoặc dùng phím mũi tên. Bàn 3x3, 4x4, 5x5, xếp hạng theo thời gian nhanh nhất."
+  },
+  "tags": {
+    "en": [
+      "Puzzle",
+      "1 player",
+      "Speed"
+    ],
+    "vi": [
+      "Giải đố",
+      "1 người",
+      "Tốc độ"
+    ]
+  },
+  "note": {
+    "en": "Every board can be solved",
+    "vi": "Bàn nào cũng giải được"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "time_low",
+    "points": 5,
+    "modes": [
+      {
+        "key": "3x3",
+        "label": {
+          "en": "3x3",
+          "vi": "3x3"
+        },
+        "rules": {
+          "min_time_ms": 1000
+        },
+        "points": 3
+      },
+      {
+        "key": "4x4",
+        "label": {
+          "en": "4x4",
+          "vi": "4x4"
+        },
+        "rules": {
+          "min_time_ms": 3000
+        },
+        "points": 6
+      },
+      {
+        "key": "5x5",
+        "label": {
+          "en": "5x5",
+          "vi": "5x5"
+        },
+        "rules": {
+          "min_time_ms": 8000
+        },
+        "points": 10
+      }
+    ]
+  }
+}

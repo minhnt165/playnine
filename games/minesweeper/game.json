@@ -1,0 +1,88 @@
+{
+  "id": "minesweeper",
+  "cat": "puzzle",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Minesweeper",
+    "vi": "Dò Mìn"
+  },
+  "sub": {
+    "en": "Classic puzzle",
+    "vi": "Minesweeper"
+  },
+  "desc": {
+    "en": "Open every safe cell without hitting a mine. The first move is always safe, long-press to flag, and there is a daily board.",
+    "vi": "Mở hết ô an toàn mà không đạp mìn. Nước đầu luôn an toàn, nhấn giữ để cắm cờ, có ván hằng ngày."
+  },
+  "tags": {
+    "en": [
+      "Puzzle",
+      "1 player",
+      "Daily puzzle"
+    ],
+    "vi": [
+      "Giải đố",
+      "1 người",
+      "Ván hằng ngày"
+    ]
+  },
+  "note": {
+    "en": "The Easy 9x9 board has only 10 mines",
+    "vi": "Bàn Dễ 9x9 chỉ có 10 quả mìn"
+  },
+  "daily": {
+    "en": "One shared board for everyone",
+    "vi": "Một bàn chung cho mọi người"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "time_low",
+    "points": 5,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_time_ms": 800
+        },
+        "points": 3
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_time_ms": 3000
+        },
+        "points": 6
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_time_ms": 8000
+        },
+        "points": 10
+      },
+      {
+        "key": "daily",
+        "label": {
+          "en": "Daily",
+          "vi": "Hằng ngày"
+        },
+        "rules": {
+          "min_time_ms": 800
+        },
+        "points": 8
+      }
+    ]
+  }
+}

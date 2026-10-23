@@ -1,0 +1,73 @@
+{
+  "id": "caro",
+  "cat": "versus",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Gomoku",
+    "vi": "Cờ Caro"
+  },
+  "sub": {
+    "en": "Five in a row",
+    "vi": "Gomoku"
+  },
+  "desc": {
+    "en": "Get five in a row to win, with the blocked-ends rule. Play the computer at 3 levels or two players on one device.",
+    "vi": "Năm quân liền hàng là thắng, có luật chặn hai đầu. Đấu máy 3 mức hoặc hai người trên cùng máy."
+  },
+  "tags": {
+    "en": [
+      "Versus",
+      "Vs computer",
+      "2 players"
+    ],
+    "vi": [
+      "Đối kháng",
+      "Đấu máy",
+      "2 người"
+    ]
+  },
+  "note": {
+    "en": "15x15 board · blocked-ends rule",
+    "vi": "Bàn 15x15 · luật chặn hai đầu"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "id": "sudoku",
+  "cat": "puzzle",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Sudoku",
+    "vi": "Sudoku"
+  },
+  "sub": {
+    "en": "Number puzzle",
+    "vi": "Sudoku"
+  },
+  "desc": {
+    "en": "Fill the 9x9 grid with 1–9. Every puzzle has exactly one solution, rated by solving technique, with hints that explain themselves.",
+    "vi": "Điền số 1–9 vào lưới 9x9. Đề luôn có một nghiệm, chấm độ khó theo kỹ thuật suy luận, gợi ý có giải thích."
+  },
+  "tags": {
+    "en": [
+      "Puzzle",
+      "1 player",
+      "5 difficulties",
+      "Daily puzzle"
+    ],
+    "vi": [
+      "Giải đố",
+      "1 người",
+      "5 độ khó",
+      "Ván hằng ngày"
+    ]
+  },
+  "keepAlive": false,
+  "sdk": true,
+  "server": {
+    "metric": "time_low",
+    "points": 10,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_time_ms": 10000
+        },
+        "points": 5
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_time_ms": 15000
+        },
+        "points": 8
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_time_ms": 20000
+        },
+        "points": 12
+      },
+      {
+        "key": "expert",
+        "label": {
+          "en": "Expert",
+          "vi": "Chuyên gia"
+        },
+        "rules": {
+          "min_time_ms": 25000
+        },
+        "points": 16
+      },
+      {
+        "key": "extreme",
+        "label": {
+          "en": "Extreme",
+          "vi": "Cực khó"
+        },
+        "rules": {
+          "min_time_ms": 30000
+        },
+        "points": 20
+      },
+      {
+        "key": "daily",
+        "label": {
+          "en": "Daily",
+          "vi": "Hằng ngày"
+        },
+        "rules": {
+          "min_time_ms": 10000
+        },
+        "points": 10
+      }
+    ]
+  }
+}

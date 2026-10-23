@@ -1,0 +1,76 @@
+{
+  "id": "xepgach",
+  "cat": "arcade",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Falling Blocks",
+    "vi": "Xếp Gạch"
+  },
+  "sub": {
+    "en": "Clear the lines",
+    "vi": "Falling Blocks"
+  },
+  "desc": {
+    "en": "Rotate and drop blocks to complete lines. With hold, ghost piece, a 3-piece preview and touch controls.",
+    "vi": "Xoay và thả khối cho kín hàng. Có giữ khối, bóng rơi, xem trước 3 khối và nút bấm cảm ứng."
+  },
+  "tags": {
+    "en": [
+      "Arcade",
+      "1 player",
+      "High score"
+    ],
+    "vi": [
+      "Phản xạ",
+      "1 người",
+      "Kỷ lục"
+    ]
+  },
+  "note": {
+    "en": "Clear 4 lines at once for a big score",
+    "vi": "Xếp kín 4 hàng một lúc để ăn đậm"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "lv1",
+        "label": {
+          "en": "Level 1",
+          "vi": "Cấp 1"
+        },
+        "rules": {
+          "min_duration_ms": 3000,
+          "max_score_per_sec": 2000
+        },
+        "points": 4
+      },
+      {
+        "key": "lv5",
+        "label": {
+          "en": "Level 5",
+          "vi": "Cấp 5"
+        },
+        "rules": {
+          "min_duration_ms": 3000,
+          "max_score_per_sec": 4000
+        },
+        "points": 6
+      },
+      {
+        "key": "lv10",
+        "label": {
+          "en": "Level 10",
+          "vi": "Cấp 10"
+        },
+        "rules": {
+          "min_duration_ms": 3000,
+          "max_score_per_sec": 8000
+        },
+        "points": 8
+      }
+    ]
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "id": "coganh",
+  "cat": "versus",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Co Ganh",
+    "vi": "Cờ Gánh"
+  },
+  "sub": {
+    "en": "Vietnamese folk strategy",
+    "vi": "Trò chơi dân gian"
+  },
+  "desc": {
+    "en": "A Vietnamese folk game on a 5x5 board: slip between two pieces to carry them, surround to trap, and win by converting every enemy piece.",
+    "vi": "Cờ dân gian Việt trên bàn 5x5: chen vào giữa để gánh, bao kín để vây, đổi màu hết quân đối thủ là thắng."
+  },
+  "tags": {
+    "en": [
+      "Folk game",
+      "Vs computer",
+      "2 players"
+    ],
+    "vi": [
+      "Dân gian",
+      "Đấu máy",
+      "2 người"
+    ]
+  },
+  "note": {
+    "en": "Guided tutorial on your first game",
+    "vi": "Lần đầu chơi có hướng dẫn"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

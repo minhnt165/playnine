@@ -1,0 +1,73 @@
+{
+  "id": "co9o",
+  "cat": "versus",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Ultimate Tic-Tac-Toe",
+    "vi": "Cờ 9 Ô"
+  },
+  "sub": {
+    "en": "Nine boards in one",
+    "vi": "Ultimate Tic-Tac-Toe"
+  },
+  "desc": {
+    "en": "Nine 3x3 tic-tac-toe boards inside one big board. The cell you play decides which board your opponent must play next.",
+    "vi": "Chín bàn ca-rô 3x3 lồng trong một bàn lớn. Ô bạn đánh quyết định bàn nào đối thủ phải đi tiếp."
+  },
+  "tags": {
+    "en": [
+      "PlayNine original",
+      "Vs computer",
+      "2 players"
+    ],
+    "vi": [
+      "Đặc sản PlayNine",
+      "Đấu máy",
+      "2 người"
+    ]
+  },
+  "note": {
+    "en": "Guided tutorial on your first game",
+    "vi": "Lần đầu chơi có hướng dẫn"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

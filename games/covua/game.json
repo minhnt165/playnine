@@ -1,0 +1,73 @@
+{
+  "id": "covua",
+  "cat": "versus",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Chess",
+    "vi": "Cờ Vua"
+  },
+  "sub": {
+    "en": "Classic strategy",
+    "vi": "Chess"
+  },
+  "desc": {
+    "en": "Chess with full rules: castling, en passant, promotion. Play the computer at 3 levels or two players on one device.",
+    "vi": "Cờ quốc tế luật đầy đủ: nhập thành, bắt tốt qua đường, phong cấp. Đấu máy 3 mức hoặc hai người trên cùng máy."
+  },
+  "tags": {
+    "en": [
+      "Strategy",
+      "Vs computer",
+      "2 players"
+    ],
+    "vi": [
+      "Chiến thuật",
+      "Đấu máy",
+      "2 người"
+    ]
+  },
+  "note": {
+    "en": "Tap or drag pieces · tutorial included",
+    "vi": "Chạm hoặc kéo thả quân · có hướng dẫn"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

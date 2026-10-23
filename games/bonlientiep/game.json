@@ -1,0 +1,73 @@
+{
+  "id": "bonlientiep",
+  "cat": "versus",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Four in a Row",
+    "vi": "Bốn Liên Tiếp"
+  },
+  "sub": {
+    "en": "Drop and connect",
+    "vi": "Four in a Row"
+  },
+  "desc": {
+    "en": "Drop discs into a 7-column board; the first to line up 4 horizontally, vertically or diagonally wins. Play the computer at 3 levels or two players.",
+    "vi": "Thả quân vào bàn 7 cột, ai xếp được 4 quân liền hàng ngang, dọc hoặc chéo trước là thắng. Đấu máy 3 mức hoặc hai người."
+  },
+  "tags": {
+    "en": [
+      "Versus",
+      "Vs computer",
+      "2 players"
+    ],
+    "vi": [
+      "Đối kháng",
+      "Đấu máy",
+      "2 người"
+    ]
+  },
+  "note": {
+    "en": "A game takes just a few minutes",
+    "vi": "Ván nhanh chừng vài phút"
+  },
+  "sdk": true,
+  "server": {
+    "metric": "wins",
+    "points": 10,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 6
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 10
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 16
+      }
+    ]
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "id": "xiangqi",
+  "cat": "versus",
+  "addedAt": "2026-10-20",
+  "name": {
+    "en": "Xiangqi",
+    "vi": "Cờ Tướng"
+  },
+  "sub": {
+    "en": "Chinese chess",
+    "vi": "Xiangqi"
+  },
+  "desc": {
+    "en": "Chinese chess with full rules, including perpetual check and repetition. Play the computer at 3 levels or two players on one device, and replay your games.",
+    "vi": "Cờ tướng luật đầy đủ, kể cả chiếu mãi và lặp thế. Đấu máy 3 mức hoặc hai người trên cùng máy, xem lại ván."
+  },
+  "tags": {
+    "en": [
+      "Strategy",
+      "Vs computer",
+      "2 players"
+    ],
+    "vi": [
+      "Chiến thuật",
+      "Đấu máy",
+      "2 người"
+    ]
+  },
+  "keepAlive": true,
+  "sdk": true,
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 25
+      }
+    ]
+  }
+}
