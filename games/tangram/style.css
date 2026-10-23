@@ -1,0 +1,195 @@
+/* =====================================================================
+ * Tangram - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bàn là SVG theo đơn vị lưới (1 đơn vị = cạnh hình vuông); kích thước nét vẽ tính theo đơn vị đó
+ *   - Màu 7 mảnh: --p0..--p6 (L L M S S Q P); hình bóng: --sil; khay: --tray
+ *   - Màn thấp nằm ngang (điện thoại xoay ngang): thanh công cụ dựng đứng bên phải bàn
+ * ===================================================================== */
+:root {
+  --app-max: 1000px;
+  --sil: #2e3354;
+  --tray: rgba(106, 76, 245, 0.06);
+  --dot: rgba(17, 20, 45, 0.18);
+  --edge: rgba(17, 20, 45, 0.35);
+  --sel: #14162b;
+  --p0: #f25f5c;
+  --p1: #ff9f43;
+  --p2: #f6c945;
+  --p3: #3ec28f;
+  --p4: #2bb3c0;
+  --p5: #4c7bf0;
+  --p6: #9b6cff;
+  --gold: #d99a00;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sil: #343b63;
+    --tray: rgba(139, 108, 255, 0.07);
+    --dot: rgba(255, 255, 255, 0.16);
+    --edge: rgba(0, 0, 0, 0.45);
+    --sel: #ffffff;
+    --gold: #f6c945;
+  }
+}
+:root[data-theme="dark"] {
+  --sil: #343b63;
+  --tray: rgba(139, 108, 255, 0.07);
+  --dot: rgba(255, 255, 255, 0.16);
+  --edge: rgba(0, 0, 0, 0.45);
+  --sel: #ffffff;
+  --gold: #f6c945;
+}
+
+/* Ô tên màn trong HUD: bấm để chọn màn */
+.hud { grid-template-columns: 1.6fr 1fr 1fr; grid-auto-flow: row; }
+.hud-puzzle { display: flex; flex-direction: column; align-items: flex-start; text-align: left; font: inherit; color: inherit; }
+.hud-puzzle .hud-value { font-size: 1.1rem; line-height: 1.4; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+@media (hover: hover) {
+  .hud-puzzle:hover { background: var(--surface-2); }
+}
+
+/* ===================== Bàn chơi ===================== */
+.play { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.stage { flex: 1; min-height: 0; }
+.board {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: visible;
+}
+.board:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 12px; }
+.tray { fill: var(--tray); }
+.dot { fill: var(--dot); }
+.board.no-grid .grid { display: none; }
+.sil { fill: var(--sil); stroke: var(--sil); stroke-width: 0.05; stroke-linejoin: round; }
+
+.piece { cursor: grab; }
+.piece-shape { stroke: var(--edge); stroke-width: 0.03; stroke-linejoin: round; }
+.p0 > .piece-shape, polygon.p0 { fill: var(--p0); }
+.p1 > .piece-shape, polygon.p1 { fill: var(--p1); }
+.p2 > .piece-shape, polygon.p2 { fill: var(--p2); }
+.p3 > .piece-shape, polygon.p3 { fill: var(--p3); }
+.p4 > .piece-shape, polygon.p4 { fill: var(--p4); }
+.p5 > .piece-shape, polygon.p5 { fill: var(--p5); }
+.p6 > .piece-shape, polygon.p6 { fill: var(--p6); }
+.piece.sel > .piece-shape { stroke: var(--sel); stroke-width: 0.07; }
+.piece.dragging { cursor: grabbing; opacity: 0.9; }
+.piece.locked { cursor: default; }
+.piece.locked > .piece-shape { stroke: var(--sel); stroke-width: 0.04; stroke-dasharray: 0.14 0.09; }
+.piece.anim { transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.3, 1.15); }
+/* Giải xong: các mảnh liền thành một hình, nháy nhẹ */
+.board.won .piece { cursor: pointer; }
+.board.won .piece-shape { stroke: rgba(255, 255, 255, 0.55); stroke-width: 0.02; stroke-dasharray: none; }
+.board.won .pieces { animation: solved-pulse 0.7s ease-out; transform-origin: 0 0; }
+@keyframes solved-pulse {
+  40% { transform: scale(1.04); }
+}
+
+/* ===================== Thanh công cụ ===================== */
+.toolbar { flex: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.tool {
+  min-height: 46px;
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0 6px;
+  transition: background 0.15s, transform 0.1s;
+}
+.tool .icon { width: 20px; height: 20px; color: var(--accent); }
+.tool:active:not(:disabled) { transform: scale(0.96); }
+.tool span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (hover: hover) {
+  .tool:hover:not(:disabled) { background: var(--surface-2); }
+}
+@media (max-width: 380px) {
+  .tool { flex-direction: column; gap: 1px; font-size: 0.72rem; min-height: 48px; }
+}
+
+/* Điện thoại xoay ngang / cửa sổ thấp: thanh công cụ đứng bên phải, HUD gọn */
+@media (max-height: 520px) and (min-aspect-ratio: 4/3) {
+  .play { flex-direction: row; }
+  .toolbar { grid-template-columns: 1fr; grid-auto-rows: 1fr; width: 92px; }
+  .tool { flex-direction: column; gap: 2px; font-size: 0.75rem; min-height: 0; }
+  .hud-box { padding: 4px 10px 5px; }
+  .hud-value, .hud-puzzle .hud-value { font-size: 1rem; line-height: 1.2; }
+  .hud-label { font-size: 0.62rem; }
+  .btn-icon { width: 36px; height: 36px; }
+  .brand-mark { width: 30px; height: 30px; }
+}
+
+/* ===================== Hướng dẫn ===================== */
+.help-list { margin: 0; padding-left: 20px; color: var(--muted); line-height: 1.5; display: flex; flex-direction: column; gap: 6px; }
+.help-list b { color: var(--text); }
+@media (hover: none) and (pointer: coarse) {
+  .help-keys-row { display: none; }
+}
+
+/* ===================== Thắng ===================== */
+.win-figure { display: flex; justify-content: center; }
+.win-figure svg { width: 180px; height: 140px; }
+.win-figure .piece-shape { stroke: rgba(255, 255, 255, 0.6); stroke-width: 0.03; }
+.win-line { text-align: center; }
+.win-line b { color: var(--text); font-variant-numeric: tabular-nums; }
+.win-note { text-align: center; color: var(--accent); font-weight: 700; }
+
+/* ===================== Chọn màn ===================== */
+.levels-card { max-width: 680px; }
+.levels-count { font-weight: 700; color: var(--muted); font-size: 0.9rem; }
+.levels { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; min-height: 0; }
+.levels-cat { margin: 6px 0 2px; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.levels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 8px; }
+.level {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px 7px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: var(--muted);
+  transition: background 0.15s, transform 0.1s;
+}
+.level:active { transform: scale(0.97); }
+.level-fig { width: 56px; height: 56px; display: block; }
+.level-fig polygon { fill: currentColor; stroke: currentColor; stroke-width: 0.06; stroke-linejoin: round; }
+.level-name { font-size: 0.74rem; font-weight: 700; color: var(--text); text-align: center; line-height: 1.2; }
+.level.solved { color: var(--accent); }
+.level.solved .level-mark {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--green);
+}
+.level.solved .level-mark::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 3px;
+  width: 4px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.level.hinted .level-mark { background: var(--gold); }
+.level.current { box-shadow: inset 0 0 0 2px var(--accent); }
+@media (hover: hover) {
+  .level:hover { background: var(--accent-soft); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .piece.anim, .tool, .level { transition: none; }
+  .board.won .pieces { animation: none; }
+}

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: bảy mảnh lần lượt bay vào lấp kín hình con cá, lặp lại; tắt khi giảm chuyển động.
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt. -->
+  <style>
+    .pc { transform-box: fill-box; transform-origin: center; stroke: rgba(10, 12, 30, 0.45); stroke-width: 0.8; stroke-linejoin: round; }
+    .k0 { animation: m0 8s ease-in-out infinite; }
+    @keyframes m0 { 0% { transform: translate(-30px,38px) rotate(-45deg); opacity: 0; } 4% { transform: translate(-30px,38px) rotate(-45deg); opacity: 1; } 6% { transform: translate(-30px,38px) rotate(-45deg); } 14% { transform: none; } 88% { transform: none; opacity: 1; } 96% { transform: none; opacity: 0; } 100% { transform: translate(-30px,38px) rotate(-45deg); opacity: 0; } }
+    .k1 { animation: m1 8s ease-in-out infinite; }
+    @keyframes m1 { 0% { transform: translate(34px,40px) rotate(90deg); opacity: 0; } 4% { transform: translate(34px,40px) rotate(90deg); opacity: 1; } 16% { transform: translate(34px,40px) rotate(90deg); } 24% { transform: none; } 88% { transform: none; opacity: 1; } 96% { transform: none; opacity: 0; } 100% { transform: translate(34px,40px) rotate(90deg); opacity: 0; } }
+    .k2 { animation: m2 8s ease-in-out infinite; }
+    @keyframes m2 { 0% { transform: translate(-44px,-36px) rotate(45deg); opacity: 0; } 4% { transform: translate(-44px,-36px) rotate(45deg); opacity: 1; } 26% { transform: translate(-44px,-36px) rotate(45deg); } 34% { transform: none; } 88% { transform: none; opacity: 1; } 96% { transform: none; opacity: 0; } 100% { transform: translate(-44px,-36px) rotate(45deg); opacity: 0; } }
+    .k3 { animation: m3 8s ease-in-out infinite; }
+    @keyframes m3 { 0% { transform: translate(44px,-38px) rotate(-90deg); opacity: 0; } 4% { transform: translate(44px,-38px) rotate(-90deg); opacity: 1; } 36% { transform: translate(44px,-38px) rotate(-90deg); } 44% { transform: none; } 88% { transform: none; opacity: 1; } 96% { transform: none; opacity: 0; } 100% { transform: translate(44px,-38px) rotate(-90deg); opacity: 0; } }
+    .k4 { animation: m4 8s ease-in-out infinite; }
+    @keyframes m4 { 0% { transform: translate(-12px,44px) rotate(135deg); opacity: 0; } 4% { transform: translate(-12px,44px) rotate(135deg); opacity: 1; } 46% { transform: translate(-12px,44px) rotate(135deg); } 54% { transform: none; } 88% { transform: none; opacity: 1; } 96% { transform: none; opacity: 0; } 100% { transform: translate(-12px,44px) rotate(135deg); opacity: 0; } }
+    .k5 { animation: m5 8s ease-in-out infinite; }
+    @keyframes m5 { 0% { transform: translate(50px,8px) rotate(45deg); opacity: 0; } 4% { transform: translate(50px,8px) rotate(45deg); opacity: 1; } 56% { transform: translate(50px,8px) rotate(45deg); } 64% { transform: none; } 88% { transform: none; opacity: 1; } 96% { transform: none; opacity: 0; } 100% { transform: translate(50px,8px) rotate(45deg); opacity: 0; } }
+    .k6 { animation: m6 8s ease-in-out infinite; }
+    @keyframes m6 { 0% { transform: translate(-50px,4px) rotate(-45deg); opacity: 0; } 4% { transform: translate(-50px,4px) rotate(-45deg); opacity: 1; } 66% { transform: translate(-50px,4px) rotate(-45deg); } 74% { transform: none; } 88% { transform: none; opacity: 1; } 96% { transform: none; opacity: 0; } 100% { transform: translate(-50px,4px) rotate(-45deg); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .pc { animation: none; } }
+  </style>
+  <g fill="rgba(255,255,255,0.16)" stroke="rgba(255,255,255,0.16)" stroke-width="1.2" stroke-linejoin="round"><polygon points="69,27 69,71 25,71"/><polygon points="69,27 113,71 69,71"/><polygon points="135,49 135,93 113,71"/><polygon points="47,71 69,71 69,93"/><polygon points="91,71 113,71 91,93"/><polygon points="69,71 91,71 91,93 69,93"/><polygon points="25,71 47,71 69,93 47,93"/></g>
+  <polygon class="pc k0" points="69,27 69,71 25,71" fill="#f25f5c"/>
+  <polygon class="pc k1" points="69,27 113,71 69,71" fill="#ff9f43"/>
+  <polygon class="pc k2" points="135,49 135,93 113,71" fill="#f6c945"/>
+  <polygon class="pc k3" points="47,71 69,71 69,93" fill="#3ec28f"/>
+  <polygon class="pc k4" points="91,71 113,71 91,93" fill="#2bb3c0"/>
+  <polygon class="pc k5" points="69,71 91,71 91,93 69,93" fill="#4c7bf0"/>
+  <polygon class="pc k6" points="25,71 47,71 69,93 47,93" fill="#9b6cff"/>
+</svg>

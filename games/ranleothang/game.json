@@ -1,0 +1,47 @@
+{
+  "id": "ranleothang",
+  "cat": "versus",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Snakes and Ladders",
+    "vi": "Rắn Leo Thang"
+  },
+  "sub": {
+    "en": "Race to 100",
+    "vi": "Snakes and Ladders"
+  },
+  "desc": {
+    "en": "Roll the die and race up to three computer players to square 100: climb the ladders, slide down the snakes and land exactly on 100 to win. Four colourful boards, picked at random each game.",
+    "vi": "Tung xúc xắc, đua với tối đa ba máy về ô 100: gặp thang thì leo, gặp rắn thì trượt, phải về đúng ô 100 mới thắng. Bốn bàn nhiều màu, mỗi ván chọn ngẫu nhiên một bàn."
+  },
+  "tags": {
+    "en": ["Board game", "Dice", "Vs computer"],
+    "vi": ["Cờ bàn", "Xúc xắc", "Đấu máy"]
+  },
+  "note": {
+    "en": "Pure luck: anyone can win",
+    "vi": "May rủi: ai cũng có thể thắng"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(124, 219, 120, .3), transparent 60%), linear-gradient(160deg, #1f3a2c, #0c1a14)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 1,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 10000
+        },
+        "points": 1
+      }
+    ]
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "id": "codon",
+  "cat": "puzzle",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Peg Solitaire",
+    "vi": "Cờ Đơn"
+  },
+  "sub": {
+    "en": "Jump until one peg is left",
+    "vi": "Peg Solitaire"
+  },
+  "desc": {
+    "en": "Jump a peg over its neighbour into an empty hole and remove the peg you jumped. Leave just one peg to win, on the English cross, the European board or the Triangle. Unlimited undo, and a hint when you are stuck.",
+    "vi": "Cho quân nhảy qua quân bên cạnh vào lỗ trống và nhấc quân bị nhảy qua. Còn đúng một quân là thắng, trên bàn chữ thập Kiểu Anh, bàn Kiểu Pháp hoặc Tam giác. Đi lại không giới hạn, có gợi ý khi bí."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Classic"],
+    "vi": ["Giải đố", "1 người", "Cổ điển"]
+  },
+  "note": {
+    "en": "Finish in the centre for a perfect game",
+    "vi": "Quân cuối ở tâm là ván hoàn hảo"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 176, 96, .3), transparent 60%), linear-gradient(160deg, #3b2614, #150c06)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 6,
+    "modes": [
+      {
+        "key": "english",
+        "label": {
+          "en": "English",
+          "vi": "Kiểu Anh"
+        },
+        "rules": {
+          "min_duration_ms": 8000
+        },
+        "points": 6
+      },
+      {
+        "key": "european",
+        "label": {
+          "en": "European",
+          "vi": "Kiểu Pháp"
+        },
+        "rules": {
+          "min_duration_ms": 8000
+        },
+        "points": 8
+      },
+      {
+        "key": "triangle",
+        "label": {
+          "en": "Triangle",
+          "vi": "Tam giác"
+        },
+        "rules": {
+          "min_duration_ms": 8000
+        },
+        "points": 4
+      }
+    ]
+  }
+}

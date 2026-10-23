@@ -1,0 +1,69 @@
+{
+  "id": "cothu",
+  "cat": "versus",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Animal Chess",
+    "vi": "Cờ Thú"
+  },
+  "sub": {
+    "en": "Jungle · Dou Shou Qi",
+    "vi": "Animal Chess · Đấu Thú Kỳ"
+  },
+  "desc": {
+    "en": "Eight animals per side, from Rat to Elephant. Cross the rivers, dodge the traps and walk into the enemy den to win.",
+    "vi": "Mỗi bên tám con vật, từ Chuột tới Voi. Vượt sông, tránh bẫy và tiến vào hang đối thủ để thắng."
+  },
+  "tags": {
+    "en": ["Board game", "Vs computer"],
+    "vi": ["Cờ bàn", "Đấu máy"]
+  },
+  "note": {
+    "en": "Three computer levels",
+    "vi": "Máy có ba mức"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(120, 200, 110, .3), transparent 60%), linear-gradient(160deg, #1f4a2c, #0d2316)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

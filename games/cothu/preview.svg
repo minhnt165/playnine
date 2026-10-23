@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: Sư Tử Đỏ nhảy qua sông ăn Sói Xanh, Chuột Xanh bơi dưới sông.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động. Nền ô xem trước lấy từ preview.bg. -->
+  <style>
+    .jx { animation: jx 4s ease-in-out infinite; }
+    .jy { animation: jy 4s ease-in-out infinite; }
+    .prey { animation: prey 4s ease-in-out infinite; transform-origin: 108px 64px; }
+    .swim { animation: swim 2.4s ease-in-out infinite; }
+    .trail { animation: trail 4s ease-in-out infinite; }
+    @keyframes jx { 0%, 25% { transform: translateX(0); opacity: 1; } 50%, 86% { transform: translateX(84px); opacity: 1; } 92% { transform: translateX(84px); opacity: 0; } 93% { transform: translateX(0); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+    @keyframes jy { 0%, 25% { transform: translateY(0); } 37.5% { transform: translateY(-26px); } 50%, 100% { transform: translateY(0); } }
+    @keyframes prey { 0%, 44% { opacity: 1; transform: scale(1); } 52%, 92% { opacity: 0; transform: scale(.4); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes swim { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(3px, -2px); } }
+    @keyframes trail { 0%, 30% { opacity: 0; } 42%, 60% { opacity: .9; } 75%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .jx, .jy, .prey, .swim, .trail { animation: none; }
+      .trail { opacity: .9; }
+      .prey { opacity: .35; }
+    }
+  </style>
+  <defs>
+    <g id="lion">
+      <circle cx="16" cy="16.5" r="11.5"/><circle cx="16" cy="4.6" r="4.2"/><circle cx="23.6" cy="7.2" r="4.2"/><circle cx="27.6" cy="13.6" r="4.2"/><circle cx="27" cy="21.2" r="4.2"/><circle cx="22.2" cy="27" r="4.2"/><circle cx="16" cy="28.6" r="4"/><circle cx="9.8" cy="27" r="4.2"/><circle cx="5" cy="21.2" r="4.2"/><circle cx="4.4" cy="13.6" r="4.2"/><circle cx="8.4" cy="7.2" r="4.2"/>
+      <circle cx="16" cy="17" r="8.4" fill="#fff8ea"/>
+      <circle cx="12.9" cy="15.4" r="1.6"/><circle cx="19.1" cy="15.4" r="1.6"/>
+      <path d="M14.2 18.8h3.6L16 21z"/>
+    </g>
+    <g id="wolf">
+      <path d="M4 2.5l7.5 7.5h9L28 2.5 27 15l-5.5 8L16 30.5 10.5 23 5 15z"/>
+      <path d="M9.5 14.6l4.6 1.8-4.4 1.2zM22.5 14.6l-4.6 1.8 4.4 1.2z" fill="#fff8ea"/>
+      <path d="M12.6 21L16 18.8l3.4 2.2L16 27.8z" fill="#fff8ea"/>
+    </g>
+    <g id="rat">
+      <circle cx="8" cy="9" r="6"/><circle cx="24" cy="9" r="6"/>
+      <circle cx="8" cy="9" r="3.2" fill="#fff8ea"/><circle cx="24" cy="9" r="3.2" fill="#fff8ea"/>
+      <path d="M16 7c7 0 10 5 10 10 0 5-6 10-10 13-4-3-10-8-10-13 0-5 3-10 10-10z"/>
+      <circle cx="12" cy="16.5" r="1.9" fill="#fff8ea"/><circle cx="20" cy="16.5" r="1.9" fill="#fff8ea"/>
+    </g>
+    <radialGradient id="tk" cx=".36" cy=".3" r=".75">
+      <stop offset="0" stop-color="#fffdf7"/>
+      <stop offset="1" stop-color="#ead9b4"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Mảnh bàn: 5 cột × 3 hàng, sông ở cột 2–3 -->
+  <rect x="7" y="19" width="146" height="90" rx="8" fill="#5b4a2c"/>
+  <g>
+    <rect x="10" y="22" width="28" height="84" fill="#9fcc72"/>
+    <rect x="94" y="22" width="28" height="84" fill="#9fcc72"/>
+    <rect x="122" y="22" width="28" height="84" fill="#93c366"/>
+    <rect x="10" y="50" width="28" height="28" fill="#93c366"/>
+    <rect x="94" y="50" width="28" height="28" fill="#93c366"/>
+    <rect x="122" y="50" width="28" height="28" fill="#9fcc72"/>
+    <rect x="38" y="22" width="56" height="84" fill="#4d9fd8"/>
+    <path d="M44 36q6-5 12 0t12 0 12 0M44 64q6-5 12 0t12 0 12 0M44 92q6-5 12 0t12 0 12 0" fill="none" stroke="#a9dcf7" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+    <!-- Bẫy và hang ở cột phải -->
+    <path d="M126 102l4-11 4 11zM132 102l4-13 4 13zM138 102l4-11 4 11z" fill="#3c6fd0" opacity=".55"/>
+  </g>
+
+  <!-- Vệt nhảy -->
+  <path class="trail" d="M24 64Q66 22 108 64" fill="none" stroke="#ffd34d" stroke-width="2.4" stroke-dasharray="3 5" stroke-linecap="round"/>
+
+  <!-- Chuột Xanh bơi dưới sông -->
+  <g class="swim">
+    <circle cx="80" cy="94" r="10" fill="#1d56b0"/>
+    <circle cx="80" cy="92.6" r="10" fill="#2f72d6"/>
+    <circle cx="80" cy="92.6" r="8" fill="url(#tk)"/>
+    <use href="#rat" fill="#1d56b0" transform="translate(73 85.6) scale(.44)"/>
+  </g>
+
+  <!-- Sói Xanh ở bờ phải (bị ăn) -->
+  <g class="prey">
+    <circle cx="108" cy="66" r="12" fill="#1d56b0"/>
+    <circle cx="108" cy="64" r="12" fill="#2f72d6"/>
+    <circle cx="108" cy="64" r="9.6" fill="url(#tk)"/>
+    <use href="#wolf" fill="#1d56b0" transform="translate(99.6 55.6) scale(.525)"/>
+    <circle cx="117" cy="73" r="4.6" fill="#2f72d6" stroke="#fff8ea" stroke-width="1.2"/>
+    <text x="117" y="75.6" text-anchor="middle" font-family="system-ui, sans-serif" font-size="7" font-weight="800" fill="#fff">4</text>
+  </g>
+
+  <!-- Sư Tử Đỏ nhảy qua sông -->
+  <g class="jx">
+    <g class="jy">
+      <ellipse cx="24" cy="77" rx="10" ry="2.6" fill="#000" opacity=".18"/>
+      <circle cx="24" cy="66" r="12.5" fill="#b42a21"/>
+      <circle cx="24" cy="64" r="12.5" fill="#d8443a"/>
+      <circle cx="24" cy="64" r="10" fill="url(#tk)"/>
+      <use href="#lion" fill="#b42a21" transform="translate(15.4 55.4) scale(.54)"/>
+      <circle cx="33.4" cy="73.4" r="4.8" fill="#d8443a" stroke="#fff8ea" stroke-width="1.2"/>
+      <text x="33.4" y="76" text-anchor="middle" font-family="system-ui, sans-serif" font-size="7" font-weight="800" fill="#fff">7</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,69 @@
+{
+  "id": "cochinquan",
+  "cat": "versus",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Mill",
+    "vi": "Cờ Chín Quân"
+  },
+  "sub": {
+    "en": "Nine men's morris",
+    "vi": "Mill · Nine men's morris"
+  },
+  "desc": {
+    "en": "Place nine pieces, then slide them along the lines. Line up three to form a mill and take one of the computer's pieces.",
+    "vi": "Đặt chín quân rồi đẩy quân theo đường kẻ. Xếp ba quân thẳng hàng thành mill để ăn một quân của máy."
+  },
+  "tags": {
+    "en": ["Strategy", "Vs computer", "Classic"],
+    "vi": ["Chiến thuật", "Đấu máy", "Cổ điển"]
+  },
+  "note": {
+    "en": "Three computer levels, play White or Black",
+    "vi": "Ba mức máy, chọn cầm Trắng hoặc Đen"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(245, 158, 11, .3), transparent 60%), linear-gradient(160deg, #3d2b1a, #150e08)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

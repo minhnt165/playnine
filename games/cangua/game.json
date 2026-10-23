@@ -1,0 +1,47 @@
+{
+  "id": "cangua",
+  "cat": "versus",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Ludo Race",
+    "vi": "Cá Ngựa"
+  },
+  "sub": {
+    "en": "Dice race board game",
+    "vi": "Ludo"
+  },
+  "desc": {
+    "en": "Roll the die and race your four tokens around the board and home before three computer players. Roll a 6 to come out, and knock rivals back to their yard.",
+    "vi": "Tung xúc xắc, đua bốn quân chạy hết vòng bàn và về đích trước ba người máy. Được 6 mới ra quân, đá quân đối thủ về lại chuồng."
+  },
+  "tags": {
+    "en": ["Board game", "Dice", "Vs computer"],
+    "vi": ["Cờ bàn", "Xúc xắc", "Đấu máy"]
+  },
+  "note": {
+    "en": "You play Blue against three computers",
+    "vi": "Bạn cầm quân xanh, đấu ba người máy"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(74, 134, 240, .32), transparent 60%), linear-gradient(160deg, #1d2a4f, #0b1024)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 6,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 30000
+        },
+        "points": 6
+      }
+    ]
+  }
+}

@@ -1,0 +1,253 @@
+/* =====================================================================
+ * Cờ Thú - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bàn 7×9: ô cạn / nước / bẫy / hang là lưới div; quân đặt tuyệt đối theo --x / --y (đơn vị ô)
+ *     và --cell (px, app.js tính theo khung), đi quân bằng transition của transform
+ *   - Quân: thẻ tròn màu kem, viền và hình con vật theo màu phe, số bậc ở góc
+ *   - Màn hình ngang thấp: bàn bên trái, hai thanh người chơi bên phải
+ * ===================================================================== */
+:root {
+  --p-red: #d8443a;
+  --p-red-ink: #b42a21;
+  --p-blue: #2f72d6;
+  --p-blue-ink: #1d56b0;
+  --token: #fff8ea;
+  --token-2: #ecdcb8;
+  --land: #cbe4a2;
+  --land-alt: #c2dd96;
+  --water: #69b8e6;
+  --water-2: #8ccdf0;
+  --frame: #6b5634;
+  --hint: rgba(32, 44, 14, 0.32);
+  --last: rgba(255, 206, 46, 0.42);
+  --pick: rgba(255, 206, 46, 0.6);
+  --glow: #ffcf33;
+  --victim: #ff8a1f;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --p-red: #ef5d52;
+    --p-red-ink: #c8372d;
+    --p-blue: #4b8cf0;
+    --p-blue-ink: #2a68c8;
+    --token: #f6eedc;
+    --token-2: #ddcca6;
+    --land: #2f4a26;
+    --land-alt: #2a4422;
+    --water: #1d4e74;
+    --water-2: #2a6590;
+    --frame: #3b311f;
+    --hint: rgba(255, 255, 255, 0.4);
+    --last: rgba(255, 206, 46, 0.3);
+    --pick: rgba(255, 206, 46, 0.45);
+  }
+}
+:root[data-theme="dark"] {
+  --p-red: #ef5d52;
+  --p-red-ink: #c8372d;
+  --p-blue: #4b8cf0;
+  --p-blue-ink: #2a68c8;
+  --token: #f6eedc;
+  --token-2: #ddcca6;
+  --land: #2f4a26;
+  --land-alt: #2a4422;
+  --water: #1d4e74;
+  --water-2: #2a6590;
+  --frame: #3b311f;
+  --hint: rgba(255, 255, 255, 0.4);
+  --last: rgba(255, 206, 46, 0.3);
+  --pick: rgba(255, 206, 46, 0.45);
+}
+
+.red { --side: var(--p-red); --side-ink: var(--p-red-ink); }
+.blue { --side: var(--p-blue); --side-ink: var(--p-blue-ink); }
+
+/* ===================== Bố cục ===================== */
+.stage { flex-direction: column; gap: 8px; }
+.side { display: contents; }
+#bar-top { order: 0; }
+.board-box { order: 1; display: flex; align-items: center; justify-content: center; flex: none; }
+#bar-bottom { order: 2; }
+
+/* ===================== Bàn ===================== */
+.board {
+  --cell: 48px;
+  position: relative;
+  flex: none;
+  border-radius: 10px;
+  box-shadow: 0 0 0 5px var(--frame), 0 10px 28px rgba(0, 0, 0, 0.22);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+}
+.board:focus-visible { outline-offset: 8px; }
+.board.wait { cursor: default; }
+.cells { position: absolute; inset: 0; border-radius: 10px; overflow: hidden; }
+.row { display: flex; }
+.cell {
+  position: relative;
+  width: var(--cell);
+  height: var(--cell);
+  flex: none;
+  background: var(--land);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cell.alt { background: var(--land-alt); }
+/* Sông: sóng nhỏ bằng gradient */
+.cell.water {
+  background:
+    radial-gradient(60% 35% at 30% 38%, transparent 62%, rgba(255, 255, 255, 0.35) 64%, transparent 72%),
+    radial-gradient(60% 35% at 72% 72%, transparent 62%, rgba(255, 255, 255, 0.28) 64%, transparent 72%),
+    linear-gradient(180deg, var(--water-2), var(--water));
+}
+.cell .mark { width: 62%; height: 62%; pointer-events: none; }
+.cell.own-red .mark { fill: var(--p-red); }
+.cell.own-blue .mark { fill: var(--p-blue); }
+.cell.trap .mark { opacity: 0.5; }
+.cell.den { --pd: var(--land); }
+.cell.den .mark { width: 74%; height: 74%; opacity: 0.85; }
+
+/* Nước vừa đi, quân đang chọn, ô đi được, con trỏ bàn phím */
+.cell.last-from, .cell.last-to { box-shadow: inset 0 0 0 200px var(--last); }
+.cell.picked { box-shadow: inset 0 0 0 200px var(--pick); }
+.cell.target::after {
+  content: "";
+  position: absolute;
+  width: 26%;
+  height: 26%;
+  border-radius: 50%;
+  background: var(--hint);
+}
+.cell.capture::after {
+  width: auto;
+  height: auto;
+  inset: 3px;
+  background: none;
+  border: 3px solid var(--victim);
+}
+.board.kb .cell.cursor { box-shadow: inset 0 0 0 3px var(--focus); }
+.board.kb .cell.cursor.last-to, .board.kb .cell.cursor.last-from { box-shadow: inset 0 0 0 3px var(--focus), inset 0 0 0 200px var(--last); }
+
+/* ===================== Quân ===================== */
+.pieces { position: absolute; inset: 0; pointer-events: none; }
+.piece {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--cell);
+  height: var(--cell);
+  transform: translate(calc(var(--x) * var(--cell)), calc(var(--y) * var(--cell)));
+  transition: transform 0.24s cubic-bezier(0.3, 0.7, 0.4, 1);
+  z-index: 1;
+}
+.board.still .piece { transition: none; }
+.token {
+  position: relative;
+  display: block;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%, #fffdf7, var(--token) 55%, var(--token-2));
+  border: max(2px, calc(var(--cell) * 0.055)) solid var(--side);
+  box-shadow: 0 max(2px, calc(var(--cell) * 0.05)) 0 var(--side-ink), 0 3px 8px rgba(0, 0, 0, 0.28);
+  color: var(--side-ink);
+  --pd: var(--token);
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.3s;
+}
+.piece .token { position: absolute; inset: 7%; }
+.animal { position: absolute; left: 10%; top: 9%; width: 80%; height: 80%; fill: currentColor; }
+.token .rank {
+  position: absolute;
+  right: -10%;
+  bottom: -10%;
+  width: 40%;
+  height: 40%;
+  border-radius: 50%;
+  background: var(--side);
+  color: #fff;
+  border: max(1.5px, calc(var(--cell) * 0.03)) solid var(--token);
+  font-size: calc(var(--cell) * 0.21);
+  font-weight: 800;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+}
+.piece.sel { z-index: 2; }
+.piece.sel .token {
+  transform: translateY(-6%) scale(1.08);
+  box-shadow: 0 0 0 3px var(--glow), 0 max(2px, calc(var(--cell) * 0.05)) 0 var(--side-ink), 0 8px 14px rgba(0, 0, 0, 0.3);
+}
+.piece.gone .token { transform: scale(0.3); opacity: 0; }
+
+/* ===================== Thanh người chơi ===================== */
+.pbar {
+  width: var(--bw, 100%);
+  max-width: 100%;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 5px 12px;
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid transparent;
+  flex: none;
+  transition: border-color 0.2s;
+}
+.pbar.active { border-color: var(--side); }
+.pdot { width: 14px; height: 14px; border-radius: 50%; background: var(--side); flex: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--side) 22%, transparent); }
+.pinfo { display: flex; flex-direction: column; min-width: 0; }
+.pname { font-weight: 800; line-height: 1.15; white-space: nowrap; }
+.psub { font-size: 0.78rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pbar.active .psub { color: var(--text); font-weight: 600; }
+.pbar.thinking .psub::after { content: ""; display: inline-block; width: 1.2em; text-align: left; animation: dots 1.2s steps(4) infinite; }
+@keyframes dots {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75% { content: "..."; }
+}
+.ptray { margin-left: auto; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 1px; min-width: 0; }
+.mini { width: 18px; height: 18px; fill: currentColor; color: var(--side); --pd: var(--surface); }
+
+/* ===================== Hộp thoại ===================== */
+.sdot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--side); margin-right: 6px; vertical-align: 0; }
+.segmented button { display: inline-flex; align-items: center; justify-content: center; }
+
+.result-card { text-align: center; align-items: center; }
+.result-card .modal-actions { width: 100%; }
+.result-art .token { width: 76px; height: 76px; --cell: 76px; margin: 2px auto 0; }
+.result-art.win .token { box-shadow: 0 0 0 6px var(--glow), 0 4px 0 var(--side-ink), 0 10px 24px rgba(0, 0, 0, 0.3); }
+.result-art.draw .token, .result-art.lose .token { filter: saturate(0.6); }
+
+.help-card { gap: 12px; }
+.rank-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 6px; }
+.rank-item { display: flex; flex-direction: column; align-items: center; gap: 4px; --cell: 40px; }
+.rank-item .token { width: 40px; height: 40px; }
+.rank-name { font-size: 0.75rem; font-weight: 600; color: var(--muted); }
+.rules { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; color: var(--muted); line-height: 1.45; font-size: 0.9rem; }
+.rules b, .help-card .modal-text b { color: var(--text); }
+
+.stats-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.stats-table th, .stats-table td { padding: 6px 4px; text-align: center; border-bottom: 1px solid var(--line); }
+.stats-table thead th { font-size: 0.75rem; color: var(--muted); font-weight: 700; }
+.stats-table tbody th { text-align: left; font-weight: 700; }
+
+/* ===================== Màn hình ngang thấp ===================== */
+@media (orientation: landscape) and (max-height: 600px) {
+  :root { --app-max: 980px; }
+  .stage { flex-direction: row; gap: 14px; }
+  .side { order: 2; display: flex; flex-direction: column; justify-content: center; gap: 10px; width: 230px; flex: none; }
+  .pbar { width: 100%; }
+  .board-box { flex: none; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .piece, .token, .pbar { transition: none; }
+  .pbar.thinking .psub::after { animation: none; content: "…"; }
+}

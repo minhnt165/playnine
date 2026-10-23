@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: khay 4×5, khối nhỏ trượt sang trái nhường đường, khối lớn trượt xuống
+       qua lối ra ở giữa đáy rồi mờ dần; lặp lại. Hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động.
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt. -->
+  <style>
+    .board { animation: board 5s ease-in-out infinite; }
+    .s1 { animation: s1 5s ease-in-out infinite; }
+    .big { animation: big 5s ease-in infinite; }
+    .chev { animation: chev 1.25s ease-in-out infinite; }
+    @keyframes board { 0%, 84% { opacity: 1; } 88%, 96% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes s1 { 0%, 8% { transform: translateX(0); } 18%, 90% { transform: translateX(-17px); } 92%, 100% { transform: translateX(0); } }
+    @keyframes big {
+      0%, 28% { transform: translateY(0); opacity: 1; }
+      40%, 46% { transform: translateY(17px); opacity: 1; }
+      64% { transform: translateY(58px); opacity: 0; }
+      90% { transform: translateY(58px); opacity: 0; }
+      92%, 100% { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes chev { 50% { transform: translateY(2px); } }
+    @media (prefers-reduced-motion: reduce) { .board, .s1, .big, .chev { animation: none; } }
+  </style>
+  <defs>
+    <linearGradient id="fr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d53ab"/><stop offset="1" stop-color="#3f3776"/></linearGradient>
+    <linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7d8f"/><stop offset="1" stop-color="#e2445e"/></linearGradient>
+    <linearGradient id="gv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6d9cf5"/><stop offset="1" stop-color="#3f6fd6"/></linearGradient>
+    <linearGradient id="gh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8c25a"/><stop offset="1" stop-color="#e3952a"/></linearGradient>
+    <linearGradient id="gs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3fd0ab"/><stop offset="1" stop-color="#1d9e7f"/></linearGradient>
+  </defs>
+  <!-- Khung + lòng khay + khe lối ra -->
+  <rect x="40" y="2" width="80" height="97" rx="9" fill="url(#fr)"/>
+  <rect x="46" y="8" width="68" height="85" rx="3" fill="#e9e6f7"/>
+  <rect x="63" y="92" width="34" height="7" fill="#e9e6f7"/>
+  <path class="chev" d="M74 104l6 5 6-5" fill="none" stroke="#ff6f88" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <g class="board">
+    <!-- Khối dọc -->
+    <g fill="url(#gv)">
+      <rect x="47" y="9" width="15" height="32" rx="3.5"/>
+      <rect x="98" y="9" width="15" height="32" rx="3.5"/>
+      <rect x="47" y="43" width="15" height="32" rx="3.5"/>
+      <rect x="98" y="43" width="15" height="32" rx="3.5"/>
+    </g>
+    <!-- Khối ngang -->
+    <rect x="64" y="26" width="32" height="15" rx="3.5" fill="url(#gh)"/>
+    <!-- Khối nhỏ -->
+    <g fill="url(#gs)">
+      <rect x="64" y="9" width="15" height="15" rx="3.5"/>
+      <rect x="81" y="9" width="15" height="15" rx="3.5"/>
+      <rect x="98" y="77" width="15" height="15" rx="3.5"/>
+      <rect class="s1" x="64" y="77" width="15" height="15" rx="3.5"/>
+    </g>
+    <!-- Khối lớn có hoa -->
+    <g class="big">
+      <rect x="64" y="43" width="32" height="32" rx="4.5" fill="url(#gb)"/>
+      <g fill="#fff" opacity=".92">
+        <ellipse cx="80" cy="53" rx="3" ry="4.2"/>
+        <ellipse cx="80" cy="65" rx="3" ry="4.2"/>
+        <ellipse cx="74" cy="59" rx="4.2" ry="3"/>
+        <ellipse cx="86" cy="59" rx="4.2" ry="3"/>
+      </g>
+      <circle cx="80" cy="59" r="2.3" fill="#e2445e"/>
+    </g>
+  </g>
+</svg>

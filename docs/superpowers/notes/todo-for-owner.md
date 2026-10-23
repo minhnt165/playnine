@@ -8,6 +8,8 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 
 - [ ] `supabase/migrations/20261023000100_batch1.sql` — đợt 1, game 22–29: Tắt Đèn, Tháp Hà Nội, Đẩy Thùng, Rót Nước, Nối Màu, Nổ Khối, Xếp Khối, Đoán Mã.
 
+- [ ] `supabase/migrations/20261023000200_batch2.sql` — đợt 2, game 30–37: Cá Ngựa, Tangram, Cờ Thú, Cờ Đơn, Hoa Dung Đạo, Rắn Leo Thang, Cờ Chín Quân, Xí Ngầu.
+
 Đợt 0 (nền tảng) không có migration. Áp các file theo đúng thứ tự tên file.
 
 ## Repo
@@ -16,6 +18,10 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 - [ ] Đợt 0 được làm trong worktree `C:/Users/MinhNT165/Workspace/games-batch0` (nhánh `batch0-platform`, luôn bằng `origin/main` sau mỗi lần đẩy). Các đợt game tiếp theo cũng làm ở đây; xong lộ trình thì xóa bằng `git worktree remove ../games-batch0`.
 
 - [ ] Xem tab Actions trên GitHub: các lần đẩy đợt 0 (từ `34fe71f` tới `397eb86`) có workflow Deploy xanh không. Máy làm việc không có `gh` và không gọi được GitHub API nên Claude chưa kiểm tra được CI; ở máy local toàn bộ `npm test` và e2e (93 test) đều xanh.
+
+## Cần bạn quyết định
+
+- [ ] **Cá Ngựa dài:** theo luật quốc tế chuẩn, một ván trung bình khoảng 480 lần tung (vài phút ở tốc độ Nhanh). Có muốn rút ngắn không, ví dụ cho tung thêm khi đá quân hoặc khi về đích? Hiện giữ luật chuẩn.
 
 ## Quyết định đã tự chốt (xem lại khi rảnh)
 

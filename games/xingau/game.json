@@ -1,0 +1,48 @@
+{
+  "id": "xingau",
+  "cat": "puzzle",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Dice Poker",
+    "vi": "Xí Ngầu"
+  },
+  "sub": {
+    "en": "Five dice, 13 boxes",
+    "vi": "Dice Poker"
+  },
+  "desc": {
+    "en": "Roll five dice up to three times a turn, hold the ones you like, and fill all 13 boxes of the score sheet: full house, straights, five of a kind. Reach 250 points to win.",
+    "vi": "Lắc 5 xúc xắc tối đa 3 lần mỗi lượt, giữ những viên ưng ý rồi điền đủ 13 ô trên bảng điểm: cù lũ, sảnh, ngũ quý. Đạt 250 điểm là thắng."
+  },
+  "tags": {
+    "en": ["Dice", "1 player", "High score"],
+    "vi": ["Xúc xắc", "1 người", "Điểm cao"]
+  },
+  "note": {
+    "en": "Roll five dice, fill 13 boxes",
+    "vi": "Lắc 5 xúc xắc, điền 13 ô"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(47, 160, 119, .35), transparent 60%), linear-gradient(160deg, #134a38, #071f17)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 30000,
+          "max_score": 1575
+        },
+        "points": 5
+      }
+    ]
+  }
+}

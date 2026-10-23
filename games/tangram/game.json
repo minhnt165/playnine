@@ -1,0 +1,47 @@
+{
+  "id": "tangram",
+  "cat": "puzzle",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Tangram",
+    "vi": "Tangram"
+  },
+  "sub": {
+    "en": "Seven-piece puzzle",
+    "vi": "Xếp hình 7 mảnh"
+  },
+  "desc": {
+    "en": "Drag, rotate and flip the seven classic pieces to fill each silhouette exactly. 42 puzzles: animals, people, objects, letters and numbers.",
+    "vi": "Kéo, xoay và lật bảy mảnh cổ điển để lấp kín từng hình bóng. 42 màn: con vật, người, đồ vật, chữ cái và chữ số."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Shapes"],
+    "vi": ["Giải đố", "1 người", "Hình khối"]
+  },
+  "note": {
+    "en": "42 silhouettes, every one solvable",
+    "vi": "42 hình bóng, màn nào cũng giải được"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(155, 108, 255, .32), transparent 60%), linear-gradient(160deg, #2b2058, #110d26)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 4,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000
+        },
+        "points": 4
+      }
+    ]
+  }
+}

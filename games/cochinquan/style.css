@@ -1,0 +1,243 @@
+/* =====================================================================
+ * Cờ Chín Quân - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   Bàn cờ là SVG toạ độ 0..6 (lưới 7x7): mọi kích thước trên bàn tính theo đơn vị đó.
+ *   Quân trắng / đen dùng gradient #grad-w / #grad-b trong index.html.
+ * ===================================================================== */
+:root {
+  --board-1: #f0d7a4;
+  --board-2: #ddb97c;
+  --board-line: #6d4a28;
+  --board-edge: rgba(109, 74, 40, 0.35);
+  --mill: #f59e0b;
+  --last: #0d9488;
+  --hint: #6a4cf5;
+  --pip-w: #f4efe4;
+  --pip-b: #2c3044;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --board-1: #6a5238;
+    --board-2: #4b3925;
+    --board-line: #ecd3a2;
+    --board-edge: rgba(236, 211, 162, 0.25);
+    --mill: #fbbf24;
+    --last: #2dd4bf;
+    --hint: #b9a6ff;
+  }
+}
+:root[data-theme="dark"] {
+  --board-1: #6a5238;
+  --board-2: #4b3925;
+  --board-line: #ecd3a2;
+  --board-edge: rgba(236, 211, 162, 0.25);
+  --mill: #fbbf24;
+  --last: #2dd4bf;
+  --hint: #b9a6ff;
+}
+
+/* ===================== Bố cục ===================== */
+/* Dọc: hai thẻ người chơi, dòng trạng thái, bàn cờ vuông; cả khối nằm giữa phần chơi.
+   Thiếu chỗ thì bàn co lại theo chiều cao (SVG tự giữ tỉ lệ và nằm giữa khung). */
+.play {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+.players { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; flex: none; }
+.status { flex: none; }
+.board-wrap { flex: 0 1 auto; width: 100%; aspect-ratio: 1; min-height: 0; }
+.board { width: 100%; height: 100%; display: block; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+
+/* Màn ngang thấp (điện thoại xoay ngang): thẻ người chơi + trạng thái bên trái, bàn cờ bên phải */
+@media (orientation: landscape) and (max-height: 560px) {
+  :root { --app-max: 900px; }
+  .play {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    grid-template-areas: "players board" "status board";
+    align-content: center;
+    column-gap: 14px;
+  }
+  .players { grid-area: players; grid-template-columns: minmax(0, 1fr); }
+  .status { grid-area: status; align-self: start; }
+  .board-wrap { grid-area: board; width: auto; height: calc(100dvh - 76px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+}
+
+/* ===================== Người chơi ===================== */
+.player {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid transparent;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.player.turn { border-color: var(--accent); }
+.player.winner { border-color: var(--mill); }
+.pdisc {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 50%;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.18), 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+.player[data-color="1"] .pdisc { background: radial-gradient(circle at 36% 30%, #ffffff, #efe9dc 55%, #c8bda4); }
+.player[data-color="2"] .pdisc { background: radial-gradient(circle at 36% 30%, #6a7090, #2c3044 50%, #11131c); }
+.player.thinking .pdisc { animation: think-pulse 1s ease-in-out infinite; }
+@keyframes think-pulse { 50% { transform: scale(0.86); } }
+.pmain { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.pname { font-weight: 800; font-size: 0.95rem; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.psub { font-size: 0.72rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player.thinking .psub { color: var(--accent); font-weight: 700; }
+
+/* Chín chấm: đậm = còn trên tay, nhạt = đang trên bàn, vòng nhỏ = đã mất */
+.pips { display: flex; gap: 3px; }
+.pip { width: 9px; height: 9px; border-radius: 50%; flex: none; box-sizing: border-box; }
+.player[data-color="1"] .pip { --pc: var(--pip-w); --pe: #8b7f66; }
+.player[data-color="2"] .pip { --pc: var(--pip-b); --pe: #2c3044; }
+.pip.hand { background: var(--pc); box-shadow: inset 0 0 0 1.5px var(--pe); }
+.pip.on { background: var(--pc); box-shadow: inset 0 0 0 1.5px var(--pe); opacity: 0.32; }
+.pip.lost { border: 1.5px solid var(--line); transform: scale(0.7); }
+:root[data-theme="dark"] .player[data-color="2"] .pip { --pe: #9aa0c2; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .player[data-color="2"] .pip { --pe: #9aa0c2; }
+}
+
+/* ===================== Trạng thái ===================== */
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 46px;
+  padding: 5px 6px 5px 12px;
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+.status-text { font-size: 0.86rem; font-weight: 600; line-height: 1.25; min-width: 0; }
+.status.thinking .status-text::after { content: ""; display: inline-block; width: 1.2em; text-align: left; animation: dots 1.2s steps(4) infinite; }
+@keyframes dots {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75% { content: "..."; }
+}
+.phase-chip {
+  flex: none;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 5px 10px;
+  border-radius: 999px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  white-space: nowrap;
+}
+.phase-chip[data-tone="cpu"] { color: var(--muted); background: var(--line); }
+.phase-chip[data-tone="remove"] { color: #ffffff; background: var(--red); animation: chip-pop 0.3s ease-out; }
+.phase-chip[data-tone="won"] { color: #ffffff; background: var(--green); }
+.phase-chip[data-tone="lost"] { color: #ffffff; background: var(--red); }
+.phase-chip[data-tone="draw"] { color: var(--text); background: var(--line); }
+@keyframes chip-pop { 50% { transform: scale(1.12); } }
+
+/* ===================== Bàn cờ ===================== */
+.board-bg { fill: url(#grad-board); stroke: var(--board-edge); stroke-width: 0.04; }
+.board-stop-1 { stop-color: var(--board-1); }
+.board-stop-2 { stop-color: var(--board-2); }
+.lines rect, .lines line { fill: none; stroke: var(--board-line); stroke-width: 0.07; stroke-linecap: round; }
+.mill { stroke: var(--mill); stroke-width: 0.2; stroke-linecap: round; opacity: 0.7; }
+.mill.new { stroke-dasharray: 7; stroke-dashoffset: 7; animation: mill-draw 0.5s 0.15s ease-out forwards; }
+@keyframes mill-draw { to { stroke-dashoffset: 0; } }
+
+.pt .hit { fill: transparent; }
+.pt.active { cursor: pointer; }
+.pt .dot { fill: var(--board-line); }
+.pt .ring { fill: none; stroke: none; pointer-events: none; }
+.pt .hint { fill: var(--hint); pointer-events: none; animation: hint-pulse 1.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes hint-pulse { 50% { transform: scale(0.7); opacity: 0.7; } }
+.pt.target .dot { opacity: 0; }
+.pt .from-mark { fill: none; stroke: var(--last); stroke-width: 0.05; stroke-dasharray: 0.1 0.07; pointer-events: none; }
+.pt .x-mark { fill: none; stroke: var(--red); stroke-width: 0.06; stroke-linecap: round; pointer-events: none; }
+.pt.last .ring { stroke: var(--last); stroke-width: 0.06; }
+.pt.can .ring { stroke: var(--hint); stroke-width: 0.04; stroke-opacity: 0.55; }
+.pt.selected .ring { stroke: var(--accent); stroke-width: 0.09; stroke-opacity: 1; }
+.pt.removable .ring { stroke: var(--red); stroke-width: 0.08; stroke-dasharray: 0.2 0.1; animation: remove-spin 2.4s linear infinite; }
+@keyframes remove-spin { to { stroke-dashoffset: -0.9; } }
+.pt.removable .pc { animation: remove-wobble 0.9s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes remove-wobble { 50% { transform: scale(0.9); } }
+.pt .cursor { fill: none; stroke: var(--focus); stroke-width: 0.06; stroke-dasharray: 0.16 0.1; pointer-events: none; }
+
+/* Quân cờ */
+.pc { pointer-events: none; }
+.pc-shadow { fill: rgba(0, 0, 0, 0.28); }
+.c1 .pc-body { fill: url(#grad-w); stroke: #8b7f66; stroke-width: 0.03; }
+.c2 .pc-body { fill: url(#grad-b); stroke: #0b0c12; stroke-width: 0.03; }
+.c1 .pc-groove { fill: none; stroke: rgba(120, 104, 74, 0.45); stroke-width: 0.03; }
+.c2 .pc-groove { fill: none; stroke: rgba(255, 255, 255, 0.16); stroke-width: 0.03; }
+.pt.selected .pc { transform: translateY(-0.06px); }
+
+.pc.drop { animation: pc-drop 0.32s cubic-bezier(0.2, 1.4, 0.4, 1) both; transform-box: fill-box; transform-origin: center; }
+@keyframes pc-drop { from { transform: scale(1.5); opacity: 0; } }
+/* Trượt từ điểm cũ tới: --dx / --dy là độ lệch theo đơn vị bàn cờ (1 đơn vị SVG = 1px của transform) */
+.pc.slide { animation: pc-slide 0.3s ease-out both; }
+@keyframes pc-slide { from { transform: translate(calc(var(--dx) * 1px), calc(var(--dy) * 1px)); } }
+.pc.ghost { animation: pc-gone 0.55s 0.25s ease-in both; transform-box: fill-box; transform-origin: center; }
+@keyframes pc-gone { to { transform: scale(0.3); opacity: 0; } }
+
+/* ===================== Hộp thoại ===================== */
+.help-text p { margin: 0 0 8px; }
+.help-list { margin: 0 0 8px; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.end-card { text-align: center; align-items: center; }
+.end-card .modal-actions { width: 100%; }
+.end-mark { position: relative; width: 84px; height: 28px; display: block; }
+/* Ba quân thẳng hàng: màu theo kết quả */
+.end-mark::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  border-radius: 50%;
+  background: var(--mark, var(--accent));
+  box-shadow: -30px 0 0 var(--mark, var(--accent)), 30px 0 0 var(--mark, var(--accent));
+}
+.end-mark::after { content: ""; position: absolute; left: 4px; right: 4px; top: 12px; height: 4px; border-radius: 2px; background: var(--mark, var(--accent)); opacity: 0.45; }
+.end-mark[data-result="won"] { --mark: var(--mill); }
+.end-mark[data-result="lost"] { --mark: var(--red); }
+.end-mark[data-result="drawn"] { --mark: var(--muted); }
+.end-meta { margin: 0; font-size: 0.82rem; color: var(--muted); font-weight: 600; }
+.stats-sub { margin: 0; font-size: 0.8rem; font-weight: 700; color: var(--muted); }
+.stat-levels { grid-template-columns: repeat(3, 1fr); }
+
+/* ===================== Màn hình hẹp ===================== */
+/* Nhường chỗ cho tên game + mức máy trên thanh trên */
+@media (max-width: 400px) {
+  .brand-mark { display: none; }
+  .logo { font-size: 1.05rem; }
+}
+@media (max-width: 380px) {
+  .player { gap: 7px; padding: 7px 8px; }
+  .pdisc { width: 24px; height: 24px; }
+  .pip { width: 8px; height: 8px; }
+  .pips { gap: 2px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player, .pdisc { transition: none; }
+  .player.thinking .pdisc, .pt .hint, .pt.removable .ring, .pt.removable .pc, .phase-chip[data-tone="remove"] { animation: none; }
+  .pc.drop, .pc.slide { animation: none; }
+  .pc.ghost { animation: none; opacity: 0; }
+  .mill.new { animation: none; stroke-dashoffset: 0; }
+  .status.thinking .status-text::after { animation: none; content: "…"; }
+}

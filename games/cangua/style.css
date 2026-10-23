@@ -1,0 +1,291 @@
+/* =====================================================================
+ * Cá Ngựa - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   Bàn 15x15 vẽ bằng SVG (app.js dựng một lần), quân là nút HTML đặt theo % trên bàn.
+ *   Cỡ bàn --board và cạnh ô --cell do app.js tính theo chỗ trống (layout()).
+ *   Màu ghế: 0 xanh dương (bạn), 1 đỏ, 2 xanh lá, 3 vàng; mỗi màu có ký hiệu riêng (sym-0 … sym-3).
+ * ===================================================================== */
+:root {
+  --c0: #2f6fe4;
+  --c1: #e0393e;
+  --c2: #1d9a52;
+  --c3: #f2b705;
+  --t0: #dce8ff;
+  --t1: #ffe0e0;
+  --t2: #d6f5e2;
+  --t3: #fff1c2;
+  --ink0: #ffffff;
+  --ink1: #ffffff;
+  --ink2: #ffffff;
+  --ink3: #4a3700;
+  --board-bg: #ffffff;
+  --cell-bg: #ffffff;
+  --cell-line: rgba(20, 22, 43, 0.22);
+  --star: #9aa0c3;
+  --die-bg: #ffffff;
+  --pip: #1b1d33;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --c0: #4a86f0;
+    --c1: #ec5258;
+    --c2: #2fb368;
+    --c3: #f5c22a;
+    --t0: #1f2d55;
+    --t1: #4a2229;
+    --t2: #173d2c;
+    --t3: #463a14;
+    --board-bg: #161a2e;
+    --cell-bg: #1f2440;
+    --cell-line: rgba(255, 255, 255, 0.14);
+    --star: #6b7199;
+    --die-bg: #f4f5fb;
+  }
+}
+:root[data-theme="dark"] {
+  --c0: #4a86f0;
+  --c1: #ec5258;
+  --c2: #2fb368;
+  --c3: #f5c22a;
+  --t0: #1f2d55;
+  --t1: #4a2229;
+  --t2: #173d2c;
+  --t3: #463a14;
+  --board-bg: #161a2e;
+  --cell-bg: #1f2440;
+  --cell-line: rgba(255, 255, 255, 0.14);
+  --star: #6b7199;
+  --die-bg: #f4f5fb;
+}
+[data-seat="0"], .s0 { --sc: var(--c0); --st: var(--t0); --ink: var(--ink0); }
+[data-seat="1"], .s1 { --sc: var(--c1); --st: var(--t1); --ink: var(--ink1); }
+[data-seat="2"], .s2 { --sc: var(--c2); --st: var(--t2); --ink: var(--ink2); }
+[data-seat="3"], .s3 { --sc: var(--c3); --st: var(--t3); --ink: var(--ink3); }
+
+/* Màn ngang: bàn bên trái, người chơi + xúc xắc bên phải (app.js bật .wide) */
+@media (min-aspect-ratio: 6/5) {
+  :root { --app-max: 1100px; }
+}
+
+/* ===================== Bố cục ===================== */
+.play {
+  --board: 300px;
+  --side: 300px;
+  align-self: stretch;
+  width: 100%;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: var(--board);
+  grid-template-areas: "top" "board" "bot" "status";
+  justify-content: center;
+  align-content: center;
+}
+.play.wide {
+  grid-template-columns: var(--board) var(--side);
+  grid-template-rows: 1fr auto auto auto 1fr;
+  grid-template-areas: "board ." "board top" "board bot" "board status" "board .";
+  column-gap: 18px;
+  row-gap: 12px;
+  align-content: stretch;
+}
+.seats-top { grid-area: top; }
+.seats-bot { grid-area: bot; }
+.status { grid-area: status; }
+.board { grid-area: board; align-self: center; }
+
+/* ===================== Người chơi ===================== */
+.seats { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
+.seat {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm), inset 0 0 0 2px transparent;
+  transition: box-shadow 0.2s, background-color 0.2s;
+}
+.seats .seat:last-child { flex-direction: row-reverse; text-align: right; }
+.seat.active { background: var(--st); box-shadow: var(--shadow-sm), inset 0 0 0 2px var(--sc); }
+.seat.winner { box-shadow: var(--shadow-sm), inset 0 0 0 3px var(--sc); }
+.seat-glyph {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.5) 0 10%, transparent 46%), var(--sc);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.22);
+}
+.seat-glyph .sym { width: 56%; height: 56%; fill: var(--ink); display: block; }
+.seat-text { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.seat-name { font-weight: 800; font-size: 0.92rem; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seat-dots { display: flex; gap: 4px; }
+.seats .seat:last-child .seat-dots { justify-content: flex-end; }
+.seat-dots i { width: 9px; height: 9px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--sc); }
+.seat-dots i.on { background: var(--sc); }
+
+/* ===================== Xúc xắc ===================== */
+.die {
+  width: 60px;
+  height: 60px;
+  flex: none;
+  border-radius: 16px;
+  background: var(--die-bg);
+  box-shadow: inset 0 0 0 3px var(--sc), 0 4px 0 color-mix(in srgb, var(--sc) 70%, #000), var(--shadow-sm);
+  transition: transform 0.1s;
+}
+.die:disabled { opacity: 1; }
+.die.ready { animation: die-call 1.3s ease-in-out infinite; }
+.die.ready:active { transform: translateY(3px); }
+.die.rolling { animation: die-tumble 0.28s linear infinite; }
+@keyframes die-call { 50% { transform: translateY(-4px); box-shadow: inset 0 0 0 3px var(--sc), 0 8px 0 color-mix(in srgb, var(--sc) 70%, #000), 0 0 0 6px color-mix(in srgb, var(--sc) 30%, transparent); } }
+@keyframes die-tumble { 25% { transform: rotate(-14deg) scale(0.94); } 75% { transform: rotate(12deg) scale(1.04); } }
+.pips {
+  width: 100%;
+  height: 100%;
+  padding: 17%;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  pointer-events: none;
+}
+.pip { width: 74%; height: 74%; place-self: center; border-radius: 50%; background: var(--pip); }
+.die[data-face="6"] .pip, .die[data-face="1"] .pip { background: var(--sc); }
+
+.status {
+  margin: 0;
+  min-height: 1.4em;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===================== Bàn ===================== */
+.board {
+  --cell: 20px;
+  position: relative;
+  width: var(--board);
+  height: var(--board);
+  border-radius: calc(var(--cell) * 0.35);
+  box-shadow: var(--shadow);
+}
+.board-svg { display: block; width: 100%; height: 100%; }
+.b-bg { fill: var(--board-bg); }
+.b-cell { fill: var(--cell-bg); stroke: var(--cell-line); stroke-width: 0.04; }
+.f0 { fill: var(--c0); }
+.f1 { fill: var(--c1); }
+.f2 { fill: var(--c2); }
+.f3 { fill: var(--c3); }
+.y-in { fill: var(--board-bg); }
+.spot { stroke-width: 0.07; }
+.spot.s0 { fill: var(--t0); stroke: var(--c0); }
+.spot.s1 { fill: var(--t1); stroke: var(--c1); }
+.spot.s2 { fill: var(--t2); stroke: var(--c2); }
+.spot.s3 { fill: var(--t3); stroke: var(--c3); }
+.b-star { fill: var(--star); }
+.b-star.on-color { fill: #ffffff; opacity: 0.92; }
+.b-arrow { fill: none; stroke: var(--star); stroke-width: 0.09; stroke-linecap: round; stroke-linejoin: round; }
+.b-center-line { fill: none; stroke: var(--cell-line); stroke-width: 0.04; }
+
+/* ===================== Quân ===================== */
+.tokens { position: absolute; inset: 0; pointer-events: none; }
+.token {
+  --hop: 140ms;
+  --sc-scale: 1;
+  position: absolute;
+  width: calc(var(--cell) * 0.78);
+  height: calc(var(--cell) * 0.78);
+  margin: calc(var(--cell) * -0.39) 0 0 calc(var(--cell) * -0.39);
+  padding: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+  cursor: default;
+  background: radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.6) 0 10%, transparent 48%), var(--sc);
+  box-shadow: inset 0 calc(var(--cell) * -0.06) 0 rgba(0, 0, 0, 0.25), 0 0 0 max(1.5px, calc(var(--cell) * 0.06)) #ffffff, 0 2px 4px rgba(0, 0, 0, 0.35);
+  transform: scale(var(--sc-scale));
+  transition: left var(--hop) ease-out, top var(--hop) ease-out, transform 0.18s;
+  z-index: 1;
+}
+.token .sym { width: 52%; height: 52%; fill: var(--ink); display: block; pointer-events: none; }
+.token.home { --sc-scale: 0.62; }
+.token.flying { --hop: 420ms; }
+.token.moving { z-index: 6; transform: scale(calc(var(--sc-scale) * 1.18)); }
+.token.can { z-index: 5; cursor: pointer; transform: scale(calc(var(--sc-scale) * 1.1)); }
+.token.can::after {
+  content: "";
+  position: absolute;
+  inset: -24%;
+  border-radius: 50%;
+  border: max(2px, calc(var(--cell) * 0.08)) solid var(--sc);
+  animation: tok-ring 1s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes tok-ring { from { transform: scale(0.8); opacity: 1; } to { transform: scale(1.25); opacity: 0; } }
+.token-key {
+  position: absolute;
+  top: -32%;
+  right: -32%;
+  min-width: 1.35em;
+  height: 1.35em;
+  padding: 0 0.2em;
+  border-radius: 999px;
+  display: none;
+  place-items: center;
+  font-size: max(10px, calc(var(--cell) * 0.36));
+  font-weight: 800;
+  line-height: 1;
+  color: var(--bg);
+  background: var(--text);
+}
+@media (hover: hover) and (pointer: fine) {
+  .token.can .token-key { display: grid; }
+}
+
+/* ===================== Hộp thoại ===================== */
+.help-text p { margin: 0 0 8px; }
+.help-text ul { margin: 0 0 8px; padding-left: 1.2em; }
+.help-text li { margin-bottom: 6px; }
+.help-text b { color: var(--text); }
+.standings { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.standings li { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 12px; background: var(--surface-2); font-weight: 600; font-size: 0.9rem; min-width: 0; }
+.standings li.win { box-shadow: inset 0 0 0 2px var(--sc); }
+.standings .seat-glyph { width: 22px; height: 22px; }
+.end-meta { margin: 0; color: var(--muted); font-size: 0.85rem; text-align: center; }
+
+/* ===================== Màn hẹp / thấp ===================== */
+@media (max-width: 380px) {
+  .seat { padding: 5px 8px; gap: 6px; }
+  .seat-glyph { width: 26px; height: 26px; }
+  .die { width: 54px; height: 54px; }
+}
+@media (max-height: 560px) {
+  .seat { padding: 4px 8px; }
+  .die { width: 54px; height: 54px; }
+}
+
+/* Màn cao (điện thoại dọc) hoặc máy tính: thẻ người chơi và xúc xắc to hơn cho dễ bấm, dễ nhìn */
+@media (min-height: 720px) {
+  .seat { padding: 9px 12px; }
+  .seat-glyph { width: 34px; height: 34px; }
+  .seat-name { font-size: 1rem; }
+  .seat-dots i { width: 10px; height: 10px; }
+  .die { width: 68px; height: 68px; border-radius: 18px; }
+  .status { font-size: 1.02rem; }
+  .play.wide .seat { padding: 8px 10px; }
+  .play.wide .seat-glyph { width: 30px; height: 30px; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .token { transition: none; }
+  .token.can::after { animation: none; transform: scale(1.05); }
+  .die.ready, .die.rolling { animation: none; }
+  .seat, .die { transition: none; }
+}

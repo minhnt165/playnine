@@ -1,0 +1,47 @@
+{
+  "id": "hoadungdao",
+  "cat": "puzzle",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Sliding Blocks",
+    "vi": "Hoa Dung Đạo"
+  },
+  "sub": {
+    "en": "Sliding block puzzle",
+    "vi": "Sliding Blocks"
+  },
+  "desc": {
+    "en": "Slide the blocks around a 4x5 tray until the big square escapes through the exit. 24 layouts from a 4-move warm-up to a 138-move marathon, including the classic opening, each with its proven minimum number of moves.",
+    "vi": "Trượt các khối trong khay 4x5 cho tới khi khối vuông lớn thoát qua lối ra. 24 thế từ bài khởi động 4 nước tới thử thách 138 nước, có cả thế cổ điển Hoành đao lập mã, thế nào cũng có số nước tối thiểu đã chứng minh."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Levels"],
+    "vi": ["Giải đố", "1 người", "Nhiều màn"]
+  },
+  "note": {
+    "en": "24 layouts, each with its minimum",
+    "vi": "24 thế, thế nào cũng có số nước tối thiểu"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 90, 118, .24), transparent 60%), linear-gradient(160deg, #2a2557, #110e26)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000
+        },
+        "points": 5
+      }
+    ]
+  }
+}

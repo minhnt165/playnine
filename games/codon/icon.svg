@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b6cff"/><stop offset="1" stop-color="#4b30c9"/></linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0c084"/><stop offset="1" stop-color="#c07d3f"/></linearGradient>
+    <radialGradient id="peg" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#e6f6ff"/><stop offset=".35" stop-color="#5fb4f5"/><stop offset="1" stop-color="#0f4f9a"/></radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Bàn chữ thập 21 lỗ, lỗ giữa trống -->
+  <path d="M22 5h20a5 5 0 0 1 5 5v7h7a5 5 0 0 1 5 5v20a5 5 0 0 1-5 5h-7v7a5 5 0 0 1-5 5H22a5 5 0 0 1-5-5v-7h-7a5 5 0 0 1-5-5V22a5 5 0 0 1 5-5h7v-7a5 5 0 0 1 5-5z" fill="url(#wood)" stroke="#8a5326" stroke-width="1.2"/>
+  <circle cx="32" cy="32" r="3.6" fill="#5b3518"/>
+  <g fill="url(#peg)"><circle cx="22" cy="12" r="3.9"/><circle cx="32" cy="12" r="3.9"/><circle cx="42" cy="12" r="3.9"/><circle cx="12" cy="22" r="3.9"/><circle cx="22" cy="22" r="3.9"/><circle cx="32" cy="22" r="3.9"/><circle cx="42" cy="22" r="3.9"/><circle cx="52" cy="22" r="3.9"/><circle cx="12" cy="32" r="3.9"/><circle cx="22" cy="32" r="3.9"/><circle cx="42" cy="32" r="3.9"/><circle cx="52" cy="32" r="3.9"/><circle cx="12" cy="42" r="3.9"/><circle cx="22" cy="42" r="3.9"/><circle cx="32" cy="42" r="3.9"/><circle cx="42" cy="42" r="3.9"/><circle cx="52" cy="42" r="3.9"/><circle cx="22" cy="52" r="3.9"/><circle cx="32" cy="52" r="3.9"/><circle cx="42" cy="52" r="3.9"/></g>
+</svg>

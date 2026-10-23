@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="r"><rect width="64" height="64" rx="14"/></clipPath>
+  </defs>
+  <g clip-path="url(#r)">
+    <rect width="64" height="64" fill="#ffd166"/>
+    <!-- Ô bàn 4x4 xen màu -->
+    <path fill="#8ee4a1" d="M0 0h16v16H0zM32 0h16v16H32zM16 16h16v16H16zM48 16h16v16H48zM0 32h16v16H0zM32 32h16v16H32zM16 48h16v16H16zM48 48h16v16H48z"/>
+    <path fill="#7cc7ff" d="M16 0h16v16H16zM0 16h16v16H0zM32 48h16v16H32zM48 32h16v16H48z"/>
+  </g>
+  <!-- Thang -->
+  <g stroke-linecap="round">
+    <path d="M9 55 23 9M21 59 35 13" stroke="#6b3d17" stroke-width="5.5"/>
+    <path d="M12 47l11 3.5M15 37l11 3.5M18 27l11 3.5M21 17l11 3.5" stroke="#6b3d17" stroke-width="4.5"/>
+    <path d="M9 55 23 9M21 59 35 13" stroke="#e2a564" stroke-width="2.4"/>
+    <path d="M12 47l11 3.5M15 37l11 3.5M18 27l11 3.5M21 17l11 3.5" stroke="#f3c48e" stroke-width="1.8"/>
+  </g>
+  <!-- Rắn -->
+  <path d="M46 13c-12 6 10 14-2 22s8 14-4 22" fill="none" stroke="#5b1a73" stroke-width="10" stroke-linecap="round"/>
+  <path d="M46 13c-12 6 10 14-2 22s8 14-4 22" fill="none" stroke="#a03ad0" stroke-width="6.5" stroke-linecap="round"/>
+  <path d="M43 22l5 1M46 34l-5 2M42 45l5 1" stroke="#f0d2ff" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M49 6l2-3.5M49 6l3.5-1.5" stroke="#e11d48" stroke-width="1.6" stroke-linecap="round"/>
+  <ellipse cx="47" cy="11" rx="7.5" ry="6" fill="#a03ad0" stroke="#5b1a73" stroke-width="2"/>
+  <circle cx="44.5" cy="9.5" r="2.2" fill="#fff"/>
+  <circle cx="49.8" cy="9.5" r="2.2" fill="#fff"/>
+  <circle cx="45" cy="9.2" r="1.1" fill="#111"/>
+  <circle cx="50.3" cy="9.2" r="1.1" fill="#111"/>
+</svg>

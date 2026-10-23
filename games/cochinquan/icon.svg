@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Cờ Chín Quân: góc bàn cờ gỗ, ba quân trắng thẳng hàng thành mill (vạch vàng), một quân đen -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4dcab"/>
+      <stop offset="1" stop-color="#d4a462"/>
+    </linearGradient>
+    <radialGradient id="w" cx=".36" cy=".3" r=".8">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".55" stop-color="#efe9dc"/>
+      <stop offset="1" stop-color="#c2b69b"/>
+    </radialGradient>
+    <radialGradient id="b" cx=".36" cy=".3" r=".8">
+      <stop offset="0" stop-color="#6a7090"/>
+      <stop offset=".5" stop-color="#2c3044"/>
+      <stop offset="1" stop-color="#11131c"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <g fill="none" stroke="#6d4a28" stroke-width="2.6" stroke-linecap="round">
+    <rect x="13" y="13" width="38" height="38"/>
+    <rect x="23" y="23" width="18" height="18"/>
+    <path d="M32 13v10M32 41v10M13 32h10M41 32h10"/>
+  </g>
+  <path d="M13 13h38" stroke="#f59e0b" stroke-width="5.5" stroke-linecap="round"/>
+  <g stroke="#7d6f55" stroke-width="1.2">
+    <circle cx="13" cy="13" r="7.2" fill="url(#w)"/>
+    <circle cx="32" cy="13" r="7.2" fill="url(#w)"/>
+    <circle cx="51" cy="13" r="7.2" fill="url(#w)"/>
+  </g>
+  <circle cx="41" cy="41" r="7.2" fill="url(#b)" stroke="#0b0c12" stroke-width="1.2"/>
+  <circle cx="23" cy="32" r="7.2" fill="url(#b)" stroke="#0b0c12" stroke-width="1.2"/>
+</svg>
