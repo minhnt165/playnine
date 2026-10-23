@@ -47,7 +47,14 @@ export function GameCard({ game: g, index: i, ribbon, note, hidden, plays, ratin
         onPointerMove={tilt ? onMove : undefined}
         onPointerLeave={tilt ? onLeave : undefined}
       >
-        <div className={'preview pv-' + g.id} data-game={g.id} aria-hidden="true">
+        {/* Game mới có preview.svg tĩnh (tải lười); game cũ dùng preview JS gắn theo data-game. */}
+        <div
+          className={'preview pv-' + g.id}
+          data-game={g.preview ? undefined : g.id}
+          style={g.preview ? { background: g.preview.bg } : undefined}
+          aria-hidden="true"
+        >
+          {g.preview && <img className="pv-img" src={g.dir + 'preview.svg'} alt="" loading="lazy" decoding="async" />}
           {ribbon && (
             // Gần như mọi game đều "Mới" nên nhãn này nhạt hơn nhãn "đang mở"/"gần nhất".
             <span className={'ribbon' + (ribbon[0] === t('ribbon.new') ? ' ribbon-new' : '')}>

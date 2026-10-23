@@ -967,3 +967,6 @@
       .mini-c4 .win { animation: none; stroke-dashoffset: 0; }
       .mini-lt span.up { animation: none; }
     }
+
+    /* Preview tĩnh của game mới (games/<dir>/preview.svg), phủ kín ô xem trước */
+    .pv-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }

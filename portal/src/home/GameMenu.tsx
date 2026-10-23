@@ -14,7 +14,7 @@ function Row({ game, onPick }: { game: GameDef; onPick: () => void }) {
   return (
     <li className="gmenu-item">
       <a className="gmenu-link" href={detailHref(game)} onClick={onPick}>
-        <span className={'gmenu-icon pv-' + game.id} aria-hidden="true">
+        <span className={'gmenu-icon pv-' + game.id} style={game.preview ? { background: game.preview.bg } : undefined} aria-hidden="true">
           <span className="card-icon" dangerouslySetInnerHTML={{ __html: game.icon(game.dir) }} />
         </span>
         <span className="gmenu-text">

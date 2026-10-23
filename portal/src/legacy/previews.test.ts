@@ -5,7 +5,7 @@ import { mountPreviews } from './previews'
 
 const mkRoot = () => {
   const root = document.createElement('div')
-  for (const g of GAMES) {
+  for (const g of GAMES.filter((x) => !x.preview)) {
     const d = document.createElement('div')
     d.className = 'preview pv-' + g.id
     d.dataset.game = g.id
@@ -29,7 +29,7 @@ describe('mountPreviews', () => {
     const root = mkRoot()
     const stop = mountPreviews(root, { isPlaying: () => false, reduceMotion: false })
     const hosts = root.querySelectorAll('.preview[data-game]')
-    expect(hosts).toHaveLength(GAMES.length)
+    expect(hosts).toHaveLength(GAMES.filter((g) => !g.preview).length)
     hosts.forEach((h) => expect(h.children.length, h.getAttribute('data-game')!).toBeGreaterThan(0))
     stop()
   })
