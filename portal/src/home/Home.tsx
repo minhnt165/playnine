@@ -34,6 +34,9 @@ type Props = {
   onThemeApplied?: () => void
 }
 
+// Trang chủ hiện tối đa bấy nhiêu thẻ game; phần còn lại ở trang #/games.
+const HOME_LIMIT = 24
+
 export function Home({ openIds, refreshKey, onThemeApplied }: Props) {
   const i18n = useI18n()
   const { games } = useServer()
@@ -90,7 +93,7 @@ export function Home({ openIds, refreshKey, onThemeApplied }: Props) {
             <CollectionRows />
           </>
         )}
-        <GameGrid sd={sd} xq={xq} rec={rec} sums={sums} openIds={openIds} now={now} query={query} onClearQuery={() => setQuery('')} totals={totals} ratings={ratings} />
+        <GameGrid sd={sd} xq={xq} rec={rec} sums={sums} openIds={openIds} now={now} query={query} onClearQuery={() => setQuery('')} totals={totals} ratings={ratings} limit={HOME_LIMIT} />
         {!searching && <Stats items={stats} />}
       </main>
       <Footer />

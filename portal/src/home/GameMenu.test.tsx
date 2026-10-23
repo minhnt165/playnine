@@ -12,6 +12,13 @@ beforeEach(() => localStorage.clear())
 afterEach(cleanup)
 
 describe('GameMenu', () => {
+  it('đang ở #/games: nút Games của sidebar được đánh dấu là trang hiện tại', () => {
+    location.hash = '#/games'
+    mountWith(createFakeApi({}), <Sidebar />)
+    expect(screen.getByRole('button', { name: en('nav.games') })).toHaveAttribute('aria-current', 'page')
+    location.hash = ''
+  })
+
   it('nút Games mở menu đủ game theo thể loại; Esc đóng và trả focus về nút', () => {
     mountWith(createFakeApi({}), <Sidebar />)
     const btn = screen.getByRole('button', { name: en('nav.games') })

@@ -55,6 +55,7 @@ const PREFIXES: [string, string][] = [
   ['#/events', 'events'],
   ['#/leaderboards', 'leaderboards'],
   ['#/news', 'news'],
+  ['#/games', 'games'],
 ]
 function sectionOf(hash: string, profileHref: string | null): string | null {
   const hit = PREFIXES.find(([p]) => hash.startsWith(p))
@@ -103,7 +104,7 @@ export function Sidebar() {
       </a>
       <nav className="sidenav-links" aria-label={t('nav.label')}>
         {item('home', '#/', ICON_HOME, t('nav.home'))}
-        <button type="button" className="sidenav-games" aria-haspopup="dialog" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>
+        <button type="button" className="sidenav-games" aria-haspopup="dialog" aria-expanded={menuOpen} aria-current={section === 'games' ? 'page' : undefined} onClick={() => setMenuOpen(true)}>
           {ICON_GAMES}
           <span>{t('nav.games')}</span>
         </button>

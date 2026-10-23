@@ -37,6 +37,11 @@ describe('route', () => {
     expect(parseRoute('#/leaderboards/x')).toEqual({ name: 'leaderboards' })
     expect(parseRoute('#/leaderboardsx')).toEqual({ name: 'home' })
   })
+  it('#/games mở trang tất cả game, đuôi lạ vẫn vào trang đó; #/game/<id> vẫn là trang giới thiệu', () => {
+    expect(parseRoute('#/games')).toEqual({ name: 'games' })
+    expect(parseRoute('#/games/x')).toEqual({ name: 'games' })
+    expect(parseRoute('#/game/sudoku')).toMatchObject({ name: 'detail' })
+  })
   it('#/history mở lịch sử chơi, đuôi lạ vẫn vào trang đó', () => {
     expect(parseRoute('#/history')).toEqual({ name: 'history' })
     expect(parseRoute('#/history?game=2048')).toEqual({ name: 'history' })

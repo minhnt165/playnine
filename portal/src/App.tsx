@@ -3,6 +3,7 @@ import { AdminPage } from './admin/AdminPage'
 import { GamePage } from './detail/GamePage'
 import { EventPage } from './events/EventPage'
 import { EventsPage } from './events/EventsPage'
+import { GamesPage } from './home/GamesPage'
 import { HistoryPage } from './history/HistoryPage'
 import { LeaderboardsPage } from './leaderboards/LeaderboardsPage'
 import { NewsPage } from './news/NewsPage'
@@ -114,6 +115,8 @@ export function App() {
         <PostPage slug={page.slug} onThemeApplied={recolor} />
       ) : page.name === 'leaderboards' ? (
         <LeaderboardsPage onThemeApplied={recolor} />
+      ) : page.name === 'games' ? (
+        <GamesPage onThemeApplied={recolor} />
       ) : page.name === 'history' ? (
         <HistoryPage onThemeApplied={recolor} />
       ) : page.name === 'admin' ? (

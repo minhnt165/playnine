@@ -12,6 +12,7 @@ export type Route =
   | { name: 'news' }
   | { name: 'post'; slug: string }
   | { name: 'history' }
+  | { name: 'games' }
 
 /** Khớp ràng buộc slug của bảng posts. */
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/
@@ -42,6 +43,7 @@ export function parseRoute(hash: string): Route {
   if (/^#\/admin(?:[/?#]|$)/.test(hash)) return { name: 'admin' }
   if (/^#\/leaderboards(?:[/?#]|$)/.test(hash)) return { name: 'leaderboards' }
   if (/^#\/history(?:[/?#]|$)/.test(hash)) return { name: 'history' }
+  if (/^#\/games(?:[/?#]|$)/.test(hash)) return { name: 'games' }
   const news = hash.match(/^#\/news(?:\/([^/?#]+))?(?:[/?#]|$)/)
   if (news) return news[1] && SLUG.test(news[1]) ? { name: 'post', slug: news[1] } : { name: 'news' }
   const m = hash.match(/^#\/(play|game)\/([\w-]+)/)
@@ -56,6 +58,9 @@ export const postHref = (slug: string): string => '#/news/' + slug
 
 /** Lịch sử chơi của chính người dùng. */
 export const historyHref = '#/history'
+
+/** Trang tất cả game: lọc, tìm và sắp xếp. */
+export const gamesHref = '#/games'
 
 export const playHref = (g: GameDef): string => '#/play/' + g.id
 
