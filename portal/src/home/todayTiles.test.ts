@@ -14,6 +14,15 @@ describe('buildTodayTiles', () => {
     expect(tiles.map((x) => x.badge)).toEqual(['daily', 'daily', 'daily'])
   })
 
+  it('ô "Thử game mới" chỉ có khi còn game thêm trong 14 ngày mà chưa chơi', () => {
+    // Ẩn ba game có đề hằng ngày để chỗ trống cho các ô phụ.
+    const hiddenIds = new Set(['sudoku', 'minesweeper', 'xepbai'])
+    const fresh = buildTodayTiles({ ...base(), hiddenIds })
+    expect(fresh.some((x) => x.badge === 'new')).toBe(true)
+    const later = buildTodayTiles({ ...base(), now: new Date(2026, 11, 1, 10, 0), hiddenIds })
+    expect(later.some((x) => x.badge === 'new')).toBe(false)
+  })
+
   it('game có daily nhưng hôm nay chưa mở: thẻ daily với tiêu đề loc(g.daily)', () => {
     const tiles = buildTodayTiles(base())
     const mines = tiles.find((x) => x.game.id === 'minesweeper')!

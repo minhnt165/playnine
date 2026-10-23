@@ -1,10 +1,14 @@
+import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
+
+// Số game lấy từ games/order.json (mỗi id một thư mục có game.json).
+const gameCount = (JSON.parse(readFileSync('games/order.json', 'utf8')) as string[]).length;
 
 // Tên test là hợp đồng "ngang bằng" - giữ nguyên khi chuyển sang cổng React (Task 8).
 
-test('home lists 21 games', async ({ page }) => {
+test('home lists every game', async ({ page }) => {
   await page.goto('');
-  await expect(page.locator('#games > li')).toHaveCount(21);
+  await expect(page.locator('#games > li')).toHaveCount(gameCount);
 });
 
 test('filter persists after reload', async ({ page }) => {

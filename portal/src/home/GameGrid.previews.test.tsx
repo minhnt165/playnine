@@ -6,9 +6,10 @@ import { GameGrid } from './GameGrid'
 
 afterEach(cleanup)
 
+// Mốc đủ xa để không game nào còn nhãn "Mới": test chỉ xem ruy băng "đang mở" bật/tắt.
 const grid = (openIds: Set<string>) => (
   <I18nProvider>
-    <GameGrid sd={emptySd()} xq={{ level: null } as never} rec={{}} sums={{}} openIds={openIds} now={new Date()} />
+    <GameGrid sd={emptySd()} xq={{ level: null } as never} rec={{}} sums={{}} openIds={openIds} now={new Date(2027, 0, 1)} />
   </I18nProvider>
 )
 

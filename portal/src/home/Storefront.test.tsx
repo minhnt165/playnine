@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { GAMES } from '../games/catalog'
 import { DICT } from '../i18n/dict'
 import { I18nProvider } from '../i18n/i18n'
 import { createFakeApi } from '../server/fakeApi'
@@ -51,7 +52,7 @@ describe('Giao diện cửa hàng', () => {
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'zzz' } })
     fireEvent.click(screen.getByRole('button', { name: en('games.clear') }))
     expect(container.querySelector('.spotlight')).not.toBeNull()
-    expect(container.querySelectorAll('#games > li:not([hidden])')).toHaveLength(21)
+    expect(container.querySelectorAll('#games > li:not([hidden])')).toHaveLength(GAMES.length)
   })
 
   it('sidebar liệt kê game chơi gần đây, mới nhất trước', () => {

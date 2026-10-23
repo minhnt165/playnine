@@ -1,5 +1,6 @@
 import type { TFn } from '../i18n/types'
 import type { GameDef } from '../games/catalog'
+import { isNewGame } from '../games/manifest'
 import { fmtAgo } from '../lib/time'
 
 /** Game chơi gần nhất theo bản ghi `recent` (id có mốc thời gian lớn nhất). */
@@ -15,6 +16,6 @@ export function ribbonFor(
   const { openIds, lastId, rec, t, now } = ctx
   if (openIds.has(g.id)) return [t('ribbon.open'), t('ribbon.openShort')]
   if (g.id === lastId) return [t('ribbon.last', { ago: fmtAgo(rec[g.id], t, now) }), t('ribbon.lastShort')]
-  if (g.isNew && !rec[g.id]) return [t('ribbon.new'), t('ribbon.new')]
+  if (isNewGame(g, now ?? Date.now()) && !rec[g.id]) return [t('ribbon.new'), t('ribbon.new')]
   return null
 }

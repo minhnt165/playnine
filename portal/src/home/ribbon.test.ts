@@ -16,12 +16,15 @@ describe('ribbonFor', () => {
     const r = ribbonFor(g('sudoku'), { openIds: none, lastId: 'sudoku', rec: { sudoku: 0 }, t, now })
     expect(r).toEqual([t('ribbon.last', { ago: t('ago.min', { n: 10 }) }), t('ribbon.lastShort')])
   })
-  it('isNew chưa chơi: ribbon.new; đã chơi thì null', () => {
-    expect(ribbonFor(g('co9o'), { openIds: none, rec: {}, t })).toEqual([t('ribbon.new'), t('ribbon.new')])
-    expect(ribbonFor(g('co9o'), { openIds: none, lastId: 'x', rec: { co9o: 1 }, t })).toBeNull()
+  it('game thêm trong 14 ngày, chưa chơi: ribbon.new; đã chơi thì null', () => {
+    const now = Date.parse('2026-10-23T09:00:00Z')
+    const fresh = { ...g('co9o'), addedAt: '2026-10-20' }
+    expect(ribbonFor(fresh, { openIds: none, rec: {}, t, now })).toEqual([t('ribbon.new'), t('ribbon.new')])
+    expect(ribbonFor(fresh, { openIds: none, lastId: 'x', rec: { co9o: 1 }, t, now })).toBeNull()
   })
-  it('còn lại null', () => {
-    expect(ribbonFor(g('sudoku'), { openIds: none, rec: {}, t })).toBeNull()
+  it('game thêm quá 14 ngày: không còn ribbon.new', () => {
+    const fresh = { ...g('co9o'), addedAt: '2026-10-20' }
+    expect(ribbonFor(fresh, { openIds: none, rec: {}, t, now: Date.parse('2026-11-10T09:00:00Z') })).toBeNull()
   })
   it('lastPlayedId chọn mốc lớn nhất', () => {
     expect(lastPlayedId({ a: 1, b: 5, c: 3 })).toBe('b')

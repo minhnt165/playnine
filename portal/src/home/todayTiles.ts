@@ -1,5 +1,6 @@
 import type { I18nApi } from '../i18n/i18n'
 import { GAMES, gameById, type GameDef } from '../games/catalog'
+import { isNewGame } from '../games/manifest'
 import type { SudokuData } from '../data/sudoku'
 import { SUDOKU_DIFF } from '../data/sudoku'
 import type { XqData } from '../data/xiangqi'
@@ -110,7 +111,7 @@ export function buildTodayTiles({ sd, xq, rec, sums, now, i18n, hiddenIds }: Inp
     }
   })
 
-  const tried = GAMES.filter((g) => g.isNew && !rec[g.id])
+  const tried = GAMES.filter((g) => isNewGame(g, now.getTime()) && !rec[g.id])
   if (tried.length) {
     const g = tried[0]
     extras.push({
