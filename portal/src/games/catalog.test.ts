@@ -28,6 +28,10 @@ describe('catalog', () => {
   it('icon trả về chuỗi HTML', () => {
     expect(gameById('co9o')?.icon('co9o/')).toBe('<img src="co9o/icon.svg" alt="">')
   })
+  it('mỗi thư mục game có icon.svg (icon() của mọi game trỏ tới file này)', () => {
+    const missing = dirs.filter((d) => !fs.existsSync(path.join(gamesDir, d, 'icon.svg')))
+    expect(missing).toEqual([])
+  })
   it('manifest có server với ít nhất một mode', () => {
     for (const g of GAMES) expect(g.server.modes.length, g.id).toBeGreaterThan(0)
   })
