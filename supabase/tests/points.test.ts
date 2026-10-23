@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { PGlite } from '@electric-sql/pglite'
 import { asAnon, asUser, createDb as createBaseDb, newUser, withoutModePoints } from './harness'
+import { readManifests } from './manifests'
 
 // Các test ở đây kiểm luật theo điểm mặc định của game; điểm riêng từng mode có ở mode_points.test.ts.
 const createDb = async () => withoutModePoints(await createBaseDb())
@@ -61,11 +62,8 @@ describe('games.points', () => {
     const db = await createDb()
     const rows = (await asAnon(db, () => db.query<any>('select id, metric, modes, hidden, points from games order by id'))).rows
     const got = Object.fromEntries(rows.map((r) => [r.id, r.points]))
-    expect(got).toEqual({
-      ran: 5, xepgach: 5, phagach: 5, '2048': 5, minesweeper: 5, noihinh: 5, truotso: 5, latthe: 5, banbong: 5,
-      sudoku: 10, tranhan: 10, xepbai: 10, bonlientiep: 10,
-      covua: 15, xiangqi: 15, co9o: 15, caro: 15, codam: 15, coganh: 15, colat: 15, oanquan: 15,
-    })
+    // Điểm mặc định của từng game nằm ở server.points trong games/<dir>/game.json.
+    expect(got).toEqual(Object.fromEntries(readManifests().map(({ m }) => [m.id, m.server.points])))
     const u = await newUser(db, { full_name: 'Alice' })
     expect((await asUser(db, u, () => db.query<any>("select points from games where id = 'caro'"))).rows[0].points).toBe(15)
     await expect(db.query("update games set points = 1001 where id = 'caro'")).rejects.toThrow()

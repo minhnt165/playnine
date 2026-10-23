@@ -1,32 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { PGlite } from '@electric-sql/pglite'
 import { asAnon, asUser, createDb, newUser } from './harness'
+import { readManifests } from './manifests'
 
-const WINS = 'easy,medium,hard'
-const MODES: Record<string, string> = {
-  '2048': '3x3,4x4,5x5',
-  xepgach: 'lv1,lv5,lv10',
-  ran: 'classic-slow,classic-normal,classic-fast,wrap-slow,wrap-normal,wrap-fast,maze-slow,maze-normal,maze-fast',
-  phagach: 'default',
-  minesweeper: 'easy,medium,hard,daily',
-  sudoku: 'easy,medium,hard,expert,extreme,daily',
-  tranhan: 's5,s10,s15',
-  xepbai: 'draw1,draw3,daily',
-  co9o: WINS, caro: WINS, xiangqi: WINS, covua: WINS, colat: WINS,
-  codam: WINS, coganh: WINS, oanquan: WINS, bonlientiep: WINS,
-  noihinh: 'classic',
-  truotso: '3x3,4x4,5x5', latthe: 'easy,medium,hard', banbong: 'classic',
-}
-
-const METRICS: Record<string, string> = {
-  '2048': 'score_high', xepgach: 'score_high', ran: 'score_high', phagach: 'score_high',
-  minesweeper: 'time_low', sudoku: 'time_low',
-  tranhan: 'wins', xepbai: 'wins',
-  co9o: 'wins', caro: 'wins', xiangqi: 'wins', covua: 'wins', colat: 'wins',
-  codam: 'wins', coganh: 'wins', oanquan: 'wins', bonlientiep: 'wins',
-  noihinh: 'wins',
-  truotso: 'time_low', latthe: 'time_low', banbong: 'score_high',
-}
+const manifests = readManifests().map(({ m }) => m)
 
 describe('spike', () => {
   it('pglite supports roles, RLS and the Asia/Ho_Chi_Minh zone', async () => {
@@ -49,21 +26,18 @@ describe('spike', () => {
 })
 
 describe('core schema', () => {
-  it('seeds 21 games with metrics and modes', async () => {
+  it('bảng games khớp manifest của mọi game (metric, điểm, mode, nhãn, luật)', async () => {
     const db = await createDb()
-    const r = await db.query<{ id: string; metric: string; modes: any[] }>('select * from games')
-    expect(r.rows).toHaveLength(21)
-    for (const g of r.rows) {
-      expect(g.metric).toBe(METRICS[g.id])
-      expect(g.modes.map((m) => m.key).join(',')).toBe(MODES[g.id])
-      for (const m of g.modes) {
-        expect(m.label.en).toBeTruthy()
-        expect(m.label.vi).toBeTruthy()
-      }
+    const r = await db.query<{ id: string; metric: string; modes: any[]; points: number }>('select * from games')
+    expect(r.rows.map((g) => g.id).sort()).toEqual(manifests.map((m) => m.id).sort())
+    for (const m of manifests) {
+      const g = r.rows.find((x) => x.id === m.id)!
+      expect({ metric: g.metric, points: g.points, modes: g.modes }, m.id).toEqual({
+        metric: m.server.metric,
+        points: m.server.points,
+        modes: m.server.modes,
+      })
     }
-    expect(Object.keys(METRICS).sort()).toEqual(r.rows.map((g) => g.id).sort())
-    const g2048 = r.rows.find((g) => g.id === '2048')!
-    expect(g2048.modes.map((m) => m.key).join(',')).toBe('3x3,4x4,5x5')
   })
 
   it('creates a profile from Google metadata', async () => {
@@ -84,7 +58,7 @@ describe('core schema', () => {
     const db = await createDb()
     await newUser(db, { full_name: 'Reader' })
     await asAnon(db, async () => {
-      expect((await db.query('select * from games')).rows.length).toBe(21)
+      expect((await db.query('select * from games')).rows.length).toBe(manifests.length)
       await db.query('select * from play_counts')
       expect((await db.query('select id, display_name, avatar_url from profiles')).rows.length).toBe(1)
     })
