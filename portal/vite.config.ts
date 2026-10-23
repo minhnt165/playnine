@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { serveGames } from './vite/serve-games'
+import { versionFile } from './vite/version-file'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -20,14 +21,17 @@ function commitSha(): string {
   }
 }
 
+const buildInfo = { version: appVersion, commit: commitSha(), time: new Date().toISOString() }
+
 export default defineConfig({
   base: '/playnine/',
   define: {
-    __APP_VERSION__: JSON.stringify(appVersion),
-    __COMMIT__: JSON.stringify(commitSha()),
-    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+    __APP_VERSION__: JSON.stringify(buildInfo.version),
+    __COMMIT__: JSON.stringify(buildInfo.commit),
+    __BUILD_TIME__: JSON.stringify(buildInfo.time),
   },
-  plugins: [react(), serveGames(repoRoot)],
+  // version.json để app cài trên màn hình chính biết server đã có bản mới (src/lib/updateCheck.ts).
+  plugins: [react(), serveGames(repoRoot), versionFile(buildInfo)],
   // Tránh 5173 (máy dev đang có app khác chiếm); strictPort để không tự nhảy port, vì Redirect URL của Supabase Auth gắn với port này.
   // fs.allow: danh mục game nạp games/*/game.json và games/order.json nằm ngoài portal/.
   server: { port: 5180, strictPort: true, fs: { allow: [repoRoot] } },

@@ -14,6 +14,7 @@ import { markPlayed } from './data/recent'
 import { useFavoritesSync } from './data/favorites'
 import { useCloudSync } from './data/useCloudSync'
 import { ScrollTop } from './home/ScrollTop'
+import { UpdateNotice } from './home/UpdateNotice'
 import type { GameDef } from './games/catalog'
 import { startGlyphs } from './legacy/glyphs'
 import { nextFrameIds } from './player/frames'
@@ -125,6 +126,8 @@ export function App() {
         <Home openIds={openIds} refreshKey={refreshKey} onThemeApplied={recolor} />
       )}
       {!game && <ScrollTop />}
+      {/* Chỉ mời tải lại ngoài game, để không mất ván đang chơi */}
+      {!game && <UpdateNotice />}
       <Player game={game} heldIds={heldIds} portalSeen={portalSeen} />
     </>
   )

@@ -107,3 +107,11 @@ test('events and admin pages say unavailable without a server', async ({ page })
   await expect(page.getByText(/isn't available|chưa khả dụng/)).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test('version.json matches the build shown in the footer', async ({ page, request }) => {
+  const res = await request.get('version.json');
+  expect(res.ok()).toBeTruthy();
+  const { version, commit } = await res.json();
+  await page.goto('');
+  await expect(page.locator('#build-info')).toContainText(`v${version} · ${commit}`);
+});

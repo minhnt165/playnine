@@ -91,6 +91,8 @@ Workflow `.github/workflows/deploy.yml` chạy khi push lên `main` (hoặc ch�
 
 Chân trang cổng hiện bản đang chạy: `v<version> · <commit> · <thời điểm build>`, bấm vào để mở commit trên GitHub.
 Phiên bản lấy từ trường `version` trong `package.json` gốc; tăng số này khi phát hành thay đổi đáng kể.
+Bản build cũng ghi `version.json` cùng nội dung ở gốc site; cổng fetch file này lúc mở và mỗi lần app hiện trở lại, thấy commit khác thì hiện thanh "Đã có bản mới · Tải lại".
+Cần vậy vì app cài trên màn hình chính (Add to Home Screen) không tự tải lại trang khi mở, nên luôn chậm một deploy so với tab trình duyệt.
 
 ## Việc làm tay trước khi merge vào `main`
 
