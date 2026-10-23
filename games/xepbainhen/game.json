@@ -1,0 +1,69 @@
+{
+  "id": "xepbainhen",
+  "cat": "card",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Spider Solitaire",
+    "vi": "Xếp Bài Nhện"
+  },
+  "sub": {
+    "en": "Spider",
+    "vi": "Spider Solitaire"
+  },
+  "desc": {
+    "en": "Build eight King-to-Ace runs of one suit across ten columns. Play with 1, 2 or 4 suits, tap or drag to move, unlimited undo.",
+    "vi": "Xếp đủ tám dãy cùng chất từ Già xuống Át trên mười cột. Chơi 1, 2 hoặc 4 chất, chạm hoặc kéo để đi, đi lại không giới hạn."
+  },
+  "tags": {
+    "en": ["Cards", "Solitaire", "1 player"],
+    "vi": ["Bài", "Xếp bài", "1 người"]
+  },
+  "note": {
+    "en": "Start with 1 suit, then try all 4",
+    "vi": "Làm quen với 1 chất, rồi thử đủ 4 chất"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(74, 222, 160, .22), transparent 60%), linear-gradient(160deg, #173f39, #0b1a1f)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 10,
+    "modes": [
+      {
+        "key": "s1",
+        "label": {
+          "en": "1 suit",
+          "vi": "1 chất"
+        },
+        "rules": {
+          "min_time_ms": 75000
+        },
+        "points": 6
+      },
+      {
+        "key": "s2",
+        "label": {
+          "en": "2 suits",
+          "vi": "2 chất"
+        },
+        "rules": {
+          "min_time_ms": 120000
+        },
+        "points": 10
+      },
+      {
+        "key": "s4",
+        "label": {
+          "en": "4 suits",
+          "vi": "4 chất"
+        },
+        "rules": {
+          "min_time_ms": 180000
+        },
+        "points": 16
+      }
+    ]
+  }
+}

@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: giữ A K Q J bích, lá thứ 5 lật từ 4 rô thành 10 bích = thùng phá sảnh lớn,
+       hàng 4000 trên bảng trả nhấp nháy. Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động.
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt. -->
+  <defs>
+    <path id="s" d="M12 1.8c.5.6 9.6 7.2 9.6 12.9 0 2.9-2.3 5.1-5 5.1-1.6 0-3-.7-3.8-1.9.3 1.8 1 3.1 2.5 4.5H8.7c1.5-1.4 2.2-2.7 2.5-4.5-.8 1.2-2.2 1.9-3.8 1.9-2.7 0-5-2.2-5-5.1C2.4 9 11.5 2.4 12 1.8z"/>
+    <path id="d" d="M12 1.4c2.3 3.8 5 7.3 8.6 10.6-3.6 3.3-6.3 6.8-8.6 10.6-2.3-3.8-5-7.3-8.6-10.6C7 8.7 9.7 5.2 12 1.4z"/>
+  </defs>
+  <style>
+    text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-weight: 800; }
+    .flip { transform-box: fill-box; transform-origin: center; animation: flip 6s ease-in-out infinite; }
+    .f4 { animation: f4 6s linear infinite; }
+    .f10 { animation: f10 6s linear infinite; }
+    .win { animation: win 6s linear infinite; }
+    @keyframes flip { 0%, 22% { transform: scaleX(1); } 27% { transform: scaleX(0); } 32%, 88% { transform: scaleX(1); } 93% { transform: scaleX(0); } 98%, 100% { transform: scaleX(1); } }
+    @keyframes f4 { 0%, 26.9% { opacity: 1; } 27%, 92.9% { opacity: 0; } 93%, 100% { opacity: 1; } }
+    @keyframes f10 { 0%, 26.9% { opacity: 0; } 27%, 92.9% { opacity: 1; } 93%, 100% { opacity: 0; } }
+    @keyframes win { 0%, 33% { opacity: 0; } 36% { opacity: 1; } 42% { opacity: .25; } 48% { opacity: 1; } 54% { opacity: .25; } 60%, 86% { opacity: 1; } 90%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .flip, .f4, .f10, .win { animation: none; }
+      .f4 { opacity: 0; }
+    }
+  </style>
+
+  <!-- Bảng trả thu nhỏ -->
+  <rect x="14" y="5" width="132" height="44" rx="7" fill="#15216d" stroke="#3446b8" stroke-width="1"/>
+  <g fill="#ffe27a" opacity=".85">
+    <rect x="23" y="12.5" width="44" height="4" rx="2"/>
+    <rect x="23" y="25.5" width="36" height="4" rx="2"/>
+    <rect x="23" y="38.5" width="40" height="4" rx="2"/>
+  </g>
+  <rect x="110" y="9" width="32" height="37" rx="3" fill="#ffffff" opacity=".12"/>
+  <g font-size="9" text-anchor="end" fill="#ffe27a">
+    <text x="138" y="18">4000</text>
+    <text x="138" y="31">125</text>
+    <text x="138" y="44">5</text>
+  </g>
+  <!-- Hàng thắng: nền vàng, chữ tối (phủ lên hàng thường) -->
+  <g class="win">
+    <rect x="18" y="9" width="124" height="11" rx="3" fill="#ffd54a"/>
+    <rect x="23" y="12.5" width="44" height="4" rx="2" fill="#2c1f00" opacity=".75"/>
+    <text x="138" y="18" font-size="9" text-anchor="end" fill="#2c1f00">4000</text>
+  </g>
+
+  <!-- 5 lá -->
+  <g stroke="#0b1240" stroke-width=".8">
+    <rect x="9" y="57" width="26" height="37" rx="3" fill="#ffffff"/>
+    <rect x="38" y="57" width="26" height="37" rx="3" fill="#ffffff"/>
+    <rect x="67" y="57" width="26" height="37" rx="3" fill="#ffffff"/>
+    <rect x="96" y="57" width="26" height="37" rx="3" fill="#ffffff"/>
+  </g>
+  <g font-size="10" fill="#191b31">
+    <text x="12" y="67">A</text>
+    <text x="41" y="67">K</text>
+    <text x="70" y="67">Q</text>
+    <text x="99.5" y="67">J</text>
+  </g>
+  <g fill="#191b31">
+    <use href="#s" transform="translate(14 71) scale(.7)"/>
+    <use href="#s" transform="translate(43 71) scale(.7)"/>
+    <use href="#s" transform="translate(72 71) scale(.7)"/>
+    <use href="#s" transform="translate(101 71) scale(.7)"/>
+  </g>
+  <!-- Lá thứ 5 lật -->
+  <g class="flip">
+    <rect x="125" y="57" width="26" height="37" rx="3" fill="#ffffff" stroke="#0b1240" stroke-width=".8"/>
+    <g class="f4">
+      <text x="128" y="67" font-size="10" fill="#c62828">4</text>
+      <use href="#d" transform="translate(130 71) scale(.7)" fill="#c62828"/>
+    </g>
+    <g class="f10">
+      <text x="126.5" y="67" font-size="9.5" letter-spacing="-.6" fill="#191b31">10</text>
+      <use href="#s" transform="translate(130 71) scale(.7)" fill="#191b31"/>
+    </g>
+  </g>
+
+  <!-- Nhãn GIỮ dưới 4 lá giữ -->
+  <g fill="#ffd54a">
+    <rect x="12" y="99" width="20" height="7" rx="2.5"/>
+    <rect x="41" y="99" width="20" height="7" rx="2.5"/>
+    <rect x="70" y="99" width="20" height="7" rx="2.5"/>
+    <rect x="99" y="99" width="20" height="7" rx="2.5"/>
+  </g>
+</svg>

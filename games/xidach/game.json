@@ -1,0 +1,47 @@
+{
+  "id": "xidach",
+  "cat": "card",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Blackjack",
+    "vi": "Xì Dách"
+  },
+  "sub": {
+    "en": "21 against the dealer",
+    "vi": "Blackjack"
+  },
+  "desc": {
+    "en": "Take on the dealer with a 6-deck shoe: hit, stand, double or split to get closer to 21. Start with 1,000 chips and finish the 10-hand session up to win.",
+    "vi": "Đấu với nhà cái bằng hộp 6 bộ bài: rút, dừng, gấp đôi hay tách bài để gần 21 hơn. Bắt đầu với 1000 chip, chơi hết 10 ván mà có lãi là thắng."
+  },
+  "tags": {
+    "en": ["Cards", "1 player", "Casino"],
+    "vi": ["Bài", "1 người", "Sòng bài"]
+  },
+  "note": {
+    "en": "1,000 chips, 10 hands: finish up",
+    "vi": "1000 chip, 10 ván: kết thúc có lãi"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(47, 163, 108, .38), transparent 60%), linear-gradient(160deg, #135436, #061a10)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 8,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 30000
+        },
+        "points": 8
+      }
+    ]
+  }
+}

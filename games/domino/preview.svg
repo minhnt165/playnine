@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước Đô-mi-nô: dây quân trên bàn, quân [6|1] từ tay trượt lên nối vào đầu 6. Nền thẻ lấy từ preview.bg. -->
+  <style>
+    .sh { fill: rgba(0, 0, 0, .35); }
+    .tf { fill: #fdfaf2; stroke: #cbbfa8; stroke-width: .5; }
+    .dv { stroke: #b3a68e; stroke-width: .6; stroke-linecap: round; }
+    .pp circle { fill: #1b1e2d; }
+    .ring { fill: rgba(251, 191, 36, .25); stroke: #fbbf24; stroke-width: 1.2; stroke-dasharray: 3 2; transform-origin: 143px 50px; animation: ring 3.2s ease-in-out infinite; }
+    .glow { fill: none; stroke: #fbbf24; stroke-width: 1.4; opacity: .9; animation: glow 3.2s linear infinite; }
+    .slide { animation: slide 3.2s cubic-bezier(.3, .9, .3, 1) infinite; transform-origin: 136px 50px; }
+    @keyframes slide {
+      0%, 22% { transform: translate(-60px, 56px) rotate(90deg) scale(.78); opacity: 1; }
+      48%, 86% { transform: none; opacity: 1; }
+      93% { transform: none; opacity: 0; }
+      94% { transform: translate(-60px, 56px) rotate(90deg) scale(.78); opacity: 0; }
+      100% { transform: translate(-60px, 56px) rotate(90deg) scale(.78); opacity: 1; }
+    }
+    @keyframes ring { 0%, 40% { opacity: 1; transform: scale(1); } 20% { transform: scale(1.18); } 48%, 100% { opacity: 0; } }
+    @keyframes glow { 0%, 22% { opacity: .9; } 28%, 94% { opacity: 0; } 100% { opacity: .9; } }
+    @media (prefers-reduced-motion: reduce) {
+      .slide, .ring, .glow { animation: none; }
+      .ring, .glow { opacity: 0; }
+    }
+  </style>
+  <g transform="translate(5 4)">
+  <rect class="sh" x="10.49" y="44.47" width="27.02" height="13.02" rx="2.24"/><rect class="tf" x="10.49" y="43.49" width="27.02" height="13.02" rx="2.24"/><line class="dv" x1="24" y1="45.52" x2="24" y2="54.48"/><g class="pp"><circle cx="13.78" cy="46.78" r="1.35"/><circle cx="20.22" cy="53.22" r="1.35"/><circle cx="27.78" cy="46.78" r="1.35"/><circle cx="34.22" cy="46.78" r="1.35"/><circle cx="31" cy="50" r="1.35"/><circle cx="27.78" cy="53.22" r="1.35"/><circle cx="34.22" cy="53.22" r="1.35"/></g><rect class="sh" x="38.49" y="37.47" width="13.02" height="27.02" rx="2.24"/><rect class="tf" x="38.49" y="36.49" width="13.02" height="27.02" rx="2.24"/><line class="dv" x1="40.52" y1="50" x2="49.48" y2="50"/><g class="pp"><circle cx="41.78" cy="39.78" r="1.35"/><circle cx="48.22" cy="39.78" r="1.35"/><circle cx="45" cy="43" r="1.35"/><circle cx="41.78" cy="46.22" r="1.35"/><circle cx="48.22" cy="46.22" r="1.35"/><circle cx="41.78" cy="53.78" r="1.35"/><circle cx="48.22" cy="53.78" r="1.35"/><circle cx="45" cy="57" r="1.35"/><circle cx="41.78" cy="60.22" r="1.35"/><circle cx="48.22" cy="60.22" r="1.35"/></g><rect class="sh" x="52.49" y="44.47" width="27.02" height="13.02" rx="2.24"/><rect class="tf" x="52.49" y="43.49" width="27.02" height="13.02" rx="2.24"/><line class="dv" x1="66" y1="45.52" x2="66" y2="54.48"/><g class="pp"><circle cx="55.78" cy="46.78" r="1.35"/><circle cx="62.22" cy="46.78" r="1.35"/><circle cx="59" cy="50" r="1.35"/><circle cx="55.78" cy="53.22" r="1.35"/><circle cx="62.22" cy="53.22" r="1.35"/><circle cx="69.78" cy="46.78" r="1.35"/><circle cx="73" cy="50" r="1.35"/><circle cx="76.22" cy="53.22" r="1.35"/></g><rect class="sh" x="80.49" y="44.47" width="27.02" height="13.02" rx="2.24"/><rect class="tf" x="80.49" y="43.49" width="27.02" height="13.02" rx="2.24"/><line class="dv" x1="94" y1="45.52" x2="94" y2="54.48"/><g class="pp"><circle cx="83.78" cy="46.78" r="1.35"/><circle cx="87" cy="50" r="1.35"/><circle cx="90.22" cy="53.22" r="1.35"/><circle cx="97.78" cy="46.78" r="1.35"/><circle cx="101" cy="46.78" r="1.35"/><circle cx="104.22" cy="46.78" r="1.35"/><circle cx="97.78" cy="53.22" r="1.35"/><circle cx="101" cy="53.22" r="1.35"/><circle cx="104.22" cy="53.22" r="1.35"/></g>
+  <circle class="ring" cx="143" cy="50" r="6"/>
+  <rect class="sh" x="56.39" y="85.16" width="10.23" height="21.23" rx="1.76"/><rect class="tf" x="56.39" y="84.39" width="10.23" height="21.23" rx="1.76"/><line class="dv" x1="57.98" y1="95" x2="65.02" y2="95"/><g class="pp"><circle cx="58.97" cy="97.97" r="1.05"/><circle cx="64.03" cy="97.97" r="1.05"/><circle cx="58.97" cy="103.03" r="1.05"/><circle cx="64.03" cy="103.03" r="1.05"/></g><rect class="sh" x="86.39" y="85.16" width="10.23" height="21.23" rx="1.76"/><rect class="tf" x="86.39" y="84.39" width="10.23" height="21.23" rx="1.76"/><line class="dv" x1="87.98" y1="95" x2="95.02" y2="95"/><g class="pp"><circle cx="91.5" cy="89.5" r="1.05"/><circle cx="88.97" cy="97.97" r="1.05"/><circle cx="94.03" cy="103.03" r="1.05"/></g>
+  <rect class="glow" x="69.5" y="82.5" width="14" height="25" rx="2.5"/>
+  <g class="slide"><rect class="sh" x="108.49" y="44.47" width="27.02" height="13.02" rx="2.24"/><rect class="tf" x="108.49" y="43.49" width="27.02" height="13.02" rx="2.24"/><line class="dv" x1="122" y1="45.52" x2="122" y2="54.48"/><g class="pp"><circle cx="111.78" cy="46.78" r="1.35"/><circle cx="115" cy="46.78" r="1.35"/><circle cx="118.22" cy="46.78" r="1.35"/><circle cx="111.78" cy="53.22" r="1.35"/><circle cx="115" cy="53.22" r="1.35"/><circle cx="118.22" cy="53.22" r="1.35"/><circle cx="129" cy="50" r="1.35"/></g></g>
+  </g>
+</svg>

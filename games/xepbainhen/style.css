@@ -1,0 +1,150 @@
+/* =====================================================================
+ * Xếp Bài Nhện - Giao diện riêng của game (nền, nút, modal… có trong ../_kit/kit.css; lá bài trong ../_kit/cards.css)
+ *   - Bàn chơi rộng hơn khung mặc định của kit để đủ chỗ 10 cột trên máy tính
+ *   - Vị trí từng lá do app.js tính (translate), cỡ lá đặt bằng --card-w trên .board
+ * ===================================================================== */
+:root {
+  --app-max: 1120px;
+  --felt: rgba(106, 76, 245, 0.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --felt: rgba(139, 108, 255, 0.06); }
+}
+:root[data-theme="dark"] { --felt: rgba(139, 108, 255, 0.06); }
+
+/* ===================== HUD ===================== */
+.hud { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-flow: row; }
+.hud-mode { text-align: left; color: var(--text); display: block; }
+.hud-mode .hud-label, .hud-mode .hud-value { display: block; }
+.hud-mode .hud-value { color: var(--accent); }
+@media (hover: hover) { .hud-mode:hover { background: var(--surface-2); } }
+
+/* ===================== Bàn chơi ===================== */
+.stage { align-items: stretch; }
+.board {
+  position: relative;
+  isolation: isolate; /* z-index của lá chỉ có nghĩa trong bàn, không đè modal / toast */
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius);
+  background: var(--felt);
+  --move-ms: 220ms;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.board .pnc {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: transform var(--move-ms) cubic-bezier(.2, .75, .3, 1);
+  cursor: default;
+}
+.board.instant .pnc { transition: none !important; }
+.board .pnc.can { cursor: grab; }
+.board .pnc.stock-card { cursor: pointer; }
+
+/* Cột: dải thả (đích của kéo thả) + ô trống ở đầu cột */
+.col {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 9% / 2%;
+  transition: background-color 0.12s;
+}
+.col.pnc-over { outline: none; background: color-mix(in srgb, var(--pnc-ring) 13%, transparent); }
+.col-slot, .found-slot, .stock-slot { position: absolute; left: 0; top: 0; }
+.col-slot.target .pnc-slot, .found-slot .pnc-slot { border-color: var(--pnc-ring); }
+.stock-slot { cursor: pointer; }
+.stock-slot .pnc-slot-label { font-size: 26cqw; }
+
+/* Số lượt chia còn lại trên chồng chia */
+.stock-count {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 300;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 20px;
+  text-align: center;
+  pointer-events: none;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Con trỏ bàn phím: khung quanh chồng đang chọn */
+.kcursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 400;
+  border-radius: 8px;
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  pointer-events: none;
+}
+.kcursor.holding { outline-style: dashed; }
+
+/* Lá đi sai: lắc nhẹ (dùng translate để không đụng transform vị trí) */
+.pnc.nope { animation: nope 0.32s ease; }
+@keyframes nope {
+  20% { translate: -4px 0; }
+  40% { translate: 4px 0; }
+  60% { translate: -3px 0; }
+  80% { translate: 2px 0; }
+}
+
+/* ===================== Nút điều khiển ===================== */
+.controls { display: grid; grid-template-columns: 1fr 1fr 1.25fr; gap: 8px; flex: none; }
+.controls .btn { min-height: 44px; padding: 0 10px; white-space: nowrap; }
+.controls .btn .icon { width: 20px; height: 20px; }
+.deal-left {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
+  font-size: 0.78rem;
+  line-height: 22px;
+}
+.controls .btn:disabled { opacity: 0.45; }
+
+/* ===================== Hộp thoại ===================== */
+.win-grid { grid-template-columns: 1fr 1fr; }
+.win-best { color: var(--accent); font-weight: 700; }
+.help-list { margin: 0; padding-left: 1.1em; color: var(--muted); line-height: 1.5; display: flex; flex-direction: column; gap: 6px; font-size: 0.92rem; }
+.help-list li::marker { color: var(--accent); }
+.help-figure { position: relative; height: 64px; --card-w: 44px; flex: none; }
+.help-figure .pnc { position: absolute; top: 0; }
+.stats-modes { margin-top: -4px; }
+
+/* ===================== Màn hình hẹp / thấp ===================== */
+@media (max-width: 420px) {
+  .hud { gap: 6px; }
+  .hud-box { padding: 5px 8px 6px; }
+  .hud-label { font-size: 0.6rem; letter-spacing: 0.04em; }
+  .hud-value { font-size: 1.12rem; }
+  .controls { gap: 6px; }
+}
+/* Màn hình thấp (điện thoại xoay ngang): gọn thanh số liệu và nút */
+@media (max-height: 560px) {
+  .app { gap: 6px; padding-top: calc(6px + env(safe-area-inset-top)); padding-bottom: calc(6px + env(safe-area-inset-bottom)); }
+  .topbar .btn-icon { width: 36px; height: 36px; }
+  .brand-mark { width: 28px; height: 28px; }
+  .hud-box { padding: 3px 10px 4px; display: flex; align-items: baseline; gap: 6px; }
+  .hud-mode { display: flex; }
+  .hud-value { font-size: 1rem; }
+  .controls .btn { min-height: 36px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board .pnc { transition: none; }
+  .pnc.nope { animation: none; }
+  .col { transition: none; }
+}

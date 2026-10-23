@@ -1,0 +1,259 @@
+/* =====================================================================
+ * PlayNine Cards - giao diện lá bài dùng chung (đi cùng cards.js)
+ *   - Nhúng sau kit.css: <link rel="stylesheet" href="../_kit/cards.css?v=1">
+ *   - Cỡ lá theo biến --card-w (đặt trên bàn chơi hoặc từng lá); cao = 1,4 × rộng
+ *   - Mọi kích thước bên trong lá tính theo cqw (1% bề rộng lá) nên lá nào cũng cân đối
+ *   - Dải trên cùng (bậc + chất nhỏ) nằm trong 36% bề rộng lá: chồng lá lệch nhau >= 0,36 × --card-w là đọc được
+ *   - Lá hẹp (< 70px) vẽ một chất lớn; lá rộng vẽ chấm như bài thật (.cards-simple để luôn vẽ chất lớn)
+ *   - .cards-4color trên phần tử cha: rô xanh dương, nhép xanh lá (chỉ đổi màu hiển thị)
+ * ===================================================================== */
+:root {
+  --pnc-face: #fffefb;
+  --pnc-edge: rgba(20, 22, 43, 0.22);
+  --pnc-black: #191b31;
+  --pnc-red: #c62828;
+  --pnc-blue: #1a5fd0;
+  --pnc-green: #12773a;
+  --pnc-spade: var(--pnc-black);
+  --pnc-heart: var(--pnc-red);
+  --pnc-diamond: var(--pnc-red);
+  --pnc-club: var(--pnc-black);
+  --pnc-gold: #c49a2c;
+  --pnc-shadow: 0 1px 2px rgba(17, 20, 45, 0.2), 0 2px 6px rgba(17, 20, 45, 0.08);
+  --pnc-shadow-up: 0 14px 28px rgba(17, 20, 45, 0.28), 0 4px 10px rgba(17, 20, 45, 0.16);
+  --pnc-back-1: #8b6cff;
+  --pnc-back-2: #4b30c9;
+  --pnc-back-line: rgba(255, 255, 255, 0.15);
+  --pnc-back-edge: rgba(255, 255, 255, 0.72);
+  --pnc-back-border: #3f27ad;
+  --pnc-slot-line: rgba(17, 20, 45, 0.24);
+  --pnc-slot-bg: rgba(106, 76, 245, 0.05);
+  --pnc-slot-text: rgba(17, 20, 45, 0.3);
+  --pnc-ring: var(--accent, #6a4cf5);
+  --pnc-hl: #f2a900;
+  --pnc-dim: rgba(20, 22, 43, 0.34);
+}
+
+/* Giao diện tối: mặt lá vẫn sáng (dễ đọc) nhưng dịu hơn để không chói */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --pnc-face: #ebe9f4;
+    --pnc-edge: rgba(0, 0, 0, 0.55);
+    --pnc-black: #15172b;
+    --pnc-red: #b8211b;
+    --pnc-blue: #1655c0;
+    --pnc-green: #0f6e34;
+    --pnc-gold: #b48a22;
+    --pnc-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    --pnc-shadow-up: 0 16px 30px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0, 0, 0, 0.4);
+    --pnc-back-1: #7a5af5;
+    --pnc-back-2: #35208f;
+    --pnc-back-line: rgba(255, 255, 255, 0.13);
+    --pnc-back-edge: rgba(255, 255, 255, 0.6);
+    --pnc-back-border: #1c1150;
+    --pnc-slot-line: rgba(238, 240, 255, 0.24);
+    --pnc-slot-bg: rgba(139, 108, 255, 0.07);
+    --pnc-slot-text: rgba(238, 240, 255, 0.3);
+    --pnc-hl: #ffc53d;
+    --pnc-dim: rgba(9, 11, 20, 0.42);
+  }
+}
+:root[data-theme="dark"] {
+  --pnc-face: #ebe9f4;
+  --pnc-edge: rgba(0, 0, 0, 0.55);
+  --pnc-black: #15172b;
+  --pnc-red: #b8211b;
+  --pnc-blue: #1655c0;
+  --pnc-green: #0f6e34;
+  --pnc-gold: #b48a22;
+  --pnc-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  --pnc-shadow-up: 0 16px 30px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0, 0, 0, 0.4);
+  --pnc-back-1: #7a5af5;
+  --pnc-back-2: #35208f;
+  --pnc-back-line: rgba(255, 255, 255, 0.13);
+  --pnc-back-edge: rgba(255, 255, 255, 0.6);
+  --pnc-back-border: #1c1150;
+  --pnc-slot-line: rgba(238, 240, 255, 0.24);
+  --pnc-slot-bg: rgba(139, 108, 255, 0.07);
+  --pnc-slot-text: rgba(238, 240, 255, 0.3);
+  --pnc-hl: #ffc53d;
+  --pnc-dim: rgba(9, 11, 20, 0.42);
+}
+
+/* Bài 4 màu (trợ năng): đặt trên <html>, bàn chơi hoặc bất kỳ phần tử cha nào */
+.cards-4color {
+  --pnc-diamond: var(--pnc-blue);
+  --pnc-club: var(--pnc-green);
+}
+
+/* ===================== Khung lá ===================== */
+.pnc,
+.pnc-slot {
+  position: relative;
+  width: var(--card-w, 72px);
+  aspect-ratio: 5 / 7;
+  flex: none;
+  /* bo góc 9% bề rộng (= 6,43% bề cao) */
+  border-radius: 9% / 6.43%;
+  font-family: var(--font, "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif);
+  line-height: 1;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+}
+.pnc { container: pnc / inline-size; }
+.pnc-s-S { --pnc-ink: var(--pnc-spade); }
+.pnc-s-H { --pnc-ink: var(--pnc-heart); }
+.pnc-s-D { --pnc-ink: var(--pnc-diamond); }
+.pnc-s-C { --pnc-ink: var(--pnc-club); }
+
+.pnc-face,
+.pnc-back {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--pnc-shadow);
+  transition: box-shadow 0.15s ease-out, translate 0.15s ease-out;
+}
+.pnc-face {
+  display: none;
+  overflow: hidden;
+  background: var(--pnc-face);
+  border: 1px solid var(--pnc-edge);
+  color: var(--pnc-ink, var(--pnc-black));
+}
+.pnc-up > .pnc-face { display: block; }
+.pnc-up > .pnc-back { display: none; }
+.pnc svg { position: absolute; fill: currentColor; overflow: visible; }
+
+/* Dải trên: bậc bên trái, chất nhỏ bên phải (luôn thấy khi lá bị lá khác đè) */
+.pnc-rk {
+  position: absolute;
+  left: 7cqw;
+  top: 3.5cqw;
+  font-size: 34cqw;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+.pnc-rk.pnc-ten { left: 3.5cqw; letter-spacing: -0.1em; }
+.pnc-sm { right: 6cqw; top: 5.5cqw; width: 27cqw; height: 27cqw; }
+
+/* Thân lá hẹp: một chất lớn */
+.pnc-big { left: 19cqw; top: 58cqw; width: 62cqw; height: 62cqw; }
+.pnc-ace { left: 15cqw; top: 50cqw; width: 70cqw; height: 70cqw; }
+.pnc-pips { display: none; }
+
+/* Lá mặt: khung viền vàng, hình vương miện / mũ trên, chất dưới */
+.pnc-court {
+  position: absolute;
+  left: 13cqw;
+  right: 13cqw;
+  top: 39cqw;
+  bottom: 8cqw;
+  border: max(1px, 2cqw) solid var(--pnc-gold);
+  border-radius: 6cqw;
+  background:
+    repeating-linear-gradient(45deg, color-mix(in srgb, var(--pnc-gold) 14%, transparent) 0 1px, transparent 1px 5cqw),
+    color-mix(in srgb, var(--pnc-ink, #000) 6%, transparent);
+}
+.pnc-emb { left: 50%; top: 6cqw; width: 42cqw; height: 42cqw; translate: -50% 0; }
+.pnc-cs { left: 50%; bottom: 8cqw; width: 26cqw; height: 26cqw; translate: -50% 0; }
+
+/* Lá đủ rộng: chấm như bài thật, dải trên gọn hơn */
+@container pnc (min-width: 70px) {
+  .pnc-rk { font-size: 30cqw; top: 4cqw; }
+  .pnc-sm { width: 23cqw; height: 23cqw; top: 6cqw; }
+  .pnc .pnc-big { display: none; }
+  .pnc-pips { display: block; }
+  .pnc-p {
+    width: 20cqw;
+    height: 20cqw;
+    left: calc(16cqw + var(--c) * 24cqw);
+    top: calc(36cqw + var(--y) * 74cqw);
+  }
+  .pnc-p-dn { rotate: 180deg; }
+  .pnc-court { top: 36cqw; }
+}
+.cards-simple .pnc .pnc-big { display: block; }
+.cards-simple .pnc .pnc-pips { display: none; }
+
+/* ===================== Lưng lá: tím PlayNine, lưới chéo, viền trong, sao ở giữa ===================== */
+.pnc-back {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.16) 0 17cqw, transparent 17.5cqw),
+    repeating-linear-gradient(45deg, var(--pnc-back-line) 0 1px, transparent 1px 8cqw),
+    repeating-linear-gradient(-45deg, var(--pnc-back-line) 0 1px, transparent 1px 8cqw),
+    linear-gradient(155deg, var(--pnc-back-1), var(--pnc-back-2));
+  border: 1px solid var(--pnc-back-border);
+}
+.pnc-back::after {
+  content: "";
+  position: absolute;
+  inset: 6cqw;
+  border-radius: 5cqw;
+  border: max(1px, 1.6cqw) solid var(--pnc-back-edge);
+}
+.pnc-star { left: 50%; top: 50%; width: 24cqw; height: 24cqw; translate: -50% -50%; fill: #ffffff !important; opacity: 0.92; }
+
+/* ===================== Ô trống ===================== */
+.pnc-slot {
+  container: pncslot / inline-size;
+  display: grid;
+  place-items: center;
+  border: 2px dashed var(--pnc-slot-line);
+  background: var(--pnc-slot-bg);
+}
+.pnc-slot-label { font-size: 40cqw; font-weight: 800; color: var(--pnc-slot-text); }
+
+/* ===================== Trạng thái ===================== */
+/* Đang chọn: viền tím + nhấc nhẹ */
+.pnc-selected > .pnc-face,
+.pnc-selected > .pnc-back {
+  translate: 0 -5cqw;
+  box-shadow: 0 0 0 3px var(--pnc-ring), var(--pnc-shadow-up);
+}
+/* Gợi ý / đi được: viền hổ phách phát sáng */
+.pnc-highlight > .pnc-face,
+.pnc-highlight > .pnc-back {
+  box-shadow: 0 0 0 3px var(--pnc-hl), 0 0 14px 3px color-mix(in srgb, var(--pnc-hl) 60%, transparent);
+}
+/* Không chơi được: phủ tối, không đổi độ trong (lá dưới không lộ ra) */
+.pnc-disabled > .pnc-face::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--pnc-dim);
+}
+.pnc-disabled > .pnc-back { filter: saturate(0.45) brightness(0.8); }
+/* Đích thả đang được kéo tới */
+.pnc-over { outline: 3px solid var(--pnc-ring); outline-offset: 2px; }
+.pnc-slot.pnc-over { background: color-mix(in srgb, var(--pnc-ring) 16%, transparent); }
+
+/* ===================== Kéo thả ===================== */
+.pnc-drag-area .pnc { touch-action: none; }
+.pnc-dragging,
+.pnc-dragging * { cursor: grabbing !important; }
+.pnc-lifted { opacity: 0; }
+.pnc-ghost {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  will-change: transform;
+  scale: 1.04;
+  rotate: -1.5deg;
+  transform-origin: 50% 20%;
+  transition: scale 0.16s, rotate 0.16s;
+}
+.pnc-ghost .pnc-face,
+.pnc-ghost .pnc-back { box-shadow: var(--pnc-shadow-up); }
+.pnc-ghost.pnc-ghost-settle { scale: 1; rotate: 0deg; }
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .pnc-face, .pnc-back, .pnc-ghost { transition: none; }
+  .pnc-ghost { rotate: 0deg; }
+}

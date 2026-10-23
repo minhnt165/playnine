@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#f3f4fb">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Video Poker">
+  <meta name="description" content="Video Poker">
+  <title>Video Poker</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <script>
+    // Áp giao diện sáng/tối đã chọn trước khi vẽ trang để tránh nháy màu
+    try {
+      var t = JSON.parse(localStorage.getItem('playnine-pokerrut-settings-v1') || '{}').theme;
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../_kit/kit.css?v=1">
+  <link rel="stylesheet" href="../_kit/cards.css?v=1">
+  <link rel="stylesheet" href="style.css?v=1.0.0">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-mark" src="icon.svg" alt="" width="34" height="34">
+        <h1 class="logo" data-i18n="app.name">Video Poker</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" type="button" data-open="modal-help" data-i18n-attr="aria-label:kit.help;title:kit.help">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 17h-2v-2h2v2zm2.1-7.7-.9.9c-.7.7-1.2 1.3-1.2 2.8h-2v-.5c0-1.1.5-2.1 1.2-2.8l1.2-1.3a2 2 0 1 0-3.4-1.4H8a4 4 0 1 1 7.1 2.3z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-stats" type="button" data-open="modal-stats" data-i18n-attr="aria-label:kit.stats;title:kit.stats">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
+        </button>
+        <button class="btn-icon" type="button" data-open="modal-settings" data-i18n-attr="aria-label:kit.settings;title:kit.settings">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-new" type="button" data-i18n-attr="aria-label:kit.newGame;title:kit.newGame">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.7 6.3A8 8 0 1 0 20 12h-2a6 6 0 1 1-1.8-4.2L13 11h7V4l-2.3 2.3z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="hud">
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.credits">Credits</div><div class="hud-value" id="credits">100</div></div>
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.bet">Bet</div><div class="hud-value" id="bet">5</div></div>
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.left">Hands left</div><div class="hud-value" id="left">25</div></div>
+    </div>
+
+    <!-- Máy video poker: bảng trả (app.js dựng hàng) + khu bài + nút -->
+    <main class="stage">
+      <section class="machine" id="machine">
+        <table class="paytable" id="paytable" data-i18n-attr="aria-label:pay.label">
+          <thead><tr id="pay-head"><th scope="col"><span class="badge pay-badge" id="badge-assisted" hidden data-i18n="badge.assisted">Assisted</span></th></tr></thead>
+          <tbody id="pay-body"></tbody>
+        </table>
+        <div class="play">
+          <p class="msg" id="msg" aria-live="polite"></p>
+          <div class="hand-area" id="hand-area">
+            <div class="hand" id="hand" role="group" data-i18n-attr="aria-label:hand.label"></div>
+          </div>
+          <div class="suggest-row" id="suggest-row" hidden>
+            <span class="suggest-text" id="suggest-text"></span>
+            <button class="btn btn-ghost btn-apply" id="btn-apply" type="button" data-i18n="ctl.apply">Hold these</button>
+          </div>
+          <div class="controls">
+            <button class="btn btn-ghost btn-bet" id="btn-bet-one" type="button"><span data-i18n="ctl.betOne">Bet One</span></button>
+            <button class="btn btn-ghost btn-bet" id="btn-bet-max" type="button" data-i18n-attr="aria-label:ctl.maxAria"><span data-i18n="ctl.betMax">Bet Max</span></button>
+            <button class="btn btn-primary btn-deal" id="btn-deal" type="button"><span id="deal-text" data-i18n="ctl.deal">Deal</span></button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <p class="help"><span class="help-keys" data-i18n-html="help.keys"></span><span class="help-touch" data-i18n="help.touch"></span></p>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <!-- Hết phiên -->
+  <div class="modal" id="modal-end" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="end-title">
+      <h2 id="end-title" data-i18n="end.title">Session over</h2>
+      <p class="end-total"><b id="end-credits">0</b> <span data-i18n="end.credits">credits</span></p>
+      <p class="end-badge" id="end-badge"></p>
+      <dl class="end-lines">
+        <div><dt data-i18n="end.net">Net</dt><dd id="end-net">0</dd></div>
+        <div><dt data-i18n="end.hands">Hands played</dt><dd id="end-hands">0</dd></div>
+        <div><dt data-i18n="end.bestHand">Best hand</dt><dd id="end-best-hand">–</dd></div>
+      </dl>
+      <p class="modal-text end-assisted" id="end-assisted" hidden data-i18n="end.assisted"></p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="btn-again" type="button" data-i18n="kit.playAgain">Play again</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bỏ phiên đang chơi -->
+  <div class="modal" id="modal-confirm" hidden>
+    <div class="modal-backdrop" data-close="modal-confirm"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+      <h2 id="confirm-title" data-i18n="confirm.title">Start a new session?</h2>
+      <p class="modal-text" id="confirm-text"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" data-close="modal-confirm" data-i18n="kit.cancel">Cancel</button>
+        <button class="btn btn-primary" id="btn-confirm-new" type="button" data-i18n="kit.newGame">New game</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-help" hidden>
+    <div class="modal-backdrop" data-close="modal-help"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <h2 id="help-title" data-i18n="kit.help">How to play</h2>
+      <p class="modal-text" data-i18n="help.p1"></p>
+      <p class="modal-text" data-i18n="help.p2"></p>
+      <p class="modal-text" data-i18n="help.p3"></p>
+      <p class="modal-text" data-i18n="help.p4"></p>
+      <p class="modal-text help-keys-list"><b data-i18n="help.keysTitle">Keys</b><br><span data-i18n-html="help.keysList"></span></p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-help" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-backdrop" data-close="modal-stats"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
+      <h2 id="stats-title" data-i18n="kit.stats">Statistics</h2>
+      <dl class="stat-grid">
+        <div><dt data-i18n="stats.played">Sessions</dt><dd id="stats-played">0</dd></div>
+        <div><dt data-i18n="stats.won">Won</dt><dd id="stats-won">0</dd></div>
+        <div><dt data-i18n="stats.best">Best</dt><dd id="stats-best">–</dd></div>
+        <div><dt data-i18n="stats.avg">Average</dt><dd id="stats-avg">–</dd></div>
+        <div><dt data-i18n="stats.hands">Hands</dt><dd id="stats-hands">0</dd></div>
+        <div><dt data-i18n="stats.royals">Royal flushes</dt><dd id="stats-royals">0</dd></div>
+      </dl>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-stats" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-settings" hidden>
+    <div class="modal-backdrop" data-close="modal-settings"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h2 id="settings-title" data-i18n="kit.settings">Settings</h2>
+      <div class="settings-list">
+        <div class="setting">
+          <span class="setting-name" data-i18n="kit.theme">Theme</span>
+          <div class="segmented" data-setting="theme">
+            <button type="button" data-value="auto" data-i18n="kit.themeAuto">Auto</button>
+            <button type="button" data-value="light" data-i18n="kit.themeLight">Light</button>
+            <button type="button" data-value="dark" data-i18n="kit.themeDark">Dark</button>
+          </div>
+        </div>
+        <div class="setting">
+          <span class="setting-name" data-i18n="kit.lang">Language</span>
+          <div class="segmented" data-setting="lang">
+            <button type="button" data-value="en">English</button>
+            <button type="button" data-value="vi">Tiếng Việt</button>
+          </div>
+        </div>
+        <label class="setting-row">
+          <span class="setting-text"><span class="setting-name" data-i18n="setting.suggest">Auto-hold suggestion</span><span class="setting-desc" data-i18n="setting.suggestDesc"></span></span>
+          <input class="switch" type="checkbox" id="sw-suggest" data-setting="suggest">
+        </label>
+        <label class="setting-row" id="setting-sound">
+          <span class="setting-text"><span class="setting-name" data-i18n="kit.sound">Sound</span><span class="setting-desc" data-i18n="kit.soundDesc"></span></span>
+          <input class="switch" type="checkbox" id="sw-sound">
+        </label>
+      </div>
+      <p class="app-version" id="app-version"></p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-settings" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <script src="../_kit/kit.js?v=1"></script>
+  <script src="../_kit/cards.js?v=1"></script>
+  <script src="i18n.js?v=1.0.0"></script>
+  <script src="engine.js?v=1.0.0"></script>
+  <script src="../sdk/playnine.js?v=2"></script>
+  <script src="app.js?v=1.0.0"></script>
+</body>
+</html>

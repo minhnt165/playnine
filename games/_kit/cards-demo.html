@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#f3f4fb">
+  <meta name="description" content="PlayNine Cards demo">
+  <title>Cards demo</title>
+  <script>
+    // Áp giao diện và tùy chọn bài đã lưu trước khi vẽ trang để tránh nháy màu
+    try {
+      var s = JSON.parse(localStorage.getItem('playnine-cardsdemo-settings-v1') || '{}');
+      if (s.theme === 'light' || s.theme === 'dark') document.documentElement.setAttribute('data-theme', s.theme);
+      if (s.fourColor) document.documentElement.classList.add('cards-4color');
+      if (s.simple) document.documentElement.classList.add('cards-simple');
+    } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="kit.css?v=1">
+  <link rel="stylesheet" href="cards.css?v=1">
+  <style>
+    body { display: block; }
+    .demo { max-width: 1180px; margin: 0 auto; padding: calc(16px + env(safe-area-inset-top)) 16px 48px; }
+    .demo h1 { margin: 0 0 4px; font-size: 1.5rem; font-weight: 800; }
+    .demo h2 { margin: 28px 0 10px; font-size: 1.05rem; font-weight: 800; }
+    .demo p { margin: 0 0 10px; color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+    .controls { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin: 14px 0 6px; }
+    .controls .segmented { min-width: 240px; }
+    .controls label { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; }
+    .row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .row.big { gap: 10px; }
+    .cap { font-size: 0.75rem; color: var(--muted); font-weight: 600; margin: 0 0 6px; }
+    .cell { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--muted); font-weight: 600; }
+    /* Chồng lá kiểu Klondike: lá úp lệch 0,14 × rộng, lá ngửa lệch 0,36 × rộng */
+    .tableau { display: flex; gap: 6px; --card-w: 46px; }
+    .col { position: relative; width: var(--card-w); height: calc(var(--card-w) * 1.4 + var(--card-w) * 0.36 * 6 + var(--card-w) * 0.14 * 6); }
+    .col .pnc { position: absolute; left: 0; }
+    .felt { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 14px; }
+    .piles { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; --card-w: clamp(44px, 12vw, 84px); }
+    .pile { position: relative; width: var(--card-w); min-height: calc(var(--card-w) * 1.4); border-radius: 9% / 6.43%; }
+    .pile .pnc { position: absolute; left: 0; transition: top 0.15s; }
+    .pile > .pnc-slot { position: absolute; left: 0; top: 0; }
+    .log { min-height: 1.5em; font-size: 0.85rem; color: var(--text); font-weight: 600; margin-top: 10px; }
+    .flip-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <div class="demo">
+    <h1>PlayNine Cards</h1>
+    <p><code>games/_kit/cards.js</code> + <code>cards.css</code>: mặt lá, lưng lá, ô trống, trạng thái, lật lá và kéo thả dùng chung cho game bài.</p>
+
+    <div class="controls">
+      <div class="segmented" id="sw-theme" data-setting="theme">
+        <button type="button" data-value="auto">Tự động</button>
+        <button type="button" data-value="light">Sáng</button>
+        <button type="button" data-value="dark">Tối</button>
+      </div>
+      <label><input class="switch" type="checkbox" id="sw-4color" data-setting="fourColor"> Bài 4 màu</label>
+      <label><input class="switch" type="checkbox" id="sw-simple" data-setting="simple"> Luôn vẽ chất lớn</label>
+    </div>
+
+    <h2>Mọi mặt lá ở 3 cỡ</h2>
+    <p class="cap">40px (điện thoại, 8–10 cột)</p>
+    <div id="faces-40"></div>
+    <p class="cap">72px (chấm như bài thật từ 70px)</p>
+    <div id="faces-72"></div>
+    <p class="cap">112px</p>
+    <div id="faces-112"></div>
+
+    <h2>Lưng lá, ô trống, trạng thái</h2>
+    <div class="row big" id="misc"></div>
+
+    <h2>Chồng lá ở 46px (lệch 0,36 × rộng)</h2>
+    <div class="felt"><div class="tableau" id="tableau"></div></div>
+
+    <h2>Lật lá</h2>
+    <div class="flip-row" id="flip-row">
+      <button class="btn btn-primary" type="button" id="btn-flip">Lật</button>
+    </div>
+
+    <h2>Kéo thả</h2>
+    <p>Kéo lá ngửa (cả chồng phía trên nó) sang cột khác hoặc ô trống. Thả ra ngoài hoặc bấm Esc thì lá bay về chỗ cũ. Chạm (không kéo) thì chọn lá.</p>
+    <div class="felt"><div class="piles" id="piles"></div><div class="log" id="log" aria-live="polite"></div></div>
+  </div>
+
+  <script src="kit.js?v=1"></script>
+  <script src="cards.js?v=1"></script>
+  <script>
+    (function () {
+      'use strict';
+      var C = PNCards;
+      var root = document.documentElement;
+      PNKit.init({
+        gameId: 'cardsdemo',
+        version: C.CARDS_VERSION,
+        defaults: { fourColor: false, simple: false },
+        dict: { en: { 'meta.title': 'Cards demo', 'meta.description': 'PlayNine Cards demo' }, vi: { 'meta.title': 'Thử bộ bài', 'meta.description': 'Trang thử PlayNine Cards' } },
+        onSetting: function (k, v) {
+          if (k === 'fourColor') root.classList.toggle('cards-4color', !!v);
+          if (k === 'simple') root.classList.toggle('cards-simple', !!v);
+        }
+      });
+      var $ = function (id) { return document.getElementById(id); };
+
+      /* Mọi mặt lá */
+      [40, 72, 112].forEach(function (w) {
+        var host = $('faces-' + w);
+        C.SUITS.forEach(function (s) {
+          var row = document.createElement('div');
+          row.className = 'row';
+          row.style.setProperty('--card-w', w + 'px');
+          C.RANKS.forEach(function (r) { row.appendChild(C.render({ rank: r, suit: s })); });
+          host.appendChild(row);
+        });
+      });
+
+      /* Lưng, ô trống, trạng thái */
+      function cell(el, text) {
+        var c = document.createElement('div');
+        c.className = 'cell';
+        c.appendChild(el);
+        c.appendChild(document.createTextNode(text));
+        $('misc').appendChild(c);
+      }
+      cell(C.render({ rank: 5, suit: 'S' }, { faceUp: false, size: 40 }), 'lưng 40');
+      cell(C.render({ rank: 5, suit: 'S' }, { faceUp: false, size: 72 }), 'lưng 72');
+      cell(C.render(null, { size: 112 }), 'lá null 112');
+      cell(C.slot({ size: 72 }), 'ô trống');
+      cell(C.slot({ label: 'A', size: 72 }), 'ô "A"');
+      cell(C.slot({ label: '♥', size: 72 }), 'ô "♥"');
+      cell(C.slot({ label: 'K', size: 40 }), 'ô 40');
+      cell(C.render({ rank: 7, suit: 'H' }, { size: 72, className: 'pnc-selected' }), 'selected');
+      cell(C.render({ rank: 12, suit: 'C' }, { size: 72, className: 'pnc-highlight' }), 'highlight');
+      cell(C.render({ rank: 9, suit: 'D' }, { size: 72, className: 'pnc-disabled' }), 'disabled');
+      cell(C.render({ rank: 3, suit: 'S' }, { faceUp: false, size: 72, className: 'pnc-disabled' }), 'lưng disabled');
+      var over = C.slot({ label: 'A', size: 72 });
+      over.classList.add('pnc-over');
+      cell(over, 'đích thả');
+
+      /* Chồng lá kiểu Klondike, 7 cột */
+      var deal = C.shuffle(C.newDeck(), C.rng('cards-demo'));
+      for (var col = 0; col < 7; col++) {
+        var colEl = document.createElement('div');
+        colEl.className = 'col';
+        var y = 0;
+        var n = col + 1 + Math.min(col, 5);
+        for (var i = 0; i < n; i++) {
+          var up = i >= col;
+          var el = C.render(deal.pop(), { faceUp: up });
+          el.style.top = 'calc(var(--card-w) * ' + y.toFixed(2) + ')';
+          colEl.appendChild(el);
+          y += up ? 0.36 : 0.14;
+        }
+        $('tableau').appendChild(colEl);
+      }
+
+      /* Lật lá */
+      var flipCards = ['AS', 'QH', '10D', '7C', 'KS'].map(function (id, i) {
+        var el = C.render(C.fromId(id), { faceUp: i % 2 === 0, size: 64 });
+        $('flip-row').appendChild(el);
+        return el;
+      });
+      $('btn-flip').addEventListener('click', function () {
+        flipCards.forEach(function (el, i) { setTimeout(function () { C.flip(el); }, i * 70); });
+      });
+
+      /* Kéo thả: 5 cột + 1 ô trống */
+      var piles = [['KS', 'QH', 'JC'], ['9D', '8S'], ['5H'], ['AS', '2S', '3S', '4S'], ['10C', '9H', '8C', '7D', '6S']];
+      var pileEls = [];
+      function layout(p) {
+        var cards = p.querySelectorAll('.pnc');
+        for (var i = 0; i < cards.length; i++) cards[i].style.top = 'calc(var(--card-w) * ' + (i * 0.36).toFixed(2) + ')';
+        p.style.height = 'calc(var(--card-w) * ' + (1.4 + Math.max(0, cards.length - 1) * 0.36).toFixed(2) + ')';
+      }
+      piles.concat([[]]).forEach(function (ids, i) {
+        var p = document.createElement('div');
+        p.className = 'pile';
+        p.dataset.drop = 'p' + i;
+        p.appendChild(C.slot({ label: i === piles.length ? 'A' : '' }));
+        ids.forEach(function (id) { p.appendChild(C.render(C.fromId(id))); });
+        layout(p);
+        pileEls.push(p);
+        $('piles').appendChild(p);
+      });
+      var log = $('log');
+      var stackFrom = function (el) {
+        var all = Array.prototype.slice.call(el.parentNode.querySelectorAll('.pnc'));
+        return all.slice(all.indexOf(el));
+      };
+      C.drag($('piles'), {
+        canPick: function (el) { return el.classList.contains('pnc-up') ? stackFrom(el) : false; },
+        canDrop: function (el, target) { return target !== el.parentNode; },
+        onDrop: function (el, target, els) {
+          var from = el.parentNode;
+          els.forEach(function (x) { x.classList.remove('pnc-selected'); target.appendChild(x); });
+          layout(from);
+          layout(target);
+          log.textContent = 'Thả ' + els.map(function (x) { return x.dataset.id; }).join(' ') + ' vào ' + target.dataset.drop;
+        },
+        onCancel: function (el) { log.textContent = 'Hủy: ' + el.dataset.id + ' về chỗ cũ'; }
+      });
+      // Chạm (không kéo) thì chọn / bỏ chọn lá
+      $('piles').addEventListener('click', function (e) {
+        var el = e.target.closest('.pnc');
+        if (!el) return;
+        var was = el.classList.contains('pnc-selected');
+        $('piles').querySelectorAll('.pnc-selected').forEach(function (x) { x.classList.remove('pnc-selected'); });
+        el.classList.toggle('pnc-selected', !was);
+        log.textContent = (was ? 'Bỏ chọn ' : 'Chọn ') + el.dataset.id;
+      });
+    })();
+  </script>
+</body>
+</html>

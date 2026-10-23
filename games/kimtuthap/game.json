@@ -1,0 +1,47 @@
+{
+  "id": "kimtuthap",
+  "cat": "card",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Pyramid Solitaire",
+    "vi": "Kim Tự Tháp"
+  },
+  "sub": {
+    "en": "Pairs that make 13",
+    "vi": "Pyramid Solitaire"
+  },
+  "desc": {
+    "en": "Pair uncovered cards that add up to 13 and clear all 28 cards of the pyramid; Kings go on their own. Three passes through the stock, three undos, and every deal can be won.",
+    "vi": "Ghép hai lá không bị đè có tổng 13 để dọn sạch 28 lá của kim tự tháp, lá K bỏ một mình. Ba lượt qua chồng rút, ba lần hoàn tác, ván nào cũng thắng được."
+  },
+  "tags": {
+    "en": ["Cards", "Solitaire", "1 player"],
+    "vi": ["Bài", "Solitaire", "1 người"]
+  },
+  "note": {
+    "en": "Every deal can be won",
+    "vi": "Ván nào cũng thắng được"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 200, 80, .26), transparent 60%), linear-gradient(160deg, #1f5e45, #0d2a1f)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 6,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 15000
+        },
+        "points": 6
+      }
+    ]
+  }
+}

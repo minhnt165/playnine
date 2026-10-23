@@ -1,0 +1,167 @@
+/* =====================================================================
+ * Ô Trống - Giao diện riêng của game (nền chung, nút, modal… ở ../_kit/kit.css, lá bài ở ../_kit/cards.css)
+ *   - Bàn chơi: lá đặt tuyệt đối bằng transform, cỡ lá (--card-w) do app.js tính theo khung
+ *   - Điện thoại dọc: thanh trên, HUD, bàn, nút điều khiển; ngang thấp: HUD và nút sang cột phải
+ * ===================================================================== */
+:root {
+  --app-max: 980px;
+  --felt: rgba(21, 128, 61, 0.07);
+  --felt-line: rgba(21, 128, 61, 0.14);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --felt: rgba(74, 222, 128, 0.05);
+    --felt-line: rgba(74, 222, 128, 0.12);
+  }
+}
+:root[data-theme="dark"] {
+  --felt: rgba(74, 222, 128, 0.05);
+  --felt-line: rgba(74, 222, 128, 0.12);
+}
+
+/* Tên game có dấu trên chữ hoa (Ô): nới dòng để dấu không bị cắt */
+.logo { line-height: 1.3; }
+
+/* ===================== Bàn chơi ===================== */
+.stage {
+  display: block;
+  background: var(--felt);
+  border: 1px solid var(--felt-line);
+  border-radius: var(--radius);
+}
+.table {
+  position: absolute;
+  inset: 8px;
+  touch-action: manipulation;
+}
+.table .zone,
+.table .card {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.table .card {
+  cursor: pointer;
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.2, 0.75, 0.3, 1);
+  will-change: transform;
+}
+@media (hover: hover) and (pointer: fine) {
+  .table .card { cursor: grab; }
+}
+.zone { border-radius: 9% / 6.43%; }
+.zone-col { border-radius: 8px; }
+.zone-col .col-slot { position: absolute; left: 0; top: 0; }
+.zone-found .pnc-slot-label { font-size: 46cqw; color: var(--pnc-slot-text); }
+.zone-found.pnc-s-H .pnc-slot-label,
+.zone-found.pnc-s-D .pnc-slot-label { color: color-mix(in srgb, var(--pnc-red) 45%, transparent); }
+.cards-4color .zone-found.pnc-s-D .pnc-slot-label { color: color-mix(in srgb, var(--pnc-blue) 45%, transparent); }
+.cards-4color .zone-found.pnc-s-C .pnc-slot-label { color: color-mix(in srgb, var(--pnc-green) 45%, transparent); }
+.zone-cell { background: color-mix(in srgb, var(--surface) 55%, transparent); }
+
+/* Chồng đặt được lá đang nhấc (bàn phím), chỗ gợi ý */
+.zone.is-target { outline: 2px dashed var(--accent); outline-offset: 2px; }
+.zone.is-hint { outline: 3px solid var(--pnc-hl); outline-offset: 2px; }
+.zone.zone:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+/* Không đi được: lá rung */
+.card.shake > .pnc-face { animation: card-shake 0.35s ease-in-out; }
+@keyframes card-shake {
+  20% { translate: -4px 0; }
+  45% { translate: 4px 0; }
+  70% { translate: -2px 0; }
+}
+
+/* Thắng: ô đích sáng lên */
+.table.won .zone-found { box-shadow: 0 0 0 3px color-mix(in srgb, var(--pnc-hl) 70%, transparent), 0 0 18px 4px color-mix(in srgb, var(--pnc-hl) 45%, transparent); }
+
+/* ===================== Nút điều khiển ===================== */
+.tools { display: flex; justify-content: center; gap: 8px; flex: none; }
+.tool {
+  min-height: 44px;
+  min-width: 0;
+  padding: 0 16px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  transition: background 0.15s, transform 0.1s, opacity 0.15s;
+  white-space: nowrap;
+}
+.tool:active { transform: scale(0.97); }
+.tool:disabled { opacity: 0.45; }
+.tool-primary { background: var(--accent); color: var(--accent-text); }
+.tool.busy .icon { animation: hint-pulse 0.9s ease-in-out infinite; }
+@keyframes hint-pulse { 50% { opacity: 0.3; } }
+@media (hover: hover) {
+  .tool:not(:disabled):hover { background: var(--surface-2); }
+  .tool-primary:not(:disabled):hover { background: var(--accent-strong); }
+}
+
+/* ===================== Modal ===================== */
+.stat-grid-3, .win-grid { grid-template-columns: repeat(3, 1fr); }
+.stat-grid-3 dd, .win-grid dd { font-size: 1.3rem; }
+.win-best { color: var(--accent); font-weight: 700; }
+.help-body { color: var(--muted); line-height: 1.5; font-size: 0.93rem; }
+.help-body p { margin: 0 0 8px; }
+.help-body ul { margin: 0 0 8px; padding-left: 20px; }
+.help-body li { margin-bottom: 4px; }
+.help-body b { color: var(--text); }
+.help-kbd { font-size: 0.85rem; }
+@media (hover: none) and (pointer: coarse) {
+  .help-kbd { display: none; }
+}
+.deal-form { margin: 0; }
+.deal-row { display: flex; gap: 8px; }
+.deal-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 42px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.deal-error { color: var(--red); font-size: 0.85rem; font-weight: 600; }
+
+/* ===================== Màn hình hẹp / ngang thấp ===================== */
+@media (max-width: 420px) {
+  .table { inset: 5px; }
+  .tool { padding: 0 12px; flex: 1; }
+  .hud-value { font-size: 1.2rem; }
+}
+/* Ngang thấp (điện thoại xoay ngang): bàn chiếm bên trái, HUD và nút xếp dọc bên phải */
+@media (max-height: 560px) and (min-aspect-ratio: 5/4) {
+  .app {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 128px;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-areas: "top top" "stage hud" "stage tools";
+    column-gap: 10px;
+  }
+  .topbar { grid-area: top; }
+  .stage { grid-area: stage; }
+  .hud { grid-area: hud; grid-auto-flow: row; gap: 6px; }
+  .hud-box { padding: 4px 10px 5px; }
+  .hud-value { font-size: 1.05rem; }
+  .tools { grid-area: tools; flex-direction: column; justify-content: flex-start; gap: 6px; }
+  .tool { min-height: 38px; padding: 0 10px; }
+  .table { inset: 5px; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .table .card { transition: none !important; }
+  .card.shake > .pnc-face, .tool.busy .icon { animation: none; }
+  .tool { transition: none; }
+}

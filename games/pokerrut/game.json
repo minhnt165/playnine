@@ -1,0 +1,48 @@
+{
+  "id": "pokerrut",
+  "cat": "card",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Video Poker",
+    "vi": "Poker Rút"
+  },
+  "sub": {
+    "en": "Jacks or Better",
+    "vi": "Video Poker"
+  },
+  "desc": {
+    "en": "Bet up to 5 credits, hold the cards you like and draw once: Jacks or Better on the full-pay 9/6 table. 25 hands from 100 credits, how many can you keep?",
+    "vi": "Cược tới 5 xu, giữ lá ưng ý rồi rút một lần: luật Jacks or Better, bảng trả 9/6. 25 tay với vốn 100 xu, bạn giữ được bao nhiêu?"
+  },
+  "tags": {
+    "en": ["Cards", "1 player", "High score"],
+    "vi": ["Bài", "1 người", "Điểm cao"]
+  },
+  "note": {
+    "en": "25 hands, 100 credits",
+    "vi": "25 tay, vốn 100 xu"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 213, 74, .28), transparent 60%), linear-gradient(160deg, #1f2f8f, #0a1140)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 15000,
+          "max_score": 99975
+        },
+        "points": 5
+      }
+    ]
+  }
+}

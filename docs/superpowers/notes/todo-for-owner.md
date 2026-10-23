@@ -10,6 +10,8 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 
 - [ ] `supabase/migrations/20261023000200_batch2.sql` — đợt 2, game 30–37: Cá Ngựa, Tangram, Cờ Thú, Cờ Đơn, Hoa Dung Đạo, Rắn Leo Thang, Cờ Chín Quân, Xí Ngầu.
 
+- [ ] `supabase/migrations/20261023000300_batch3.sql` — đợt 3, game 38–45: Xì Dách, Xếp Bài Nhện, Ô Trống, Kim Tự Tháp, Ba Đỉnh, Bài Tám, Poker Rút, Đô-mi-nô.
+
 Đợt 0 (nền tảng) không có migration. Áp các file theo đúng thứ tự tên file.
 
 ## Repo
@@ -27,4 +29,5 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 
 - Nhãn "Mới" giờ tính theo `addedAt` (14 ngày), nên Sudoku cũng có nhãn "Mới" tới 03/11/2026 như các game ra mắt cùng đợt.
 - Thể loại chưa có game (Bài, Chữ và số) không hiện nút trên bộ lọc cho tới khi có game đầu tiên.
+- Đô-mi-nô: ngưỡng chống gian lận 8 giây thay vì 20 giây đã dự kiến, vì mô phỏng 100.000 trận cho thấy 1,5–3,7% trận thắng thật tới 50 điểm xong dưới 20 giây; 8 giây là mức sàn chứng minh được từ nhịp máy.
 - Nút "Game" ở sidebar vẫn mở menu nhanh; trang `#/games` vào từ nút "Xem tất cả N game" dưới lưới trang chủ (hiện khi có hơn 24 game).

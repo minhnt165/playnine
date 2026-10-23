@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Biểu tượng Xếp Bài Nhện: ba lá xòe (lá trước là Già bích) và con nhện treo tơ -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22695c"/>
+      <stop offset="1" stop-color="#10302e"/>
+    </linearGradient>
+    <linearGradient id="back" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8b6cff"/>
+      <stop offset="1" stop-color="#4b30c9"/>
+    </linearGradient>
+    <path id="spade" d="M12 1.8c.5.6 9.6 7.2 9.6 12.9 0 2.9-2.3 5.1-5 5.1-1.6 0-3-.7-3.8-1.9.3 1.8 1 3.1 2.5 4.5H8.7c1.5-1.4 2.2-2.7 2.5-4.5-.8 1.2-2.2 1.9-3.8 1.9-2.7 0-5-2.2-5-5.1C2.4 9 11.5 2.4 12 1.8z"/>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Lá sau: lưng tím -->
+  <rect x="10" y="17" width="25" height="35" rx="3.5" fill="url(#back)" stroke="#2c1a86" stroke-width="1.2" transform="rotate(-16 22 34)"/>
+  <rect x="17" y="14" width="25" height="35" rx="3.5" fill="#fffefb" stroke="#0b1a1f" stroke-opacity=".35" stroke-width="1.2" transform="rotate(-5 30 32)"/>
+  <!-- Lá trước: Già bích -->
+  <g transform="rotate(7 38 36)">
+    <rect x="25" y="17" width="27" height="38" rx="3.8" fill="#fffefb" stroke="#0b1a1f" stroke-opacity=".35" stroke-width="1.2"/>
+    <text x="28.5" y="28" font-family="system-ui, sans-serif" font-size="11" font-weight="800" fill="#191b31">K</text>
+    <use href="#spade" transform="translate(31.5 30) scale(.85)" fill="#191b31"/>
+  </g>
+  <!-- Nhện treo tơ -->
+  <path d="M45 0v13" stroke="#e7fff6" stroke-width="1.4"/>
+  <g stroke="#0b1a1f" stroke-width="1.6" stroke-linecap="round" fill="none">
+    <path d="M42 14l-4-3M42 16l-5 0M42 18l-4 3M48 14l4-3M48 16l5 0M48 18l4 3"/>
+  </g>
+  <ellipse cx="45" cy="16.5" rx="4" ry="4.6" fill="#0b1a1f"/>
+  <circle cx="45" cy="12.4" r="2.4" fill="#0b1a1f"/>
+</svg>

@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước Xếp Bài Nhện: chồng 7-6 bích nhảy lên 8 bích, rồi cả dãy K→A bay lên ô đích.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động; nền thẻ lấy từ preview.bg. -->
+  <style>
+    .card { fill: #fffefb; stroke: #0b1a1f; stroke-opacity: .3; stroke-width: .6; }
+    .back { fill: #6a4cf5; stroke: #2c1a86; stroke-width: .6; }
+    .rk { font: 800 7px system-ui, sans-serif; fill: #191b31; }
+    .red { fill: #c62828; }
+    .slot { fill: none; stroke: #e7fff6; stroke-opacity: .35; stroke-dasharray: 2 1.6; }
+    .hop { animation: hop 4.8s cubic-bezier(.3, .7, .3, 1) infinite; }
+    .run { animation: run 4.8s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 0; }
+    .done { animation: done 4.8s ease-out infinite; }
+    .glow { animation: glow 4.8s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+    @keyframes hop {
+      0%, 16% { transform: translate(0, 0); }
+      34%, 100% { transform: translate(56px, 18px); }
+    }
+    @keyframes run {
+      0%, 46% { transform: translate(0, 0); opacity: 1; }
+      66% { transform: translate(25px, -10px) scale(1, .25); opacity: 1; }
+      67%, 92% { transform: translate(25px, -10px) scale(1, .25); opacity: 0; }
+      100% { transform: translate(0, 0); opacity: 0; }
+    }
+    @keyframes done {
+      0%, 64% { opacity: 0; }
+      68%, 92% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes glow {
+      0%, 64% { opacity: 0; transform: scale(.6); }
+      70% { opacity: .9; }
+      84%, 100% { opacity: 0; transform: scale(1.5); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hop, .run, .done, .glow { animation: none; }
+      .done, .glow { opacity: 0; }
+    }
+  </style>
+  <defs>
+    <path id="s" d="M12 1.8c.5.6 9.6 7.2 9.6 12.9 0 2.9-2.3 5.1-5 5.1-1.6 0-3-.7-3.8-1.9.3 1.8 1 3.1 2.5 4.5H8.7c1.5-1.4 2.2-2.7 2.5-4.5-.8 1.2-2.2 1.9-3.8 1.9-2.7 0-5-2.2-5-5.1C2.4 9 11.5 2.4 12 1.8z"/>
+    <path id="h" d="M12 21.6c-.5-.5-9.7-7-9.7-13.2 0-3.2 2.4-5.6 5.5-5.6 1.8 0 3.3.9 4.2 2.4.9-1.5 2.4-2.4 4.2-2.4 3.1 0 5.5 2.4 5.5 5.6 0 6.2-9.2 12.7-9.7 13.2z"/>
+    <!-- Lá ngửa 22 × 31; bậc ở góc trái, chất nhỏ góc phải -->
+    <symbol id="up" viewBox="0 0 22 31" overflow="visible"><rect class="card" x=".3" y=".3" width="21.4" height="30.4" rx="2.4"/></symbol>
+    <symbol id="dn" viewBox="0 0 22 31" overflow="visible"><rect class="back" x=".3" y=".3" width="21.4" height="30.4" rx="2.4"/><rect x="2.4" y="2.4" width="17.2" height="26.2" rx="1.5" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width=".7"/></symbol>
+  </defs>
+  <g transform="translate(0 7)">
+
+  <!-- Chồng chia và ô đích -->
+  <use href="#dn" x="8" y="6" width="22" height="31"/>
+  <use href="#dn" x="11" y="6" width="22" height="31"/>
+  <use href="#dn" x="14" y="6" width="22" height="31"/>
+  <rect class="slot" x="125.5" y="6.5" width="21" height="30" rx="2.4"/>
+  <circle class="glow" cx="136" cy="22" r="14" fill="#a7f3d0"/>
+  <g class="done">
+    <use href="#up" x="125" y="6" width="22" height="31"/>
+    <text class="rk" x="127.5" y="13.5">K</text>
+    <use href="#s" transform="translate(140 8.5) scale(.25)" fill="#191b31"/>
+    <use href="#s" transform="translate(130 17) scale(.5)" fill="#191b31"/>
+  </g>
+
+  <!-- Cột 1: lá úp + 9 cơ -->
+  <use href="#dn" x="16" y="44" width="22" height="31"/>
+  <use href="#dn" x="16" y="48" width="22" height="31"/>
+  <use href="#up" x="16" y="52" width="22" height="31"/>
+  <text class="rk red" x="18.5" y="59.5">9</text>
+  <use href="#h" transform="translate(31 54.5) scale(.25)" class="red"/>
+  <use href="#h" transform="translate(20.5 62) scale(.55)" class="red"/>
+
+  <!-- Cột 2: lá úp (chồng 7-6 bích nằm trong nhóm của cột 4 bên dưới để bay theo cả dãy) -->
+  <use href="#dn" x="44" y="44" width="22" height="31"/>
+  <use href="#dn" x="44" y="48" width="22" height="31"/>
+
+  <!-- Cột 3: lá úp + 4 cơ -->
+  <use href="#dn" x="72" y="44" width="22" height="31"/>
+  <use href="#up" x="72" y="48" width="22" height="31"/>
+  <text class="rk red" x="74.5" y="55.5">4</text>
+  <use href="#h" transform="translate(87 50.5) scale(.25)" class="red"/>
+  <use href="#h" transform="translate(76.5 58) scale(.55)" class="red"/>
+
+  <!-- Cột 4: K→8 bích; 7-6 bích nhảy từ cột 2 sang, rồi cả dãy bay lên ô đích -->
+  <g class="run">
+    <use href="#up" x="100" y="16" width="22" height="31"/>
+    <text class="rk" x="102.5" y="23.5">K</text>
+    <use href="#up" x="100" y="25" width="22" height="31"/>
+    <text class="rk" x="102.5" y="32.5">Q</text>
+    <use href="#up" x="100" y="34" width="22" height="31"/>
+    <text class="rk" x="102.5" y="41.5">J</text>
+    <use href="#up" x="100" y="43" width="22" height="31"/>
+    <text class="rk" x="101" y="50.5">10</text>
+    <use href="#up" x="100" y="52" width="22" height="31"/>
+    <text class="rk" x="102.5" y="59.5">9</text>
+    <use href="#up" x="100" y="61" width="22" height="31"/>
+    <text class="rk" x="102.5" y="68.5">8</text>
+    <use href="#s" transform="translate(115 18.5) scale(.25)" fill="#191b31"/>
+    <use href="#s" transform="translate(115 27.5) scale(.25)" fill="#191b31"/>
+    <use href="#s" transform="translate(115 36.5) scale(.25)" fill="#191b31"/>
+    <use href="#s" transform="translate(115 45.5) scale(.25)" fill="#191b31"/>
+    <use href="#s" transform="translate(115 54.5) scale(.25)" fill="#191b31"/>
+    <use href="#s" transform="translate(115 63.5) scale(.25)" fill="#191b31"/>
+    <use href="#s" transform="translate(104.5 73) scale(.55)" fill="#191b31"/>
+    <g class="hop">
+      <use href="#up" x="44" y="52" width="22" height="31"/>
+      <text class="rk" x="46.5" y="59.5">7</text>
+      <use href="#s" transform="translate(59 54.5) scale(.25)" fill="#191b31"/>
+      <use href="#up" x="44" y="61" width="22" height="31"/>
+      <text class="rk" x="46.5" y="68.5">6</text>
+      <use href="#s" transform="translate(59 63.5) scale(.25)" fill="#191b31"/>
+      <use href="#s" transform="translate(48.5 73) scale(.55)" fill="#191b31"/>
+    </g>
+  </g>
+  </g>
+</svg>

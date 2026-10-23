@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: kim tự tháp 4 hàng; lá 6 và 7 ở hàng dưới sáng viền, nhấc lên rồi biến mất
+       (6 + 7 = 13) làm lộ lá 2 phía trên, rồi quay lại từ đầu.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động; nền trong suốt (nền thẻ lấy từ preview.bg). -->
+  <style>
+    .c rect { fill: #fffefb; stroke: rgba(20, 22, 43, .28); stroke-width: .8; }
+    .c text { font: 800 10.5px system-ui, -apple-system, "Segoe UI", sans-serif; fill: #191b31; }
+    .c .r { fill: #c62828; }
+    .k rect { stroke: #d9a521; stroke-width: 1.4; }
+    .pair { animation: pair 4s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 50%; }
+    .c .ring { fill: none; stroke: #ffc53d; stroke-width: 2; opacity: 0; animation: ring 4s ease-in-out infinite; }
+    .sum { opacity: 0; animation: sum 4s ease-in-out infinite; }
+    .sum rect { fill: #ffc53d; }
+    .sum text { font: 800 11px system-ui, -apple-system, "Segoe UI", sans-serif; fill: #3a2600; }
+    @keyframes pair {
+      0%, 30% { transform: none; opacity: 1; }
+      40% { transform: translateY(-4px); opacity: 1; }
+      52% { transform: translateY(-6px) scale(.7); opacity: 0; }
+      88% { transform: translateY(-6px) scale(.7); opacity: 0; }
+      96%, 100% { transform: none; opacity: 1; }
+    }
+    @keyframes ring { 0%, 12% { opacity: 0; } 18%, 40% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    @keyframes sum { 0%, 38% { opacity: 0; } 46%, 78% { opacity: 1; } 86%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .pair, .c .ring, .sum { animation: none; }
+      .c .ring { opacity: 1; }
+    }
+  </style>
+  <defs>
+    <filter id="sh" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#04130c" flood-opacity=".5"/>
+    </filter>
+  </defs>
+  <g filter="url(#sh)">
+    <!-- Hàng 1: đỉnh -->
+    <g class="c k"><rect x="67" y="10" width="26" height="36" rx="3"/><text class="r" x="70" y="21">K</text></g>
+    <!-- Hàng 2 -->
+    <g class="c"><rect x="52" y="26" width="26" height="36" rx="3"/><text x="55" y="37">4</text></g>
+    <g class="c"><rect x="82" y="26" width="26" height="36" rx="3"/><text class="r" x="85" y="37">9</text></g>
+    <!-- Hàng 3 -->
+    <g class="c"><rect x="37" y="42" width="26" height="36" rx="3"/><text x="40" y="53">Q</text></g>
+    <g class="c"><rect x="67" y="42" width="26" height="36" rx="3"/><text class="r" x="70" y="53">2</text></g>
+    <g class="c"><rect x="97" y="42" width="26" height="36" rx="3"/><text x="100" y="53">8</text></g>
+    <!-- Hàng 4: 6 và 7 ở giữa được ghép -->
+    <g class="c"><rect x="22" y="58" width="26" height="36" rx="3"/><text class="r" x="25" y="69">5</text><path d="M35 78l4 5-4 5-4-5z" fill="#c62828"/></g>
+    <g class="c pair"><rect x="52" y="58" width="26" height="36" rx="3"/><text x="55" y="69">6</text><path d="M65 77c-.6.6-5 3.8-5 6.3a2.3 2.3 0 0 0 3.9 1.7l-.8 2.2h3.8l-.8-2.2a2.3 2.3 0 0 0 3.9-1.7c0-2.5-4.4-5.7-5-6.3z" fill="#191b31"/><rect class="ring" x="51" y="57" width="28" height="38" rx="4"/></g>
+    <g class="c pair"><rect x="82" y="58" width="26" height="36" rx="3"/><text class="r" x="85" y="69">7</text><path d="M95 88.5c-.6-.6-5.5-4.2-5.5-7.1a2.8 2.8 0 0 1 5.5-1.1 2.8 2.8 0 0 1 5.5 1.1c0 2.9-4.9 6.5-5.5 7.1z" fill="#c62828"/><rect class="ring" x="81" y="57" width="28" height="38" rx="4"/></g>
+    <g class="c"><rect x="112" y="58" width="26" height="36" rx="3"/><text x="115" y="69">J</text><path d="M125 77c-.6.6-5 3.8-5 6.3a2.3 2.3 0 0 0 3.9 1.7l-.8 2.2h3.8l-.8-2.2a2.3 2.3 0 0 0 3.9-1.7c0-2.5-4.4-5.7-5-6.3z" fill="#191b31"/></g>
+  </g>
+  <!-- 6 + 7 = 13 -->
+  <g class="sum">
+    <rect x="58" y="99" width="44" height="16" rx="8"/>
+    <text x="80" y="111" text-anchor="middle">6+7=13</text>
+  </g>
+</svg>

@@ -1,0 +1,222 @@
+/* =====================================================================
+ * Poker Rút - Giao diện riêng của game (nền chung, nút, modal… ở ../_kit/kit.css; lá bài ở ../_kit/cards.css)
+ *   - "Máy" video poker: màn xanh đậm như máy thật ở cả hai giao diện, chữ vàng
+ *   - Bảng trả: cột cược hiện tại sáng, hàng bài đang cầm sáng nhẹ, hàng thắng nhấp nháy rồi giữ nền vàng
+ *   - 5 lá: cỡ theo khung (app.js đặt --card-w), nhãn GIỮ dưới lá đang giữ
+ *   - Màn hình ngang thấp: bảng trả bên trái, bài + nút bên phải
+ * ===================================================================== */
+:root {
+  --app-max: 760px;
+  --machine: linear-gradient(170deg, #22339a 0%, #15216d 55%, #0e174f 100%);
+  --machine-edge: rgba(255, 255, 255, 0.14);
+  --gold: #ffd54a;
+  --gold-strong: #f2b31b;
+  --gold-text: #2c1f00;
+  --pay-text: #ffe27a;
+  --pay-muted: rgba(255, 255, 255, 0.55);
+  --pay-on: rgba(255, 213, 74, 0.2);
+  --pay-now: rgba(255, 255, 255, 0.1);
+  --machine-btn: rgba(255, 255, 255, 0.13);
+  --machine-btn-hover: rgba(255, 255, 255, 0.2);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --machine: linear-gradient(170deg, #1b2a84 0%, #111a5a 55%, #0a1140 100%);
+    --machine-edge: rgba(255, 255, 255, 0.1);
+  }
+}
+:root[data-theme="dark"] {
+  --machine: linear-gradient(170deg, #1b2a84 0%, #111a5a 55%, #0a1140 100%);
+  --machine-edge: rgba(255, 255, 255, 0.1);
+}
+
+.stage { align-items: stretch; }
+
+/* ===================== Máy ===================== */
+.machine {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 20px;
+  background: var(--machine);
+  border: 1px solid var(--machine-edge);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  color: #fff;
+  /* Lá đang giữ: viền trắng (nổi trên nền xanh); gợi ý / lá ăn tiền: viền hổ phách của cards.css */
+  --pnc-ring: #ffffff;
+}
+
+/* ===================== Bảng trả ===================== */
+.paytable {
+  flex: none;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: clamp(0.7rem, 2.9vw, 0.92rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.18);
+  table-layout: fixed;
+}
+.paytable th,
+.paytable td { padding: clamp(1px, 0.72vh, 7px) 6px; white-space: nowrap; }
+.paytable thead th {
+  font-size: 0.68em;
+  color: var(--pay-muted);
+  text-align: right;
+  letter-spacing: 0.04em;
+  padding-top: 4px;
+  padding-bottom: 2px;
+}
+.paytable thead th:first-child { width: 40%; text-align: left; vertical-align: bottom; }
+/* Phiên có dùng gợi ý: nhãn nằm ở ô trống đầu bảng trả */
+.pay-badge { font-size: 0.66rem; letter-spacing: 0.02em; color: var(--gold); background: rgba(255, 213, 74, 0.18); }
+.paytable tbody th { text-align: left; color: var(--pay-text); overflow: hidden; text-overflow: ellipsis; }
+.paytable td { text-align: right; color: var(--pay-text); }
+.paytable .on { background: var(--pay-on); color: #fff; }
+.paytable thead .on { color: #fff; }
+.paytable tr.now th,
+.paytable tr.now td { background-color: var(--pay-now); color: #fff; }
+.paytable tr.now .on { background-color: rgba(255, 213, 74, 0.32); }
+.paytable tr.win th,
+.paytable tr.win td { background: var(--gold); color: var(--gold-text); }
+.paytable tr.win .on { background: #fff1b8; }
+.paytable tr.win.flash th,
+.paytable tr.win.flash td { animation: pay-flash 0.36s steps(1, end) 4; }
+@keyframes pay-flash {
+  50% { background: transparent; color: var(--pay-text); }
+}
+
+/* ===================== Khu bài ===================== */
+.play { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.msg {
+  flex: none;
+  margin: 0;
+  min-height: 1.35em;
+  text-align: center;
+  font-weight: 800;
+  font-size: clamp(0.88rem, 3.6vw, 1.05rem);
+  color: var(--pay-text);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.msg.good { color: #fff; text-shadow: 0 0 12px rgba(255, 213, 74, 0.7); }
+.hand-area { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+.hand { display: flex; gap: var(--gap, 8px); align-items: flex-start; }
+
+.slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border-radius: 10px;
+  touch-action: manipulation;
+}
+.slot:disabled { opacity: 1; cursor: default; }
+.slot:focus-visible { outline-offset: 4px; }
+.held-tag {
+  visibility: hidden;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  padding: 3px 8px 4px;
+  border-radius: 6px;
+  background: var(--gold);
+  color: var(--gold-text);
+}
+.slot.held .held-tag { visibility: visible; }
+@media (hover: hover) {
+  .slot:not(:disabled):hover .pnc-face { box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55), var(--pnc-shadow); }
+}
+
+/* Gợi ý giữ bài (giữ chỗ khi đang bật để lá không đổi cỡ) */
+.suggest-row {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 34px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ffe9a8;
+}
+.suggest-row.idle { visibility: hidden; }
+.suggest-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.btn-apply { min-height: 32px; padding: 0 12px; font-size: 0.8rem; background: var(--machine-btn); color: #fff; flex: none; }
+
+/* ===================== Nút ===================== */
+.controls { flex: none; display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 8px; }
+.btn-bet { background: var(--machine-btn); color: #fff; padding: 0 8px; font-size: 0.88rem; min-height: 46px; }
+.btn-deal {
+  min-height: 46px;
+  font-size: 1.08rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  background: linear-gradient(180deg, #ffe27a, var(--gold-strong));
+  color: var(--gold-text);
+  box-shadow: 0 3px 0 #b07c08;
+}
+.btn-deal.draw { background: linear-gradient(180deg, #fff2b0, var(--gold)); }
+.btn-deal:active { transform: translateY(2px); box-shadow: 0 1px 0 #b07c08; }
+@media (hover: hover) {
+  .btn-bet:not(:disabled):hover,
+  .btn-apply:not(:disabled):hover { background: var(--machine-btn-hover); }
+  .btn-deal:not(:disabled):hover { background: linear-gradient(180deg, #fff0a8, var(--gold)); }
+}
+
+/* ===================== Hết phiên ===================== */
+.end-total { margin: 0; font-size: 1rem; color: var(--muted); }
+.end-total b { font-size: 2.4rem; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.end-badge { margin: 0; font-weight: 700; color: var(--muted); }
+.end-badge.good { color: var(--accent); }
+.end-lines { margin: 0; display: grid; gap: 6px; }
+.end-lines div { display: flex; justify-content: space-between; gap: 12px; background: var(--surface-2); border-radius: 10px; padding: 8px 12px; }
+.end-lines dt { color: var(--muted); font-weight: 600; }
+.end-lines dd { margin: 0; font-weight: 800; font-variant-numeric: tabular-nums; }
+.end-lines dd.up { color: var(--green); }
+.end-lines dd.down { color: var(--red); }
+.end-assisted { font-size: 0.85rem; }
+.help-keys-list { font-size: 0.85rem; }
+.help-keys-list kbd { font-size: 0.7rem; }
+
+/* ===================== Màn hình hẹp ===================== */
+@media (max-width: 380px) {
+  .machine { padding: 8px; gap: 8px; }
+  .paytable th, .paytable td { padding-left: 4px; padding-right: 4px; }
+  .btn-bet { font-size: 0.8rem; }
+}
+
+/* ===================== Màn hình ngang thấp: bảng trả trái, bài phải ===================== */
+@media (orientation: landscape) and (max-height: 560px) {
+  .hud-box { padding: 4px 10px 5px; }
+  .hud-value { font-size: 1.1rem; }
+  .machine {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.25fr);
+    gap: 10px;
+    padding: 8px;
+  }
+  .paytable { align-self: center; font-size: 0.74rem; }
+  .paytable th, .paytable td { padding-top: 2px; padding-bottom: 2px; }
+  .play { gap: 6px; }
+  .btn-bet, .btn-deal { min-height: 40px; }
+  .suggest-row { min-height: 30px; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .paytable tr.win.flash th,
+  .paytable tr.win.flash td { animation: none; }
+  .btn-deal:active { transform: none; }
+}

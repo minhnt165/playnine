@@ -1,0 +1,49 @@
+{
+  "id": "badinh",
+  "cat": "card",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "TriPeaks",
+    "vi": "Ba Đỉnh"
+  },
+  "sub": {
+    "en": "Three-peak solitaire",
+    "vi": "TriPeaks"
+  },
+  "desc": {
+    "en": "Clear three peaks of cards by playing ones a rank higher or lower than the open card. Build long streaks for big points over three deals.",
+    "vi": "Dọn ba đỉnh bài bằng cách đánh lá hơn hoặc kém lá đáy một bậc. Đánh chuỗi thật dài để ăn điểm lớn qua ba ván."
+  },
+  "tags": {
+    "en": ["Cards", "Solitaire", "1 player", "High score"],
+    "vi": ["Bài", "Solitaire", "1 người", "Kỷ lục"]
+  },
+  "note": {
+    "en": "Long streaks score big",
+    "vi": "Chuỗi càng dài điểm càng cao"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(46, 196, 140, .3), transparent 60%), linear-gradient(160deg, #123d35, #08181a)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 20000,
+          "max_score_per_sec": 60,
+          "max_score": 1788
+        },
+        "points": 5
+      }
+    ]
+  }
+}

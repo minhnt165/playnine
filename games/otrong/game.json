@@ -1,0 +1,47 @@
+{
+  "id": "otrong",
+  "cat": "card",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "FreeCell",
+    "vi": "Ô Trống"
+  },
+  "sub": {
+    "en": "Solitaire, 4 free cells",
+    "vi": "FreeCell"
+  },
+  "desc": {
+    "en": "Move all 52 cards to the foundations by suit, using four free cells to dig them out. The classic numbered deals #1 to #32000, tap or drag to move, unlimited undo.",
+    "vi": "Đưa cả 52 lá lên ô đích theo chất, dùng bốn ô trống để gỡ bài. Các ván cổ điển đánh số #1 đến #32000, chạm hoặc kéo để đi, hoàn tác không giới hạn."
+  },
+  "tags": {
+    "en": ["Cards", "1 player", "Solitaire"],
+    "vi": ["Bài", "1 người", "Xếp bài"]
+  },
+  "note": {
+    "en": "Almost every deal can be won",
+    "vi": "Gần như ván nào cũng giải được"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(52, 211, 153, .28), transparent 60%), linear-gradient(160deg, #10392f, #07160f)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 8,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_time_ms": 12000
+        },
+        "points": 8
+      }
+    ]
+  }
+}

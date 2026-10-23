@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước Ba Đỉnh: ba đỉnh bài, hai lá liền bậc lần lượt bay xuống lá đáy (chuỗi ×1, ×2), lá bên trên lật ngửa.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động. Nền lấy từ preview.bg trong game.json. -->
+  <style>
+    text { font-family: system-ui, sans-serif; font-weight: 800; }
+    .a { animation: a 6s cubic-bezier(.3,.7,.3,1) infinite; }
+    .b { animation: b 6s cubic-bezier(.3,.7,.3,1) infinite; }
+    .fb { animation: fb 6s linear infinite; }
+    .ff { animation: ff 6s linear infinite; opacity: 0; }
+    .p1 { animation: p1 6s ease-out infinite; opacity: 0; }
+    .p2 { animation: p2 6s ease-out infinite; opacity: 0; }
+    .s0 { animation: s0 6s linear infinite; }
+    .s1 { animation: s1 6s linear infinite; opacity: 0; }
+    .s2 { animation: s2 6s linear infinite; opacity: 0; }
+    @keyframes a {
+      0%, 12% { transform: none; opacity: 1; }
+      26%, 92% { transform: translate(31.9px, 41px) scale(1.3); opacity: 1; }
+      96% { transform: translate(31.9px, 41px) scale(1.3); opacity: 0; }
+      97% { transform: none; opacity: 0; }
+      100% { transform: none; opacity: 1; }
+    }
+    @keyframes b {
+      0%, 42% { transform: none; opacity: 1; }
+      56%, 92% { transform: translate(17.3px, 41px) scale(1.3); opacity: 1; }
+      96% { transform: translate(17.3px, 41px) scale(1.3); opacity: 0; }
+      97% { transform: none; opacity: 0; }
+      100% { transform: none; opacity: 1; }
+    }
+    @keyframes fb { 0%, 58% { opacity: 1; } 62%, 97% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes ff { 0%, 58% { opacity: 0; } 62%, 94% { opacity: 1; } 97%, 100% { opacity: 0; } }
+    @keyframes p1 { 0%, 25% { opacity: 0; transform: translateY(0); } 29% { opacity: 1; } 42%, 100% { opacity: 0; transform: translateY(-12px); } }
+    @keyframes p2 { 0%, 55% { opacity: 0; transform: translateY(0); } 59% { opacity: 1; } 72%, 100% { opacity: 0; transform: translateY(-12px); } }
+    @keyframes s0 { 0%, 25% { opacity: 1; } 26%, 97% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes s1 { 0%, 25% { opacity: 0; } 26%, 55% { opacity: 1; } 56%, 100% { opacity: 0; } }
+    @keyframes s2 { 0%, 55% { opacity: 0; } 56%, 95% { opacity: 1; } 97%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .a, .b, .fb, .ff, .p1, .p2, .s0, .s1, .s2 { animation: none; }
+    }
+  </style>
+  <defs>
+    <linearGradient id="bk" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#8b6cff"/><stop offset="1" stop-color="#4b30c9"/></linearGradient>
+    <symbol id="back" viewBox="0 0 14 19.6" width="14" height="19.6"><rect x=".3" y=".3" width="13.4" height="19" rx="1.4" fill="url(#bk)" stroke="#3f27ad" stroke-width=".6"/><rect x="1.6" y="1.6" width="10.8" height="16.400000000000002" rx=".9" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width=".5"/></symbol>
+    <symbol id="face" viewBox="0 0 14 19.6" width="14" height="19.6"><rect x=".3" y=".3" width="13.4" height="19" rx="1.4" fill="#fffefb" stroke="#000" stroke-opacity=".25" stroke-width=".6"/></symbol>
+    <symbol id="S" viewBox="0 0 24 24"><path d="M12 1.8c.5.6 9.6 7.2 9.6 12.9 0 2.9-2.3 5.1-5 5.1-1.6 0-3-.7-3.8-1.9.3 1.8 1 3.1 2.5 4.5H8.7c1.5-1.4 2.2-2.7 2.5-4.5-.8 1.2-2.2 1.9-3.8 1.9-2.7 0-5-2.2-5-5.1C2.4 9 11.5 2.4 12 1.8z"/></symbol>
+    <symbol id="H" viewBox="0 0 24 24"><path d="M12 21.6c-.5-.5-9.7-7-9.7-13.2 0-3.2 2.4-5.6 5.5-5.6 1.8 0 3.3.9 4.2 2.4.9-1.5 2.4-2.4 4.2-2.4 3.1 0 5.5 2.4 5.5 5.6 0 6.2-9.2 12.7-9.7 13.2z"/></symbol>
+    <symbol id="D" viewBox="0 0 24 24"><path d="M12 1.4c2.3 3.8 5 7.3 8.6 10.6-3.6 3.3-6.3 6.8-8.6 10.6-2.3-3.8-5-7.3-8.6-10.6C7 8.7 9.7 5.2 12 1.4z"/></symbol>
+    <symbol id="C" viewBox="0 0 24 24"><path d="M12 2.3a4.6 4.6 0 0 1 4.3 6.2 4.6 4.6 0 1 1-2.9 5.5c.1 3.6.9 6.1 3.1 8.3H7.5c2.2-2.2 3-4.7 3.1-8.3a4.6 4.6 0 1 1-2.9-5.5A4.6 4.6 0 0 1 12 2.3z"/></symbol>
+  </defs>
+  <!-- Ba đỉnh -->
+  <use href="#back" x="29.2" y="5"/><use href="#back" x="73" y="5"/><use href="#back" x="116.8" y="5"/><use href="#back" x="21.9" y="15"/><use href="#back" x="36.5" y="15"/><use href="#back" x="65.7" y="15"/><use href="#back" x="80.3" y="15"/><use href="#back" x="109.5" y="15"/><use href="#back" x="124.1" y="15"/><use href="#back" x="14.6" y="25"/><use href="#back" x="29.2" y="25"/><use href="#back" x="43.8" y="25"/><use href="#back" x="73" y="25"/><use href="#back" x="87.6" y="25"/><use href="#back" x="102.2" y="25"/><use href="#back" x="116.8" y="25"/><use href="#back" x="131.4" y="25"/><g transform="translate(7.3 35)"><g ><use href="#face"/><text x="1.6" y="6.4" font-size="6" fill="#191b31">5</text><use href="#S" x="4" y="8.4" width="6.4" height="6.4" fill="#191b31"/></g></g><g transform="translate(21.9 35)"><g ><use href="#face"/><text x="1.6" y="6.4" font-size="6" fill="#191b31">K</text><use href="#C" x="4" y="8.4" width="6.4" height="6.4" fill="#191b31"/></g></g><g transform="translate(36.5 35)"><g ><use href="#face"/><text x="1.6" y="6.4" font-size="6" fill="#c62828">J</text><use href="#H" x="4" y="8.4" width="6.4" height="6.4" fill="#c62828"/></g></g><g transform="translate(80.3 35)"><g ><use href="#face"/><text x="1.6" y="6.4" font-size="6" fill="#c62828">2</text><use href="#D" x="4" y="8.4" width="6.4" height="6.4" fill="#c62828"/></g></g><g transform="translate(94.9 35)"><g ><use href="#face"/><text x="1.6" y="6.4" font-size="6" fill="#191b31">Q</text><use href="#C" x="4" y="8.4" width="6.4" height="6.4" fill="#191b31"/></g></g><g transform="translate(109.5 35)"><g ><use href="#face"/><text x="1.6" y="6.4" font-size="6" fill="#c62828">4</text><use href="#D" x="4" y="8.4" width="6.4" height="6.4" fill="#c62828"/></g></g><g transform="translate(124.1 35)"><g ><use href="#face"/><text x="1.6" y="6.4" font-size="6" fill="#191b31">10</text><use href="#S" x="4" y="8.4" width="6.4" height="6.4" fill="#191b31"/></g></g><g transform="translate(138.7 35)"><g ><use href="#face"/><text x="1.6" y="6.4" font-size="6" fill="#191b31">9</text><use href="#C" x="4" y="8.4" width="6.4" height="6.4" fill="#191b31"/></g></g>
+  <!-- Lá hàng 3 bị 7♥ và 8♠ đè: lật ngửa khi cả hai đã đi -->
+  <g class="fb"><use href="#back" x="58.4" y="25"/></g>
+  <g class="ff" transform="translate(58.4 25)"><g ><use href="#face"/><text x="1.6" y="6.4" font-size="6" fill="#c62828">9</text><use href="#D" x="4" y="8.4" width="6.4" height="6.4" fill="#c62828"/></g></g>
+  <!-- Nọc và lá đáy -->
+  <g transform="translate(57 76) scale(1.3)"><use href="#back" x="-1.2" y="-1.2"/><use href="#back" x="-.6" y="-.6"/><use href="#back"/></g>
+  <g transform="translate(83 76) scale(1.3)"><g ><use href="#face"/><text x="1.6" y="6.4" font-size="6" fill="#191b31">6</text><use href="#C" x="4" y="8.4" width="6.4" height="6.4" fill="#191b31"/></g></g>
+  <!-- Hai lá liền bậc bay xuống đáy -->
+  <g transform="translate(51.1 35)"><g class="a"><g ><use href="#face"/><text x="1.6" y="6.4" font-size="6" fill="#c62828">7</text><use href="#H" x="4" y="8.4" width="6.4" height="6.4" fill="#c62828"/></g></g></g>
+  <g transform="translate(65.7 35)"><g class="b"><g ><use href="#face"/><text x="1.6" y="6.4" font-size="6" fill="#191b31">8</text><use href="#S" x="4" y="8.4" width="6.4" height="6.4" fill="#191b31"/></g></g></g>
+  <!-- Điểm và chuỗi -->
+  <text class="p1" x="92" y="73" text-anchor="middle" font-size="10" fill="#ffffff">+1</text>
+  <text class="p2" x="92" y="73" text-anchor="middle" font-size="10" fill="#ffd166">+2</text>
+  <text class="s0" x="128" y="98" text-anchor="middle" font-size="15" fill="#ffffff" fill-opacity=".5">×0</text>
+  <text class="s1" x="128" y="98" text-anchor="middle" font-size="15" fill="#ffffff">×1</text>
+  <text class="s2" x="128" y="98" text-anchor="middle" font-size="15" fill="#ffb020">×2</text>
+</svg>

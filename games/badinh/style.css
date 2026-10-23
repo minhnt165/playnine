@@ -1,0 +1,231 @@
+/* =====================================================================
+ * Ba Đỉnh - Giao diện riêng của game (nền chung, nút, modal… ở ../_kit/kit.css; lá bài ở ../_kit/cards.css)
+ *   - app.js tính cỡ lá theo khung (.stage) và ghi --card-w, kích thước bàn; mỗi lá đặt bằng transform
+ *     (translate + scale) nên lá bay từ bàn xuống đáy, từ nọc ra đáy bằng transition
+ *   - Bàn nỉ xanh, chuỗi, điểm bay lên, băng hết ván
+ * ===================================================================== */
+:root {
+  --app-max: 860px;
+  --felt-1: #2f8d69;
+  --felt-2: #1c6a4d;
+  --felt-edge: #17573f;
+  --felt-text: #f1fff8;
+  --felt-muted: rgba(241, 255, 248, 0.72);
+  --hot: #ffb020;
+  --hotter: #ff6b3d;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --felt-1: #1b5544;
+    --felt-2: #0f3329;
+    --felt-edge: #0a241d;
+  }
+}
+:root[data-theme="dark"] {
+  --felt-1: #1b5544;
+  --felt-2: #0f3329;
+  --felt-edge: #0a241d;
+}
+
+/* Màn hình hẹp: lề hai bên mỏng hơn để lá to hơn một chút */
+@media (max-width: 420px) {
+  .app { padding-left: calc(8px + env(safe-area-inset-left)); padding-right: calc(8px + env(safe-area-inset-right)); }
+}
+
+.stage { user-select: none; -webkit-user-select: none; }
+
+/* ===================== Bàn ===================== */
+.table {
+  position: relative;
+  isolation: isolate; /* z-index của lá chỉ có nghĩa trong bàn, không đè lên hộp thoại */
+  flex: none;
+  width: var(--tw, 360px);
+  height: var(--th, 300px);
+  border-radius: 18px;
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.12), transparent 60%),
+    linear-gradient(170deg, var(--felt-1), var(--felt-2));
+  box-shadow: inset 0 0 0 1px var(--felt-edge), inset 0 2px 24px rgba(0, 0, 0, 0.18), var(--shadow-sm);
+  --pnc-slot-line: rgba(255, 255, 255, 0.3);
+  --pnc-slot-bg: rgba(0, 0, 0, 0.1);
+  --pnc-slot-text: rgba(255, 255, 255, 0.4);
+}
+
+/* Lá: vị trí bằng transform (góc trên trái), bay bằng transition */
+.table .pnc,
+.table .pile-slot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+.table .pnc { transition: transform 0.34s cubic-bezier(0.22, 0.8, 0.3, 1); }
+.table.instant .pnc { transition: none !important; }
+.table .pnc.legal { cursor: pointer; }
+.table .pnc.waste-old { visibility: hidden; }
+@media (hover: hover) {
+  .table .pnc.legal:hover > .pnc-face {
+    box-shadow: 0 0 0 3px var(--pnc-hl), 0 0 14px 3px color-mix(in srgb, var(--pnc-hl) 60%, transparent);
+    translate: 0 -4cqw;
+  }
+}
+/* Chạm nhầm lá không đánh được: lắc nhẹ */
+.table .pnc.nope > .pnc-face,
+.table .pnc.nope > .pnc-back { animation: nope 0.32s ease-in-out; }
+@keyframes nope {
+  20% { translate: -7cqw 0; }
+  45% { translate: 6cqw 0; }
+  70% { translate: -4cqw 0; }
+  90% { translate: 2cqw 0; }
+}
+
+/* Nọc: nút trong suốt phủ lên chồng lá úp, số lá còn ở góc */
+.stock-hit {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 60;
+  border-radius: 9% / 6.43%;
+  background: transparent;
+}
+.stock-hit:disabled { opacity: 1; cursor: default; }
+.stock-count {
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+.stock-hit:disabled .stock-count { opacity: 0.6; }
+/* Hết nước: nọc nhấp nháy nhẹ gợi ý rút */
+.stock-hit.hint { animation: hint 1.4s ease-in-out infinite; }
+@keyframes hint {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--pnc-hl) 0%, transparent); }
+  50% { box-shadow: 0 0 0 4px var(--pnc-hl), 0 0 18px 4px color-mix(in srgb, var(--pnc-hl) 55%, transparent); }
+}
+
+/* Chuỗi: số lớn cạnh lá đáy, nảy mỗi lá, nóng dần theo độ dài */
+.streak {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--felt-text);
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+.streak-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--felt-muted); }
+.streak-value {
+  font-size: var(--streak-size, 2rem);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+.streak-value::before { content: "×"; font-size: 0.7em; margin-right: 2px; opacity: 0.85; }
+/* Màn hình thấp (nọc / đáy thành cột bên phải): chuỗi nhỏ gọn giữa nọc và đáy */
+.streak.compact { gap: 0; }
+.streak.compact .streak-label { font-size: 0.6rem; }
+.streak.compact .streak-value { font-size: 1.25rem; }
+.streak.zero { opacity: 0.45; }
+.streak.warm .streak-value { color: var(--hot); }
+.streak.hot .streak-value { color: var(--hotter); }
+.streak.bump .streak-value { animation: bump 0.3s ease-out; }
+@keyframes bump {
+  40% { transform: scale(1.35); }
+}
+.streak.broke .streak-value { animation: broke 0.4s ease-out; }
+@keyframes broke {
+  30% { transform: translateY(3px) scale(0.85); }
+}
+
+/* Điểm bay lên từ lá đáy */
+.fx { position: absolute; inset: 0; pointer-events: none; overflow: visible; z-index: 200; }
+.pop {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1.1;
+  animation: pop 0.9s ease-out forwards;
+}
+.pop small { display: block; font-size: 0.72rem; color: var(--hot); }
+.pop.big { font-size: 1.4rem; color: var(--hot); }
+@keyframes pop {
+  0% { opacity: 0; translate: 0 6px; scale: 0.7; }
+  18% { opacity: 1; translate: 0 -6px; scale: 1.1; }
+  100% { opacity: 0; translate: 0 -46px; scale: 1; }
+}
+
+/* Băng hết ván: phủ mờ bàn, thẻ giữa bàn */
+.round-banner {
+  position: absolute;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  border-radius: inherit;
+  background: rgba(6, 20, 15, 0.45);
+  animation: kit-fade-in 0.25s ease;
+}
+.round-card {
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 340px;
+  animation: kit-sheet-in 0.25s ease-out;
+}
+.round-title { margin: 0; font-size: 1.2rem; font-weight: 800; }
+.round-text, .round-bonus { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.4; }
+.round-bonus { color: var(--green); font-weight: 700; }
+.round-card .btn { margin-top: 6px; }
+
+/* Hộp kết quả */
+.over-perfect, .over-best { color: var(--accent); font-weight: 700; }
+.over-rounds { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.over-rounds li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+.over-rounds .ok { color: var(--green); font-weight: 700; }
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .table .pnc { transition: none; }
+  .table .pnc.nope > .pnc-face, .table .pnc.nope > .pnc-back,
+  .stock-hit.hint, .streak.bump .streak-value, .streak.broke .streak-value,
+  .round-banner, .round-card { animation: none; }
+  .stock-hit.hint { box-shadow: 0 0 0 3px var(--pnc-hl); }
+  .pop { display: none; }
+}

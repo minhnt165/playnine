@@ -1,0 +1,58 @@
+{
+  "id": "domino",
+  "cat": "versus",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Dominoes",
+    "vi": "Đô-mi-nô"
+  },
+  "sub": {
+    "en": "Draw dominoes",
+    "vi": "Dominoes · Domino bốc"
+  },
+  "desc": {
+    "en": "Match tiles to the open ends of the line and draw from the boneyard when stuck. Empty your hand first to score your opponent's pips.",
+    "vi": "Nối quân khớp hai đầu dây, hết quân khớp thì bốc nọc. Đánh hết quân trước để ăn số chấm trên tay đối thủ."
+  },
+  "tags": {
+    "en": ["Tiles", "Vs computer", "Classic"],
+    "vi": ["Đô-mi-nô", "Đấu máy", "Cổ điển"]
+  },
+  "note": {
+    "en": "Two computer levels, play to 50, 100 or 150",
+    "vi": "Hai mức máy, chơi tới 50, 100 hoặc 150 điểm"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(52, 211, 153, .28), transparent 60%), linear-gradient(160deg, #1d4d3a, #0b2119)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 8,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 8000
+        },
+        "points": 6
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 8000
+        },
+        "points": 10
+      }
+    ]
+  }
+}

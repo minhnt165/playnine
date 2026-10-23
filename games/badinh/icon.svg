@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2=".7" y2="1">
+      <stop offset="0" stop-color="#36a07a"/>
+      <stop offset="1" stop-color="#114232"/>
+    </linearGradient>
+    <linearGradient id="bk" x1="0" y1="0" x2=".6" y2="1">
+      <stop offset="0" stop-color="#9a7fff"/>
+      <stop offset="1" stop-color="#4b30c9"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Ba đỉnh: ba lá úp trên, hai lá ngửa đè lên giữa các đỉnh -->
+  <g stroke="#2d1b8f" stroke-width="1">
+    <rect x="4.5" y="9.5" width="16" height="22" rx="2.5" fill="url(#bk)"/>
+    <rect x="24" y="9.5" width="16" height="22" rx="2.5" fill="url(#bk)"/>
+    <rect x="43.5" y="9.5" width="16" height="22" rx="2.5" fill="url(#bk)"/>
+  </g>
+  <g fill="none" stroke="#ffffff" stroke-opacity=".7" stroke-width="1">
+    <rect x="7" y="12" width="11" height="17" rx="1.5"/>
+    <rect x="26.5" y="12" width="11" height="17" rx="1.5"/>
+    <rect x="46" y="12" width="11" height="17" rx="1.5"/>
+  </g>
+  <g stroke="#000000" stroke-opacity=".25" stroke-width="1">
+    <rect x="13" y="25.5" width="18" height="25" rx="2.5" fill="#fffefb"/>
+    <rect x="33" y="25.5" width="18" height="25" rx="2.5" fill="#fffefb"/>
+  </g>
+  <!-- Cơ đỏ, bích đen -->
+  <path d="M22 46.5c-.4-.4-7.3-5.2-7.3-9.9 0-2.4 1.8-4.2 4.1-4.2 1.4 0 2.5.7 3.2 1.8.7-1.1 1.8-1.8 3.2-1.8 2.3 0 4.1 1.8 4.1 4.2 0 4.7-6.9 9.5-7.3 9.9z" fill="#d42f2a"/>
+  <path d="M42 31.5c.4.5 7.2 5.4 7.2 9.7 0 2.2-1.7 3.8-3.8 3.8-1.2 0-2.2-.5-2.8-1.4.2 1.4.8 2.3 1.9 3.4h-5c1.1-1.1 1.7-2 1.9-3.4-.6.9-1.6 1.4-2.8 1.4-2.1 0-3.8-1.6-3.8-3.8 0-4.3 6.8-9.2 7.2-9.7z" fill="#191b31"/>
+</svg>

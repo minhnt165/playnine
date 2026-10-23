@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="bg" cx=".5" cy=".3" r=".85">
+      <stop offset="0" stop-color="#34a073"/>
+      <stop offset="1" stop-color="#155c3e"/>
+    </radialGradient>
+  </defs>
+  <style>.sh{fill:rgba(0,0,0,.32)}.tf{fill:#fdfaf2;stroke:#cbbfa8;stroke-width:.8}.dv{stroke:#b3a68e;stroke-width:1.2;stroke-linecap:round}.pp circle{fill:#1b1e2d}</style>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <g transform="rotate(-28 32 32)"><rect class="sh" x="20.38" y="8.63" width="23.25" height="48.25" rx="4"/><rect class="tf" x="20.38" y="6.88" width="23.25" height="48.25" rx="4"/><line class="dv" x1="24" y1="31" x2="40" y2="31"/><g class="pp"><circle cx="26.25" cy="12.75" r="3.3"/><circle cx="37.75" cy="24.25" r="3.3"/><circle cx="26.25" cy="37.75" r="3.3"/><circle cx="32" cy="43.5" r="3.3"/><circle cx="37.75" cy="49.25" r="3.3"/></g></g>
+</svg>

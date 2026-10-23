@@ -1,0 +1,58 @@
+{
+  "id": "baitam",
+  "cat": "card",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Crazy Eights",
+    "vi": "Bài Tám"
+  },
+  "sub": {
+    "en": "Shedding card game",
+    "vi": "Crazy Eights"
+  },
+  "desc": {
+    "en": "Match the suit or rank of the top card, play wild eights to change the suit, and empty your hand before three computer players. First to the target score wins the match.",
+    "vi": "Đánh lá cùng chất hoặc cùng bậc với lá trên cùng, dùng lá 8 để đổi chất, hết bài trước ba người máy để ăn điểm. Ai chạm mốc điểm trước thì thắng trận."
+  },
+  "tags": {
+    "en": ["Cards", "Vs computer", "1 player"],
+    "vi": ["Bài", "Đấu máy", "1 người"]
+  },
+  "note": {
+    "en": "Eights are wild, first to 100 wins",
+    "vi": "Lá 8 đổi chất, ai chạm 100 điểm trước thắng"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(74, 200, 140, .28), transparent 60%), linear-gradient(160deg, #1d4a36, #0b1f16)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 8,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 6000
+        },
+        "points": 6
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 6000
+        },
+        "points": 10
+      }
+    ]
+  }
+}
