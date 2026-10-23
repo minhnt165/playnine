@@ -7,7 +7,9 @@ type Props = { filter: FilterKey; onChange: (k: FilterKey) => void; /** Danh sá
 
 export function Filters({ filter, onChange, games = GAMES }: Props) {
   const { t } = useI18n()
-  const entries: [FilterKey, string][] = [['all', 'cat.all'], ...(Object.entries(CATS) as [FilterKey, string][])]
+  // Thể loại chưa có game thì ẩn nút (trừ khi đang được chọn, để còn bấm "Tất cả" quay ra).
+  const cats = (Object.entries(CATS) as [FilterKey, string][]).filter(([key]) => key === filter || games.some((g) => g.cat === key))
+  const entries: [FilterKey, string][] = [['all', 'cat.all'], ...cats]
   return (
     <div className="filters" id="filters" aria-label={t('games.filter')}>
       {entries.map(([key, label]) => (

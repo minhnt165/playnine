@@ -59,6 +59,15 @@ describe('Home', () => {
     expect(container.querySelector('#filters button[aria-pressed="true"]')!.textContent).toMatch(/^Versus/)
   })
 
+  it('bộ lọc: Tất cả + các thể loại đang có game (thể loại rỗng thì ẩn), mỗi nút có số đếm', () => {
+    const { container } = renderHome()
+    const buttons = [...container.querySelectorAll('#filters button')]
+    const labels: Record<string, string> = { puzzle: 'Puzzle', versus: 'Versus', arcade: 'Arcade', card: 'Cards', brain: 'Words & numbers' }
+    const used = Object.keys(labels).filter((c) => GAMES.some((g) => g.cat === c))
+    expect(buttons.map((b) => b.firstChild!.textContent)).toEqual(['All', ...used.map((c) => labels[c])])
+    used.forEach((c, i) => expect(buttons[i + 1].querySelector('b')!.textContent).toBe(String(GAMES.filter((g) => g.cat === c).length)))
+  })
+
   it('localStorage.getItem ném lỗi: vẫn render đủ thẻ và stats.empty', () => {
     vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error('blocked')
