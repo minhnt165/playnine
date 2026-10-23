@@ -51,7 +51,7 @@ describe('Giao diện cửa hàng', () => {
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'zzz' } })
     fireEvent.click(screen.getByRole('button', { name: en('games.clear') }))
     expect(container.querySelector('.spotlight')).not.toBeNull()
-    expect(container.querySelectorAll('#games > li:not([hidden])')).toHaveLength(18)
+    expect(container.querySelectorAll('#games > li:not([hidden])')).toHaveLength(21)
   })
 
   it('sidebar liệt kê game chơi gần đây, mới nhất trước', () => {

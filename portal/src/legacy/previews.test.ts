@@ -29,7 +29,7 @@ describe('mountPreviews', () => {
     const root = mkRoot()
     const stop = mountPreviews(root, { isPlaying: () => false, reduceMotion: false })
     const hosts = root.querySelectorAll('.preview[data-game]')
-    expect(hosts).toHaveLength(18)
+    expect(hosts).toHaveLength(21)
     hosts.forEach((h) => expect(h.children.length, h.getAttribute('data-game')!).toBeGreaterThan(0))
     stop()
   })

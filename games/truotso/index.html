@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#f3f4fb">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Sliding Puzzle">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="Sliding Puzzle: slide the numbered tiles back into order as fast as you can. 3x3, 4x4 and 5x5 boards, best times, autosave.">
+  <title>Sliding Puzzle</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <script>
+    // Áp giao diện sáng/tối đã chọn trước khi vẽ trang để tránh nháy màu
+    try {
+      var t = JSON.parse(localStorage.getItem('playnine-truotso-settings-v1') || '{}').theme;
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="style.css?v=1.0.0">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-mark" src="icon.svg" alt="" width="34" height="34">
+        <h1 class="logo" data-i18n="brand.name">Sliding Puzzle</h1>
+        <button class="size-badge" id="size-badge" type="button" title="Board size" data-i18n-attr="title:settings.size">4x4</button>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" id="btn-stats" type="button" aria-label="Statistics" title="Statistics" data-i18n-attr="aria-label:top.stats;title:top.stats">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-settings" type="button" aria-label="Settings" title="Settings" data-i18n-attr="aria-label:top.settings;title:top.settings">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+        </button>
+        <button class="btn btn-primary btn-new" id="btn-new" type="button" title="New game (N)" data-i18n-attr="title:top.newGameTitle">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>
+          <span data-i18n="top.newGame">New game</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="hud">
+      <div class="score-box idle" id="time-box" title="The clock starts on your first move" data-i18n-attr="title:help.start">
+        <span class="score-label" data-i18n="hud.time">Time</span>
+        <span class="score-value" id="time">0:00</span>
+      </div>
+      <div class="score-box">
+        <span class="score-label" data-i18n="hud.moves">Moves</span>
+        <span class="score-value" id="moves">0</span>
+      </div>
+      <div class="score-box">
+        <span class="score-label" data-i18n="hud.best">Best</span>
+        <span class="score-value" id="best">—</span>
+      </div>
+    </section>
+
+    <main class="board-area" id="board-area">
+      <div class="board" id="board" tabindex="0" role="application" aria-roledescription="sliding puzzle board"
+           aria-label="Sliding puzzle board. Use the arrow keys or W A S D to slide a tile into the empty space." aria-describedby="board-desc"
+           data-i18n-attr="aria-roledescription:board.role;aria-label:board.label">
+        <div class="grid" id="grid" aria-hidden="true"></div>
+        <div class="tiles" id="tiles"></div>
+
+        <div class="overlay" id="overlay-win" hidden>
+          <div class="overlay-card">
+            <p class="overlay-title" data-i18n="win.title">Solved!</p>
+            <p class="overlay-score"><span class="overlay-score-label" data-i18n="win.time">Time</span><span class="overlay-score-value" id="win-time">0:00</span></p>
+            <p class="overlay-badge" id="win-best" data-i18n="game.newBest" hidden>New best time!</p>
+            <p class="overlay-sub" id="win-sub">0 moves</p>
+            <div class="overlay-actions">
+              <button class="btn btn-ghost" type="button" id="btn-win-size" data-i18n="win.size">Change size</button>
+              <button class="btn btn-primary" type="button" id="btn-win-new" data-i18n="win.again">Play again</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <p class="help" id="board-desc">
+      <span class="help-touch" data-i18n="help.touch">Tap a tile in the same row or column as the gap, or swipe, to slide it. Put the numbers back in order.</span>
+      <span class="help-keys" data-i18n-html="help.keys">Click a tile or use <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> / <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to slide · <kbd>N</kbd> new game</span>
+    </p>
+  </div>
+
+  <div class="sr-only" id="announcer" aria-live="polite"></div>
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <!-- Cài đặt -->
+  <div class="modal" id="modal-settings" hidden>
+    <div class="modal-backdrop" data-close="modal-settings"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h2 id="settings-title" data-i18n="settings.title">Settings</h2>
+      <div class="settings-list">
+        <div class="setting">
+          <span class="setting-name" id="lbl-theme" data-i18n="settings.theme">Theme</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="lbl-theme" data-setting="theme">
+            <button type="button" role="radio" data-value="auto" data-i18n="settings.themeAuto">Auto</button>
+            <button type="button" role="radio" data-value="light" data-i18n="settings.themeLight">Light</button>
+            <button type="button" role="radio" data-value="dark" data-i18n="settings.themeDark">Dark</button>
+          </div>
+        </div>
+        <div class="setting">
+          <div class="setting-text">
+            <span class="setting-name" id="lbl-mode" data-i18n="settings.size">Board size</span>
+            <span class="setting-desc" data-i18n="settings.sizeDesc">Changing the size starts a new game. Each size has its own best time and leaderboard.</span>
+          </div>
+          <div class="segmented" role="radiogroup" aria-labelledby="lbl-mode" data-setting="mode">
+            <button type="button" role="radio" data-value="3x3">3x3</button>
+            <button type="button" role="radio" data-value="4x4">4x4</button>
+            <button type="button" role="radio" data-value="5x5">5x5</button>
+          </div>
+        </div>
+        <div class="setting" id="setting-sound">
+          <span class="setting-name" id="lbl-sound" data-i18n="settings.sound">Sound</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="lbl-sound" data-setting="sound">
+            <button type="button" role="radio" data-value="on" data-i18n="settings.soundOn">On</button>
+            <button type="button" role="radio" data-value="off" data-i18n="settings.soundOff">Off</button>
+          </div>
+        </div>
+        <div class="setting">
+          <span class="setting-name" id="lbl-lang" data-i18n="settings.language">Language</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="lbl-lang" data-setting="lang">
+            <button type="button" role="radio" data-value="en">English</button>
+            <button type="button" role="radio" data-value="vi">Tiếng Việt</button>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" type="button" data-close="modal-settings" data-i18n="settings.done">Done</button>
+      <p class="app-version"><span data-i18n="brand.name">Sliding Puzzle</span> · <span data-i18n="settings.version">version</span> <span id="app-version">—</span></p>
+    </div>
+  </div>
+
+  <!-- Thống kê -->
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-backdrop" data-close="modal-stats"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
+      <h2 id="stats-title" data-i18n="stats.title">Statistics</h2>
+      <dl class="stat-grid">
+        <div><dt data-i18n="stats.played">Games played</dt><dd id="st-played">0</dd></div>
+        <div><dt data-i18n="stats.solved">Solved</dt><dd id="st-solved">0</dd></div>
+      </dl>
+      <p class="stats-section" data-i18n="stats.bySize">Best by size</p>
+      <dl class="best-list" id="st-best-list"></dl>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" id="btn-stats-reset" data-i18n="stats.reset">Reset</button>
+        <button class="btn btn-primary" type="button" data-close="modal-stats" data-i18n="stats.close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Xác nhận -->
+  <div class="modal" id="modal-confirm" hidden>
+    <div class="modal-backdrop" data-close="modal-confirm"></div>
+    <div class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+      <h2 id="confirm-title" data-i18n="confirm.newTitle">Start a new game?</h2>
+      <p class="modal-text" id="confirm-text" data-i18n="confirm.lost">The current game will be lost.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" data-close="modal-confirm" data-i18n="confirm.cancel">Cancel</button>
+        <button class="btn btn-primary" type="button" id="btn-confirm-ok" data-i18n="top.newGame">New game</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="i18n.js?v=1.0.0"></script>
+  <script src="engine.js?v=1.0.0"></script>
+  <script src="../sdk/playnine.js?v=2"></script>
+  <script src="app.js?v=1.0.0"></script>
+</body>
+</html>

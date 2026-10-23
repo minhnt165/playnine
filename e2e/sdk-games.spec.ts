@@ -97,6 +97,7 @@ const arcadeGames: [id: string, mode: string, start?: string][] = [
   ['xepgach', 'lv1', '#btn-start'],
   ['ran', 'classic-normal', '#btn-start'],
   ['phagach', 'default', '#btn-start'],
+  ['banbong', 'classic', '#btn-start'],
 ];
 
 for (const [id, mode, startBtn] of arcadeGames) {
@@ -389,4 +390,139 @@ test('noihinh reports a won run when level 1 is cleared', async ({ page }) => {
   await expect
     .poll(async () => (await messages(page)).find((m) => m.type === 'pn:end'), { timeout: 5000 })
     .toMatchObject({ gameId: 'noihinh', mode: 'classic', won: true, assisted: false });
+});
+
+test('truotso reports hello and start with mode 4x4', async ({ page }) => {
+  await captureMessages(page);
+  await page.goto('#/play/truotso');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === 'truotso'), { timeout: 5000 })
+    .toBe(true);
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === 'truotso' && m.mode === '4x4'), {
+      timeout: 5000,
+    })
+    .toBe(true);
+});
+
+test('truotso plays standalone without the SDK', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.route('**/sdk/playnine.js*', (r) => r.abort());
+  const res = await page.goto('truotso/');
+  expect(res?.status()).toBe(200);
+  await expect(page.locator('.tile')).toHaveCount(15);
+  // Bấm một ô kề ô trống: số nước tăng lên 1
+  const tile = await page.evaluate(() => {
+    const g = JSON.parse(localStorage.getItem('playnine-truotso-save-v1') || '{}').game;
+    const gap = g.tiles.indexOf(0);
+    return gap % 4 > 0 ? g.tiles[gap - 1] : g.tiles[gap + 1];
+  });
+  await page.locator(`.tile[data-v="${tile}"]`).click();
+  await expect(page.locator('#moves')).toHaveText('1');
+  await page.waitForTimeout(500);
+  expect(errors).toEqual([]);
+});
+
+test('truotso reports a won run with the solve time', async ({ page }) => {
+  await captureMessages(page);
+  // Ván lưu: bàn 4x4 chỉ còn một nước (ô 15 sang trái), đã 60 giây trên đồng hồ.
+  await page.addInitScript(() => {
+    if (window.localStorage.getItem('playnine-truotso-save-v1')) return;
+    const tiles = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15];
+    window.localStorage.setItem(
+      'playnine-truotso-save-v1',
+      JSON.stringify({ v: 1, game: { v: 1, size: 4, tiles, moves: 40 }, elapsed: 60000, counted: true }),
+    );
+  });
+  await page.goto('#/play/truotso');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.resume === true && m.mode === '4x4'), {
+      timeout: 5000,
+    })
+    .toBe(true);
+  const frame = page.frameLocator('iframe');
+  await frame.locator('.tile[data-v="15"]').click();
+  await expect
+    .poll(async () => (await messages(page)).find((m) => m.type === 'pn:end'), { timeout: 5000 })
+    .toMatchObject({ gameId: 'truotso', mode: '4x4', won: true, assisted: false });
+  const end = (await messages(page)).find((m) => m.type === 'pn:end') as Msg & { timeMs?: number };
+  expect(end.timeMs).toBeGreaterThanOrEqual(60000);
+  await expect(frame.locator('#overlay-win')).toBeVisible();
+});
+
+// Lật Thẻ: mức Dễ mặc định, mỗi thẻ có data-face (cùng số là một cặp) nên lật lần lượt từng cặp là thắng.
+test('latthe reports hello and start with mode easy', async ({ page }) => {
+  await captureMessages(page);
+  await page.goto('#/play/latthe');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === 'latthe'), { timeout: 5000 })
+    .toBe(true);
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === 'latthe' && m.mode === 'easy'), {
+      timeout: 5000,
+    })
+    .toBe(true);
+});
+
+test('latthe plays standalone without the SDK', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.route('**/sdk/playnine.js*', (r) => r.abort());
+  const res = await page.goto('latthe/');
+  expect(res?.status()).toBe(200);
+  const cards = page.locator('.card');
+  await expect(cards).toHaveCount(12);
+  await cards.first().click();
+  await expect(cards.first()).toHaveClass(/\bup\b/);
+  expect(errors).toEqual([]);
+});
+
+test('latthe reports a won run with the time when every pair is found', async ({ page }) => {
+  await captureMessages(page);
+  await page.goto('#/play/latthe');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === 'latthe'), { timeout: 5000 })
+    .toBe(true);
+  const frame = page.frameLocator('iframe');
+  const cards = frame.locator('.card');
+  await expect(cards).toHaveCount(12);
+  const faces = await cards.evaluateAll((els) => els.map((el) => [el.getAttribute('data-i'), el.getAttribute('data-face')]));
+  faces.sort((a, b) => Number(a[1]) - Number(b[1]));
+  for (const [i] of faces) await frame.locator(`.card[data-i="${i}"]`).click();
+  await expect
+    .poll(async () => (await messages(page)).find((m) => m.type === 'pn:end'), { timeout: 5000 })
+    .toMatchObject({ gameId: 'latthe', mode: 'easy', won: true, assisted: false });
+  const end = (await messages(page)).find((m) => m.type === 'pn:end') as Msg & { timeMs?: number };
+  expect(end.timeMs).toBeGreaterThan(0);
+});
+
+test('banbong reports an ended run with a numeric score', async ({ page }) => {
+  await captureMessages(page);
+  // Ván lưu sát vạch: 12 hàng đầy màu 1, bóng chờ màu 2; bắn thẳng lên là bóng dính ở hàng 12 (vạch) và hết ván.
+  await page.addInitScript(() => {
+    if (window.localStorage.getItem('playnine-banbong-save-v1')) return;
+    window.localStorage.setItem('playnine-banbong-settings-v1', JSON.stringify({ guideSeen: true }));
+    const rows = [];
+    for (let r = 0; r < 12; r++) rows.push(Array.from({ length: 11 }, (_, c) => (r % 2 && c === 10 ? 0 : 1)));
+    const game = {
+      v: 1, rows, parity: 0, current: 2, next: 2, score: 1230, misses: 0, combo: 0, level: 1,
+      shots: 40, popped: 100, dropped: 10, bestCombo: 3, over: false, seed: 12345,
+    };
+    window.localStorage.setItem('playnine-banbong-save-v1', JSON.stringify({ v: 1, game, counted: true, bestAtStart: 0 }));
+  });
+  await page.goto('#/play/banbong');
+  await expect
+    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.resume === true && m.mode === 'classic'), {
+      timeout: 5000,
+    })
+    .toBe(true);
+  const frame = page.frameLocator('iframe');
+  await frame.locator('#btn-resume').click();
+  await page.keyboard.press('Space');
+  await expect
+    .poll(async () => (await messages(page)).find((m) => m.type === 'pn:end'), { timeout: 5000 })
+    .toMatchObject({ gameId: 'banbong', mode: 'classic', won: false });
+  const end = (await messages(page)).find((m) => m.type === 'pn:end') as Msg & { score?: number };
+  expect(end.score).toBe(1230);
 });

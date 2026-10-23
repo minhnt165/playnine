@@ -490,6 +490,139 @@ export function mountPreviews(root, opts) {
       });
     },
 
+    // Trượt Số: bàn 4x4 xáo dần bằng nước đi ngẫu nhiên rồi đi ngược lại về đúng thứ tự
+    pv_truotso(host) {
+      const N = 4;
+      const grid = document.createElement('div');
+      grid.className = 'mini-ts';
+      const tiles = [];
+      for (let v = 1; v < N * N; v++) { const s = document.createElement('span'); s.textContent = v; grid.appendChild(s); tiles.push(s); }
+      host.appendChild(grid);
+      const board = [];
+      for (let v = 1; v < N * N; v++) board.push(v);
+      board.push(0);
+      let gap = N * N - 1, undoing = true, pause = 3;
+      const path = []; // các vị trí ô trống đã đi qua, đi ngược lại để về đích
+      const slide = (i) => { board[gap] = board[i]; board[i] = 0; gap = i; };
+      const near = (g) => [g - N, g + N, g % N ? g - 1 : -1, g % N < N - 1 ? g + 1 : -1].filter((i) => i >= 0 && i < N * N);
+      const paint = () => board.forEach((v, i) => {
+        if (!v) return;
+        tiles[v - 1].style.transform = 'translate(' + (i % N) * 100 + '%,' + Math.floor(i / N) * 100 + '%)';
+        tiles[v - 1].className = v === i + 1 ? 'ok' : '';
+      });
+      // Khung tĩnh: bàn đã xáo sẵn 6 nước (ô trống đi 14 → 13 → 9 → 10 → 6 → 5)
+      [14, 13, 9, 10, 6, 5].forEach((i) => { path.push(gap); slide(i); });
+      paint();
+      if (opts.reduceMotion) return;
+      this.loop(host, 380, () => {
+        if (pause > 0) { pause--; return; }
+        if (undoing) {
+          slide(path.pop());
+          paint();
+          if (!path.length) { undoing = false; pause = 5; }
+          return;
+        }
+        // Xáo: chọn ô kề ô trống, không đi ngược ngay nước vừa rồi
+        const next = near(gap).filter((i) => i !== path[path.length - 1]);
+        path.push(gap);
+        slide(next[Math.floor(Math.random() * next.length)]);
+        paint();
+        if (path.length >= 12) { undoing = true; pause = 3; }
+      });
+    },
+
+    // Lật Thẻ: lần lượt lật từng cặp (có lượt đoán sai rồi úp lại), ghép hết thì chia lại
+    pv_latthe(host) {
+      const ICONS = ['🏮', '🍜', '🥭', '🐃', '🎋', '⛵'];
+      // 12 thẻ (6 hình x 2), thẻ thứ k mang hình BOARD[k]; STEPS là các lượt lật [a, b]
+      const BOARD = [0, 3, 1, 4, 2, 5, 3, 0, 5, 1, 4, 2];
+      const STEPS = [[0, 2], [7, 0], [1, 4], [6, 1], [9, 2], [3, 8], [11, 4], [5, 8], [10, 3]];
+      const grid = document.createElement('div');
+      grid.className = 'mini-lt';
+      const cards = BOARD.map((f) => { const s = document.createElement('span'); s.textContent = ICONS[f]; grid.appendChild(s); return s; });
+      host.appendChild(grid);
+      let step, phase, open, done, pause = 0;
+      const paint = () => cards.forEach((s, i) => { s.className = done.has(i) ? 'up ok' : open.includes(i) ? 'up' : ''; });
+      const reset = () => { step = 0; phase = 0; open = []; done = new Set(); paint(); };
+      // Khung tĩnh: hai cặp đã ghép, một thẻ đang mở
+      open = [2]; done = new Set([0, 7, 1, 6]); paint();
+      if (opts.reduceMotion) return;
+      reset();
+      this.loop(host, 600, () => {
+        if (pause > 0) { if (--pause === 0) reset(); return; }
+        if (step >= STEPS.length) { pause = 4; return; }
+        const [a, b] = STEPS[step];
+        if (phase === 0) { open = [a]; phase = 1; } else if (phase === 1) {
+          // Lật thẻ thứ hai: đúng cặp thì giữ mở, sai thì nhịp sau úp lại
+          if (BOARD[a] === BOARD[b]) { done.add(a); done.add(b); open = []; step++; phase = 0; } else { open = [a, b]; phase = 2; }
+        } else { open = []; step++; phase = 0; }
+        paint();
+      });
+    },
+
+    // Bắn Bóng: súng ở đáy bắn bóng nảy tường lên chùm bóng, đủ 3 bóng cùng màu thì nổ, bóng treo bên dưới rơi
+    pv_banbong(host) {
+      const W = 150, H = 160, R = 7, D = 14, RH = 12.2, X0 = 12, Y0 = 11, SX = 75, SY = H - 18, WALL = W - 11;
+      const COLORS = ['#ff5d63', '#ffbd3a', '#49c86b', '#4c95ff', '#a67bff'];
+      // Bàn mẫu (chữ số = màu, '.' trống), hàng lẻ lệch nửa ô; bóng đỏ bắn vào ô trống (2, 6)
+      const MAP = ['331244133', '21443401', '243130...', '.....2..'];
+      const POP = ['1,6', '2,5'], FALL = '3,5', T = [2, 6];
+      const xy = (r, c) => [X0 + c * D + (r % 2 ? R : 0), Y0 + r * RH];
+      const ball = (x, y, k, cls) => '<g transform="translate(' + x + ' ' + y + ')"><g class="b' + (cls ? ' ' + cls : '') + '">' +
+        '<circle r="' + (R - 0.4) + '" fill="' + COLORS[k] + '" stroke="rgba(0, 0, 0, .25)" stroke-width=".6"/>' +
+        '<circle cx="-2.3" cy="-2.5" r="2" fill="#fff" opacity=".55"/></g></g>';
+      const [tx, ty] = xy(T[0], T[1]);
+      // Nảy tường phải: lấy đối xứng ô đích qua tường để tìm điểm nảy
+      const mx = 2 * WALL - tx, k = (WALL - SX) / (mx - SX), by = SY + (ty - SY) * k;
+      const path = [[SX, SY], [WALL, by], [tx, ty]];
+      const seg = [Math.hypot(WALL - SX, by - SY), Math.hypot(tx - WALL, ty - by)];
+      let cells = '';
+      MAP.forEach((row, r) => [...row].forEach((ch, c) => {
+        if (ch === '.') return;
+        const [x, y] = xy(r, c);
+        cells += ball(x, y, +ch, POP.includes(r + ',' + c) ? 'p' : r + ',' + c === FALL ? 'f' : '');
+      }));
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+      svg.setAttribute('class', 'mini-bb');
+      svg.innerHTML = '<rect x=".5" y=".5" width="' + (W - 1) + '" height="' + (H - 1) + '" rx="10" fill="rgba(0, 0, 0, .35)" stroke="rgba(255, 255, 255, .14)"/>' +
+        '<line x1="8" x2="' + (W - 8) + '" y1="' + (SY - 22) + '" y2="' + (SY - 22) + '" class="danger"/>' + cells +
+        ball(tx, ty, 0, 'p t') + '<polyline class="guide" points="' + path.map((p) => p.join(',')).join(' ') + '"/>' +
+        '<path d="M' + (SX - 24) + ' ' + H + 'a24 24 0 0 1 48 0z" fill="rgba(139, 108, 255, .3)"/>' +
+        '<g class="shot">' + ball(0, 0, 0) + '</g>';
+      host.appendChild(svg);
+      const shot = svg.querySelector('.shot'), guide = svg.querySelector('.guide'), target = svg.querySelector('.t');
+      const pops = svg.querySelectorAll('.p'), fall = svg.querySelector('.f');
+      let tick = 0;
+      const at = (d) => {
+        const i = d < seg[0] ? 0 : 1, f = Math.min(1, (d - (i ? seg[0] : 0)) / seg[i]);
+        return [path[i][0] + (path[i + 1][0] - path[i][0]) * f, path[i][1] + (path[i + 1][1] - path[i][1]) * f];
+      };
+      const place = ([x, y]) => shot.setAttribute('transform', 'translate(' + x + ' ' + y + ')');
+      const reset = () => {
+        tick = 0;
+        pops.forEach((el) => el.classList.remove('pop'));
+        fall.classList.remove('drop');
+        target.classList.add('hide');
+        shot.style.opacity = 1;
+        guide.style.opacity = 1;
+        place(path[0]);
+      };
+      reset();
+      if (opts.reduceMotion) return;
+      // Nhịp 30ms: ngắm ~0,6s, bay ~1s, nổ + rơi, nghỉ rồi dựng lại
+      this.loop(host, 30, () => {
+        tick++;
+        if (tick < 20) return;
+        guide.style.opacity = 0;
+        const d = (tick - 20) * 5;
+        if (d < seg[0] + seg[1]) { place(at(d)); return; }
+        if (target.classList.contains('hide')) { target.classList.remove('hide'); shot.style.opacity = 0; return; }
+        if (tick === 60) { pops.forEach((el) => el.classList.add('pop')); fall.classList.add('drop'); }
+        if (tick > 120) reset();
+      });
+    },
+
     // 2048: tự chơi theo thứ tự ưu tiên trái → xuống → phải → lên
     pv_2048(host) {
       const COLORS = { 2: '#f3e6c8', 4: '#efd9a6', 8: '#f2b179', 16: '#f59563', 32: '#f67c5f', 64: '#e8622c', 128: '#edcf72', 256: '#e0b964', 512: '#d9a13a', 1024: '#c9902d', 2048: '#b3261e' };

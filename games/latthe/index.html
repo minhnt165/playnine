@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#f5ecdc">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Memory Match">
+  <meta name="description" content="Memory Match: flip two cards at a time and find every pair. Three board sizes, a timer, move counter and best times.">
+  <title>Memory Match</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <script>
+    // Áp giao diện sáng/tối đã chọn trước khi vẽ trang để tránh nháy màu
+    try {
+      var t = JSON.parse(localStorage.getItem('playnine-latthe-settings-v1') || '{}').theme;
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="style.css?v=1.0.0">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-mark" src="icon.svg" alt="" width="34" height="34">
+        <h1 class="logo" data-i18n="app.name">Memory Match</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" id="btn-stats" type="button" aria-label="Statistics" title="Statistics" data-i18n-attr="aria-label:top.stats;title:top.stats">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-settings" type="button" aria-label="Settings" title="Settings" data-i18n-attr="aria-label:top.settings;title:top.settings">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+        </button>
+        <button class="btn btn-primary btn-new" id="btn-new" type="button" title="New board (N)" data-i18n-attr="title:top.newGameTitle">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.7 6.3A8 8 0 1 0 20 12h-2.2a5.8 5.8 0 1 1-1.7-4.1L13 11h7V4l-2.3 2.3z"/></svg>
+          <span class="btn-new-text" data-i18n="top.newGame">New board</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="hud">
+      <div class="segmented mode-switch" id="mode-switch" role="radiogroup" aria-label="Difficulty" data-i18n-attr="aria-label:mode.label">
+        <button type="button" role="radio" data-mode="easy"><span data-i18n="mode.easy">Easy</span><small>6</small></button>
+        <button type="button" role="radio" data-mode="medium"><span data-i18n="mode.medium">Medium</span><small>8</small></button>
+        <button type="button" role="radio" data-mode="hard"><span data-i18n="mode.hard">Hard</span><small>15</small></button>
+      </div>
+      <dl class="chips">
+        <div class="chip chip-time"><dt data-i18n="hud.time">Time</dt><dd id="time">0:00</dd></div>
+        <div class="chip"><dt data-i18n="hud.moves">Moves</dt><dd id="moves">0</dd></div>
+        <div class="chip"><dt data-i18n="hud.best">Best</dt><dd id="best">—</dd></div>
+      </dl>
+    </section>
+
+    <main class="board-area" id="board-area">
+      <div class="board" id="board" role="group" aria-label="Card table. Flip two cards to find a matching pair." aria-describedby="help" data-i18n-attr="aria-label:board.label"></div>
+    </main>
+
+    <p class="help" id="help">
+      <span class="help-touch" data-i18n="help.touch">Tap a card to flip it, then find its twin. Matching pairs stay open.</span>
+      <span class="help-keys" data-i18n-html="help.keys">Arrow keys move · <kbd>Enter</kbd> flip · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> difficulty · <kbd>N</kbd> new board</span>
+    </p>
+  </div>
+
+  <div class="sr-only" id="announcer" aria-live="polite"></div>
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <!-- Thắng -->
+  <div class="modal" id="modal-win" hidden>
+    <div class="modal-backdrop" data-close="modal-win"></div>
+    <div class="modal-card modal-result" role="dialog" aria-modal="true" aria-labelledby="win-title">
+      <div class="result-badge" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><rect x="5" y="9" width="20" height="28" rx="4" transform="rotate(-12 15 23)" fill="#fffaf0" stroke="#c8a970" stroke-width="1.6"/><use href="#lt-face-0" x="5.5" y="13" width="19" height="19" transform="rotate(-12 15 23)"/><rect x="23" y="9" width="20" height="28" rx="4" transform="rotate(12 33 23)" fill="#fffaf0" stroke="#c8a970" stroke-width="1.6"/><use href="#lt-face-0" x="23.5" y="13" width="19" height="19" transform="rotate(12 33 23)"/></svg>
+      </div>
+      <h2 id="win-title" data-i18n="win.title">All pairs found!</h2>
+      <p class="result-note" id="win-note" hidden></p>
+      <dl class="result-stats">
+        <div><dt data-i18n="win.time">Time</dt><dd id="win-time">0:00</dd></div>
+        <div><dt data-i18n="win.moves">Moves</dt><dd id="win-moves">0</dd></div>
+        <div><dt data-i18n="win.best">Best</dt><dd id="win-best">—</dd></div>
+      </dl>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" id="btn-win-harder" hidden></button>
+        <button class="btn btn-primary" type="button" id="btn-win-again" data-i18n="win.again">Play again</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Xác nhận bỏ ván đang chơi -->
+  <div class="modal" id="modal-confirm" hidden>
+    <div class="modal-backdrop" data-close="modal-confirm"></div>
+    <div class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+      <h2 id="confirm-title" data-i18n="confirm.newTitle">Start a new board?</h2>
+      <p id="confirm-text" data-i18n="confirm.text">The board you are playing will end unfinished.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" data-close="modal-confirm" data-i18n="confirm.cancel">Keep playing</button>
+        <button class="btn btn-primary" type="button" id="btn-confirm-ok" data-i18n="confirm.ok">New board</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cài đặt -->
+  <div class="modal" id="modal-settings" hidden>
+    <div class="modal-backdrop" data-close="modal-settings"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h2 id="settings-title" data-i18n="settings.title">Settings</h2>
+      <div class="settings-list">
+        <div class="setting">
+          <div class="setting-text">
+            <span class="setting-name" data-i18n="settings.theme">Theme</span>
+          </div>
+          <div class="segmented" role="radiogroup" aria-label="Theme" data-i18n-attr="aria-label:settings.theme" data-setting="theme">
+            <button type="button" role="radio" data-value="auto" data-i18n="settings.themeAuto">Auto</button>
+            <button type="button" role="radio" data-value="light" data-i18n="settings.themeLight">Light</button>
+            <button type="button" role="radio" data-value="dark" data-i18n="settings.themeDark">Dark</button>
+          </div>
+        </div>
+        <div class="setting">
+          <div class="setting-text">
+            <span class="setting-name" data-i18n="settings.language">Language</span>
+          </div>
+          <div class="segmented" role="radiogroup" aria-label="Language" data-i18n-attr="aria-label:settings.language" data-setting="lang">
+            <button type="button" role="radio" data-value="en">English</button>
+            <button type="button" role="radio" data-value="vi">Tiếng Việt</button>
+          </div>
+        </div>
+        <label class="setting" id="setting-sound">
+          <div class="setting-text">
+            <span class="setting-name" data-i18n="settings.sound">Sound</span>
+            <span class="setting-desc" data-i18n="settings.soundDesc">Sound effects for flips, pairs and wins.</span>
+          </div>
+          <input type="checkbox" class="switch" id="sw-sound">
+        </label>
+        <label class="setting">
+          <div class="setting-text">
+            <span class="setting-name" data-i18n="settings.vibrate">Vibrate</span>
+            <span class="setting-desc" data-i18n="settings.vibrateDesc">Vibrate briefly when you find a pair (if supported).</span>
+          </div>
+          <input type="checkbox" class="switch" data-setting="vibrate">
+        </label>
+      </div>
+      <p class="modal-hint" data-i18n="settings.hint">Flip two cards per move.</p>
+      <button class="btn btn-primary" type="button" data-close="modal-settings" data-i18n="settings.done">Done</button>
+      <p class="app-version"><span data-i18n="app.name">Memory Match</span> · <span data-i18n="settings.version">version</span> <span id="app-version">—</span></p>
+    </div>
+  </div>
+
+  <!-- Thống kê -->
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-backdrop" data-close="modal-stats"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
+      <h2 id="stats-title" data-i18n="stats.title">Statistics</h2>
+      <dl class="result-stats">
+        <div><dt data-i18n="stats.played">Played</dt><dd id="st-played">0</dd></div>
+        <div><dt data-i18n="stats.won">Cleared</dt><dd id="st-won">0</dd></div>
+        <div><dt data-i18n="stats.rate">Clear rate</dt><dd id="st-rate">—</dd></div>
+      </dl>
+      <p class="stats-section" data-i18n="stats.byMode">Best by difficulty</p>
+      <dl class="best-list" id="st-best-list"></dl>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" id="btn-stats-reset" data-i18n="stats.reset">Reset</button>
+        <button class="btn btn-primary" type="button" data-close="modal-stats" data-i18n="stats.close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="i18n.js?v=1.0.0"></script>
+  <script src="engine.js?v=1.0.0"></script>
+  <script src="../sdk/playnine.js?v=2"></script>
+  <script src="app.js?v=1.0.0"></script>
+</body>
+</html>

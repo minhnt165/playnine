@@ -4,6 +4,8 @@ const DAY = 86_400_000
 // Bước nhảy giữa các game nổi bật: lệch thể loại vì danh mục xếp các game cùng loại gần nhau.
 const STRIDE = 7
 
+const gcd = (a: number, b: number): number => (b ? gcd(b, a % b) : a)
+
 /** Số ngày theo giờ địa phương (đổi lúc nửa đêm của người chơi, không phải UTC). */
 export const localDay = (now: Date): number => Math.floor((now.getTime() - now.getTimezoneOffset() * 60_000) / DAY)
 
@@ -12,8 +14,11 @@ export function featuredGames(list: GameDef[], now: Date, n = 5): GameDef[] {
   const len = list.length
   const out: GameDef[] = []
   const start = ((localDay(now) % len) + len) % len
-  for (let i = 0; out.length < Math.min(n, len) && i < len * STRIDE; i++) {
-    const g = list[(start + i * STRIDE) % len]
+  // Bước nhảy phải nguyên tố cùng nhau với số game, không thì chỉ quay vòng trong vài game (21 game, bước 7 chỉ ra 3 game).
+  let stride = STRIDE
+  while (len > 0 && gcd(stride, len) !== 1) stride++
+  for (let i = 0; out.length < Math.min(n, len) && i < len; i++) {
+    const g = list[(start + i * stride) % len]
     if (!out.includes(g)) out.push(g)
   }
   return out

@@ -422,6 +422,9 @@
     .pv-xepbai { background: radial-gradient(120% 120% at 50% 0%, rgba(224, 185, 100, .22), transparent 60%), linear-gradient(160deg, #17361f, #08160c); }
     .pv-phagach { background: radial-gradient(120% 120% at 70% 0%, rgba(95, 208, 208, .2), transparent 60%), linear-gradient(160deg, #172a33, #091216); }
     .pv-noihinh { background: radial-gradient(120% 120% at 50% 0%, rgba(184, 140, 224, .32), transparent 60%), linear-gradient(160deg, #2c1f3d, #120c1a); }
+    .pv-truotso { background: radial-gradient(120% 120% at 70% 0%, rgba(34, 211, 238, .24), transparent 60%), linear-gradient(160deg, #2b2170, #110d2e); }
+    .pv-latthe { background: radial-gradient(120% 120% at 50% 0%, rgba(242, 196, 90, .26), transparent 60%), linear-gradient(160deg, #3d1814, #160807); }
+    .pv-banbong { background: radial-gradient(120% 120% at 50% 0%, rgba(76, 149, 255, .28), transparent 60%), linear-gradient(160deg, #1a2046, #0b0e20); }
     .kbd {
       position: absolute;
       z-index: 2;
@@ -512,6 +515,9 @@
     .preview > .mini-sol { width: 84%; height: auto; }
     .preview > .mini-bk { width: auto; height: 80%; }
     .preview > .mini-nh { width: auto; height: 84%; }
+    .preview > .mini-ts { width: auto; height: 80%; }
+    .preview > .mini-lt { width: auto; height: 84%; }
+    .preview > .mini-bb { width: auto; height: 84%; }
 
     /* Ô Ăn Quan xem trước */
     .mini-oq { filter: drop-shadow(0 14px 26px rgba(0, 0, 0, .45)); }
@@ -580,6 +586,29 @@
     .mini-nh .t { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; width: 100%; padding: 4px; border-radius: 8px; background: linear-gradient(#f0c38c, #d99a5b 50%, #a5652e); box-shadow: 0 3px 0 #8a4f1f; }
     .mini-nh .t span { background: rgba(90, 45, 10, .32); font-size: clamp(8px, 1.9vw, 13px); }
     .mini-nh .t span.on { background: #fffaf0; animation: pop .24s cubic-bezier(.2, 1.4, .4, 1); }
+
+    /* Trượt Số xem trước: bàn 4x4, ô trượt bằng transform (bước 100% = một ô) */
+    .mini-ts { position: relative; width: min(50%, 184px); aspect-ratio: 1; border-radius: 12px; background: rgba(0, 0, 0, .32); box-shadow: 0 16px 34px rgba(0, 0, 0, .4); }
+    .mini-ts span { position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 4); height: calc((100% - 8px) / 4); display: grid; place-items: center; box-sizing: border-box; border: 2px solid transparent; border-radius: 8px; background: linear-gradient(#ffffff, #e4e0fb) padding-box; color: #2b2170; font-size: clamp(10px, 2.4vw, 16px); font-weight: 800; transition: transform .26s ease-out, background .3s, color .3s; }
+    .mini-ts span.ok { background: linear-gradient(#f2fdff, #c6eff7) padding-box; color: #0b5d73; }
+
+    /* Lật Thẻ xem trước: 12 thẻ 4x3, lưng đỏ viền vàng, lật từng cặp */
+    .mini-lt { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); gap: 5px; aspect-ratio: 1; filter: drop-shadow(0 14px 26px rgba(0, 0, 0, .45)); }
+    .mini-lt span { display: grid; place-items: center; border-radius: 6px; font-size: 0; line-height: 1; background: linear-gradient(160deg, #d4423a, #8f1f19); box-shadow: inset 0 0 0 2px #8f1f19, inset 0 0 0 3px #f2c45a; }
+    .mini-lt span::before { content: "◆"; color: #f2c45a; font-size: clamp(7px, 1.4vw, 11px); }
+    .mini-lt span.up { font-size: clamp(11px, 2.8vw, 20px); background: #fffaf0; box-shadow: 0 3px 0 #cdb98f; animation: lt-flip .3s ease-out; }
+    .mini-lt span.up::before { content: none; }
+    .mini-lt span.ok { box-shadow: inset 0 0 0 2px #4cc27a, 0 3px 0 #cdb98f; }
+    @keyframes lt-flip { from { transform: rotateY(90deg); } to { transform: none; } }
+
+    /* Bắn Bóng xem trước: chùm bóng, đường ngắm nảy tường, bóng nổ và bóng treo rơi */
+    .mini-bb { filter: drop-shadow(0 14px 26px rgba(0, 0, 0, .45)); }
+    .mini-bb .b { transform-box: fill-box; transform-origin: center; transition: opacity .22s ease, transform .22s ease; }
+    .mini-bb .b.hide { opacity: 0; transition: none; }
+    .mini-bb .b.pop { opacity: 0; transform: scale(1.6); }
+    .mini-bb .b.drop { opacity: 0; transform: translateY(70px); transition: opacity .6s ease-in, transform .6s ease-in; }
+    .mini-bb .guide { fill: none; stroke: rgba(238, 240, 255, .55); stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 0 5; transition: opacity .2s; }
+    .mini-bb .danger { stroke: rgba(255, 107, 129, .5); stroke-width: 1; stroke-dasharray: 4 3; }
 
     /* Cờ Gánh, Cờ Vua, Cờ Lật, Cờ Đam, Bốn Liên Tiếp, Xếp Bài, Phá Gạch xem trước */
     .mini-cg, .mini-cv, .mini-rv, .mini-cd, .mini-c4, .mini-sol, .mini-bk { filter: drop-shadow(0 16px 28px rgba(0, 0, 0, .45)); }
@@ -936,4 +965,5 @@
       .mini-sudoku span.fill { animation: none; }
       .mini-caro .win { animation: none; stroke-dashoffset: 0; }
       .mini-c4 .win { animation: none; stroke-dashoffset: 0; }
+      .mini-lt span.up { animation: none; }
     }

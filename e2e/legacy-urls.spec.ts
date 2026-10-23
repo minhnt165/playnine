@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
-// URL của 18 game không được đổi: /playnine/<dir>/ (sudoku nằm ở sugoku/).
+// URL của 21 game không được đổi: /playnine/<dir>/ (sudoku nằm ở sugoku/).
 const dirs = [
-  '2048', 'bonlientiep', 'caro', 'co9o', 'codam', 'coganh', 'colat', 'covua', 'minesweeper',
-  'noihinh', 'oanquan', 'phagach', 'ran', 'sugoku', 'tranhan', 'xepbai', 'xepgach', 'xiangqi',
+  '2048', 'banbong', 'bonlientiep', 'caro', 'co9o', 'codam', 'coganh', 'colat', 'covua', 'latthe', 'minesweeper',
+  'noihinh', 'oanquan', 'phagach', 'ran', 'sugoku', 'tranhan', 'truotso', 'xepbai', 'xepgach', 'xiangqi',
 ];
 
 // Game cũ phát pageerror khi tải thường: không sửa game, ghi vào đây kèm lý do.

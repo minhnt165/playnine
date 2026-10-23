@@ -1,6 +1,6 @@
 # PlayNine
 
-Cổng game PlayNine (18 game JavaScript thuần) triển khai trên GitHub Pages:
+Cổng game PlayNine (21 game JavaScript thuần) triển khai trên GitHub Pages:
 https://minhnt165.github.io/playnine/
 
 ## Cấu trúc thư mục
@@ -66,7 +66,7 @@ Phần server dùng Supabase gói Free (Postgres + RPC + Auth). Cổng chỉ hi�
 - Test cơ sở dữ liệu: `npm test -w supabase`.
 - Hướng dẫn thiết lập từng bước (tạo project, Google OAuth, migration, secrets, đặt admin): [supabase/README.md](supabase/README.md).
 
-Cả 18 game đều đã gắn SDK và ghi điểm lên server.
+Cả 21 game đều đã gắn SDK và ghi điểm lên server.
 
 Sự kiện và trang quản trị (giai đoạn 3): trang `#/events` liệt kê sự kiện theo từng game và mode; kết quả được chụp
 lại khi sự kiện kết thúc nhờ `pg_cron` (phải bật extension này trên project). Trang `#/admin` chỉ dành cho tài khoản có

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#f3f4fb">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Bubble Shooter">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="Bubble Shooter: aim, bounce off the walls and match 3 or more bubbles of the same colour. Drop whole clusters for bonus points, clear the board for a big bonus. Endless, autosave.">
+  <title>Bubble Shooter</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <script>
+    // Áp giao diện sáng/tối đã chọn trước khi vẽ trang để tránh nháy màu
+    try {
+      var t = JSON.parse(localStorage.getItem('playnine-banbong-settings-v1') || '{}').theme;
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="style.css?v=1.0.0">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-mark" src="icon.svg" alt="" width="34" height="34">
+        <h1 class="logo" data-i18n="app.name">Bubble Shooter</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" id="btn-help" type="button" aria-label="How to play" title="How to play (H)" data-i18n-attr="aria-label:top.help;title:top.helpKey">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 16.2a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm1.4-5.1c-.6.4-.7.6-.7 1.2v.4h-2.3v-.5c0-1.3.4-2 1.5-2.7.9-.6 1.3-1 1.3-1.7 0-.8-.6-1.3-1.5-1.3-.9 0-1.6.6-1.7 1.6H7.7C7.8 7.8 9.5 6.3 12 6.3c2.4 0 4 1.3 4 3.3 0 1.4-.8 2.3-2.6 3.5z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-stats" type="button" aria-label="Statistics" title="Statistics" data-i18n-attr="aria-label:top.stats;title:top.stats">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-settings" type="button" aria-label="Settings" title="Settings" data-i18n-attr="aria-label:top.settings;title:top.settings">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+        </button>
+        <button class="btn btn-primary btn-new" id="btn-new" type="button" title="New game (N)" aria-label="New game" data-i18n-attr="aria-label:btn.new;title:btn.newKey">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>
+          <span data-i18n="btn.new">New game</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="hud" aria-label="Score" data-i18n-attr="aria-label:hud.label">
+      <div class="score-box" id="score-box">
+        <span class="score-label" data-i18n="hud.score">Score</span>
+        <span class="score-value" id="score">0</span>
+      </div>
+      <div class="score-box">
+        <span class="score-label" data-i18n="hud.best">Best</span>
+        <span class="score-value" id="best">0</span>
+      </div>
+      <div class="score-box score-small">
+        <span class="score-label" data-i18n="hud.board">Board</span>
+        <span class="score-value" id="level">1</span>
+      </div>
+      <button class="btn btn-pause" id="btn-pause" type="button" aria-label="Pause" title="Pause (P)" disabled>
+        <svg class="icon icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+        <svg class="icon icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5L8 5.5z"/></svg>
+      </button>
+    </section>
+
+    <main class="board-area" id="board-area">
+      <div class="board" id="board" tabindex="0" role="application" aria-roledescription="bubble shooter board"
+           aria-label="Bubble Shooter board. Left and right arrows to aim, Space to shoot, X to swap bubbles, P to pause." aria-describedby="board-desc"
+           data-i18n-attr="aria-roledescription:board.role;aria-label:board.label">
+        <canvas class="canvas" id="canvas" aria-hidden="true"></canvas>
+
+        <div class="banner" id="banner" aria-hidden="true" hidden>
+          <span class="banner-title" id="banner-title"></span>
+          <span class="banner-sub" id="banner-sub"></span>
+        </div>
+
+        <!-- Lớp phủ: bắt đầu / tạm dừng / kết thúc -->
+        <div class="overlay" id="overlay-start">
+          <div class="overlay-card">
+            <p class="overlay-title" data-i18n="app.name">Bubble Shooter</p>
+            <p class="overlay-sub" data-i18n="start.sub">Aim, bounce off the walls and match 3 or more bubbles of the same colour. Cut a cluster loose to drop it for bonus points.</p>
+            <p class="start-best" id="start-best" hidden></p>
+            <button class="btn btn-primary btn-wide" type="button" id="btn-start">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5L8 5.5z"/></svg>
+              <span data-i18n="start.go">Start</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="overlay" id="overlay-pause" hidden>
+          <div class="overlay-card">
+            <p class="overlay-title" data-i18n="pause.title">Paused</p>
+            <p class="overlay-sub" id="pause-sub">Board 1 · 0 pts</p>
+            <div class="overlay-actions">
+              <button class="btn btn-ghost" type="button" id="btn-pause-new" data-i18n="btn.new">New game</button>
+              <button class="btn btn-primary" type="button" id="btn-resume" data-i18n="btn.resume">Resume</button>
+            </div>
+            <p class="overlay-hint help-keys" data-i18n-html="pause.hint">Press <kbd>P</kbd> or <kbd>Space</kbd> to resume</p>
+          </div>
+        </div>
+
+        <div class="overlay" id="overlay-over" hidden>
+          <div class="overlay-card">
+            <p class="overlay-title" id="over-title" data-i18n="over.title">Game over</p>
+            <p class="new-best" id="over-new-best" data-i18n="over.record" hidden>New record!</p>
+            <dl class="over-stats">
+              <div><dt data-i18n="over.score">Score</dt><dd id="over-score">0</dd></div>
+              <div><dt data-i18n="over.best">Best</dt><dd id="over-best">0</dd></div>
+              <div><dt data-i18n="over.board">Board</dt><dd id="over-board">1</dd></div>
+            </dl>
+            <div class="overlay-actions">
+              <button class="btn btn-primary btn-wide" type="button" id="btn-again" data-i18n="over.again">Play again</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <p class="help" id="board-desc">
+      <span class="help-touch" data-i18n="help.touch">Drag to aim · release to shoot · tap the next bubble to swap</span>
+      <span class="help-keys" data-i18n-html="help.keys">Mouse or <kbd>←</kbd><kbd>→</kbd> aim · <kbd>Space</kbd> shoot · <kbd>X</kbd> swap · <kbd>P</kbd> pause</span>
+    </p>
+  </div>
+
+  <div class="sr-only" id="announcer" aria-live="polite"></div>
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <!-- Cách chơi -->
+  <div class="modal" id="modal-help" hidden>
+    <div class="modal-backdrop" data-close="modal-help"></div>
+    <div class="modal-card modal-help" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <div class="help-head">
+        <h2 id="help-title" data-i18n="help.title">How to play</h2>
+        <button class="btn-icon" type="button" data-close="modal-help" aria-label="Close" data-i18n-attr="aria-label:btn.close">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>
+        </button>
+      </div>
+      <div class="help-body">
+        <p data-i18n-html="help.intro">Shoot bubbles from the bottom. When a bubble touches the ceiling or another bubble it sticks. <b>3 or more connected bubbles of the same colour pop</b>, and every bubble no longer connected to the ceiling <b>drops</b> for bonus points.</p>
+
+        <h3 data-i18n="help.controls">Controls</h3>
+        <ul class="help-list">
+          <li data-i18n-html="help.phone"><b>Phone:</b> drag your finger above the shooter to aim, release to shoot.</li>
+          <li data-i18n-html="help.computer"><b>Computer:</b> point with the mouse and click to shoot.</li>
+          <li data-i18n-html="help.walls">Bubbles bounce off the side walls.</li>
+        </ul>
+
+        <h3 data-i18n="help.pressure">Pressure</h3>
+        <ul class="help-list">
+          <li data-i18n-html="help.press1">Every few misses a new row pushes the board down.</li>
+          <li data-i18n-html="help.press2">If any bubble reaches the dashed line near the shooter, the game is over.</li>
+          <li data-i18n-html="help.press3">You only get colours that are still on the board.</li>
+        </ul>
+
+        <h3 data-i18n="help.scoring">Scoring</h3>
+        <ul class="help-list">
+          <li data-i18n-html="help.score1">10 points per popped bubble.</li>
+          <li data-i18n-html="help.score2">Dropped bubbles are worth 20, 40, then 60 points each.</li>
+          <li data-i18n-html="help.score3">Clear the board for a bonus.</li>
+        </ul>
+      </div>
+      <button class="btn btn-primary btn-block" type="button" data-close="modal-help" id="btn-help-ok" data-i18n="help.play">Let's play!</button>
+    </div>
+  </div>
+
+  <!-- Cài đặt -->
+  <div class="modal" id="modal-settings" hidden>
+    <div class="modal-backdrop" data-close="modal-settings"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h2 id="settings-title" data-i18n="settings.title">Settings</h2>
+      <div class="settings-list">
+        <div class="setting">
+          <span class="setting-name" id="lbl-theme" data-i18n="settings.theme">Theme</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="lbl-theme" data-setting="theme">
+            <button type="button" role="radio" data-value="auto" data-i18n="settings.themeAuto">Auto</button>
+            <button type="button" role="radio" data-value="light" data-i18n="settings.themeLight">Light</button>
+            <button type="button" role="radio" data-value="dark" data-i18n="settings.themeDark">Dark</button>
+          </div>
+        </div>
+        <div class="setting">
+          <span class="setting-name" id="lbl-lang" data-i18n="settings.lang">Language</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="lbl-lang" data-setting="lang">
+            <button type="button" role="radio" data-value="en">English</button>
+            <button type="button" role="radio" data-value="vi">Tiếng Việt</button>
+          </div>
+        </div>
+        <label class="setting setting-row" id="setting-sound" hidden>
+          <span class="setting-text">
+            <span class="setting-name" data-i18n="settings.sound">Sound</span>
+            <span class="setting-desc" data-i18n="settings.soundDesc">Sound effects for shots, pops, drops and new rows.</span>
+          </span>
+          <input type="checkbox" class="switch" id="sound-switch">
+        </label>
+        <label class="setting setting-row">
+          <span class="setting-text">
+            <span class="setting-name" data-i18n="settings.vibrate">Vibration</span>
+            <span class="setting-desc" data-i18n="settings.vibrateDesc">Vibrate gently when bubbles drop, a row pushes down or the board is cleared (if supported).</span>
+          </span>
+          <input type="checkbox" class="switch" data-setting="vibrate">
+        </label>
+      </div>
+      <button class="btn btn-ghost btn-block" type="button" id="btn-settings-help" data-i18n="settings.replayHelp">Show how to play</button>
+      <button class="btn btn-primary btn-block" type="button" data-close="modal-settings" data-i18n="settings.done">Done</button>
+      <p class="app-version"><span data-i18n="settings.version">Bubble Shooter · version</span> <span id="app-version">—</span></p>
+    </div>
+  </div>
+
+  <!-- Thống kê -->
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-backdrop" data-close="modal-stats"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
+      <h2 id="stats-title" data-i18n="stats.title">Statistics</h2>
+      <dl class="stat-grid">
+        <div><dt data-i18n="stats.played">Games played</dt><dd id="st-played">0</dd></div>
+        <div><dt data-i18n="stats.best">Best score</dt><dd id="st-best">0</dd></div>
+        <div><dt data-i18n="stats.boards">Boards cleared</dt><dd id="st-boards">0</dd></div>
+        <div><dt data-i18n="stats.combo">Best combo</dt><dd id="st-combo">0</dd></div>
+        <div><dt data-i18n="stats.popped">Bubbles popped</dt><dd id="st-popped">0</dd></div>
+        <div><dt data-i18n="stats.dropped">Bubbles dropped</dt><dd id="st-dropped">0</dd></div>
+      </dl>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" id="btn-stats-reset" data-i18n="stats.reset">Reset</button>
+        <button class="btn btn-primary" type="button" data-close="modal-stats" data-i18n="btn.close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Xác nhận -->
+  <div class="modal" id="modal-confirm" hidden>
+    <div class="modal-backdrop" data-close="modal-confirm"></div>
+    <div class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+      <h2 id="confirm-title" data-i18n="confirm.title">Start a new game?</h2>
+      <p class="modal-text" id="confirm-text">The current game will end with its score so far.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" data-close="modal-confirm" data-i18n="btn.cancel">Cancel</button>
+        <button class="btn btn-primary" type="button" id="btn-confirm-ok" data-i18n="btn.new">New game</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="i18n.js?v=1.0.0"></script>
+  <script src="engine.js?v=1.0.0"></script>
+  <script src="../sdk/playnine.js?v=2"></script>
+  <script src="app.js?v=1.0.0"></script>
+</body>
+</html>

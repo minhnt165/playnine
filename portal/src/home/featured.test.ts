@@ -23,6 +23,14 @@ describe('featuredGames', () => {
     expect(new Set(list).size).toBe(3)
   })
 
+  it('đủ game khác nhau với mọi độ dài danh sách (kể cả số game chia hết cho bước nhảy)', () => {
+    for (let len = 1; len <= 40; len++) {
+      const games = Array.from({ length: len }, (_, i) => ({ ...GAMES[0], id: 'g' + i }))
+      const list = featuredGames(games, day('2026-10-21T09:00:00'))
+      expect(new Set(list).size, 'len ' + len).toBe(Math.min(5, len))
+    }
+  })
+
   it('danh sách rỗng: trả rỗng', () => {
     expect(featuredGames([], day('2026-10-21T09:00:00'))).toEqual([])
   })

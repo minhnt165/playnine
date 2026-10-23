@@ -15,6 +15,7 @@ const MODES: Record<string, string> = {
   co9o: WINS, caro: WINS, xiangqi: WINS, covua: WINS, colat: WINS,
   codam: WINS, coganh: WINS, oanquan: WINS, bonlientiep: WINS,
   noihinh: 'classic',
+  truotso: '3x3,4x4,5x5', latthe: 'easy,medium,hard', banbong: 'classic',
 }
 
 const METRICS: Record<string, string> = {
@@ -24,6 +25,7 @@ const METRICS: Record<string, string> = {
   co9o: 'wins', caro: 'wins', xiangqi: 'wins', covua: 'wins', colat: 'wins',
   codam: 'wins', coganh: 'wins', oanquan: 'wins', bonlientiep: 'wins',
   noihinh: 'wins',
+  truotso: 'time_low', latthe: 'time_low', banbong: 'score_high',
 }
 
 describe('spike', () => {
@@ -47,10 +49,10 @@ describe('spike', () => {
 })
 
 describe('core schema', () => {
-  it('seeds 18 games with metrics and modes', async () => {
+  it('seeds 21 games with metrics and modes', async () => {
     const db = await createDb()
     const r = await db.query<{ id: string; metric: string; modes: any[] }>('select * from games')
-    expect(r.rows).toHaveLength(18)
+    expect(r.rows).toHaveLength(21)
     for (const g of r.rows) {
       expect(g.metric).toBe(METRICS[g.id])
       expect(g.modes.map((m) => m.key).join(',')).toBe(MODES[g.id])
@@ -82,7 +84,7 @@ describe('core schema', () => {
     const db = await createDb()
     await newUser(db, { full_name: 'Reader' })
     await asAnon(db, async () => {
-      expect((await db.query('select * from games')).rows.length).toBe(18)
+      expect((await db.query('select * from games')).rows.length).toBe(21)
       await db.query('select * from play_counts')
       expect((await db.query('select id, display_name, avatar_url from profiles')).rows.length).toBe(1)
     })

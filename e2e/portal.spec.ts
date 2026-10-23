@@ -2,9 +2,9 @@ import { test, expect } from '@playwright/test';
 
 // Tên test là hợp đồng "ngang bằng" - giữ nguyên khi chuyển sang cổng React (Task 8).
 
-test('home lists 18 games', async ({ page }) => {
+test('home lists 21 games', async ({ page }) => {
   await page.goto('');
-  await expect(page.locator('#games > li')).toHaveCount(18);
+  await expect(page.locator('#games > li')).toHaveCount(21);
 });
 
 test('filter persists after reload', async ({ page }) => {

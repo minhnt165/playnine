@@ -1,7 +1,7 @@
 {
   "name": "PlayNine",
   "short_name": "PlayNine",
-  "description": "Nine cells, nine paths, one great move. Eighteen puzzle, strategy and arcade games in your browser, with points, leaderboards and daily streaks.",
+  "description": "Nine cells, nine paths, one great move. Twenty-one puzzle, strategy and arcade games in your browser, with points, leaderboards and daily streaks.",
   "start_url": "../",
   "scope": "../",
   "display": "standalone",

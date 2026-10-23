@@ -62,7 +62,7 @@ describe('games.points', () => {
     const rows = (await asAnon(db, () => db.query<any>('select id, metric, modes, hidden, points from games order by id'))).rows
     const got = Object.fromEntries(rows.map((r) => [r.id, r.points]))
     expect(got).toEqual({
-      ran: 5, xepgach: 5, phagach: 5, '2048': 5, minesweeper: 5, noihinh: 5,
+      ran: 5, xepgach: 5, phagach: 5, '2048': 5, minesweeper: 5, noihinh: 5, truotso: 5, latthe: 5, banbong: 5,
       sudoku: 10, tranhan: 10, xepbai: 10, bonlientiep: 10,
       covua: 15, xiangqi: 15, co9o: 15, caro: 15, codam: 15, coganh: 15, colat: 15, oanquan: 15,
     })
