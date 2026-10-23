@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động.
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt. -->
+  <style>
+    .press { animation: press 1.2s ease-in-out infinite; transform-origin: 80px 62px; }
+    .ring { animation: ring 1.2s ease-out infinite; transform-origin: 80px 58px; }
+    @keyframes press { 0%, 60%, 100% { transform: translateY(0); } 70% { transform: translateY(4px); } }
+    @keyframes ring { 0%, 65% { opacity: 0; transform: scale(.8); } 75% { opacity: .7; } 100% { opacity: 0; transform: scale(1.35); } }
+    @media (prefers-reduced-motion: reduce) { .press, .ring { animation: none; } .ring { opacity: 0; } }
+  </style>
+  <circle class="ring" cx="80" cy="58" r="34" fill="none" stroke="#ffd8f0" stroke-width="3"/>
+  <circle cx="80" cy="66" r="30" fill="#9c1f55"/>
+  <g class="press">
+    <circle cx="80" cy="58" r="30" fill="#ff6fa8"/>
+    <circle cx="72" cy="50" r="12" fill="#ffd8f0" opacity=".45"/>
+    <text x="80" y="65" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="800" fill="#fff">7/10</text>
+  </g>
+</svg>

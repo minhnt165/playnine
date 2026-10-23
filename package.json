@@ -6,9 +6,10 @@
   "scripts": {
     "build": "npm run build -w sdk && npm run build -w portal",
     "assemble": "node scripts/assemble.mjs --portal portal/dist",
-    "test": "node --test \"scripts/*.test.mjs\" && npm test -w sdk && npm test -w portal && npm test -w supabase",
+    "test": "node --test \"scripts/*.test.mjs\" && node scripts/test-games.mjs && npm test -w sdk && npm test -w portal && npm test -w supabase",
     "e2e": "playwright test",
-    "seed-sql": "node scripts/seed-sql.mjs"
+    "seed-sql": "node scripts/seed-sql.mjs",
+    "new-game": "node scripts/new-game.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0"

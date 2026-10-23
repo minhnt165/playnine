@@ -1,0 +1,47 @@
+{
+  "id": "{{id}}",
+  "cat": "{{cat}}",
+  "addedAt": "{{date}}",
+  "name": {
+    "en": "{{nameEn}}",
+    "vi": "{{nameVi}}"
+  },
+  "sub": {
+    "en": "TODO: short subtitle",
+    "vi": "TODO: dòng phụ ngắn"
+  },
+  "desc": {
+    "en": "TODO: one or two sentences shown on the card and the game page.",
+    "vi": "TODO: một hai câu hiện trên thẻ game và trang game."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player"],
+    "vi": ["Giải đố", "1 người"]
+  },
+  "note": {
+    "en": "TODO: card note before the first game",
+    "vi": "TODO: dòng ghi chú trên thẻ khi chưa chơi"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 111, 168, .3), transparent 60%), linear-gradient(160deg, #2b1f4d, #120d24)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 3,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_time_ms": 500
+        },
+        "points": 3
+      }
+    ]
+  }
+}

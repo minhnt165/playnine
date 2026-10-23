@@ -1,0 +1,28 @@
+/* =====================================================================
+ * {{nameVi}} - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   Đè token màu của kit trong :root nếu game cần bảng màu riêng.
+ * ===================================================================== */
+
+/* Nút chạm lớn giữa màn hình */
+.tap-button {
+  width: min(70vw, 280px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #a48bff, var(--accent) 60%, var(--accent-strong));
+  color: var(--accent-text);
+  font-size: clamp(1.6rem, 7vw, 2.4rem);
+  font-weight: 800;
+  box-shadow: 0 10px 0 var(--accent-strong), var(--shadow);
+  transition: transform 0.06s, box-shadow 0.06s;
+}
+.tap-button:active { transform: translateY(6px); box-shadow: 0 4px 0 var(--accent-strong), var(--shadow); }
+.tap-button.pop { animation: tap-pop 0.18s ease-out; }
+@keyframes tap-pop { 50% { transform: scale(1.06); } }
+.tap-button:disabled { opacity: 0.6; }
+
+.win-best { color: var(--accent); font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tap-button { transition: none; }
+  .tap-button.pop { animation: none; }
+}

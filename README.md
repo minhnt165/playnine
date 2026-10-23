@@ -7,7 +7,10 @@ https://minhnt165.github.io/playnine/
 
 ```
 .
-├── games/<dir>/        # mỗi game một thư mục, được copy ra dist/<dir>/
+├── games/<dir>/        # mỗi game một thư mục (có game.json), được copy ra dist/<dir>/
+├── games/order.json    # thứ tự game trên cổng
+├── games/_kit/         # phần dùng chung cho game mới, copy ra dist/_kit/
+├── games/_template/    # khung game mới cho npm run new-game (không xuất bản)
 ├── brand/              # tài sản thương hiệu, copy ra dist/brand/
 ├── sdk/                # SDK cho game (npm workspace); build ra sdk/dist/playnine.js, assemble chép ra dist/sdk/
 ├── portal/             # portal React (npm workspace); bản build portal/dist/ được assemble ra gốc dist/
@@ -23,7 +26,7 @@ https://minhnt165.github.io/playnine/
 npm install                # cài dependency
 npm run build -w sdk       # build SDK trước khi chạy dev (để game tải được sdk/playnine.js)
 npm run dev -w portal      # chạy portal ở chế độ dev
-npm test                   # test node cho scripts/ + test của portal
+npm test                   # test scripts/, test engine của mọi game, sdk, portal, supabase
 npm run build              # build SDK (sdk/dist/) rồi portal (portal/dist/)
 npm run assemble           # gom portal/dist + games thành dist/ (cần build trước)
 npm run e2e                # test Playwright (cần assemble trước; serve dist/ tại :4173/playnine/)
@@ -33,16 +36,23 @@ Lần đầu chạy e2e cần cài trình duyệt: `npx playwright install chrom
 
 ## Thêm một game vào portal
 
-1. Đặt game vào `games/<dir>/` (có `index.html`; nếu có `package.json` thì assemble lấy `dist/` của game).
-2. Khai báo game trong `portal/src/games/catalog.ts` (id, dir, tên, mô tả, nhãn, icon, ...) theo mẫu các game có sẵn.
-3. `npm run build && npm run assemble && npm run e2e` để kiểm tra; URL game luôn là `/playnine/<dir>/`.
+Cổng tự đọc mọi `games/<dir>/game.json` (manifest: tên, mô tả, thể loại, ngày thêm, ảnh xem trước, cấu hình server) và xếp theo `games/order.json`; không phải sửa file nào của cổng.
+
+1. `npm run new-game -- <dir> --en "English name" --vi "Tên tiếng Việt" --cat puzzle|versus|arcade|card|brain`:
+   chép `games/_template` (game mẫu dùng `games/_kit`) sang `games/<dir>/` và thêm id vào cuối `games/order.json`. Thư mục cũng là id game.
+2. Viết game trong `games/<dir>/` theo `games/<dir>/README.md`: engine + `test.js`, giao diện, `i18n.js`, `game.json` (bỏ hết `TODO`), `icon.svg`, `preview.svg`.
+3. `npm test` (có chạy `test.js` của mọi game).
+4. `npm run seed-sql -- <id> > supabase/migrations/<thời điểm>_<id>.sql` rồi áp file đó qua SQL Editor của Supabase.
+5. `npm run build && npm run assemble && npm run e2e`: e2e chung tự kiểm tra mọi game có trong manifest; URL game luôn là `/playnine/<dir>/`.
+
+Game có `package.json` thì assemble lấy `dist/` của game thay vì chép nguyên thư mục.
 
 ## SDK cho game
 
 Game cũ gắn SDK bằng một thẻ script (đường dẫn tương đối, dev và bản publish đều là `/playnine/sdk/playnine.js`) và luôn gọi qua `window.PlayNine` có kiểm tra tồn tại:
 
 ```html
-<script src="../sdk/playnine.js?v=1"></script>
+<script src="../sdk/playnine.js?v=2"></script>
 ```
 
 ```js
