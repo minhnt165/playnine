@@ -31,6 +31,9 @@
     "vi": "Làm rơi cả chùm bóng để ăn thưởng"
   },
   "sdk": true,
+  "e2e": {
+    "start": "#btn-start"
+  },
   "server": {
     "metric": "score_high",
     "points": 5,

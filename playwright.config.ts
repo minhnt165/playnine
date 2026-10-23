@@ -2,7 +2,10 @@ import { defineConfig, devices } from '@playwright/test';
 
 // Chạy e2e trên dist/ đã ghép, phục vụ tại /playnine/ giống GitHub Pages.
 export default defineConfig({
-  testDir: 'e2e',
+  // Test chung ở e2e/, test riêng của một game nằm cạnh game: games/<dir>/e2e.spec.ts.
+  testDir: '.',
+  testMatch: ['e2e/**/*.spec.ts', 'games/*/e2e.spec.ts'],
+  testIgnore: ['**/node_modules/**', 'dist/**'],
   fullyParallel: true,
   reporter: 'list',
   use: { baseURL: 'http://localhost:4173/playnine/' },
@@ -13,7 +16,7 @@ export default defineConfig({
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    // Mobile chỉ kiểm tra URL game cũ.
-    { name: 'mobile', use: { ...devices['Pixel 7'] }, testMatch: /legacy-urls\.spec\.ts/ },
+    // Mobile chỉ kiểm tra mọi game mở được (URL không đổi, không lỗi trang).
+    { name: 'mobile', use: { ...devices['Pixel 7'] }, testMatch: /e2e[\\/]games\.spec\.ts$/ },
   ],
 });

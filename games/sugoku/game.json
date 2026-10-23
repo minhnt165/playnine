@@ -30,6 +30,9 @@
   },
   "keepAlive": false,
   "sdk": true,
+  "e2e": {
+    "start": ".difficulty-option[data-difficulty=\"easy\"]"
+  },
   "server": {
     "metric": "time_low",
     "points": 10,

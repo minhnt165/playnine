@@ -31,6 +31,9 @@
     "vi": "Xếp kín 4 hàng một lúc để ăn đậm"
   },
   "sdk": true,
+  "e2e": {
+    "start": "#btn-start"
+  },
   "server": {
     "metric": "score_high",
     "points": 5,

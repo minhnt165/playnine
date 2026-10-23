@@ -1,12 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
 
-// 9 game đấu máy báo kết quả qua SDK. Không có Supabase: cổng vẫn trả pn:ready,
-// nên game gửi pn:start/pn:end; ở đây bắt thẳng tin nhắn ở khung trên cùng.
-
-const boardGames: [id: string, dir: string][] = [
-  ['co9o', 'co9o'], ['caro', 'caro'], ['xiangqi', 'xiangqi'], ['covua', 'covua'], ['colat', 'colat'],
-  ['codam', 'codam'], ['coganh', 'coganh'], ['oanquan', 'oanquan'], ['bonlientiep', 'bonlientiep'],
-];
+// Test riêng từng game qua SDK (ván thắng, đổi mức…). Test hello/start và mở không có SDK cho mọi game nằm ở
+// games-sdk.spec.ts và games.spec.ts. Không có Supabase: cổng vẫn trả pn:ready, nên game gửi pn:start/pn:end;
+// ở đây bắt thẳng tin nhắn ở khung trên cùng.
 
 type Msg = { type: string; gameId?: string; mode?: string; won?: boolean; assisted?: boolean; resume?: boolean };
 
@@ -22,37 +18,6 @@ async function captureMessages(page: Page) {
 }
 
 const messages = (page: Page) => page.evaluate(() => (window as unknown as { __pn: Msg[] }).__pn);
-
-for (const [id] of boardGames) {
-  test(`${id} reports hello and start through the SDK`, async ({ page }) => {
-    await captureMessages(page);
-    await page.goto(`#/play/${id}`);
-    await expect
-      .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === id), { timeout: 5000 })
-      .toBe(true);
-    await expect
-      .poll(
-        async () =>
-          (await messages(page)).some(
-            (m) => m.type === 'pn:start' && m.gameId === id && ['easy', 'medium', 'hard'].includes(m.mode ?? ''),
-          ),
-        { timeout: 5000 },
-      )
-      .toBe(true);
-  });
-}
-
-for (const [id, dir] of boardGames) {
-  test(`${id} plays standalone without the SDK`, async ({ page }) => {
-    const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
-    await page.route('**/sdk/playnine.js*', (r) => r.abort());
-    const res = await page.goto(`${dir}/`);
-    expect(res?.status()).toBe(200);
-    await page.waitForTimeout(500);
-    expect(errors).toEqual([]);
-  });
-}
 
 test('bonlientiep reports a won run with assisted false', async ({ page }) => {
   await captureMessages(page);
@@ -91,43 +56,6 @@ test('xiangqi re-sends start with the new level when switched before the first m
     .toBe('easy');
 });
 
-// 4 game tính điểm (2048, xepgach, ran, phagach): mode theo cấu hình mặc định.
-const arcadeGames: [id: string, mode: string, start?: string][] = [
-  ['2048', '4x4'],
-  ['xepgach', 'lv1', '#btn-start'],
-  ['ran', 'classic-normal', '#btn-start'],
-  ['phagach', 'default', '#btn-start'],
-  ['banbong', 'classic', '#btn-start'],
-];
-
-for (const [id, mode, startBtn] of arcadeGames) {
-  test(`${id} reports hello and start with mode ${mode}`, async ({ page }) => {
-    await captureMessages(page);
-    // Bỏ hộp hướng dẫn lần đầu để bấm được nút bắt đầu
-    await page.addInitScript((key) => window.localStorage.setItem(key, JSON.stringify({ guideSeen: true })), `playnine-${id}-settings-v1`);
-    await page.goto(`#/play/${id}`);
-    await expect
-      .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === id), { timeout: 5000 })
-      .toBe(true);
-    if (startBtn) await page.frameLocator('iframe').locator(startBtn).click();
-    await expect
-      .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === id && m.mode === mode), {
-        timeout: 5000,
-      })
-      .toBe(true);
-  });
-
-  test(`${id} plays standalone without the SDK`, async ({ page }) => {
-    const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
-    await page.route('**/sdk/playnine.js*', (r) => r.abort());
-    const res = await page.goto(`${id}/`);
-    expect(res?.status()).toBe(200);
-    await page.waitForTimeout(500);
-    expect(errors).toEqual([]);
-  });
-}
-
 test('2048 game over reports the score', async ({ page }) => {
   await captureMessages(page);
   // Lưới 4x4 đầy, chỉ còn một nước (gộp 2+2 ở hàng đầu); sau nước đó và ô sinh thêm thì hết nước.
@@ -164,38 +92,6 @@ test('2048 game over reports the score', async ({ page }) => {
   const end = (await messages(page)).find((m) => m.type === 'pn:end') as Msg & { score?: number };
   expect(String(end.score)).toBe(shown.replace(/\D/g, ''));
 });
-
-// 2 game giải đố (tranhan, xepbai): mode theo cấu hình mặc định, ván seed gần xong để kiểm tra pn:end.
-const puzzleGames: [id: string, mode: string][] = [
-  ['tranhan', 's5'],
-  ['xepbai', 'draw1'],
-];
-
-for (const [id, mode] of puzzleGames) {
-  test(`${id} reports hello and start with mode ${mode}`, async ({ page }) => {
-    await captureMessages(page);
-    await page.addInitScript((key) => window.localStorage.setItem(key, JSON.stringify({ guideSeen: true })), `playnine-${id}-settings-v1`);
-    await page.goto(`#/play/${id}`);
-    await expect
-      .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === id), { timeout: 5000 })
-      .toBe(true);
-    await expect
-      .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === id && m.mode === mode), {
-        timeout: 5000,
-      })
-      .toBe(true);
-  });
-
-  test(`${id} plays standalone without the SDK`, async ({ page }) => {
-    const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
-    await page.route('**/sdk/playnine.js*', (r) => r.abort());
-    const res = await page.goto(`${id}/`);
-    expect(res?.status()).toBe(200);
-    await page.waitForTimeout(500);
-    expect(errors).toEqual([]);
-  });
-}
 
 test('tranhan reports a solved picture with assisted false', async ({ page }) => {
   await captureMessages(page);
@@ -257,45 +153,6 @@ test('xepbai reports a won run (auto-complete is not assistance)', async ({ page
 });
 
 // Minesweeper và Sudoku: mode theo ván mặc định / độ khó chọn, ván Sudoku seed gần xong để kiểm tra pn:end.
-test('minesweeper reports hello and start with mode easy', async ({ page }) => {
-  await captureMessages(page);
-  await page.goto('#/play/minesweeper');
-  await expect
-    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === 'minesweeper'), { timeout: 5000 })
-    .toBe(true);
-  await expect
-    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === 'minesweeper' && m.mode === 'easy'), {
-      timeout: 5000,
-    })
-    .toBe(true);
-});
-
-test('sudoku reports hello and start with the chosen difficulty', async ({ page }) => {
-  await captureMessages(page);
-  await page.goto('#/play/sudoku');
-  await expect
-    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === 'sudoku'), { timeout: 5000 })
-    .toBe(true);
-  await page.frameLocator('iframe').locator('.difficulty-option[data-difficulty="easy"]').click();
-  await expect
-    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === 'sudoku' && m.mode === 'easy'), {
-      timeout: 8000,
-    })
-    .toBe(true);
-});
-
-for (const [id, dir] of [['minesweeper', 'minesweeper'], ['sudoku', 'sugoku']]) {
-  test(`${id} plays standalone without the SDK`, async ({ page }) => {
-    const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
-    await page.route('**/sdk/playnine.js*', (r) => r.abort());
-    const res = await page.goto(`${dir}/`);
-    expect(res?.status()).toBe(200);
-    await page.waitForTimeout(500);
-    expect(errors).toEqual([]);
-  });
-}
-
 test('minesweeper custom game sends nothing', async ({ page }) => {
   await captureMessages(page);
   await page.goto('#/play/minesweeper');
@@ -348,29 +205,6 @@ test('sudoku reports a won run with assisted false', async ({ page }) => {
   expect(end.timeMs).toBeGreaterThanOrEqual(120000);
 });
 
-test('noihinh reports hello and start with mode classic', async ({ page }) => {
-  await captureMessages(page);
-  await page.goto('#/play/noihinh');
-  await expect
-    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === 'noihinh'), { timeout: 5000 })
-    .toBe(true);
-  await expect
-    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === 'noihinh' && m.mode === 'classic'), {
-      timeout: 5000,
-    })
-    .toBe(true);
-});
-
-test('noihinh plays standalone without the SDK', async ({ page }) => {
-  const errors: string[] = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  await page.route('**/sdk/playnine.js*', (r) => r.abort());
-  const res = await page.goto('noihinh/');
-  expect(res?.status()).toBe(200);
-  await page.waitForTimeout(500);
-  expect(errors).toEqual([]);
-});
-
 test('noihinh reports a won run when level 1 is cleared', async ({ page }) => {
   await captureMessages(page);
   await page.goto('#/play/noihinh');
@@ -390,38 +224,6 @@ test('noihinh reports a won run when level 1 is cleared', async ({ page }) => {
   await expect
     .poll(async () => (await messages(page)).find((m) => m.type === 'pn:end'), { timeout: 5000 })
     .toMatchObject({ gameId: 'noihinh', mode: 'classic', won: true, assisted: false });
-});
-
-test('truotso reports hello and start with mode 4x4', async ({ page }) => {
-  await captureMessages(page);
-  await page.goto('#/play/truotso');
-  await expect
-    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === 'truotso'), { timeout: 5000 })
-    .toBe(true);
-  await expect
-    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === 'truotso' && m.mode === '4x4'), {
-      timeout: 5000,
-    })
-    .toBe(true);
-});
-
-test('truotso plays standalone without the SDK', async ({ page }) => {
-  const errors: string[] = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  await page.route('**/sdk/playnine.js*', (r) => r.abort());
-  const res = await page.goto('truotso/');
-  expect(res?.status()).toBe(200);
-  await expect(page.locator('.tile')).toHaveCount(15);
-  // Bấm một ô kề ô trống: số nước tăng lên 1
-  const tile = await page.evaluate(() => {
-    const g = JSON.parse(localStorage.getItem('playnine-truotso-save-v1') || '{}').game;
-    const gap = g.tiles.indexOf(0);
-    return gap % 4 > 0 ? g.tiles[gap - 1] : g.tiles[gap + 1];
-  });
-  await page.locator(`.tile[data-v="${tile}"]`).click();
-  await expect(page.locator('#moves')).toHaveText('1');
-  await page.waitForTimeout(500);
-  expect(errors).toEqual([]);
 });
 
 test('truotso reports a won run with the solve time', async ({ page }) => {
@@ -452,32 +254,6 @@ test('truotso reports a won run with the solve time', async ({ page }) => {
 });
 
 // Lật Thẻ: mức Dễ mặc định, mỗi thẻ có data-face (cùng số là một cặp) nên lật lần lượt từng cặp là thắng.
-test('latthe reports hello and start with mode easy', async ({ page }) => {
-  await captureMessages(page);
-  await page.goto('#/play/latthe');
-  await expect
-    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:hello' && m.gameId === 'latthe'), { timeout: 5000 })
-    .toBe(true);
-  await expect
-    .poll(async () => (await messages(page)).some((m) => m.type === 'pn:start' && m.gameId === 'latthe' && m.mode === 'easy'), {
-      timeout: 5000,
-    })
-    .toBe(true);
-});
-
-test('latthe plays standalone without the SDK', async ({ page }) => {
-  const errors: string[] = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  await page.route('**/sdk/playnine.js*', (r) => r.abort());
-  const res = await page.goto('latthe/');
-  expect(res?.status()).toBe(200);
-  const cards = page.locator('.card');
-  await expect(cards).toHaveCount(12);
-  await cards.first().click();
-  await expect(cards.first()).toHaveClass(/\bup\b/);
-  expect(errors).toEqual([]);
-});
-
 test('latthe reports a won run with the time when every pair is found', async ({ page }) => {
   await captureMessages(page);
   await page.goto('#/play/latthe');
