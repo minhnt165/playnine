@@ -35,6 +35,10 @@ export async function assemble({ root, out, portalDir = path.join(root, 'portal'
     }
   }
 
+  // Bộ dùng chung cho game mới: out/_kit/ (game nạp ../_kit/kit.js, ../_kit/kit.css).
+  const kit = path.join(gamesDir, '_kit');
+  if (await exists(kit)) await cp(kit, path.join(out, '_kit'), { recursive: true });
+
   const brand = path.join(root, 'brand');
   if (await exists(brand)) await cp(brand, path.join(out, 'brand'), { recursive: true });
 

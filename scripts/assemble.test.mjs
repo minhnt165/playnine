@@ -50,6 +50,15 @@ test('skips underscore folders', async () => {
   assert.equal(await exists(path.join(out, '_template')), false);
 });
 
+test('copies _kit to dist/_kit but still skips other underscore folders', async () => {
+  const { root, portalDir, out } = await fixture();
+  await put(path.join(root, 'games', '_kit', 'kit.js'), 'kit');
+  await put(path.join(root, 'games', '_template', 'index.html'), 'x');
+  await assemble({ root, out, portalDir });
+  assert.equal(await readFile(path.join(out, '_kit', 'kit.js'), 'utf8'), 'kit');
+  assert.equal(await exists(path.join(out, '_template')), false);
+});
+
 test('copies portal, brand and writes .nojekyll', async () => {
   const { root, portalDir, out } = await fixture();
   await assemble({ root, out, portalDir });

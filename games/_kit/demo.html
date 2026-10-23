@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#f3f4fb">
+  <meta name="description" content="PlayNine Kit demo">
+  <title>Kit demo</title>
+  <script>
+    // Áp giao diện đã chọn trước khi vẽ trang để tránh nháy màu
+    try {
+      var t = JSON.parse(localStorage.getItem('playnine-kitdemo-settings-v1') || '{}').theme;
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="kit.css?v=1">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <h1 class="logo" data-i18n="demo.title">Kit demo</h1>
+        <span class="badge" data-i18n="demo.badge">Demo</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" id="btn-help" type="button" data-open="modal-help" data-i18n-attr="aria-label:kit.help;title:kit.help">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 17h-2v-2h2v2zm2.1-7.7-.9.9c-.7.7-1.2 1.3-1.2 2.8h-2v-.5c0-1.1.5-2.1 1.2-2.8l1.2-1.3a2 2 0 1 0-3.4-1.4H8a4 4 0 1 1 7.1 2.3z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-settings" type="button" data-open="modal-settings" data-i18n-attr="aria-label:kit.settings;title:kit.settings">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+        </button>
+      </div>
+    </header>
+    <div class="hud">
+      <div class="hud-box"><div class="hud-label" data-i18n="demo.clicks">Clicks</div><div class="hud-value" id="clicks">0</div></div>
+      <div class="hud-box"><div class="hud-label" data-i18n="demo.lang">Language</div><div class="hud-value" id="lang">en</div></div>
+    </div>
+    <main class="stage">
+      <button class="btn btn-primary" id="btn-toast" type="button" data-i18n="demo.toast">Show a toast</button>
+    </main>
+    <p class="help"><span class="help-keys" data-i18n-html="demo.keys">Press <kbd>Esc</kbd> to close a dialog</span><span class="help-touch" data-i18n="demo.touch">Tap the button</span></p>
+  </div>
+
+  <div class="modal" id="modal-settings" hidden>
+    <div class="modal-backdrop" data-close="modal-settings"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <div class="modal-head">
+        <h2 id="settings-title" data-i18n="kit.settings">Settings</h2>
+        <button class="btn-icon modal-close" type="button" data-close="modal-settings" data-i18n-attr="aria-label:kit.close">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6L19 6.4 17.6 5 12 10.6z"/></svg>
+        </button>
+      </div>
+      <div class="settings-list">
+        <div class="setting">
+          <span class="setting-name" data-i18n="kit.theme">Theme</span>
+          <div class="segmented" id="sw-theme" data-setting="theme">
+            <button type="button" data-value="auto" data-i18n="kit.themeAuto">Auto</button>
+            <button type="button" data-value="light" data-i18n="kit.themeLight">Light</button>
+            <button type="button" data-value="dark" data-i18n="kit.themeDark">Dark</button>
+          </div>
+        </div>
+        <div class="setting">
+          <span class="setting-name" data-i18n="kit.lang">Language</span>
+          <div class="segmented" id="sw-lang" data-setting="lang">
+            <button type="button" data-value="en">English</button>
+            <button type="button" data-value="vi">Tiếng Việt</button>
+          </div>
+        </div>
+        <label class="setting-row" id="setting-sound">
+          <span class="setting-text"><span class="setting-name" data-i18n="kit.sound">Sound</span><span class="setting-desc" data-i18n="kit.soundDesc">Sound effects</span></span>
+          <input class="switch" type="checkbox" id="sw-sound">
+        </label>
+      </div>
+      <p class="app-version" id="app-version"></p>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-help" hidden>
+    <div class="modal-backdrop" data-close="modal-help"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <h2 id="help-title" data-i18n="kit.help">How to play</h2>
+      <p class="modal-text" data-i18n="demo.help">This page shows the shared kit: dialogs, toast, theme and language.</p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-help" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <script src="kit.js?v=1"></script>
+  <script>
+    (function () {
+      'use strict';
+      var kit = PNKit.init({
+        gameId: 'kitdemo',
+        version: PNKit.KIT_VERSION,
+        dict: {
+          en: { 'meta.title': 'Kit demo', 'meta.description': 'PlayNine Kit demo', 'demo.title': 'Kit demo', 'demo.badge': 'Demo', 'demo.clicks': 'Clicks', 'demo.lang': 'Language', 'demo.toast': 'Show a toast', 'demo.toastText': 'Hello from the kit ({n})', 'demo.keys': 'Press <kbd>Esc</kbd> to close a dialog', 'demo.touch': 'Tap the button', 'demo.help': 'This page shows the shared kit: dialogs, toast, theme and language.' },
+          vi: { 'meta.title': 'Thử kit', 'meta.description': 'Trang thử PlayNine Kit', 'demo.title': 'Thử kit', 'demo.badge': 'Thử', 'demo.clicks': 'Lần bấm', 'demo.lang': 'Ngôn ngữ', 'demo.toast': 'Hiện thông báo', 'demo.toastText': 'Chào từ kit ({n})', 'demo.keys': 'Bấm <kbd>Esc</kbd> để đóng hộp thoại', 'demo.touch': 'Chạm vào nút', 'demo.help': 'Trang này cho xem phần dùng chung: hộp thoại, thông báo, giao diện và ngôn ngữ.' }
+        }
+      });
+      var n = 0;
+      document.getElementById('lang').textContent = kit.i18n.lang;
+      document.getElementById('btn-toast').addEventListener('click', function () {
+        n++;
+        document.getElementById('clicks').textContent = String(n);
+        kit.toast(kit.t('demo.toastText', { n: n }));
+      });
+    })();
+  </script>
+</body>
+</html>
