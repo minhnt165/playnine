@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { localized } from '../events/model'
 import { gameById } from '../games/catalog'
+import { PageLoading } from '../home/PageLoading'
 import { Topbar } from '../home/Topbar'
 import { useI18n } from '../i18n/i18n'
 import { detailHref, playHref } from '../player/route'
@@ -51,7 +52,7 @@ export function PostPage({ slug, onThemeApplied }: { slug: string; onThemeApplie
 
   let body
   if (!api) body = <p className="lb-note">{t('news.unavailable')}</p>
-  else if (state.status === 'loading') body = null
+  else if (state.status === 'loading') body = <PageLoading />
   else if (state.status === 'error') body = <p className="lb-note">{t('news.error')}</p>
   else if (!post) body = <p className="lb-note">{t('news.notFound')}</p>
   else {

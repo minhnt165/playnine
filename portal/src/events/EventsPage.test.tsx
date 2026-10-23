@@ -78,6 +78,13 @@ describe('EventsPage', () => {
     expect(screen.getByText('Only English')).toBeInTheDocument()
   })
 
+  it('đang tải → vòng xoay page.loading, tải xong thì ẩn', async () => {
+    mountWith(createFakeApi({ games: GAMES, events: [ev()] }), <EventsPage />)
+    expect(screen.getByRole('status')).toHaveTextContent(en('page.loading'))
+    await screen.findByText('Spring cup')
+    expect(screen.queryByRole('status')).toBeNull()
+  })
+
   it('không server → ev.unavailable', () => {
     mountWith(null, <EventsPage />)
     expect(screen.getByText(en('ev.unavailable'))).toBeInTheDocument()

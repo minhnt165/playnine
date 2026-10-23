@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { PageLoading } from '../home/PageLoading'
 import { Topbar } from '../home/Topbar'
 import { MostPlayed } from '../home/MostPlayed'
 import { usePlayTotals } from '../home/usePlayTotals'
@@ -40,7 +41,7 @@ export function NewsPage({ onThemeApplied }: { onThemeApplied?: () => void }) {
 
   let body
   if (!api) body = <p className="lb-note">{t('news.unavailable')}</p>
-  else if (state.status === 'loading') body = null
+  else if (state.status === 'loading') body = <PageLoading />
   else if (state.status === 'error') body = <p className="lb-note">{t('news.error')}</p>
   else if (state.posts.length === 0) body = <p className="lb-note">{t('news.none')}</p>
   else {

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { gameById } from '../games/catalog'
+import { PageLoading } from '../home/PageLoading'
 import { Topbar } from '../home/Topbar'
 import { useI18n } from '../i18n/i18n'
 import { eventHref } from '../player/route'
@@ -57,7 +58,7 @@ export function EventsPage({ onThemeApplied }: { onThemeApplied?: () => void }) 
   let body
   if (state.status === 'unavailable') body = <p className="lb-note">{t('ev.unavailable')}</p>
   else if (state.status === 'error') body = <p className="lb-note">{t('ev.error')}</p>
-  else if (state.status === 'loading') body = null
+  else if (state.status === 'loading') body = <PageLoading />
   else {
     const g = groupEvents(state.events, now)
     const sections = [

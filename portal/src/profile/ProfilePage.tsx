@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { localized } from '../events/model'
 import { gameById } from '../games/catalog'
+import { PageLoading } from '../home/PageLoading'
 import { Topbar } from '../home/Topbar'
 import { useI18n } from '../i18n/i18n'
 import { usePoints } from '../leaderboards/usePoints'
@@ -79,7 +80,7 @@ export function ProfilePage({ userId, onThemeApplied }: { userId: string; onThem
   if (!api || data.status === 'error') {
     body = <p className="lb-note">{t('profile.unavailable')}</p>
   } else if (data.status === 'loading') {
-    body = null
+    body = <PageLoading />
   } else if (!data.profile) {
     body = <p className="lb-note">{t('profile.notFound')}</p>
   } else {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { PageLoading } from '../home/PageLoading'
 import { Topbar } from '../home/Topbar'
 import { useI18n } from '../i18n/i18n'
 import { defaultSession, safeStore } from '../lib/safeStorage'
@@ -42,7 +43,7 @@ export function AdminPage({ onThemeApplied }: { onThemeApplied?: () => void }) {
 
   let body = null
   if (!api) body = <p className="lb-note">{t('admin.unavailable')}</p>
-  else if (!authReady) body = null
+  else if (!authReady) body = <PageLoading />
   else if (!user?.isAdmin) body = <p className="lb-note">{t('admin.forbidden')}</p>
   else {
     body = (

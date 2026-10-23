@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { gameById } from '../games/catalog'
+import { PageLoading } from '../home/PageLoading'
 import { Topbar } from '../home/Topbar'
 import { useI18n } from '../i18n/i18n'
 import { formatValue } from '../player/leaderboardModel'
@@ -38,7 +39,7 @@ export function EventPage({ eventId, onThemeApplied }: Props) {
   let body
   if (state.status === 'unavailable') body = <p className="lb-note">{t('ev.unavailable')}</p>
   else if (state.status === 'error') body = <p className="lb-note">{t('ev.error')}</p>
-  else if (state.status === 'loading') body = null
+  else if (state.status === 'loading') body = <PageLoading />
   else if (!event) body = <p className="lb-note">{t('ev.notFound')}</p>
   else if (eventPhase(event, now) === 'cancelled') body = <p className="lb-note">{t('ev.cancelled')}</p>
   else {
