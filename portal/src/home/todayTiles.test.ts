@@ -46,6 +46,8 @@ describe('buildTodayTiles', () => {
     const sums = {
       minesweeper: sum({ daily: { date: today, done: true } }),
       tranhan: sum({ daily: { date: today, done: true } }),
+      // Game có đề hằng ngày ra sau (Đoán Chữ) cũng đã làm, để chỉ còn Sudoku và Xếp Bài chưa làm.
+      doanchu: sum({ daily: { date: today, done: true } }),
     }
     const tiles = buildTodayTiles({ ...base(), sums })
     expect(tiles.map((x) => [x.game.id, x.badge])).toEqual([

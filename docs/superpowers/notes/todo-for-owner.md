@@ -16,6 +16,8 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 
 - [ ] `supabase/migrations/20261023000500_batch5.sql` — đợt 5, game 54–61: Kakuro, Ô Số Tính, Cầu Nối, Vòng Kín, Nhị Phân, Lều Trại, Hitori, Chia Ô.
 
+- [ ] `supabase/migrations/20261023000600_batch6.sql` — đợt 6, game 62–69: Đoán Chữ, Tìm Chữ, Ghép Chữ, Tính Nhẩm, Tính 24, Nhớ Nhịp, Gõ Nhanh, Dãy Số.
+
 Đợt 0 (nền tảng) không có migration. Áp các file theo đúng thứ tự tên file.
 
 ## Repo
@@ -24,6 +26,8 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 - [ ] Đợt 0 được làm trong worktree `C:/Users/MinhNT165/Workspace/games-batch0` (nhánh `batch0-platform`, luôn bằng `origin/main` sau mỗi lần đẩy). Các đợt game tiếp theo cũng làm ở đây; xong lộ trình thì xóa bằng `git worktree remove ../games-batch0`.
 
 - [ ] Xem tab Actions trên GitHub: các lần đẩy đợt 0 (từ `34fe71f` tới `397eb86`) có workflow Deploy xanh không. Máy làm việc không có `gh` và không gọi được GitHub API nên Claude chưa kiểm tra được CI; ở máy local toàn bộ `npm test` và e2e (93 test) đều xanh.
+
+- [ ] Thử **Gõ Nhanh** trên điện thoại thật (iOS và Android/Gboard): bàn phím ảo bật lên khung có co vừa không, gõ có bị chặn nhầm là "dán / gõ tự động" khi bàn phím gợi ý từ hay tự sửa không. Máy làm việc chỉ giả lập được.
 
 ## Cần bạn quyết định
 
