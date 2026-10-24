@@ -1,0 +1,235 @@
+/* =====================================================================
+ * Ô Vuông - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   Bàn là SVG tọa độ theo ô: điểm ở tọa độ nguyên 0..n, mọi kích thước trên bàn tính theo đơn vị ô.
+ *   Người 1 màu xanh tím (dấu tròn), người 2 màu cam (dấu thoi).
+ * ===================================================================== */
+:root {
+  --p1: #4f52e8;
+  --p1-soft: rgba(79, 82, 232, 0.16);
+  --p2: #ea5a2a;
+  --p2-soft: rgba(234, 90, 42, 0.17);
+  --board: #ffffff;
+  --board-edge: rgba(17, 20, 45, 0.08);
+  --slot: rgba(17, 20, 45, 0.11);
+  --dot: #262a48;
+  --win: #f59e0b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --p1: #8d8cff;
+    --p1-soft: rgba(141, 140, 255, 0.2);
+    --p2: #ff8a5b;
+    --p2-soft: rgba(255, 138, 91, 0.2);
+    --board: #151a2e;
+    --board-edge: rgba(255, 255, 255, 0.08);
+    --slot: rgba(255, 255, 255, 0.11);
+    --dot: #e4e6ff;
+    --win: #fbbf24;
+  }
+}
+:root[data-theme="dark"] {
+  --p1: #8d8cff;
+  --p1-soft: rgba(141, 140, 255, 0.2);
+  --p2: #ff8a5b;
+  --p2-soft: rgba(255, 138, 91, 0.2);
+  --board: #151a2e;
+  --board-edge: rgba(255, 255, 255, 0.08);
+  --slot: rgba(255, 255, 255, 0.11);
+  --dot: #e4e6ff;
+  --win: #fbbf24;
+}
+
+/* ===================== Bố cục ===================== */
+/* Dọc: hai thẻ người chơi, dòng trạng thái, bàn vuông; cả khối nằm giữa phần chơi.
+   Thiếu chỗ thì bàn co lại theo chiều cao (SVG tự giữ tỉ lệ và nằm giữa khung). */
+.play {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+.players { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; flex: none; }
+.status { flex: none; }
+.board-wrap { flex: 0 1 auto; width: 100%; aspect-ratio: 1; min-height: 0; }
+.board { width: 100%; height: 100%; display: block; touch-action: manipulation; user-select: none; -webkit-user-select: none; filter: drop-shadow(0 3px 8px rgba(17, 20, 45, 0.1)); }
+
+/* Màn ngang thấp (điện thoại xoay ngang): thẻ người chơi + trạng thái bên trái, bàn bên phải */
+@media (orientation: landscape) and (max-height: 560px) {
+  :root { --app-max: 900px; }
+  .play {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    grid-template-areas: "players board" "status board";
+    align-content: center;
+    column-gap: 14px;
+  }
+  .players { grid-area: players; grid-template-columns: minmax(0, 1fr); align-self: end; }
+  .status { grid-area: status; align-self: start; }
+  .board-wrap { grid-area: board; width: auto; height: calc(100dvh - 76px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+}
+
+/* ===================== Người chơi ===================== */
+.player {
+  --pc: var(--p1);
+  --pc-soft: var(--p1-soft);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 8px 12px 8px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid transparent;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.player[data-p="2"] { --pc: var(--p2); --pc-soft: var(--p2-soft); }
+.player.turn { border-color: var(--pc); }
+.player.winner { border-color: var(--win); }
+/* Ô vuông nhỏ mang dấu của bên đó (tròn / thoi) */
+.pmark {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 8px;
+  background: var(--pc-soft);
+  box-shadow: inset 0 0 0 2.5px var(--pc);
+}
+.pmark::after { content: ""; position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; background: var(--pc); border-radius: 50%; }
+.player[data-p="2"] .pmark::after { border-radius: 1px; transform: rotate(45deg) scale(0.95); }
+.player.thinking .pmark { animation: think-pulse 1s ease-in-out infinite; }
+@keyframes think-pulse { 50% { transform: scale(0.86); } }
+.pmain { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.pname { font-weight: 800; font-size: 0.95rem; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.psub { font-size: 0.72rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.psub:empty { display: none; }
+.player.thinking .psub { color: var(--pc); font-weight: 700; }
+.pscore { flex: none; font-size: 1.7rem; font-weight: 800; line-height: 1; color: var(--pc); font-variant-numeric: tabular-nums; }
+
+/* ===================== Trạng thái ===================== */
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  padding: 5px 6px 5px 12px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border-left: 4px solid transparent;
+}
+.status[data-turn="1"] { border-left-color: var(--p1); }
+.status[data-turn="2"] { border-left-color: var(--p2); }
+.status-text { font-size: 0.86rem; font-weight: 600; line-height: 1.25; min-width: 0; }
+.status.thinking .status-text::after { content: ""; display: inline-block; width: 1.2em; text-align: left; animation: dots 1.2s steps(4) infinite; }
+@keyframes dots {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75% { content: "..."; }
+}
+.chip {
+  flex: none;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 5px 10px;
+  border-radius: 999px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.chip[data-tone="cpu"] { color: var(--muted); background: var(--line); }
+.chip[data-tone="won"] { color: #ffffff; background: var(--green); }
+.chip[data-tone="lost"] { color: #ffffff; background: var(--red); }
+.chip[data-tone="draw"] { color: var(--text); background: var(--line); }
+
+/* ===================== Bàn ===================== */
+.board-bg { fill: var(--board); stroke: var(--board-edge); stroke-width: 0.02; }
+.dot { fill: var(--dot); pointer-events: none; }
+
+/* Mỗi cạnh: vùng chạm hình thoi (trong suốt), khe mờ (cạnh chưa kẻ), nét màu (cạnh đã kẻ) */
+.edge .hit { fill: transparent; }
+.edge .slot { stroke: var(--slot); stroke-width: 0.05; stroke-linecap: round; pointer-events: none; }
+.edge .ln { stroke: transparent; stroke-width: 0.11; stroke-linecap: round; pointer-events: none; }
+.edge.on .slot { stroke: transparent; }
+.edge.p1 .ln { stroke: var(--p1); }
+.edge.p2 .ln { stroke: var(--p2); }
+/* Cạnh vừa kẻ: quầng nhạt màu của bên kẻ */
+.edge.last .slot { stroke-width: 0.26; }
+.edge.last.p1 .slot { stroke: var(--p1-soft); }
+.edge.last.p2 .slot { stroke: var(--p2-soft); }
+.edge.new .ln { stroke-dasharray: 1; animation: ln-draw 0.22s ease-out both; }
+@keyframes ln-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+/* Lượt người chơi: cạnh trống bấm được, rê chuột thì hiện trước nét mờ màu của bên đang đi */
+.board.can-play .edge:not(.on) { cursor: pointer; }
+@media (hover: hover) {
+  .board.can-play[data-turn="1"] .edge:not(.on):hover .ln { stroke: var(--p1); opacity: 0.4; }
+  .board.can-play[data-turn="2"] .edge:not(.on):hover .ln { stroke: var(--p2); opacity: 0.4; }
+}
+/* Con trỏ bàn phím */
+.edge.cursor .hit { fill: var(--accent-soft); }
+.edge.cursor:not(.on) .slot { stroke: var(--focus); stroke-width: 0.07; stroke-dasharray: 0.1 0.08; }
+.edge.cursor.on .ln { filter: drop-shadow(0 0 0.06px var(--focus)); }
+
+/* Ô đã khép: nền nhạt + dấu của chủ ô */
+.box { pointer-events: none; }
+.box.p1 .fill { fill: var(--p1-soft); }
+.box.p2 .fill { fill: var(--p2-soft); }
+.box.p1 .omark { fill: var(--p1); }
+.box.p2 .omark { fill: var(--p2); }
+.box.new { animation: box-pop 0.35s 0.12s cubic-bezier(0.2, 1.5, 0.4, 1) both; transform-box: fill-box; transform-origin: center; }
+@keyframes box-pop { from { transform: scale(0.4); opacity: 0; } }
+
+/* ===================== Hộp thoại ===================== */
+.help-text p { margin: 0 0 8px; }
+.help-list { margin: 0 0 8px; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.end-card { text-align: center; align-items: center; }
+.end-card .modal-actions { width: 100%; }
+/* Bốn ô nhỏ 2×2 tô màu theo kết quả */
+.end-mark { display: grid; grid-template-columns: 22px 22px; gap: 4px; padding: 4px; border-radius: 8px; }
+.end-mark i { display: block; width: 22px; height: 22px; border-radius: 5px; background: var(--mark-soft, var(--accent-soft)); box-shadow: inset 0 0 0 2.5px var(--mark, var(--accent)); }
+.end-mark i:nth-child(1), .end-mark i:nth-child(4) { background: var(--mark, var(--accent)); }
+.end-mark[data-result="won"] { --mark: var(--win); --mark-soft: rgba(245, 158, 11, 0.2); }
+.end-mark[data-result="lost"] { --mark: var(--red); --mark-soft: rgba(179, 38, 30, 0.15); }
+.end-mark[data-result="drawn"] { --mark: var(--muted); --mark-soft: var(--line); }
+.end-score { margin: 0; display: flex; align-items: center; justify-content: center; gap: 14px; }
+.end-side { display: flex; flex-direction: column; align-items: center; min-width: 70px; }
+.end-side b { font-size: 2.2rem; line-height: 1.05; font-weight: 800; font-variant-numeric: tabular-nums; }
+.end-side small { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+.end-side[data-p="1"] b { color: var(--p1); }
+.end-side[data-p="2"] b { color: var(--p2); }
+.end-dash { align-self: flex-start; font-size: 1.6rem; line-height: 2.3rem; color: var(--muted); font-weight: 700; }
+.end-meta { margin: 0; font-size: 0.82rem; color: var(--muted); font-weight: 600; }
+.stats-sub { margin: 0; font-size: 0.8rem; font-weight: 700; color: var(--muted); }
+.stat-levels { grid-template-columns: repeat(3, 1fr); }
+/* Bốn lựa chọn đối thủ: chữ nhỏ hơn một chút cho vừa điện thoại */
+.segmented[data-setting="level"] button { font-size: 0.86rem; padding: 0 2px; }
+
+/* ===================== Màn hình hẹp ===================== */
+/* Nhường chỗ cho tên game + mức máy trên thanh trên */
+@media (max-width: 400px) {
+  .brand-mark { display: none; }
+  .logo { font-size: 1.05rem; }
+  .badge { display: none; } /* mức máy đã ghi trên thẻ máy, cỡ bàn ghi ở dòng trạng thái */
+}
+@media (max-width: 380px) {
+  .player { gap: 7px; padding: 7px 9px 7px 8px; }
+  .pmark { width: 24px; height: 24px; }
+  .pscore { font-size: 1.45rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player { transition: none; }
+  .player.thinking .pmark { animation: none; }
+  .edge.new .ln { animation: none; stroke-dasharray: none; }
+  .box.new { animation: none; }
+  .status.thinking .status-text::after { animation: none; content: "…"; }
+}

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: hàng trên đã có chủ; hàng dưới là chuỗi 3 ô. Cam buộc phải mở chuỗi,
+       xanh khép liền ba ô (mỗi ô khép thì được đi tiếp). Hoạt hình CSS, tắt khi người dùng giảm chuyển động
+       (hiện trạng thái cuối). Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt. -->
+  <style>
+    .scene { animation: scene 8s ease-in-out infinite; }
+    .ln { fill: none; stroke-width: 4.2; stroke-linecap: round; }
+    .slot { fill: none; stroke: rgba(255, 255, 255, .16); stroke-width: 2; stroke-linecap: round; }
+    .b { stroke: #8d8cff; }
+    .o { stroke: #ff8a5b; }
+    .new { stroke-dasharray: 1; }
+    .fb { fill: rgba(141, 140, 255, .3); }
+    .fo { fill: rgba(255, 138, 91, .3); }
+    .mb { fill: #a9a8ff; }
+    .mo { fill: #ff9d76; }
+    .pop { transform-box: fill-box; transform-origin: center; }
+    .ring { fill: none; stroke: #ffffff; stroke-width: 1.6; opacity: 0; transform-box: fill-box; transform-origin: center; }
+    .l1 { animation: l1 8s linear infinite; } .r1 { animation: r1 8s ease-out infinite; }
+    .l2 { animation: l2 8s linear infinite; } .r2 { animation: r2 8s ease-out infinite; } .p2 { animation: p2 8s ease-out infinite; }
+    .l3 { animation: l3 8s linear infinite; } .r3 { animation: r3 8s ease-out infinite; } .p3 { animation: p3 8s ease-out infinite; }
+    .l4 { animation: l4 8s linear infinite; } .r4 { animation: r4 8s ease-out infinite; } .p4 { animation: p4 8s ease-out infinite; }
+    @keyframes scene { 0% { opacity: 0; } 4%, 90% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes l1 { 0%, 10% { stroke-dashoffset: 1; } 14%, 100% { stroke-dashoffset: 0; } }
+    @keyframes l2 { 0%, 22% { stroke-dashoffset: 1; } 26%, 100% { stroke-dashoffset: 0; } }
+    @keyframes l3 { 0%, 33% { stroke-dashoffset: 1; } 37%, 100% { stroke-dashoffset: 0; } }
+    @keyframes l4 { 0%, 44% { stroke-dashoffset: 1; } 48%, 100% { stroke-dashoffset: 0; } }
+    @keyframes r1 { 0%, 9% { opacity: 0; transform: scale(.5); } 11% { opacity: .9; } 19%, 100% { opacity: 0; transform: scale(1.7); } }
+    @keyframes r2 { 0%, 21% { opacity: 0; transform: scale(.5); } 23% { opacity: .9; } 31%, 100% { opacity: 0; transform: scale(1.7); } }
+    @keyframes r3 { 0%, 32% { opacity: 0; transform: scale(.5); } 34% { opacity: .9; } 42%, 100% { opacity: 0; transform: scale(1.7); } }
+    @keyframes r4 { 0%, 43% { opacity: 0; transform: scale(.5); } 45% { opacity: .9; } 53%, 100% { opacity: 0; transform: scale(1.7); } }
+    @keyframes p2 { 0%, 26% { opacity: 0; transform: scale(.4); } 31%, 100% { opacity: 1; transform: none; } }
+    @keyframes p3 { 0%, 37% { opacity: 0; transform: scale(.4); } 42%, 100% { opacity: 1; transform: none; } }
+    @keyframes p4 { 0%, 48% { opacity: 0; transform: scale(.4); } 53%, 100% { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .scene, .l1, .l2, .l3, .l4, .p2, .p3, .p4 { animation: none; }
+      .r1, .r2, .r3, .r4 { animation: none; display: none; }
+    }
+  </style>
+  <g class="scene">
+  <g transform="translate(80 60) scale(1.3) translate(-80 -55)">
+    <!-- Ô hàng trên đã có chủ: cam, xanh, cam -->
+    <rect class="fo" x="37" y="27" width="26" height="26" rx="2"/>
+    <rect class="fb" x="67" y="27" width="26" height="26" rx="2"/>
+    <rect class="fo" x="97" y="27" width="26" height="26" rx="2"/>
+    <path class="mo" d="M50 34.5 55.5 40 50 45.5 44.5 40Z"/>
+    <circle class="mb" cx="80" cy="40" r="4.6"/>
+    <path class="mo" d="M110 34.5 115.5 40 110 45.5 104.5 40Z"/>
+    <!-- Hàng dưới: chuỗi 3 ô bị mở, xanh khép lần lượt -->
+    <g class="pop p2"><rect class="fb" x="37" y="57" width="26" height="26" rx="2"/><circle class="mb" cx="50" cy="70" r="4.6"/></g>
+    <g class="pop p3"><rect class="fb" x="67" y="57" width="26" height="26" rx="2"/><circle class="mb" cx="80" cy="70" r="4.6"/></g>
+    <g class="pop p4"><rect class="fb" x="97" y="57" width="26" height="26" rx="2"/><circle class="mb" cx="110" cy="70" r="4.6"/></g>
+    <!-- Khe trống của các cạnh sẽ kẻ -->
+    <path class="slot" d="M35 55v30M65 55v30M95 55v30M125 55v30"/>
+    <!-- Cạnh đã kẻ -->
+    <path class="ln o" d="M35 25h30M35 25v30M65 25v30"/>
+    <path class="ln b" d="M65 25h30M95 25v30M35 55h30"/>
+    <path class="ln o" d="M95 25h30M125 25v30M65 55h30"/>
+    <path class="ln b" d="M95 55h30M35 85h30"/>
+    <path class="ln o" d="M65 85h30M95 85h30"/>
+    <!-- Cam mở chuỗi, xanh khép ba ô -->
+    <path class="ln o new l1" pathLength="1" d="M35 55v30"/>
+    <path class="ln b new l2" pathLength="1" d="M65 55v30"/>
+    <path class="ln b new l3" pathLength="1" d="M95 55v30"/>
+    <path class="ln b new l4" pathLength="1" d="M125 55v30"/>
+    <circle class="ring r1" cx="35" cy="70" r="7"/>
+    <circle class="ring r2" cx="65" cy="70" r="7"/>
+    <circle class="ring r3" cx="95" cy="70" r="7"/>
+    <circle class="ring r4" cx="125" cy="70" r="7"/>
+    <!-- Điểm -->
+    <g fill="#eef0ff">
+      <circle cx="35" cy="25" r="3.4"/><circle cx="65" cy="25" r="3.4"/><circle cx="95" cy="25" r="3.4"/><circle cx="125" cy="25" r="3.4"/>
+      <circle cx="35" cy="55" r="3.4"/><circle cx="65" cy="55" r="3.4"/><circle cx="95" cy="55" r="3.4"/><circle cx="125" cy="55" r="3.4"/>
+      <circle cx="35" cy="85" r="3.4"/><circle cx="65" cy="85" r="3.4"/><circle cx="95" cy="85" r="3.4"/><circle cx="125" cy="85" r="3.4"/>
+    </g>
+  </g>
+  </g>
+</svg>

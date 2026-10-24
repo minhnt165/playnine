@@ -1,0 +1,71 @@
+{
+  "id": "khucconcau",
+  "cat": "versus",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Air Hockey",
+    "vi": "Khúc Côn Cầu"
+  },
+  "sub": {
+    "en": "Mallet and puck against the computer",
+    "vi": "Air Hockey"
+  },
+  "desc": {
+    "en": "Steer your mallet with a finger or the mouse and slam the puck into the computer's goal, banking it off the rails. First to 7 goals wins, on Easy, Medium or Hard.",
+    "vi": "Điều khiển chày bằng ngón tay hoặc chuột, đánh đĩa vào khung thành của máy, cho đĩa dội thành để có góc khó đỡ. Ai tới 7 bàn trước thì thắng, ở mức Dễ, Vừa hoặc Khó."
+  },
+  "tags": {
+    "en": ["Versus", "Vs computer", "Real-time"],
+    "vi": ["Đối kháng", "Đấu máy", "Thời gian thực"]
+  },
+  "note": {
+    "en": "First to 7 goals",
+    "vi": "Ai tới 7 bàn trước thắng"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(77, 139, 255, .3), transparent 60%), linear-gradient(160deg, #1a2a4f, #070c1c)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 15000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 15000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 15000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

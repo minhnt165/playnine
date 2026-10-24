@@ -1,0 +1,71 @@
+{
+  "id": "vetsang",
+  "cat": "versus",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Light Trails",
+    "vi": "Vệt Sáng"
+  },
+  "sub": {
+    "en": "Light cycle duel against the computer",
+    "vi": "Đấu xe ánh sáng với máy"
+  },
+  "desc": {
+    "en": "Steer your light cycle and box the computer in with your glowing trail; hit a wall or any trail and the round is lost. First to win 3 rounds, on Easy, Medium or Hard.",
+    "vi": "Lái xe ánh sáng, dùng vệt sáng phía sau để nhốt máy; đâm vào tường hay vệt nào là thua hiệp. Ai thắng 3 hiệp trước thắng trận, ở mức Dễ, Vừa hoặc Khó."
+  },
+  "tags": {
+    "en": ["Versus", "1 player", "Vs computer"],
+    "vi": ["Đối kháng", "1 người", "Đấu với máy"]
+  },
+  "note": {
+    "en": "First to win 3 rounds",
+    "vi": "Ai thắng 3 hiệp trước thắng trận"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(34, 211, 238, .24), transparent 60%), linear-gradient(160deg, #1b2150, #070a17)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "wins",
+    "points": 10,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 9000
+        },
+        "points": 6
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 9000
+        },
+        "points": 10
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 9000
+        },
+        "points": 16
+      }
+    ]
+  }
+}

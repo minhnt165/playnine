@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f8fd0"/>
+      <stop offset="1" stop-color="#0d3a66"/>
+    </linearGradient>
+    <linearGradient id="hull" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d3dbe5"/>
+      <stop offset="1" stop-color="#5b697c"/>
+    </linearGradient>
+    <radialGradient id="fire" cx=".5" cy=".55" r=".5">
+      <stop offset="0" stop-color="#fff3b0"/>
+      <stop offset=".4" stop-color="#ffb02e"/>
+      <stop offset=".75" stop-color="#ef4b25"/>
+      <stop offset="1" stop-color="#ef4b25" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#sea)"/>
+  <path d="M16 6v52M32 6v52M48 6v52M6 16h52M6 32h52M6 48h52" stroke="#fff" stroke-opacity=".14" stroke-width="1.5"/>
+  <path d="M7 39h40l11-6-4 12H12z" fill="url(#hull)"/>
+  <rect x="19" y="30" width="13" height="9" rx="2" fill="#9aa7b8"/>
+  <rect x="23" y="24" width="5" height="7" rx="1" fill="#6c798b"/>
+  <circle cx="39" cy="36" r="2.6" fill="#3c4757"/>
+  <circle cx="13" cy="36" r="2.6" fill="#3c4757"/>
+  <path d="M5 51q5-4 10 0t10 0 10 0 10 0 10 0 9 0" fill="none" stroke="#bfe6ff" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="45" cy="19" r="12" fill="url(#fire)"/>
+  <circle cx="45" cy="19" r="7.5" fill="none" stroke="#ff3b30" stroke-width="2.6"/>
+  <path d="M45 8v5M45 25v5M34 19h5M51 19h5" stroke="#ff3b30" stroke-width="2.6" stroke-linecap="round"/>
+</svg>

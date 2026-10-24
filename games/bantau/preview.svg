@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động.
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt.
+       Cảnh: hồng tâm bắn trượt một ô (té nước) rồi bắn trúng tàu (cầu lửa), lặp lại mỗi 4 giây. -->
+  <style>
+    .ret { animation: ret 4s infinite; transform-box: view-box; }
+    @keyframes ret {
+      0%, 8% { transform: translate(0, 0); opacity: 0; }
+      14% { opacity: 1; }
+      30%, 46% { transform: translate(0, 0); opacity: 1; }
+      58%, 80% { transform: translate(36px, 36px); opacity: 1; }
+      90%, 100% { transform: translate(36px, 36px); opacity: 0; }
+    }
+    .ring { transform-box: fill-box; transform-origin: center; opacity: 0; animation: ring 4s infinite; }
+    .ring.r2 { animation-delay: .15s; }
+    @keyframes ring {
+      0%, 31% { transform: scale(.2); opacity: 0; }
+      32% { opacity: 1; }
+      48% { transform: scale(1.8); opacity: 0; }
+      100% { opacity: 0; }
+    }
+    .miss { opacity: 0; animation: miss 4s infinite; }
+    @keyframes miss { 0%, 33% { opacity: 0; } 36%, 94% { opacity: 1; } 100% { opacity: 0; } }
+    .blast { transform-box: fill-box; transform-origin: center; opacity: 0; animation: blast 4s infinite; }
+    @keyframes blast {
+      0%, 63% { transform: scale(.2); opacity: 0; }
+      64% { opacity: 1; }
+      78% { transform: scale(1.6); opacity: 0; }
+      100% { opacity: 0; }
+    }
+    .hit2 { opacity: 0; animation: hit2 4s infinite; }
+    @keyframes hit2 { 0%, 65% { opacity: 0; } 68%, 94% { opacity: 1; } 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .ret, .ring, .blast { animation: none; opacity: 0; }
+      .miss, .hit2 { animation: none; opacity: 1; }
+    }
+  </style>
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5fb4e8"/>
+      <stop offset="1" stop-color="#1f6ea8"/>
+    </linearGradient>
+    <linearGradient id="hull" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d0d8e2"/>
+      <stop offset="1" stop-color="#5b697c"/>
+    </linearGradient>
+    <radialGradient id="fire" cx=".5" cy=".55" r=".5">
+      <stop offset="0" stop-color="#fff3b0"/>
+      <stop offset=".35" stop-color="#ffb02e"/>
+      <stop offset=".7" stop-color="#ef4b25"/>
+      <stop offset="1" stop-color="#ef4b25" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Vùng biển 7×5 ô (ô 18px) -->
+  <rect x="17" y="15" width="126" height="90" rx="6" fill="url(#sea)" stroke="#9fd4f5" stroke-width="2"/>
+  <path d="M35 15v90M53 15v90M71 15v90M89 15v90M107 15v90M125 15v90M17 33h126M17 51h126M17 69h126M17 87h126" stroke="#fff" stroke-opacity=".22" stroke-width="1"/>
+
+  <!-- Tàu 4 ô ở hàng 3, cột 3..6; ô thứ hai đã trúng từ trước -->
+  <path d="M55 72h62l7 6-7 6H55l-2-3v-6z" fill="url(#hull)"/>
+  <circle cx="80" cy="78" r="2.4" fill="#3c4757"/>
+  <circle cx="98" cy="78" r="2.4" fill="#3c4757"/>
+  <circle cx="62" cy="78" r="5.5" fill="url(#fire)"/>
+  <!-- Ô trượt cũ + chấm "chắc chắn trống" -->
+  <circle cx="134" cy="24" r="3.6" fill="#fff" stroke="#1a5f96" stroke-opacity=".5" stroke-width="2"/>
+  <circle cx="26" cy="96" r="3.6" fill="#fff" stroke="#1a5f96" stroke-opacity=".5" stroke-width="2"/>
+  <circle cx="44" cy="60" r="1.6" fill="#0d3a66" fill-opacity=".5"/>
+  <circle cx="80" cy="60" r="1.6" fill="#0d3a66" fill-opacity=".5"/>
+
+  <!-- Phát 1: trượt ở ô (cột 4, hàng 2) tâm (80, 42) -->
+  <circle class="ring" cx="80" cy="42" r="8" fill="none" stroke="#fff" stroke-width="2"/>
+  <circle class="ring r2" cx="80" cy="42" r="8" fill="none" stroke="#fff" stroke-width="1.5"/>
+  <circle class="miss" cx="80" cy="42" r="3.6" fill="#fff" stroke="#1a5f96" stroke-opacity=".5" stroke-width="2"/>
+
+  <!-- Phát 2: trúng tàu ở ô tâm (116, 78) -->
+  <circle class="blast" cx="116" cy="78" r="13" fill="url(#fire)"/>
+  <circle class="hit2" cx="116" cy="78" r="5.5" fill="url(#fire)"/>
+
+  <!-- Hồng tâm: bắt đầu ở (80, 42), sau đó dời (+36, +36) tới (116, 78) -->
+  <g class="ret">
+    <g transform="translate(80 42)">
+      <circle r="9" fill="none" stroke="#ff3b30" stroke-width="2.2"/>
+      <path d="M0-13v6M0 7v6M-13 0h6M7 0h6" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

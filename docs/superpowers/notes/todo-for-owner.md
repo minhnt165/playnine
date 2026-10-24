@@ -18,6 +18,8 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 
 - [ ] `supabase/migrations/20261023000600_batch6.sql` — đợt 6, game 62–69: Đoán Chữ, Tìm Chữ, Ghép Chữ, Tính Nhẩm, Tính 24, Nhớ Nhịp, Gõ Nhanh, Dãy Số.
 
+- [ ] `supabase/migrations/20261023000700_batch7.sql` — đợt 7, game 70–77: Bắn Tàu, Ô Vuông, Cờ Lục Giác, Cờ Nhảy, Xoay Cờ, Vệt Sáng, Khúc Côn Cầu, Pháo Thủ.
+
 Đợt 0 (nền tảng) không có migration. Áp các file theo đúng thứ tự tên file.
 
 ## Repo
@@ -40,3 +42,5 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 - Đô-mi-nô: ngưỡng chống gian lận 8 giây thay vì 20 giây đã dự kiến, vì mô phỏng 100.000 trận cho thấy 1,5–3,7% trận thắng thật tới 50 điểm xong dưới 20 giây; 8 giây là mức sàn chứng minh được từ nhịp máy.
 - Nút "Game" ở sidebar vẫn mở menu nhanh; trang `#/games` vào từ nút "Xem tất cả N game" dưới lưới trang chủ (hiện khi có hơn 24 game).
 - Hiệu năng (mốc 50 game): màn chờ lúc tải lần đầu giờ hiện logo PlayNine ngay (vòng xoay vẫn hiện sau 0,3 s); khối Spotlight đầu trang chỉ trượt lên, không còn mờ dần; trang chủ chỉ dựng 24 thẻ thay vì dựng hết rồi ẩn. Mục đích: Lighthouse điện thoại từ ~60 lên 85–87.
+- Điểm cổng một số game đối kháng thấp hơn mức 10/15/25 của lộ trình: Bắn Tàu 5/10/20 (may rủi nhiều, người chơi bình thường gần như chắc thắng máy Dễ), Vệt Sáng 6/10/16 (trận 1–2 phút, ngang Bóng Bàn).
+- Cờ Lục Giác bật luật đổi bên (pie rule) mặc định, tắt được trong Cài đặt: không có nó thì đặt giữa bàn ở nước đầu là thắng máy quá dễ.

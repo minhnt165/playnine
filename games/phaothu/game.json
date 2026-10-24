@@ -1,0 +1,69 @@
+{
+  "id": "phaothu",
+  "cat": "versus",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Artillery",
+    "vi": "Pháo Thủ"
+  },
+  "sub": {
+    "en": "Turn-based cannon duel",
+    "vi": "Đấu pháo theo lượt"
+  },
+  "desc": {
+    "en": "Set the angle and power, read the wind and lob shells over the hills. Craters reshape the ground; knock out the computer's cannon on Easy, Medium or Hard.",
+    "vi": "Chỉnh góc và lực, canh gió rồi bắn đạn vòng qua đồi núi. Hố nổ làm đổi địa hình; hạ pháo của máy ở mức Dễ, Vừa hoặc Khó."
+  },
+  "tags": {
+    "en": ["Strategy", "Vs computer", "2 players"],
+    "vi": ["Chiến thuật", "Đấu máy", "2 người"]
+  },
+  "note": {
+    "en": "Wind changes every turn",
+    "vi": "Gió đổi mỗi lượt"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 176, 32, .28), transparent 60%), linear-gradient(160deg, #24406e, #0e1a33)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 3500
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 3500
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 3500
+        },
+        "points": 25
+      }
+    ]
+  }
+}

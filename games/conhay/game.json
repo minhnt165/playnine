@@ -1,0 +1,69 @@
+{
+  "id": "conhay",
+  "cat": "versus",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Star Checkers",
+    "vi": "Cờ Nhảy"
+  },
+  "sub": {
+    "en": "Chinese checkers · Halma star",
+    "vi": "Chinese checkers · Cờ sao sáu cánh"
+  },
+  "desc": {
+    "en": "Hop your ten pieces across the six-pointed star with chained jumps and fill the opposite corner before the computer does.",
+    "vi": "Nhảy liên hoàn đưa mười quân qua bàn sao sáu cánh, lấp đầy góc đối diện trước máy."
+  },
+  "tags": {
+    "en": ["Board game", "Vs computer", "Strategy"],
+    "vi": ["Cờ bàn", "Đấu máy", "Chiến thuật"]
+  },
+  "note": {
+    "en": "Three computer levels",
+    "vi": "Máy có ba mức"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(242, 85, 90, .28), transparent 60%), linear-gradient(160deg, #2a2350, #110f26)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 12000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 12000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 12000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

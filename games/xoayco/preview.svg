@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động
+       (khi tắt thì hiện khung cuối: góc trên phải đã xoay, hàng năm quân trắng sáng lên).
+       Cảnh: đặt một quân trắng vào góc trên phải, mũi tên hiện, góc xoay 90° sang phải, đủ năm quân liền hàng.
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt. -->
+  <defs>
+    <linearGradient id="q" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#36b3a3"/>
+      <stop offset="1" stop-color="#21867a"/>
+    </linearGradient>
+    <radialGradient id="w" cx=".35" cy=".3" r=".75">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset=".6" stop-color="#ece6d8"/>
+      <stop offset="1" stop-color="#bdb39d"/>
+    </radialGradient>
+    <radialGradient id="k" cx=".35" cy=".3" r=".75">
+      <stop offset="0" stop-color="#5a6080"/>
+      <stop offset=".6" stop-color="#23263a"/>
+      <stop offset="1" stop-color="#0b0d16"/>
+    </radialGradient>
+    <g id="holes" fill="#0a3a35" fill-opacity=".45">
+      <circle cx="9" cy="9" r="3"/><circle cx="23" cy="9" r="3"/><circle cx="37" cy="9" r="3"/>
+      <circle cx="9" cy="23" r="3"/><circle cx="23" cy="23" r="3"/><circle cx="37" cy="23" r="3"/>
+      <circle cx="9" cy="37" r="3"/><circle cx="23" cy="37" r="3"/><circle cx="37" cy="37" r="3"/>
+    </g>
+  </defs>
+  <style>
+    .scene { animation: scene 5s linear infinite; }
+    .turn { transform-origin: 105px 35px; transform: rotate(90deg); animation: turn 5s cubic-bezier(.45, .05, .25, 1) infinite; }
+    .drop { transform-origin: 105px 49px; animation: drop 5s ease-out infinite; }
+    .arrow { opacity: 0; animation: arrow 5s ease-in-out infinite; }
+    .glow { animation: glow 5s ease-in-out infinite; }
+    @keyframes scene { 0% { opacity: 0; } 5%, 90% { opacity: 1; } 97%, 100% { opacity: 0; } }
+    @keyframes turn { 0%, 36% { transform: rotate(0deg); } 50%, 100% { transform: rotate(90deg); } }
+    @keyframes drop { 0%, 10% { opacity: 0; transform: scale(1.7); } 18%, 100% { opacity: 1; transform: scale(1); } }
+    @keyframes arrow { 0%, 20% { opacity: 0; } 26%, 44% { opacity: 1; } 52%, 100% { opacity: 0; } }
+    @keyframes glow { 0%, 54% { opacity: 0; } 62%, 100% { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) {
+      .scene, .turn, .drop, .arrow, .glow { animation: none; }
+    }
+  </style>
+  <g class="scene">
+    <!-- Đế bàn -->
+    <rect x="26" y="6" width="108" height="108" rx="12" fill="#12293b"/>
+    <!-- Góc trên trái: ba quân trắng ở hàng giữa, một quân đen -->
+    <g transform="translate(32 12)">
+      <rect width="46" height="46" rx="7" fill="url(#q)"/>
+      <use href="#holes"/>
+      <circle cx="9" cy="23" r="5.6" fill="url(#w)"/>
+      <circle cx="23" cy="23" r="5.6" fill="url(#w)"/>
+      <circle cx="37" cy="23" r="5.6" fill="url(#w)"/>
+      <circle cx="9" cy="37" r="5.6" fill="url(#k)"/>
+    </g>
+    <!-- Góc dưới trái và dưới phải -->
+    <g transform="translate(32 62)">
+      <rect width="46" height="46" rx="7" fill="url(#q)"/>
+      <use href="#holes"/>
+      <circle cx="23" cy="23" r="5.6" fill="url(#k)"/>
+    </g>
+    <g transform="translate(82 62)">
+      <rect width="46" height="46" rx="7" fill="url(#q)"/>
+      <use href="#holes"/>
+      <circle cx="9" cy="9" r="5.6" fill="url(#k)"/>
+      <circle cx="37" cy="37" r="5.6" fill="url(#w)"/>
+    </g>
+    <!-- Góc trên phải: xoay 90° sang phải, quân ở giữa và quân vừa đặt (hàng dưới, cột giữa) vào hàng giữa -->
+    <g class="turn">
+      <g transform="translate(82 12)">
+        <rect width="46" height="46" rx="7" fill="url(#q)"/>
+        <use href="#holes"/>
+        <circle cx="23" cy="23" r="5.6" fill="url(#w)"/>
+        <circle cx="37" cy="9" r="5.6" fill="url(#k)"/>
+      </g>
+      <circle class="drop" cx="105" cy="49" r="5.6" fill="url(#w)"/>
+    </g>
+    <!-- Mũi tên xoay quanh góc trên phải -->
+    <g class="arrow" fill="none" stroke="#ff8a3d" stroke-width="3.4" stroke-linecap="round">
+      <path d="M112 4.5A31 31 0 0 1 136 28"/>
+      <path d="M131.5 25.5l4.6 6 4.4-6.4" stroke-linejoin="round"/>
+    </g>
+    <!-- Năm quân liền hàng sáng lên -->
+    <g class="glow" fill="none" stroke="#ffcf33" stroke-width="2.2">
+      <rect x="34" y="27.5" width="78" height="15" rx="7.5" stroke-opacity=".9"/>
+    </g>
+  </g>
+</svg>

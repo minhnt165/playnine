@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3f7fe0"/>
+      <stop offset="1" stop-color="#9fd4ff"/>
+    </linearGradient>
+    <linearGradient id="dirt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a0703f"/>
+      <stop offset="1" stop-color="#5e3b20"/>
+    </linearGradient>
+    <clipPath id="r"><rect width="64" height="64" rx="14"/></clipPath>
+  </defs>
+  <g clip-path="url(#r)">
+    <rect width="64" height="64" fill="url(#sky)"/>
+    <!-- Đồi -->
+    <path d="M0 48c8-3 14-3 20 0s12 2 18-5 14-8 26-4v29H0z" fill="url(#dirt)"/>
+    <path d="M0 48c8-3 14-3 20 0s12 2 18-5 14-8 26-4" fill="none" stroke="#4caf50" stroke-width="3.2" stroke-linecap="round"/>
+    <!-- Đường đạn và viên đạn -->
+    <path d="M22 37C28 14 44 10 53 22" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="0.1 5.2" opacity=".95"/>
+    <circle cx="51" cy="18.5" r="3.6" fill="#23273a" stroke="#fff" stroke-width="1.4"/>
+    <!-- Pháo đỏ -->
+    <path d="M17 39l9-7" stroke="#23273a" stroke-width="3.6" stroke-linecap="round"/>
+    <path d="M8 46l2.6-5h15.8l2.6 5z" fill="#e5484d"/>
+    <path d="M12.5 41a5.5 5.5 0 0 1 11 0z" fill="#e5484d"/>
+    <rect x="7" y="45" width="23" height="5" rx="2.5" fill="#23273a"/>
+  </g>
+</svg>

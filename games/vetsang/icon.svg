@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b2150"/>
+      <stop offset="1" stop-color="#070a17"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Lưới mờ -->
+  <path d="M16 6v52M32 6v52M48 6v52M6 16h52M6 32h52M6 48h52" stroke="#7c8cff" stroke-width="1" opacity=".18"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Vệt máy (hồng): từ trên xuống rồi rẽ trái -->
+    <path d="M50 8v16H38" stroke="#ff4d9d" stroke-width="11" opacity=".28"/>
+    <path d="M50 8v16H38" stroke="#ff4d9d" stroke-width="6.5"/>
+    <path d="M50 8v16H38" stroke="#fff0f7" stroke-width="2"/>
+    <!-- Vệt người chơi (xanh): từ dưới lên rồi rẽ phải -->
+    <path d="M14 56V40h14" stroke="#22d3ee" stroke-width="11" opacity=".28"/>
+    <path d="M14 56V40h14" stroke="#22d3ee" stroke-width="6.5"/>
+    <path d="M14 56V40h14" stroke="#e9fdff" stroke-width="2"/>
+  </g>
+  <!-- Đầu xe -->
+  <rect x="33" y="19" width="10" height="10" rx="3" fill="#ff4d9d"/>
+  <circle cx="35.5" cy="24" r="1.8" fill="#fff0f7"/>
+  <rect x="25" y="35" width="10" height="10" rx="3" fill="#22d3ee"/>
+  <circle cx="32.5" cy="40" r="1.8" fill="#e9fdff"/>
+</svg>

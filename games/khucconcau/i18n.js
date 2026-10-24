@@ -1,0 +1,138 @@
+/* =====================================================================
+ * Khúc Côn Cầu - Chuỗi giao diện tiếng Anh (mặc định) + tiếng Việt
+ *   - Kit đọc ngôn ngữ ở khóa dùng chung với cổng: localStorage['playnine-lang']
+ *   - Chuỗi chung (Cài đặt, Đóng, Giao diện…) có sẵn trong kit với khóa kit.*; khóa trùng tên ở đây sẽ đè
+ *   - Chuỗi số nhiều: { one, other }, chọn theo params.n
+ * ===================================================================== */
+window.GAME_DICT = {
+  en: {
+    'meta.title': 'Air Hockey',
+    'meta.description': 'Air Hockey: knock the puck into the computer\'s goal with your mallet. First to 7 goals wins.',
+    'app.name': 'Air Hockey',
+    'hud.you': 'You',
+    'hud.cpu': 'CPU',
+    'hud.level': 'Level',
+    'level.easy': 'Easy',
+    'level.medium': 'Medium',
+    'level.hard': 'Hard',
+    'board.role': 'air hockey table',
+    'board.label': 'Table. Move the mouse, drag anywhere or use the arrow keys to move your mallet. P to pause.',
+    'btn.pause': 'Pause',
+    'btn.resume': 'Resume',
+    'btn.newMatch': 'New match',
+    'start.sub': 'First to 7 goals wins. Drag anywhere or move the mouse: your mallet follows.',
+    'start.go': 'Start',
+    'start.continue': 'Continue',
+    'start.saved': 'Match in progress: You {you} – {cpu} CPU',
+    'start.hint': 'Press <kbd>Space</kbd> to start',
+    'pause.title': 'Paused',
+    'pause.sub': 'You {you} – {cpu} CPU · {level}',
+    'pause.hint': 'Press <kbd>P</kbd> or <kbd>Space</kbd> to resume',
+    'canvas.yourPuck': 'Your puck',
+    'canvas.cpuPuck': 'CPU\'s puck',
+    'canvas.goalYou': 'Goal!',
+    'canvas.goalCpu': 'CPU scores',
+    'canvas.matchPoint': 'Match point',
+    'canvas.decider': 'Next goal wins',
+    'live.score': 'You {you}, CPU {cpu}',
+    'result.win': 'You win!',
+    'result.lose': 'CPU wins',
+    'result.text': '{level} · match time {time}',
+    'result.streak': 'Win streak: {n}',
+    'confirm.title': 'Start a new match?',
+    'confirm.text': 'The current match will count as a loss.',
+    'stats.played': 'Played',
+    'stats.won': 'Won',
+    'stats.rate': 'Win rate',
+    'stats.goals': 'Goals scored',
+    'stats.level': 'Level',
+    'stats.streak': 'Best streak',
+    'set.level': 'Computer level',
+    'set.levelDesc': 'Changing it mid-match applies from the next match.',
+    'set.vibrate': 'Vibration',
+    'set.vibrateDesc': 'Short buzz on hits and goals (phones only)',
+    'help.keys': '<kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> / mouse: move · <kbd>Space</kbd> start · <kbd>P</kbd> pause · <kbd>N</kbd> new match',
+    'help.touch': 'Drag anywhere on the table: your mallet follows your finger',
+    'help.text':
+      '<ul class="help-list">' +
+      '<li>Your mallet is the red one at the bottom (on the left on a wide screen). It follows your finger or mouse but stays in your half.</li>' +
+      '<li>Hit the puck into the computer\'s goal slot. The harder you swing, the faster it flies; bounce it off the side rails for tricky angles.</li>' +
+      '<li>Guard your own goal: stand between the puck and the slot.</li>' +
+      '<li>After a goal, the side that conceded gets the puck. A puck kept in one half for more than 7 seconds goes to the other side.</li>' +
+      '<li>First to 7 goals wins. Easy only defends, Medium also counter-attacks, Hard reads rebounds and banks its shots.</li>' +
+      '<li>Keyboard: hold the arrow keys or WASD. <kbd>P</kbd> / <kbd>Esc</kbd> pauses.</li>' +
+      '</ul>',
+    'summary.note': 'Won {won} of {played} matches',
+    'summary.none': 'First to 7 goals against the computer',
+    'summary.resume': 'You {you} – {cpu} CPU · {level}',
+    'toast.saved': 'Match restored',
+    'toast.next': 'The new level applies from the next match',
+    'toast.stallYou': 'Too long in your half: puck to the CPU',
+    'toast.stallCpu': 'Too long in the CPU\'s half: your puck',
+  },
+  vi: {
+    'meta.title': 'Khúc Côn Cầu',
+    'meta.description': 'Khúc Côn Cầu: dùng chày đánh đĩa vào khung thành của máy. Ai tới 7 bàn trước thì thắng.',
+    'app.name': 'Khúc Côn Cầu',
+    'hud.you': 'Bạn',
+    'hud.cpu': 'Máy',
+    'hud.level': 'Mức',
+    'level.easy': 'Dễ',
+    'level.medium': 'Vừa',
+    'level.hard': 'Khó',
+    'board.role': 'bàn khúc côn cầu',
+    'board.label': 'Bàn chơi. Rê chuột, kéo ở bất kỳ đâu hoặc dùng phím mũi tên để di chuyển chày. P để tạm dừng.',
+    'btn.pause': 'Tạm dừng',
+    'btn.resume': 'Chơi tiếp',
+    'btn.newMatch': 'Trận mới',
+    'start.sub': 'Ai tới 7 bàn trước thì thắng. Kéo ở bất kỳ đâu hoặc rê chuột: chày đi theo.',
+    'start.go': 'Bắt đầu',
+    'start.continue': 'Chơi tiếp',
+    'start.saved': 'Trận đang dở: Bạn {you} – {cpu} Máy',
+    'start.hint': 'Nhấn <kbd>Space</kbd> để bắt đầu',
+    'pause.title': 'Tạm dừng',
+    'pause.sub': 'Bạn {you} – {cpu} Máy · {level}',
+    'pause.hint': 'Nhấn <kbd>P</kbd> hoặc <kbd>Space</kbd> để chơi tiếp',
+    'canvas.yourPuck': 'Bạn giao đĩa',
+    'canvas.cpuPuck': 'Máy giao đĩa',
+    'canvas.goalYou': 'Vào!',
+    'canvas.goalCpu': 'Máy ghi bàn',
+    'canvas.matchPoint': 'Bàn quyết định',
+    'canvas.decider': 'Bàn tiếp theo phân thắng bại',
+    'live.score': 'Bạn {you}, máy {cpu}',
+    'result.win': 'Bạn thắng!',
+    'result.lose': 'Máy thắng',
+    'result.text': 'Mức {level} · thời gian {time}',
+    'result.streak': 'Chuỗi thắng: {n}',
+    'confirm.title': 'Chơi trận mới?',
+    'confirm.text': 'Trận đang chơi sẽ tính là thua.',
+    'stats.played': 'Đã chơi',
+    'stats.won': 'Thắng',
+    'stats.rate': 'Tỉ lệ thắng',
+    'stats.goals': 'Bàn đã ghi',
+    'stats.level': 'Mức',
+    'stats.streak': 'Chuỗi thắng dài nhất',
+    'set.level': 'Mức của máy',
+    'set.levelDesc': 'Đổi giữa trận thì áp dụng từ trận sau.',
+    'set.vibrate': 'Rung',
+    'set.vibrateDesc': 'Rung nhẹ khi chạm đĩa và khi có bàn thắng (điện thoại)',
+    'help.keys': '<kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> / chuột: di chuyển · <kbd>Space</kbd> bắt đầu · <kbd>P</kbd> dừng · <kbd>N</kbd> trận mới',
+    'help.touch': 'Kéo ở bất kỳ đâu trên bàn: chày đi theo ngón tay',
+    'help.text':
+      '<ul class="help-list">' +
+      '<li>Chày của bạn là chày đỏ ở dưới (bên trái khi màn hình nằm ngang). Chày đi theo ngón tay hoặc chuột nhưng chỉ ở nửa sân của bạn.</li>' +
+      '<li>Đánh đĩa vào khe khung thành của máy. Vung chày càng mạnh đĩa bay càng nhanh; cho đĩa dội thành bên để có góc khó đỡ.</li>' +
+      '<li>Giữ khung thành của mình: đứng chắn giữa đĩa và khe khung.</li>' +
+      '<li>Sau mỗi bàn, bên thủng lưới được giao đĩa. Đĩa nằm một nửa sân quá 7 giây thì chuyển cho bên kia.</li>' +
+      '<li>Ai tới 7 bàn trước thì thắng. Máy Dễ chỉ đỡ, Vừa biết phản công, Khó đoán đường dội thành và đánh góc.</li>' +
+      '<li>Bàn phím: giữ phím mũi tên hoặc WASD. <kbd>P</kbd> / <kbd>Esc</kbd> tạm dừng.</li>' +
+      '</ul>',
+    'summary.note': 'Thắng {won}/{played} trận',
+    'summary.none': 'Ai tới 7 bàn trước thắng',
+    'summary.resume': 'Bạn {you} – {cpu} Máy · {level}',
+    'toast.saved': 'Đã khôi phục trận đấu',
+    'toast.next': 'Mức mới áp dụng từ trận sau',
+    'toast.stallYou': 'Giữ đĩa quá lâu: máy được giao đĩa',
+    'toast.stallCpu': 'Đĩa nằm sân máy quá lâu: bạn được giao đĩa',
+  },
+};

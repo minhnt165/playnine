@@ -1,0 +1,69 @@
+{
+  "id": "ovuong",
+  "cat": "versus",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Dots and Boxes",
+    "vi": "Ô Vuông"
+  },
+  "sub": {
+    "en": "Classic pencil game",
+    "vi": "Dots and Boxes"
+  },
+  "desc": {
+    "en": "Take turns drawing lines between dots; close a box to claim it and move again. Play the computer at three levels or a friend on one device.",
+    "vi": "Lần lượt kẻ cạnh nối hai điểm; khép được ô thì ô là của mình và đi tiếp. Đấu máy 3 mức hoặc hai người trên cùng máy."
+  },
+  "tags": {
+    "en": ["Strategy", "Vs computer", "2 players"],
+    "vi": ["Chiến thuật", "Đấu máy", "2 người"]
+  },
+  "note": {
+    "en": "3×3 to 5×5 boards · three computer levels",
+    "vi": "Bàn 3×3 đến 5×5 · ba mức máy"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 138, 91, .28), transparent 60%), linear-gradient(160deg, #24245c, #0e0f26)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 4000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 4000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 4000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: hai khẩu pháo trên đồi, pháo đỏ bắn một viên theo đường cong
+       (gió đẩy mây trôi), viên đạn nổ cạnh pháo xanh và khoét đất. Hoạt hình CSS bên trong file,
+       tắt khi giảm chuyển động. Nền trong suốt (nền ô xem trước lấy từ preview.bg trong game.json). -->
+  <style>
+    .shell { animation: fly 3s linear infinite; }
+    .boom { transform-origin: 121px 79px; transform-box: view-box; animation: boom 3s ease-out infinite; opacity: 0; }
+    .crater { animation: crater 3s linear infinite; opacity: 0; }
+    .barrel { transform-origin: 34px 78px; transform-box: view-box; animation: aim 3s ease-in-out infinite; }
+    .cloud { animation: drift 6s linear infinite; }
+    .cloud2 { animation: drift 6s linear infinite; animation-delay: -3s; }
+    .dots { animation: dots 3s linear infinite; }
+    @keyframes fly {
+      0%, 8% { transform: translate(41px, 74px); opacity: 0; }
+      10% { transform: translate(41px, 74px); opacity: 1; }
+      15.2% { transform: translate(47.9px, 58.8px); }
+      20.4% { transform: translate(55.8px, 46.8px); }
+      25.6% { transform: translate(64.3px, 38px); }
+      30.8% { transform: translate(73.3px, 32.7px); }
+      36% { transform: translate(82.5px, 30.9px); }
+      41.2% { transform: translate(91.5px, 32.6px); }
+      46.4% { transform: translate(100.2px, 38px); }
+      51.6% { transform: translate(108.2px, 47.1px); }
+      56.8% { transform: translate(115.2px, 60.1px); }
+      62% { transform: translate(121px, 77px); opacity: 1; }
+      63%, 100% { transform: translate(121px, 77px); opacity: 0; }
+    }
+    @keyframes boom {
+      0%, 61% { opacity: 0; transform: scale(.2); }
+      64% { opacity: 1; transform: scale(1); }
+      85%, 100% { opacity: 0; transform: scale(1.35); }
+    }
+    @keyframes crater { 0%, 62% { opacity: 0; } 64%, 96% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes aim { 0%, 100% { transform: rotate(4deg); } 8%, 60% { transform: rotate(-3deg); } }
+    @keyframes drift { from { transform: translateX(-40px); } to { transform: translateX(170px); } }
+    @keyframes dots { 0%, 6% { opacity: .9; } 12%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .shell, .boom, .crater, .barrel, .cloud, .cloud2, .dots { animation: none; }
+      .shell { transform: translate(82.5px, 30.9px); }
+      .crater { opacity: 0; }
+    }
+  </style>
+  <defs>
+    <linearGradient id="dirt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a0703f"/>
+      <stop offset="1" stop-color="#5e3b20"/>
+    </linearGradient>
+    <radialGradient id="fire">
+      <stop offset="0" stop-color="#fffbe6"/>
+      <stop offset=".4" stop-color="#ffb020"/>
+      <stop offset=".8" stop-color="#ff5a1f"/>
+      <stop offset="1" stop-color="#ff5a1f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Mây trôi theo gió -->
+  <g class="cloud" fill="#fff" opacity=".55"><circle cx="10" cy="22" r="6"/><circle cx="18" cy="19" r="8"/><circle cx="27" cy="23" r="6"/></g>
+  <g class="cloud2" fill="#fff" opacity=".4"><circle cx="0" cy="40" r="4.5"/><circle cx="6" cy="37" r="6"/><circle cx="13" cy="40" r="4.5"/></g>
+  <!-- Gió -->
+  <g fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".8"><path d="M66 10h22M83 6l5 4-5 4"/></g>
+  <!-- Đồi -->
+  <path d="M0 86c10-6 22-6 30-4s12 4 20-4 18-26 32-22 18 18 26 20 18 0 26 4 18-4 26-6v46H0z" fill="url(#dirt)"/>
+  <path d="M0 86c10-6 22-6 30-4s12 4 20-4 18-26 32-22 18 18 26 20 18 0 26 4 18-4 26-6" fill="none" stroke="#4caf50" stroke-width="3" stroke-linecap="round"/>
+  <!-- Hố vừa bị khoét -->
+  <path class="crater" d="M110 80.5a8 6 0 0 0 15 0z" fill="#5e3b20" stroke="#4caf50" stroke-width="1.6"/>
+  <!-- Đường ngắm ngắn -->
+  <g class="dots" fill="#fff"><circle cx="44" cy="67" r="1.4"/><circle cx="48" cy="59" r="1.3"/><circle cx="52" cy="52" r="1.2"/></g>
+  <!-- Pháo đỏ (bạn) -->
+  <g>
+    <path class="barrel" d="M34 78l9-7" stroke="#e8ebf7" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M24 85l2.6-5h15.8l2.6 5z" fill="#e5484d"/>
+    <path d="M28.5 80a5.5 5.5 0 0 1 11 0z" fill="#e5484d"/>
+    <rect x="23" y="84" width="23" height="4.6" rx="2.3" fill="#23273a"/>
+  </g>
+  <!-- Pháo xanh (máy) -->
+  <g>
+    <path d="M128 76l-9-6" stroke="#e8ebf7" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M118 83l2.6-5h15.8l2.6 5z" fill="#2f6fdb"/>
+    <path d="M122.5 78a5.5 5.5 0 0 1 11 0z" fill="#2f6fdb"/>
+    <rect x="117" y="82" width="23" height="4.6" rx="2.3" fill="#23273a"/>
+  </g>
+  <!-- Viên đạn + vụ nổ -->
+  <circle class="shell" r="3" fill="#23273a" stroke="#fff" stroke-width="1.2"/>
+  <circle class="boom" cx="121" cy="79" r="13" fill="url(#fire)"/>
+</svg>

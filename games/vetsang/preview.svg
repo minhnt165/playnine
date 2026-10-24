@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: đấu trường lưới, xe xanh (bạn) và xe hồng (máy) kéo vệt sáng;
+       xe hồng rẽ ngang đâm vào vệt xanh và nổ tia sáng. Hoạt hình CSS bên trong file, tắt khi giảm chuyển động. Nền trong suốt. -->
+  <style>
+    .trail { stroke-dasharray: 1 1; stroke-dashoffset: 0; animation: draw 4s linear infinite; }
+    .head-you { animation: you 4s linear infinite; }
+    .head-cpu { animation: cpu 4s linear infinite; }
+    .boom { opacity: 0; transform-origin: 97px 48px; animation: boom 4s ease-out infinite; }
+    .fade { animation: fade 4s linear infinite; }
+    @keyframes draw {
+      0% { stroke-dashoffset: 1; }
+      70%, 100% { stroke-dashoffset: 0; }
+    }
+    @keyframes fade {
+      0%, 88% { opacity: 1; }
+      97% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @keyframes you {
+      0% { transform: translate(0, 0); }
+      24.9% { transform: translate(0, -42px); }
+      51% { transform: translate(44px, -42px); }
+      70%, 100% { transform: translate(44px, -76px); }
+    }
+    @keyframes cpu {
+      0% { transform: translate(0, 0); }
+      48.8% { transform: translate(0, 30px); }
+      70%, 100% { transform: translate(-13px, 30px); }
+    }
+    @keyframes boom {
+      0%, 69% { opacity: 0; transform: scale(.3); }
+      72% { opacity: 1; transform: scale(1); }
+      88% { opacity: 0; transform: scale(1.6); }
+      100% { opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .trail, .head-you, .head-cpu, .boom, .fade { animation: none; }
+      .head-you { transform: translate(44px, -76px); }
+      .head-cpu { transform: translate(-13px, 30px); }
+      .boom { opacity: 1; }
+    }
+  </style>
+  <!-- Đấu trường -->
+  <rect x="28" y="8" width="104" height="104" rx="7" fill="#1d2448"/>
+  <rect x="31" y="11" width="98" height="98" rx="4" fill="#070a17"/>
+  <path d="M43.25 11v98M55.5 11v98M67.75 11v98M80 11v98M92.25 11v98M104.5 11v98M116.75 11v98M31 23.25h98M31 35.5h98M31 47.75h98M31 60h98M31 72.25h98M31 84.5h98M31 96.75h98" stroke="#7c8cff" stroke-width=".5" opacity=".2"/>
+  <g class="fade">
+    <!-- Vệt người chơi -->
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path class="trail" pathLength="1" d="M53 104V62H97V28" stroke="#22d3ee" stroke-width="8" opacity=".25"/>
+      <path class="trail" pathLength="1" d="M53 104V62H97V28" stroke="#22d3ee" stroke-width="4.4"/>
+      <path class="trail" pathLength="1" d="M53 104V62H97V28" stroke="#e9fdff" stroke-width="1.4"/>
+      <!-- Vệt máy -->
+      <path class="trail" pathLength="1" d="M112 18V48H99" stroke="#ff4d9d" stroke-width="8" opacity=".25"/>
+      <path class="trail" pathLength="1" d="M112 18V48H99" stroke="#ff4d9d" stroke-width="4.4"/>
+      <path class="trail" pathLength="1" d="M112 18V48H99" stroke="#fff0f7" stroke-width="1.4"/>
+    </g>
+    <!-- Đầu xe -->
+    <g class="head-you"><rect x="49.5" y="100.5" width="7" height="7" rx="2" fill="#22d3ee"/></g>
+    <g class="head-cpu"><rect x="108.5" y="14.5" width="7" height="7" rx="2" fill="#ff4d9d"/></g>
+    <!-- Tia nổ khi máy đâm vào vệt -->
+    <g class="boom" stroke="#fff0f7" stroke-width="1.6" stroke-linecap="round">
+      <path d="M97 40v-6M97 56v6M89 48h-6M105 48h6M91 42l-4-4M103 54l4 4M103 42l4-4M91 54l-4 4"/>
+      <circle cx="97" cy="48" r="4" fill="#ff4d9d" stroke="none"/>
+    </g>
+  </g>
+</svg>

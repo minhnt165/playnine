@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b4a8f"/>
+      <stop offset="1" stop-color="#0d1730"/>
+    </linearGradient>
+    <radialGradient id="knob" cx=".4" cy=".35" r=".7">
+      <stop offset="0" stop-color="#ffd1d3"/>
+      <stop offset="1" stop-color="#e5484d"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Mặt bàn nhìn từ trên: khe khung thành ở trên, vạch giữa -->
+  <rect x="9" y="7" width="46" height="50" rx="6" fill="#e9f2ff"/>
+  <rect x="22" y="5" width="20" height="4" rx="2" fill="#070b18"/>
+  <path d="M9 32h46" stroke="#e5484d" stroke-width="1.6" opacity=".7"/>
+  <!-- Vệt đĩa bay về khung -->
+  <circle cx="33" cy="31" r="4" fill="#ffb020" opacity=".3"/>
+  <circle cx="32" cy="25" r="5" fill="#ffb020" opacity=".5"/>
+  <!-- Đĩa -->
+  <circle cx="31" cy="18" r="6.5" fill="#1b2133"/>
+  <circle cx="31" cy="18" r="4.3" fill="none" stroke="#ffb020" stroke-width="1.8"/>
+  <!-- Chày đỏ -->
+  <circle cx="35" cy="45" r="10" fill="#e5484d"/>
+  <circle cx="35" cy="45" r="7" fill="none" stroke="#ffd1d3" stroke-width="1.6"/>
+  <circle cx="35" cy="45" r="4.2" fill="url(#knob)"/>
+</svg>

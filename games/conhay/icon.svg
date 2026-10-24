@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4a3f8f"/>
+      <stop offset="1" stop-color="#1c1840"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Ngôi sao sáu cánh: hai tam giác bo góc -->
+  <g fill="#f3e4c2" stroke="#f3e4c2" stroke-width="5" stroke-linejoin="round">
+    <polygon points="32,7 54,45 10,45"/>
+    <polygon points="32,58 10,20 54,20"/>
+  </g>
+  <!-- Quân xanh ở góc trên, quân đỏ ở góc dưới -->
+  <g fill="#3a7ff2" stroke="#1d4fb0" stroke-width="1">
+    <circle cx="32" cy="13.5" r="3.6"/><circle cx="28" cy="20.5" r="3.6"/><circle cx="36" cy="20.5" r="3.6"/>
+  </g>
+  <g fill="#ef4c52" stroke="#a3232a" stroke-width="1">
+    <circle cx="28" cy="44" r="3.6"/><circle cx="36" cy="44" r="3.6"/><circle cx="32" cy="51" r="3.6"/>
+    <circle cx="32" cy="32.5" r="3.6"/>
+  </g>
+  <!-- Đường nhảy -->
+  <path d="M36 40 Q44 30 36 25" fill="none" stroke="#ffc21a" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="0.1 4.2"/>
+  <path d="M33.5 26.2l3.4-1.6-.4 3.7" fill="none" stroke="#ffc21a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,69 @@
+{
+  "id": "colucgiac",
+  "cat": "versus",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Hex",
+    "vi": "Cờ Lục Giác"
+  },
+  "sub": {
+    "en": "Connection game",
+    "vi": "Hex · cờ nối cạnh"
+  },
+  "desc": {
+    "en": "Take turns placing stones on a diamond of hexagons and link your two sides before your opponent links theirs. There are no draws. Play the computer at three levels or a friend.",
+    "vi": "Lần lượt đặt quân trên bàn hình thoi các ô lục giác, nối liền hai cạnh của mình trước đối thủ. Không bao giờ hòa. Đấu máy ba mức hoặc chơi hai người."
+  },
+  "tags": {
+    "en": ["Board game", "Vs computer", "2 players"],
+    "vi": ["Cờ bàn", "Đấu máy", "2 người"]
+  },
+  "note": {
+    "en": "Three computer levels · 7×7 to 11×11",
+    "vi": "Máy ba mức · bàn 7×7 đến 11×11"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(232, 70, 60, .28), transparent 60%), linear-gradient(160deg, #262a5c, #0f1130)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 4000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 4000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 4000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

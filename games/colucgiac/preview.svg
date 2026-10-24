@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước Cờ Lục Giác: bàn 5×5, hai bên lần lượt đặt quân, Đỏ nối hai cạnh đỏ rồi chuỗi thắng sáng lên.
+       Tự chứa, hoạt hình bằng CSS, tắt khi giảm chuyển động (hiện thế cờ cuối). Nền trong suốt. -->
+  <defs>
+    <radialGradient id="r" cx=".36" cy=".32" r=".75"><stop offset="0" stop-color="#ffb0a5"/><stop offset=".55" stop-color="#e8463c"/><stop offset="1" stop-color="#a8261e"/></radialGradient>
+    <radialGradient id="b" cx=".36" cy=".32" r=".75"><stop offset="0" stop-color="#a8ccff"/><stop offset=".55" stop-color="#3478dc"/><stop offset="1" stop-color="#1b4c9e"/></radialGradient>
+  </defs>
+  <style>
+    .h { fill: #f6ecd8; stroke: #c8b48c; stroke-width: .9; }
+    .s { transform-box: fill-box; transform-origin: center; stroke: rgba(0,0,0,.28); stroke-width: .6; }
+    .g { fill: none; stroke: #ffcf33; stroke-width: 2.2; opacity: 0; animation: glow 9s infinite; }
+    @keyframes glow { 0%, 72% { opacity: 0; } 76%, 93% { opacity: 1; } 100% { opacity: 0; } }
+    .s0 { animation: s0 9s infinite; }
+    @keyframes s0 { 0%, 7% { opacity: 0; transform: scale(.4); } 10% { opacity: 1; transform: scale(1); } 93% { opacity: 1; } 100% { opacity: 0; } }
+    .s1 { animation: s1 9s infinite; }
+    @keyframes s1 { 0%, 14% { opacity: 0; transform: scale(.4); } 17% { opacity: 1; transform: scale(1); } 93% { opacity: 1; } 100% { opacity: 0; } }
+    .s2 { animation: s2 9s infinite; }
+    @keyframes s2 { 0%, 22% { opacity: 0; transform: scale(.4); } 25% { opacity: 1; transform: scale(1); } 93% { opacity: 1; } 100% { opacity: 0; } }
+    .s3 { animation: s3 9s infinite; }
+    @keyframes s3 { 0%, 30% { opacity: 0; transform: scale(.4); } 33% { opacity: 1; transform: scale(1); } 93% { opacity: 1; } 100% { opacity: 0; } }
+    .s4 { animation: s4 9s infinite; }
+    @keyframes s4 { 0%, 38% { opacity: 0; transform: scale(.4); } 41% { opacity: 1; transform: scale(1); } 93% { opacity: 1; } 100% { opacity: 0; } }
+    .s5 { animation: s5 9s infinite; }
+    @keyframes s5 { 0%, 46% { opacity: 0; transform: scale(.4); } 49% { opacity: 1; transform: scale(1); } 93% { opacity: 1; } 100% { opacity: 0; } }
+    .s6 { animation: s6 9s infinite; }
+    @keyframes s6 { 0%, 53% { opacity: 0; transform: scale(.4); } 56% { opacity: 1; transform: scale(1); } 93% { opacity: 1; } 100% { opacity: 0; } }
+    .s7 { animation: s7 9s infinite; }
+    @keyframes s7 { 0%, 61% { opacity: 0; transform: scale(.4); } 64% { opacity: 1; transform: scale(1); } 93% { opacity: 1; } 100% { opacity: 0; } }
+    .s8 { animation: s8 9s infinite; }
+    @keyframes s8 { 0%, 69% { opacity: 0; transform: scale(.4); } 72% { opacity: 1; transform: scale(1); } 93% { opacity: 1; } 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .s, .g { animation: none; } .s { opacity: 1; } .g { opacity: 1; } }
+  </style>
+  <polygon points="80,60 8,60 80,18.4" fill="#e8463c"/>
+  <polygon points="80,60 80,18.4 152,60" fill="#3478dc"/>
+  <polygon points="80,60 152,60 80,101.6" fill="#e8463c"/>
+  <polygon points="80,60 80,101.6 8,60" fill="#3478dc"/>
+  <polygon class="h" points="40.7,60 36.7,66.8 28.9,66.8 24.9,60 28.9,53.2 36.7,53.2"/>
+  <polygon class="h" points="52.5,53.2 48.5,60 40.7,60 36.7,53.2 40.7,46.4 48.5,46.4"/>
+  <polygon class="h" points="64.3,46.4 60.3,53.2 52.5,53.2 48.5,46.4 52.5,39.6 60.3,39.6"/>
+  <polygon class="h" points="76.1,39.6 72.1,46.4 64.3,46.4 60.3,39.6 64.3,32.7 72.1,32.7"/>
+  <polygon class="h" points="87.9,32.7 83.9,39.6 76.1,39.6 72.1,32.7 76.1,25.9 83.9,25.9"/>
+  <polygon class="h" points="52.5,66.8 48.5,73.6 40.7,73.6 36.7,66.8 40.7,60 48.5,60"/>
+  <polygon class="h" points="64.3,60 60.3,66.8 52.5,66.8 48.5,60 52.5,53.2 60.3,53.2"/>
+  <polygon class="h" points="76.1,53.2 72.1,60 64.3,60 60.3,53.2 64.3,46.4 72.1,46.4"/>
+  <polygon class="h" points="87.9,46.4 83.9,53.2 76.1,53.2 72.1,46.4 76.1,39.6 83.9,39.6"/>
+  <polygon class="h" points="99.7,39.6 95.7,46.4 87.9,46.4 83.9,39.6 87.9,32.7 95.7,32.7"/>
+  <polygon class="h" points="64.3,73.6 60.3,80.4 52.5,80.4 48.5,73.6 52.5,66.8 60.3,66.8"/>
+  <polygon class="h" points="76.1,66.8 72.1,73.6 64.3,73.6 60.3,66.8 64.3,60 72.1,60"/>
+  <polygon class="h" points="87.9,60 83.9,66.8 76.1,66.8 72.1,60 76.1,53.2 83.9,53.2"/>
+  <polygon class="h" points="99.7,53.2 95.7,60 87.9,60 83.9,53.2 87.9,46.4 95.7,46.4"/>
+  <polygon class="h" points="111.5,46.4 107.5,53.2 99.7,53.2 95.7,46.4 99.7,39.6 107.5,39.6"/>
+  <polygon class="h" points="76.1,80.4 72.1,87.3 64.3,87.3 60.3,80.4 64.3,73.6 72.1,73.6"/>
+  <polygon class="h" points="87.9,73.6 83.9,80.4 76.1,80.4 72.1,73.6 76.1,66.8 83.9,66.8"/>
+  <polygon class="h" points="99.7,66.8 95.7,73.6 87.9,73.6 83.9,66.8 87.9,60 95.7,60"/>
+  <polygon class="h" points="111.5,60 107.5,66.8 99.7,66.8 95.7,60 99.7,53.2 107.5,53.2"/>
+  <polygon class="h" points="123.3,53.2 119.3,60 111.5,60 107.5,53.2 111.5,46.4 119.3,46.4"/>
+  <polygon class="h" points="87.9,87.3 83.9,94.1 76.1,94.1 72.1,87.3 76.1,80.4 83.9,80.4"/>
+  <polygon class="h" points="99.7,80.4 95.7,87.3 87.9,87.3 83.9,80.4 87.9,73.6 95.7,73.6"/>
+  <polygon class="h" points="111.5,73.6 107.5,80.4 99.7,80.4 95.7,73.6 99.7,66.8 107.5,66.8"/>
+  <polygon class="h" points="123.3,66.8 119.3,73.6 111.5,73.6 107.5,66.8 111.5,60 119.3,60"/>
+  <polygon class="h" points="135.1,60 131.1,66.8 123.3,66.8 119.3,60 123.3,53.2 131.1,53.2"/>
+  <circle class="s s0" cx="80" cy="60" r="4.9" fill="url(#r)"/>
+  <circle class="s s1" cx="91.8" cy="53.2" r="4.9" fill="url(#b)"/>
+  <circle class="s s2" cx="68.2" cy="53.2" r="4.9" fill="url(#r)"/>
+  <circle class="s s3" cx="56.4" cy="60" r="4.9" fill="url(#b)"/>
+  <circle class="s s4" cx="80" cy="73.6" r="4.9" fill="url(#r)"/>
+  <circle class="s s5" cx="91.8" cy="66.8" r="4.9" fill="url(#b)"/>
+  <circle class="s s6" cx="68.2" cy="39.6" r="4.9" fill="url(#r)"/>
+  <circle class="s s7" cx="56.4" cy="73.6" r="4.9" fill="url(#b)"/>
+  <circle class="s s8" cx="91.8" cy="80.4" r="4.9" fill="url(#r)"/>
+  <circle class="g" cx="68.2" cy="39.6" r="5.5"/>
+  <circle class="g" cx="68.2" cy="53.2" r="5.5"/>
+  <circle class="g" cx="80" cy="60" r="5.5"/>
+  <circle class="g" cx="80" cy="73.6" r="5.5"/>
+  <circle class="g" cx="91.8" cy="80.4" r="5.5"/>
+</svg>

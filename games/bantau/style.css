@@ -1,0 +1,444 @@
+/* =====================================================================
+ * Bắn Tàu - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Lưới 10×10 có hàng chữ A–J và cột số 1–10: CSS grid, cạnh ô --cell và dải nhãn --lab do app.js tính
+ *   - Thứ tự lớp trong lưới: nền biển (::before) < tàu (.ships) < ô (dấu bắn vẽ bằng ::after) < hoạt cảnh (.fx)
+ *   - Bố cục: .seas đổi grid-template-areas theo lớp place / battle và tall / wide2 / wide3 (app.js chọn)
+ *   - Tàu: thân vẽ bằng clip-path (mũi nhọn), chi tiết boong bằng gradient; tàu chìm cháy sẫm
+ * ===================================================================== */
+:root {
+  --app-max: 1100px;
+  --sea-1: #c4e6f8;
+  --sea-2: #8fcdee;
+  --sea-e1: #b3dcf3;
+  --sea-e2: #7cbde6;
+  --sea-line: rgba(18, 82, 130, 0.2);
+  --frame: #2a6f9f;
+  --hull-1: #9aa8ba;
+  --hull-2: #5b697c;
+  --hull-edge: #3c4757;
+  --deck: #e3e8ee;
+  --wreck-1: #6b4b45;
+  --wreck-2: #2f2220;
+  --miss: #ffffff;
+  --miss-ring: rgba(26, 95, 150, 0.55);
+  --hit: #e8432e;
+  --hit-core: #ffd25a;
+  --empty-dot: rgba(18, 70, 115, 0.35);
+  --last: #ffc928;
+  --ok: rgba(34, 197, 94, 0.45);
+  --bad: rgba(239, 68, 68, 0.45);
+  --sunk-cell: rgba(160, 30, 20, 0.22);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sea-1: #164a72;
+    --sea-2: #0d2f4d;
+    --sea-e1: #123f62;
+    --sea-e2: #0a2640;
+    --sea-line: rgba(150, 205, 255, 0.13);
+    --frame: #0e3a5e;
+    --hull-1: #a7b4c6;
+    --hull-2: #66758a;
+    --hull-edge: #2a3341;
+    --deck: #d6dde6;
+    --miss: #d9ecff;
+    --miss-ring: rgba(170, 215, 255, 0.45);
+    --empty-dot: rgba(190, 225, 255, 0.35);
+    --sunk-cell: rgba(255, 90, 60, 0.18);
+  }
+}
+:root[data-theme="dark"] {
+  --sea-1: #164a72;
+  --sea-2: #0d2f4d;
+  --sea-e1: #123f62;
+  --sea-e2: #0a2640;
+  --sea-line: rgba(150, 205, 255, 0.13);
+  --frame: #0e3a5e;
+  --hull-1: #a7b4c6;
+  --hull-2: #66758a;
+  --hull-edge: #2a3341;
+  --deck: #d6dde6;
+  --miss: #d9ecff;
+  --miss-ring: rgba(170, 215, 255, 0.45);
+  --empty-dot: rgba(190, 225, 255, 0.35);
+  --sunk-cell: rgba(255, 90, 60, 0.18);
+}
+
+/* ===================== Bố cục ===================== */
+.stage { flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 8px; }
+
+.status {
+  flex: none;
+  width: min(100%, max(var(--seas-w, 100%), 340px));
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 5px 12px;
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+.status-dot { width: 12px; height: 12px; border-radius: 50%; flex: none; background: var(--muted); }
+.status[data-mode="place"] .status-dot { background: var(--frame); }
+.status[data-mode="you"] .status-dot { background: var(--green); box-shadow: 0 0 0 4px color-mix(in srgb, var(--green) 22%, transparent); }
+.status[data-mode="ai"] .status-dot { background: #f59e0b; animation: pulse 0.9s ease-in-out infinite alternate; }
+.status[data-mode="won"] .status-dot { background: var(--accent); }
+.status[data-mode="lost"] .status-dot { background: var(--red); }
+@keyframes pulse { to { transform: scale(0.6); opacity: 0.6; } }
+.status-main { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.status-turn { font-weight: 800; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.status-event { font-size: 0.78rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.35; }
+.status-event[data-kind="you-hit"], .status-event[data-kind="you-sunk"] { color: var(--hit); font-weight: 700; }
+.status-event[data-kind="ai-hit"], .status-event[data-kind="ai-sunk"] { color: var(--red); font-weight: 600; }
+.chip {
+  flex: none;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Khu vực hai vùng biển: app.js đặt --ew (bề rộng lưới địch), --ow (lưới mình), --sw (bảng xếp tàu), --fw (bảng tàu) */
+.seas {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  gap: 10px;
+}
+.sea-enemy { grid-area: enemy; }
+.sea-own { grid-area: own; }
+.fleets { grid-area: fleets; }
+.setup { grid-area: setup; }
+.seas.place .sea-enemy, .seas.place .fleets, .seas.battle .setup { display: none; }
+
+.seas.place.tall { grid-template-areas: "own" "setup"; grid-template-columns: max(var(--ow), min(100%, 340px)); justify-items: center; }
+.seas.place.wide { grid-template-areas: "own setup"; grid-template-columns: var(--ow) var(--sw); column-gap: 20px; align-items: center; }
+.seas.battle.tall {
+  grid-template-areas: "enemy enemy" "own fleets";
+  grid-template-columns: var(--ow) calc(var(--ew) - var(--ow) - 10px);
+}
+.seas.battle.wide2 {
+  grid-template-areas: "own enemy" "fleets enemy";
+  grid-template-columns: var(--ow) var(--ew);
+  grid-template-rows: auto 1fr;
+  column-gap: 20px;
+}
+.seas.battle.wide3 { grid-template-areas: "own enemy fleets"; grid-template-columns: var(--ow) var(--ew) var(--fw); column-gap: 16px; }
+.seas.battle.wide .sea-own { align-self: start; }
+
+.sea { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.sea-head {
+  margin: 0;
+  height: 20px;
+  padding-left: var(--lab-pad, 0);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.sea-enemy .sea-head { color: var(--text); }
+
+/* ===================== Lưới ===================== */
+.grid {
+  --cell: 30px;
+  --lab: 15px;
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--lab) repeat(10, var(--cell));
+  grid-template-rows: var(--lab) repeat(10, var(--cell));
+  width: max-content;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+.grid:focus-visible { outline-offset: 4px; }
+/* Nền biển + khung */
+.grid::before {
+  content: "";
+  position: absolute;
+  left: var(--lab);
+  top: var(--lab);
+  width: calc(var(--cell) * 10);
+  height: calc(var(--cell) * 10);
+  border-radius: 6px;
+  background:
+    radial-gradient(120% 70% at 30% 0%, rgba(255, 255, 255, 0.28), transparent 60%),
+    linear-gradient(170deg, var(--sea-1), var(--sea-2));
+  box-shadow: 0 0 0 3px var(--frame), 0 8px 22px rgba(0, 0, 0, 0.2);
+}
+#grid-enemy::before { background: radial-gradient(120% 70% at 70% 0%, rgba(255, 255, 255, 0.2), transparent 60%), linear-gradient(170deg, var(--sea-e1), var(--sea-e2)); }
+.lab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: max(9px, calc(var(--lab) * 0.62));
+  font-weight: 700;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.grid.nolab .lab { visibility: hidden; overflow: hidden; font-size: 0; }
+.grid.nolab::before { box-shadow: 0 0 0 2px var(--frame), 0 6px 16px rgba(0, 0, 0, 0.18); }
+
+.layer { position: absolute; left: var(--lab); top: var(--lab); width: calc(var(--cell) * 10); height: calc(var(--cell) * 10); pointer-events: none; }
+.cell {
+  position: relative;
+  box-shadow: inset -1px -1px 0 var(--sea-line);
+}
+/* Ô hàng cuối / cột cuối không kẻ đường ra mép khung */
+.cell[data-i$="9"] { box-shadow: inset 0 -1px 0 var(--sea-line); }
+.cell[data-i^="9"]:not([data-i="9"]) { box-shadow: inset -1px 0 0 var(--sea-line); }
+.cell[data-i="99"] { box-shadow: none; }
+.cell::after { content: ""; position: absolute; pointer-events: none; }
+
+/* Dấu bắn */
+.cell.miss::after {
+  inset: 32%;
+  border-radius: 50%;
+  background: var(--miss);
+  box-shadow: 0 0 0 max(2px, calc(var(--cell) * 0.08)) var(--miss-ring);
+}
+.cell.empty::after { inset: 43%; border-radius: 50%; background: var(--empty-dot); }
+.cell.hit::after {
+  inset: 16%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 55%, var(--hit-core) 0 22%, #ff8a2a 40%, var(--hit) 66%);
+  box-shadow: 0 0 calc(var(--cell) * 0.25) rgba(255, 110, 40, 0.75);
+}
+.cell.hit.sunk::after { background: radial-gradient(circle at 50% 55%, #ffb36b 0 18%, #c2341f 50%, #6b1a10 70%); box-shadow: none; inset: 24%; }
+.cell.sunk { background: var(--sunk-cell); }
+.cell.last { box-shadow: inset 0 0 0 max(2px, calc(var(--cell) * 0.07)) var(--last); }
+.cell.fresh::after { animation: mark-in 0.32s 0.12s cubic-bezier(0.3, 1.6, 0.5, 1) backwards; }
+@keyframes mark-in { from { transform: scale(0); } }
+
+/* Lưới địch tới lượt bạn: con trỏ ngắm, ô chưa biết sáng lên khi rê chuột */
+.grid.aiming .cell.open { cursor: crosshair; }
+@media (hover: hover) {
+  .grid.aiming .cell.open:hover { background: rgba(255, 255, 255, 0.22); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.7); }
+}
+.grid.kb .cell.cursor { box-shadow: inset 0 0 0 3px var(--focus); background: rgba(255, 255, 255, 0.16); z-index: 1; }
+.grid.kb .cell.cursor.last { box-shadow: inset 0 0 0 3px var(--focus), inset 0 0 0 6px var(--last); }
+
+/* Xem trước khi kéo tàu */
+.cell.pv-ok { background: var(--ok); }
+.cell.pv-bad { background: var(--bad); }
+.grid.placing { touch-action: none; }
+
+/* ===================== Tàu ===================== */
+.ship { position: absolute; left: calc(var(--c) * var(--cell)); top: calc(var(--r) * var(--cell)); }
+.ship.h { width: calc(var(--len) * var(--cell)); height: var(--cell); }
+.ship.v { width: var(--cell); height: calc(var(--len) * var(--cell)); }
+.hull, .deck { position: absolute; display: block; }
+.ship.h .hull {
+  inset: 15% 4%;
+  clip-path: polygon(0 18%, 8% 0, calc(100% - var(--cell) * 0.55) 0, 100% 50%, calc(100% - var(--cell) * 0.55) 100%, 8% 100%, 0 82%);
+  background: linear-gradient(180deg, var(--hull-1), var(--hull-2) 70%, var(--hull-edge));
+}
+.ship.v .hull {
+  inset: 4% 15%;
+  clip-path: polygon(18% 100%, 0 calc(100% - 8%), 0 calc(var(--cell) * 0.55), 50% 0, 100% calc(var(--cell) * 0.55), 100% calc(100% - 8%), 82% 100%);
+  background: linear-gradient(90deg, var(--hull-1), var(--hull-2) 70%, var(--hull-edge));
+}
+/* Boong: tháp chỉ huy + các ụ pháo, lặp theo từng ô */
+.ship.h .deck {
+  inset: 36% calc(var(--cell) * 0.6) 36% calc(var(--cell) * 0.32);
+  border-radius: 3px;
+  background:
+    radial-gradient(circle at calc(var(--cell) * 0.5) 50%, var(--hull-edge) 0 calc(var(--cell) * 0.1), var(--deck) calc(var(--cell) * 0.11) calc(var(--cell) * 0.14), transparent calc(var(--cell) * 0.15)) 0 0 / var(--cell) 100% repeat-x;
+  opacity: 0.85;
+}
+.ship.v .deck {
+  inset: calc(var(--cell) * 0.6) 36% calc(var(--cell) * 0.32);
+  border-radius: 3px;
+  background:
+    radial-gradient(circle at 50% calc(var(--cell) * 0.5), var(--hull-edge) 0 calc(var(--cell) * 0.1), var(--deck) calc(var(--cell) * 0.11) calc(var(--cell) * 0.14), transparent calc(var(--cell) * 0.15)) 0 0 / 100% var(--cell) repeat-y;
+  opacity: 0.85;
+}
+/* Tàu sân bay: boong phẳng có vạch */
+.ship.len5.h .deck { inset: 30% calc(var(--cell) * 0.55) 30% calc(var(--cell) * 0.25); background: repeating-linear-gradient(90deg, var(--deck) 0 calc(var(--cell) * 0.35), transparent calc(var(--cell) * 0.35) calc(var(--cell) * 0.6)); opacity: 0.55; }
+.ship.len5.v .deck { inset: calc(var(--cell) * 0.55) 30% calc(var(--cell) * 0.25); background: repeating-linear-gradient(180deg, var(--deck) 0 calc(var(--cell) * 0.35), transparent calc(var(--cell) * 0.35) calc(var(--cell) * 0.6)); opacity: 0.55; }
+
+.ship.movable { pointer-events: auto; cursor: grab; touch-action: none; }
+.ship.sel { filter: drop-shadow(0 0 2px var(--last)) drop-shadow(0 0 4px var(--last)); }
+.ship.lifted { opacity: 0.3; }
+.ship.wreck .hull { background: linear-gradient(180deg, var(--wreck-1), var(--wreck-2)); }
+.ship.wreck.v .hull { background: linear-gradient(90deg, var(--wreck-1), var(--wreck-2)); }
+.ship.wreck .deck { opacity: 0.25; }
+.ship.reveal { opacity: 0.55; }
+.ship.ghost { position: fixed; left: 0; top: 0; z-index: 1500; pointer-events: none; opacity: 0.9; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35)); }
+.ship.ghost.bad .hull { background: linear-gradient(180deg, #f08a80, #b8382c); }
+
+/* ===================== Hoạt cảnh nước bắn ===================== */
+.boom { position: absolute; left: calc((var(--c) + 0.5) * var(--cell)); top: calc((var(--r) + 0.5) * var(--cell)); width: 0; height: 0; }
+.boom i, .boom b { position: absolute; left: 0; top: 0; border-radius: 50%; }
+/* Té nước: hai vòng sóng loang + giọt nước bắn lên */
+.boom.miss i {
+  width: var(--cell);
+  height: var(--cell);
+  margin: calc(var(--cell) * -0.5);
+  border: max(2px, calc(var(--cell) * 0.07)) solid rgba(255, 255, 255, 0.9);
+  animation: ring 0.8s ease-out both;
+}
+.boom.miss i:nth-child(2) { animation-delay: 0.14s; }
+.boom.miss i:nth-child(3) { animation-delay: 0.28s; }
+.boom b {
+  width: calc(var(--cell) * 0.16);
+  height: calc(var(--cell) * 0.16);
+  margin: calc(var(--cell) * -0.08);
+  background: #fff;
+  animation: drop 0.6s ease-out both;
+}
+.boom b:nth-of-type(1) { --dx: -0.55; --dy: -0.9; }
+.boom b:nth-of-type(2) { --dx: 0.5; --dy: -1; }
+.boom b:nth-of-type(3) { --dx: -0.15; --dy: -1.25; }
+.boom b:nth-of-type(4) { --dx: 0.85; --dy: -0.45; }
+.boom b:nth-of-type(5) { --dx: -0.9; --dy: -0.35; }
+.boom b:nth-of-type(6) { --dx: 0.2; --dy: -0.7; }
+@keyframes ring {
+  from { transform: scale(0.15); opacity: 1; }
+  to { transform: scale(1.7); opacity: 0; }
+}
+@keyframes drop {
+  from { transform: translate(0, 0) scale(1); opacity: 1; }
+  to { transform: translate(calc(var(--dx) * var(--cell)), calc(var(--dy) * var(--cell))) scale(0.4); opacity: 0; }
+}
+/* Trúng / chìm: quả cầu lửa + tia lửa */
+.boom.hit i, .boom.sunk i {
+  width: calc(var(--cell) * 1.3);
+  height: calc(var(--cell) * 1.3);
+  margin: calc(var(--cell) * -0.65);
+  background: radial-gradient(circle, #fff6c4 0 18%, #ffc23a 34%, #ff6a1f 56%, rgba(214, 40, 20, 0.6) 70%, transparent 72%);
+  animation: blast 0.6s ease-out both;
+}
+.boom.hit i:nth-child(n + 2), .boom.sunk i:nth-child(n + 2) { display: none; }
+.boom.sunk i { width: calc(var(--cell) * 2.2); height: calc(var(--cell) * 2.2); margin: calc(var(--cell) * -1.1); }
+.boom.hit b, .boom.sunk b { background: #ffb02e; box-shadow: 0 0 6px #ff7a1a; }
+@keyframes blast {
+  0% { transform: scale(0.2); opacity: 1; }
+  60% { opacity: 1; }
+  100% { transform: scale(1.25); opacity: 0; }
+}
+/* Hồng tâm máy đang ngắm (trên lưới của bạn) */
+.boom.aim i {
+  width: calc(var(--cell) * 1.1);
+  height: calc(var(--cell) * 1.1);
+  margin: calc(var(--cell) * -0.55);
+  border: 2px solid #ff3b30;
+  background:
+    linear-gradient(#ff3b30, #ff3b30) 50% 0 / 2px 28% no-repeat,
+    linear-gradient(#ff3b30, #ff3b30) 50% 100% / 2px 28% no-repeat,
+    linear-gradient(#ff3b30, #ff3b30) 0 50% / 28% 2px no-repeat,
+    linear-gradient(#ff3b30, #ff3b30) 100% 50% / 28% 2px no-repeat;
+  animation: aim 0.35s ease-out both;
+}
+@keyframes aim {
+  from { transform: scale(2.4) rotate(-45deg); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.grid.shake { animation: shake 0.4s ease-out; }
+@keyframes shake {
+  20% { transform: translate(-3px, 1px); }
+  40% { transform: translate(3px, -1px); }
+  60% { transform: translate(-2px, 0); }
+  80% { transform: translate(1px, 1px); }
+}
+
+/* ===================== Bảng tàu (trong trận) ===================== */
+.fleets { display: flex; flex-direction: column; gap: 8px; min-width: 0; align-self: start; padding-top: 24px; font-size: 0.78rem; }
+.seas.battle.wide2 .fleets { padding-top: 0; }
+.tally { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.tally div { background: var(--surface); border-radius: 10px; box-shadow: var(--shadow-sm); padding: 4px 6px; display: flex; flex-direction: column; min-width: 0; }
+.tally b { font-size: 1.05rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.tally span { font-size: 0.68rem; font-weight: 600; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.flist h3 { margin: 0 0 3px; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.flist ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.flist li { display: flex; align-items: center; gap: 7px; min-height: 16px; }
+.sbar {
+  flex: none;
+  width: calc(var(--len) * 9px);
+  margin-right: calc((5 - var(--len)) * 9px); /* tên tàu thẳng cột */
+  height: 9px;
+  border-radius: 2px 5px 5px 2px;
+  background: repeating-linear-gradient(90deg, var(--hull-2) 0 7.5px, transparent 7.5px 9px);
+}
+#list-enemy .sbar { background: repeating-linear-gradient(90deg, var(--frame) 0 7.5px, transparent 7.5px 9px); }
+.sname { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.flist li.down .sbar { background: repeating-linear-gradient(90deg, var(--hit) 0 7.5px, transparent 7.5px 9px); opacity: 0.6; }
+.flist li.down .sname { text-decoration: line-through; color: var(--muted); font-weight: 500; }
+
+/* Dọc hoặc thấp: bỏ danh sách tàu của mình (đã thấy trên lưới) cho vừa khung */
+.seas.tall .flist-own, .seas.short .flist-own { display: none; }
+
+/* ===================== Bảng xếp tàu ===================== */
+.setup { display: flex; flex-direction: column; gap: 8px; width: 100%; min-width: 0; }
+.setup-tip { margin: 0; font-size: 0.78rem; color: var(--muted); line-height: 1.4; text-align: center; }
+.seas.short .setup-tip { display: none; }
+.dock {
+  --cell: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 12px;
+  padding: 8px;
+  min-height: calc(var(--cell) * 2 + 22px);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  touch-action: none;
+}
+.dock-slot { position: relative; width: calc(var(--len) * var(--cell)); height: var(--cell); }
+.dock-slot.placed { border: 1.5px dashed var(--line); border-radius: 6px; }
+.level-seg button { min-height: 36px; }
+.setup-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.setup-actions .btn { padding: 0 6px; font-size: 0.85rem; min-height: 40px; gap: 4px; }
+.setup-actions .icon { width: 18px; height: 18px; }
+.btn-start { min-height: 46px; font-size: 1rem; }
+
+/* ===================== Hộp thoại ===================== */
+.result-card { text-align: center; align-items: center; }
+.result-card .modal-actions { width: 100%; }
+.result-art { position: relative; width: 140px; height: 36px; margin: 4px auto 0; }
+.result-art .ship { --cell: 35px; }
+.result-art.win .ship { filter: drop-shadow(0 0 6px var(--last)); }
+
+.help-card { gap: 12px; }
+.rules { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; color: var(--muted); line-height: 1.45; font-size: 0.9rem; }
+.rules b, .help-card .modal-text b { color: var(--text); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 0.82rem; color: var(--muted); font-weight: 600; }
+.legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.lg { --cell: 22px; position: relative; display: inline-block; width: 22px; height: 22px; border-radius: 5px; background: linear-gradient(170deg, var(--sea-1), var(--sea-2)); }
+.lg::after { content: ""; position: absolute; border-radius: 50%; }
+.lg-miss::after { inset: 32%; background: var(--miss); box-shadow: 0 0 0 2px var(--miss-ring); }
+.lg-hit::after { inset: 16%; background: radial-gradient(circle at 50% 55%, var(--hit-core) 0 22%, #ff8a2a 40%, var(--hit) 66%); }
+.lg-empty::after { inset: 41%; background: var(--empty-dot); }
+
+.stats-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.stats-table th, .stats-table td { padding: 6px 4px; text-align: center; border-bottom: 1px solid var(--line); }
+.stats-table thead th { font-size: 0.75rem; color: var(--muted); font-weight: 700; }
+.stats-table tbody th { text-align: left; font-weight: 700; }
+
+/* ===================== Màn hình thấp ===================== */
+@media (max-height: 560px) {
+  .status { min-height: 38px; padding: 3px 10px; }
+  .status-event { font-size: 0.72rem; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .status[data-mode="ai"] .status-dot { animation: none; }
+  .cell.fresh::after, .grid.shake { animation: none; }
+  .boom { display: none; }
+}
