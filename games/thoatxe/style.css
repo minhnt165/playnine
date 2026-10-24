@@ -1,0 +1,306 @@
+/* =====================================================================
+ * Thoát Xe - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bãi đỗ: khung tím than, nền ô nhạt có vạch ô, khe cửa ra ở mép phải hàng 2 (mũi tên đỏ)
+ *   - Xe: phần tử .car đặt bằng transform theo --cell (px, app.js tính theo khung), hình xe là SVG tự vẽ
+ *   - Màn hình ngang thấp (điện thoại xoay ngang): cột trái thanh trên + số liệu + nút, bãi đỗ bên phải
+ * ===================================================================== */
+:root {
+  --lot-frame: #4a4f73;
+  --lot-frame-hi: #5b6189;
+  --lot-bg: #e2e5f3;
+  --lot-line: rgba(30, 35, 70, 0.1);
+  --lane: rgba(229, 56, 59, 0.14);
+  --chev: #e5383b;
+  --star: #f2a900;
+  --star-off: rgba(30, 35, 70, 0.16);
+  --slide: 130ms;
+  --cell: 56px;
+  --pad: 16px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --lot-frame: #262a4a;
+    --lot-frame-hi: #323762;
+    --lot-bg: #151a33;
+    --lot-line: rgba(255, 255, 255, 0.06);
+    --lane: rgba(248, 113, 113, 0.13);
+    --chev: #f87171;
+    --star: #fbbf24;
+    --star-off: rgba(255, 255, 255, 0.14);
+  }
+}
+:root[data-theme="dark"] {
+  --lot-frame: #262a4a;
+  --lot-frame-hi: #323762;
+  --lot-bg: #151a33;
+  --lot-line: rgba(255, 255, 255, 0.06);
+  --lane: rgba(248, 113, 113, 0.13);
+  --chev: #f87171;
+  --star: #fbbf24;
+  --star-off: rgba(255, 255, 255, 0.14);
+}
+
+/* ===================== Số liệu ===================== */
+.hud-level { text-align: left; color: var(--text); cursor: pointer; transition: background 0.15s; }
+.hud-level .hud-label { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hud-level .hud-value { display: flex; align-items: center; }
+.hud-value small { font-size: 0.8rem; font-weight: 700; color: var(--muted); margin-left: 1px; }
+.hud-caret { width: 18px; height: 18px; fill: var(--muted); margin-left: auto; flex: none; }
+.hud-best { display: flex; align-items: baseline; gap: 4px; }
+.hud-best .mini-stars { font-size: 0.72rem; letter-spacing: -1px; color: var(--star); }
+@media (hover: hover) {
+  .hud-level:hover { background: var(--surface-2); }
+}
+
+/* ===================== Bãi đỗ ===================== */
+.stage { touch-action: none; user-select: none; -webkit-user-select: none; overflow: hidden; }
+.lot {
+  position: relative;
+  padding: var(--pad);
+  background: linear-gradient(160deg, var(--lot-frame-hi), var(--lot-frame));
+  border-radius: calc(var(--pad) * 1.1);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.lot-grid {
+  position: relative;
+  width: calc(var(--cell) * 6);
+  height: calc(var(--cell) * 6);
+  border-radius: calc(var(--cell) * 0.14);
+  background-color: var(--lot-bg);
+  background-image:
+    linear-gradient(var(--lot-line) 2px, transparent 2px),
+    linear-gradient(90deg, var(--lot-line) 2px, transparent 2px);
+  background-size: var(--cell) var(--cell);
+  background-position: -1px -1px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+/* Làn thoát: dải đỏ nhạt dọc hàng 2 dẫn ra cửa */
+.lane {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--cell) * 2);
+  height: var(--cell);
+  background: linear-gradient(90deg, transparent, var(--lane));
+  pointer-events: none;
+}
+/* Khe cửa ra: phủ lên khung ở mép phải hàng 2, cùng màu nền bãi để thấy khung bị hở */
+.exit {
+  position: absolute;
+  right: 0;
+  top: calc(var(--pad) + var(--cell) * 2);
+  width: calc(var(--pad) + 2px);
+  height: var(--cell);
+  background: linear-gradient(90deg, var(--lot-bg), var(--lane)), var(--lot-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  pointer-events: none;
+}
+.exit span {
+  width: calc(var(--pad) * 0.4);
+  height: calc(var(--pad) * 0.4);
+  margin-left: calc(var(--pad) * -0.12);
+  border-top: 3px solid var(--chev);
+  border-right: 3px solid var(--chev);
+  transform: rotate(45deg);
+  animation: exit-blink 1.6s ease-in-out infinite;
+}
+.exit span:nth-child(2) { animation-delay: 0.2s; }
+@keyframes exit-blink { 50% { opacity: 0.35; } }
+
+.cars { position: absolute; inset: 0; }
+.car {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--cell) * var(--w));
+  height: calc(var(--cell) * var(--h));
+  border-radius: calc(var(--cell) * 0.2);
+  transition: transform var(--slide) ease-out;
+  cursor: grab;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.car svg { width: 100%; height: 100%; display: block; overflow: visible; pointer-events: none; }
+.car.drag { transition: none; cursor: grabbing; z-index: 3; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.28)); }
+.car:focus { outline: none; }
+.car.sel::after,
+.car:focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  box-shadow: 0 0 0 3px var(--focus);
+  pointer-events: none;
+}
+.car.hinted::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  box-shadow: 0 0 0 3px var(--star), 0 0 16px 4px var(--star);
+  animation: hint-glow 1.2s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes hint-glow { to { box-shadow: 0 0 0 3px transparent, 0 0 16px 4px transparent; } }
+.car.bump { animation: car-bump 0.2s ease-out; }
+@keyframes car-bump { 40% { filter: brightness(1.25); } }
+/* Xe đỏ chạy ra cửa khi thắng (giảm chuyển động: đứng yên ở cửa) */
+.car.leave { transition: transform 0.55s cubic-bezier(0.5, 0, 0.9, 0.6), opacity 0.55s ease-in; opacity: 0; }
+.no-anim .car { transition: none; }
+
+/* Hình xe trong SVG */
+.car-shadow { fill: rgba(0, 0, 0, 0.28); }
+.car-body { stroke: rgba(0, 0, 0, 0.28); stroke-width: 2.5; }
+.car-roof { fill: rgba(0, 0, 0, 0.2); }
+.car-glass { fill: #d8ecff; opacity: 0.92; }
+.car-light { fill: #fff3b0; }
+.car-tail { fill: #c81e28; }
+.car-pat { fill: rgba(255, 255, 255, 0.5); }
+.car-pat-dark { fill: rgba(0, 0, 0, 0.22); }
+.car-zig { fill: none; stroke: rgba(255, 255, 255, 0.55); stroke-width: 6; stroke-linejoin: round; }
+.car-rib { stroke: rgba(0, 0, 0, 0.16); stroke-width: 3; }
+.car-arrow { fill: #ffffff; opacity: 0.9; }
+
+/* ===================== Nút công cụ ===================== */
+.tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; flex: none; }
+.tools .btn { min-height: 46px; padding: 0 8px; background: var(--surface); box-shadow: var(--shadow-sm); white-space: nowrap; min-width: 0; }
+.tools .btn span { overflow: hidden; text-overflow: ellipsis; }
+@media (hover: hover) {
+  .tools .btn:not(:disabled):hover { background: var(--surface-2); }
+}
+@media (max-width: 480px) {
+  .tools { gap: 6px; }
+  .tools .btn { flex-direction: column; gap: 2px; min-height: 54px; font-size: 0.74rem; padding: 4px 2px; }
+  .tools .btn .icon { width: 20px; height: 20px; }
+}
+
+/* Thông báo nhanh nằm trên hàng nút công cụ và không chặn chạm (bấm Chơi lại lần hai) */
+.toast { pointer-events: none; bottom: calc(108px + env(safe-area-inset-bottom)); width: max-content; }
+
+/* ===================== Hộp thoại thắng ===================== */
+.win-stars { display: flex; justify-content: center; gap: 6px; font-size: 2.6rem; line-height: 1; }
+.win-stars span { color: var(--star-off); }
+.win-stars span.on { color: var(--star); animation: star-pop 0.4s ease-out backwards; }
+.win-stars span.on:nth-child(2) { animation-delay: 0.12s; }
+.win-stars span.on:nth-child(3) { animation-delay: 0.24s; }
+@keyframes star-pop { from { transform: scale(0.3); opacity: 0; } 70% { transform: scale(1.2); } }
+.win-result { color: var(--text); font-size: 1.1rem; font-weight: 700; text-align: center; }
+.win-note { text-align: center; color: var(--accent); font-weight: 700; }
+#modal-win h2 { text-align: center; }
+#modal-win .modal-actions .btn { padding: 0 8px; }
+#modal-win .btn-primary { flex: 1.4; }
+
+/* ===================== Cách chơi ===================== */
+.help-legend { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+.legend-lot {
+  --cell: 30px;
+  position: relative;
+  flex: none;
+  width: 120px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--lot-bg);
+  border: 3px solid var(--lot-frame);
+  border-right-color: transparent;
+}
+.legend-lot .car { cursor: default; top: 0; left: 0; }
+.legend-lot .exit-mini { position: absolute; right: 6px; top: 50%; display: flex; gap: 1px; transform: translateY(-50%); }
+.legend-lot .exit-mini span { width: 7px; height: 7px; border-top: 3px solid var(--chev); border-right: 3px solid var(--chev); transform: rotate(45deg); }
+
+/* ===================== Chọn bàn ===================== */
+#modal-levels .modal-card { max-width: 520px; gap: 12px; }
+.level-tabs button { padding: 0 4px; }
+.board-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; }
+.board-btn {
+  height: 46px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  border: 2px solid transparent;
+  padding: 0;
+}
+.board-num { font-size: 0.98rem; }
+.board-stars { font-size: 0.56rem; letter-spacing: -0.5px; color: var(--star-off); }
+.board-stars b { color: var(--star); font-weight: 400; }
+.board-btn.solved { background: var(--accent-soft); color: var(--accent); }
+.board-btn.current { border-color: var(--accent); }
+.board-btn:disabled { opacity: 0.45; }
+.board-lock { width: 15px; height: 15px; fill: var(--muted); }
+.levels-note { font-size: 0.8rem; }
+@media (hover: hover) {
+  .board-btn:not(:disabled):hover { background: var(--accent-soft); }
+}
+.daily-card { display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 14px; background: var(--surface-2); }
+.daily-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.daily-head b { font-size: 1.15rem; }
+.daily-head span { color: var(--muted); font-size: 0.85rem; font-weight: 600; }
+.daily-status { color: var(--text); font-weight: 700; }
+.daily-status .mini-stars { color: var(--star); }
+
+/* ===================== Thống kê ===================== */
+.level-bars { display: flex; flex-direction: column; gap: 8px; }
+.level-bar { display: grid; grid-template-columns: 70px 1fr auto; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: 600; }
+.level-bar .bar { height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+.level-bar .bar i { display: block; height: 100%; background: var(--accent); border-radius: inherit; }
+.level-bar span:last-child { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* ===================== Màn hình hẹp ===================== */
+@media (max-width: 520px) {
+  .board-grid { grid-template-columns: repeat(6, 1fr); }
+  .board-btn { height: 44px; }
+}
+@media (max-width: 420px) {
+  .hud { gap: 6px; }
+  .hud-box { padding: 6px 8px 7px; }
+  .hud-value { font-size: 1.2rem; }
+  .hud-label { font-size: 0.62rem; letter-spacing: 0.04em; }
+}
+
+/* ===================== Điện thoại xoay ngang ===================== */
+@media (orientation: landscape) and (max-height: 560px) {
+  .app {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(230px, 290px) 1fr;
+    grid-template-rows: auto auto auto 1fr;
+    grid-template-areas: "top stage" "hud stage" "tools stage" ". stage";
+    column-gap: 14px;
+    row-gap: 8px;
+  }
+  .topbar { grid-area: top; }
+  .hud { grid-area: hud; grid-auto-flow: row; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .hud-level { grid-column: 1 / -1; }
+  .tools { grid-area: tools; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .tools .btn { min-height: 40px; flex-direction: row; font-size: 0.85rem; justify-content: flex-start; padding: 0 10px; }
+  .stage { grid-area: stage; }
+  .toast { bottom: calc(24px + env(safe-area-inset-bottom)); left: auto; right: 24px; transform: none; }
+  .brand-mark { width: 30px; height: 30px; }
+  .btn-icon { width: 38px; height: 38px; }
+  .logo { font-size: 1.1rem; }
+  /* Chọn bàn: 15 cột × 4 hàng để cả bảng vừa chiều cao thấp */
+  #modal-levels .modal-card { max-width: 680px; padding: 14px 18px; gap: 10px; }
+  #modal-levels .segmented button { min-height: 34px; }
+  #modal-levels .modal-actions .btn { min-height: 36px; }
+  #levels-note { display: none; }
+  .board-grid { grid-template-columns: repeat(15, 1fr); gap: 5px; }
+  .board-btn { height: 38px; }
+  .board-num { font-size: 0.88rem; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .car, .car.leave, .hud-level { transition: none; }
+  .car.leave { opacity: 1; }
+  .exit span, .car.hinted::after, .car.bump, .win-stars span.on { animation: none; }
+  .car.hinted::after { box-shadow: 0 0 0 3px var(--star); }
+}

@@ -1,0 +1,50 @@
+{
+  "id": "phongkhong",
+  "cat": "arcade",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Missile Defense",
+    "vi": "Phòng Không"
+  },
+  "sub": {
+    "en": "Arcade defense",
+    "vi": "Missile Defense"
+  },
+  "desc": {
+    "en": "Protect six cities from falling missiles. Tap the sky ahead of them: your interceptor bursts into a blast that sets off chain reactions.",
+    "vi": "Bảo vệ sáu thành phố trước tên lửa đang rơi. Chạm lên trời đón đầu chúng: đạn chặn nổ thành quả cầu gây nổ dây chuyền."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "High score"],
+    "vi": ["Phản xạ", "1 người", "Kỷ lục"]
+  },
+  "note": {
+    "en": "Chain blasts down whole salvos",
+    "vi": "Nổ dây chuyền hạ cả loạt tên lửa"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 90% at 50% 100%, rgba(124, 92, 255, .35), transparent 60%), linear-gradient(180deg, #05061a, #1a1145)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 360
+        },
+        "points": 5
+      }
+    ]
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "id": "ghephinh",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Jigsaw",
+    "vi": "Ghép Hình"
+  },
+  "sub": {
+    "en": "Classic jigsaw puzzle",
+    "vi": "Jigsaw"
+  },
+  "desc": {
+    "en": "Drag real tab-and-blank pieces onto the board to rebuild a picture: a mountain lake, a night city, a coral reef and more, all drawn fresh by code. Pieces that fit together join up and move as one.",
+    "vi": "Kéo những mảnh có tai, có lõm như thật lên bàn để ghép lại bức tranh: hồ núi, phố đêm, rạn san hô và nhiều cảnh khác, tất cả vẽ mới bằng code. Mảnh khớp nhau tự dính lại và đi cùng nhau."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "3 sizes", "Daily puzzle"],
+    "vi": ["Giải đố", "1 người", "3 cỡ", "Đề hằng ngày"]
+  },
+  "note": {
+    "en": "16, 36 or 64 pieces, ten pictures",
+    "vi": "16, 36 hoặc 64 mảnh, mười bức tranh"
+  },
+  "daily": {
+    "en": "One shared picture for everyone",
+    "vi": "Một bức tranh chung cho mọi người"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(251, 146, 60, .3), transparent 60%), linear-gradient(160deg, #3a2347, #140c1d)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 5,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "16 pieces · Easy",
+          "vi": "16 mảnh · Dễ"
+        },
+        "rules": {
+          "min_time_ms": 6400
+        },
+        "points": 3
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "36 pieces · Medium",
+          "vi": "36 mảnh · Vừa"
+        },
+        "rules": {
+          "min_time_ms": 14400
+        },
+        "points": 5
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "64 pieces · Hard",
+          "vi": "64 mảnh · Khó"
+        },
+        "rules": {
+          "min_time_ms": 25600
+        },
+        "points": 8
+      },
+      {
+        "key": "daily",
+        "label": {
+          "en": "Daily",
+          "vi": "Hằng ngày"
+        },
+        "rules": {
+          "min_time_ms": 14400
+        },
+        "points": 5
+      }
+    ]
+  }
+}

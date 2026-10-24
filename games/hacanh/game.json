@@ -1,0 +1,50 @@
+{
+  "id": "hacanh",
+  "cat": "arcade",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Lunar Lander",
+    "vi": "Hạ Cánh"
+  },
+  "sub": {
+    "en": "Gentle touchdown",
+    "vi": "Lunar Lander"
+  },
+  "desc": {
+    "en": "Fight gravity and wind with a single engine and set the lander down gently on a flat pad. Narrow pads pay up to ×5, but fuel is running low.",
+    "vi": "Chống lại trọng lực và gió bằng một động cơ duy nhất, đặt tàu đổ bộ thật êm xuống bãi phẳng. Bãi càng hẹp điểm càng cao tới ×5, nhưng nhiên liệu có hạn."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "High score"],
+    "vi": ["Phản xạ", "1 người", "Kỷ lục"]
+  },
+  "note": {
+    "en": "Narrow pads score up to ×5",
+    "vi": "Bãi càng hẹp điểm càng cao"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 90% at 50% 0%, rgba(125, 249, 255, .18), transparent 60%), linear-gradient(170deg, #0d1030, #05060f 70%)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 75
+        },
+        "points": 5
+      }
+    ]
+  }
+}

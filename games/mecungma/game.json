@@ -1,0 +1,50 @@
+{
+  "id": "mecungma",
+  "cat": "arcade",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Ghost Maze",
+    "vi": "Mê Cung Ma"
+  },
+  "sub": {
+    "en": "Maze chase",
+    "vi": "Ghost Maze"
+  },
+  "desc": {
+    "en": "Guide a little firefly through haunted mazes, eat every light and dodge four ghosts with their own tricks. Grab a big orb to turn the tables and eat them.",
+    "vi": "Dẫn chú đom đóm đi khắp mê cung có ma, ăn hết đốm sáng và né bốn con ma mỗi con một kiểu. Ăn đốm lớn để lật ngược thế cờ và ăn luôn ma."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "High score"],
+    "vi": ["Phản xạ", "1 người", "Kỷ lục"]
+  },
+  "note": {
+    "en": "Clear the maze, eat the ghosts, chase a new record",
+    "vi": "Dọn sạch mê cung, ăn ma, lập kỷ lục mới"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(139, 108, 255, .32), transparent 60%), linear-gradient(160deg, #1a1840, #0a0b1a)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 500
+        },
+        "points": 5
+      }
+    ]
+  }
+}

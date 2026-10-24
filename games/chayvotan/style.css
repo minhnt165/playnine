@@ -1,0 +1,273 @@
+/* =====================================================================
+ * Chạy Vô Tận - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bảng màu bầu trời / núi / đồi / cây / mặt đất / chướng ngại cho canvas là token CSS (--sky-top…):
+ *     app.js đọc lại khi đổi giao diện. Sáng = ban ngày, tối = ban đêm (trăng, sao)
+ *   - Bàn chơi tự co theo khung (app.js đặt kích thước .board), lớp phủ bắt đầu / tạm dừng / hết ván nằm trên .stage
+ * ===================================================================== */
+:root {
+  --app-max: 1080px;
+  /* Ban ngày */
+  --sky-top: #6cbcf0;
+  --sky-bottom: #ffe6c2;
+  --sun: #ffd76a;
+  --night: 0;
+  --cloud: rgba(255, 255, 255, 0.9);
+  --mount: #b7c9e6;
+  --mount-snow: #f4f8ff;
+  --hill: #8cc79b;
+  --tree: #5aa56f;
+  --tree-dark: #3f8556;
+  --grass: #7ccf5d;
+  --grass-dark: #5aa640;
+  --soil: #c99a62;
+  --soil-dark: #a97a46;
+  --pit: #3a2a1f;
+  --post: #d4553b;
+  --post-light: #ffffff;
+  --post-dark: #9b3524;
+  --flyer: #6d5ce8;
+  --flyer-wing: #a79bff;
+  --coin: #ffc93c;
+  --coin-dark: #d99a12;
+  --runner: #ff7a45;
+  --runner-dark: #d9542a;
+  --skin: #ffd2a8;
+}
+
+/* Ban đêm: theo hệ thống (trừ khi chọn Sáng) hoặc khi chọn Tối */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sky-top: #070b24;
+    --sky-bottom: #2b2d68;
+    --sun: #f2efd2;
+    --night: 1;
+    --cloud: rgba(130, 140, 200, 0.28);
+    --mount: #2a3266;
+    --mount-snow: #4b5594;
+    --hill: #1f2a52;
+    --tree: #18223f;
+    --tree-dark: #111830;
+    --grass: #2f7a55;
+    --grass-dark: #225c40;
+    --soil: #4a3a2e;
+    --soil-dark: #3a2d23;
+    --pit: #0b0814;
+    --post: #e4664a;
+    --post-light: #ffe9df;
+    --post-dark: #9b3524;
+    --flyer: #9b8cff;
+    --flyer-wing: #cfc7ff;
+  }
+}
+:root[data-theme="dark"] {
+  --sky-top: #070b24;
+  --sky-bottom: #2b2d68;
+  --sun: #f2efd2;
+  --night: 1;
+  --cloud: rgba(130, 140, 200, 0.28);
+  --mount: #2a3266;
+  --mount-snow: #4b5594;
+  --hill: #1f2a52;
+  --tree: #18223f;
+  --tree-dark: #111830;
+  --grass: #2f7a55;
+  --grass-dark: #225c40;
+  --soil: #4a3a2e;
+  --soil-dark: #3a2d23;
+  --pit: #0b0814;
+  --post: #e4664a;
+  --post-light: #ffe9df;
+  --post-dark: #9b3524;
+  --flyer: #9b8cff;
+  --flyer-wing: #cfc7ff;
+}
+
+/* ===================== HUD ===================== */
+.hud { grid-template-columns: 1fr 1fr 1fr auto; align-items: stretch; }
+.btn-pause { width: 52px; height: auto; min-height: 42px; }
+.btn-pause .icon-play { display: none; }
+.btn-pause[data-state="paused"] .icon-pause { display: none; }
+.btn-pause[data-state="paused"] .icon-play { display: block; }
+.hud-value { transform-origin: left center; display: flex; align-items: center; gap: 6px; }
+.hud-value.pop { animation: score-pop 0.22s ease-out; }
+@keyframes score-pop { 40% { transform: scale(1.15); } }
+.coin-dot {
+  width: 0.8em;
+  height: 0.8em;
+  flex: none;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff3b8, var(--coin) 55%, var(--coin-dark));
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* ===================== Bàn chơi ===================== */
+.stage { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.board {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  background: var(--sky-bottom);
+  /* kích thước thật do app.js đặt theo khung; đây là giá trị tạm trước khi script chạy */
+  width: 100%;
+  height: 100%;
+}
+.board canvas { display: block; width: 100%; height: 100%; cursor: pointer; }
+/* Canvas chỉ nhận focus để bắt phím khi chơi: không vẽ viền focus đè lên khung cảnh */
+.board canvas:focus-visible { outline: none; }
+
+.ready-hint {
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  max-width: 90%;
+  padding: 8px 14px;
+  border-radius: 14px;
+  background: rgba(10, 14, 36, 0.58);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+  pointer-events: none;
+  animation: hint-bob 1.1s ease-in-out infinite;
+}
+.ready-hint kbd { background: rgba(255, 255, 255, 0.15); color: #fff; border-color: rgba(255, 255, 255, 0.3); }
+.ready-icon { width: 24px; height: 24px; fill: #ffd34d; }
+@keyframes hint-bob { 50% { transform: translate(-50%, -5px); } }
+
+/* Nhãn vùng chạm (chỉ điện thoại / máy tính bảng): nửa trái trượt, nửa phải nhảy */
+.pads {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  justify-content: space-between;
+  gap: 10px;
+  pointer-events: none;
+  z-index: 2;
+}
+.pad {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  font-weight: 800;
+  font-size: 0.9rem;
+  transition: background 0.08s, transform 0.08s;
+}
+.pad svg { width: 22px; height: 22px; fill: currentColor; }
+.pad.on { background: var(--accent); color: var(--accent-text); transform: scale(0.96); }
+@media (hover: none) and (pointer: coarse) {
+  .pads { display: flex; }
+}
+/* Màn dọc: bàn chơi sát trên, khoảng trống bên dưới dành cho nhãn vùng chạm */
+@media (max-aspect-ratio: 3/4) {
+  .stage { align-items: flex-start; }
+}
+
+/* ===================== Lớp phủ ===================== */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: rgba(8, 12, 32, 0.3);
+  border-radius: var(--radius);
+  animation: kit-fade-in 0.2s ease;
+}
+.overlay-card {
+  width: min(100%, 380px);
+  max-height: 100%;
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: 18px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  text-align: center;
+}
+.overlay-title { margin: 0; font-size: 1.45rem; font-weight: 800; line-height: 1.3; }
+.overlay-sub { margin: 0; color: var(--muted); line-height: 1.45; font-size: 0.92rem; }
+.overlay-hint { margin: 0; color: var(--muted); font-size: 0.78rem; line-height: 1.6; }
+.overlay-actions { display: flex; gap: 10px; }
+.overlay-actions .btn { flex: 1; }
+.btn-wide { width: 100%; min-height: 48px; font-size: 1.05rem; }
+
+/* Chú giải chướng ngại ở màn chờ */
+.legend { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; text-align: left; font-size: 0.84rem; color: var(--muted); }
+.legend li { display: flex; align-items: center; gap: 8px; min-width: 0; line-height: 1.3; }
+.lg { flex: none; width: 22px; height: 22px; display: block; position: relative; }
+.lg-post { background: linear-gradient(var(--post) 0 30%, var(--post-light) 30% 50%, var(--post) 50%); width: 12px; margin: 0 5px; border-radius: 3px 3px 1px 1px; }
+.lg-pit { background: linear-gradient(90deg, var(--grass) 0 25%, var(--pit) 25% 75%, var(--grass) 75%); height: 10px; margin: 6px 0; border-radius: 2px; }
+.lg-flyer { background: var(--flyer); border-radius: 50%; width: 16px; height: 12px; margin: 5px 3px; box-shadow: -7px -3px 0 -2px var(--flyer-wing), 7px -3px 0 -2px var(--flyer-wing); }
+.lg-coin { border-radius: 50%; width: 16px; height: 16px; margin: 3px; background: radial-gradient(circle at 35% 30%, #fff3b8, var(--coin) 55%, var(--coin-dark)); }
+
+/* Kết quả */
+.final-score { display: flex; flex-direction: column; align-items: center; gap: 0; }
+.final-score span { font-size: 0.75rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+.final-score b { font-size: 2.6rem; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--accent); }
+.result-grid { margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.result-grid div { background: var(--surface-2); border-radius: 12px; padding: 6px 8px; min-width: 0; }
+.result-grid dt { font-size: 0.68rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.result-grid dd { margin: 0; font-size: 1.2rem; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.over-new { margin: 0; color: var(--accent); font-weight: 800; }
+.modal-card .modal-text + .modal-text { margin-top: -4px; }
+.modal-text.help-touch { display: none; }
+@media (hover: none) and (pointer: coarse) {
+  .modal-text.help-keys { display: none; }
+  .modal-text.help-touch { display: block; }
+}
+
+/* ===================== Màn hình hẹp / thấp ===================== */
+@media (max-width: 420px) {
+  .overlay-card { padding: 16px 14px 12px; gap: 8px; }
+  .overlay-title { font-size: 1.3rem; }
+  .hud { gap: 6px; }
+  .hud-box { padding: 6px 8px 7px; }
+  .hud-value { font-size: 1.2rem; gap: 4px; }
+  .btn-pause { width: 46px; }
+}
+/* Ngang, thấp (điện thoại xoay ngang): HUD thành cột bên phải để bàn chơi cao hơn */
+@media (max-height: 520px) and (min-aspect-ratio: 1/1) {
+  .app {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .topbar { grid-column: 1 / -1; }
+  .stage { grid-column: 1; grid-row: 2; }
+  .hud { grid-column: 2; grid-row: 2; grid-auto-flow: row; grid-template-columns: 1fr; grid-template-rows: auto auto auto auto; align-content: start; }
+  .btn-pause { width: 100%; }
+  .help { display: none; }
+  .overlay-card { padding: 12px 14px 10px; gap: 6px; width: min(100%, 440px); }
+  .overlay-title { font-size: 1.15rem; }
+  .overlay-sub { font-size: 0.85rem; }
+  .overlay-hint, .legend { display: none; }
+  .final-score b { font-size: 1.9rem; }
+  .result-grid dd { font-size: 1.05rem; }
+  .btn-wide { min-height: 42px; }
+  .pad { padding: 6px 12px; opacity: 0.85; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .ready-hint, .overlay, .hud-value.pop { animation: none; }
+  .pad { transition: none; }
+}

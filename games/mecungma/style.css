@@ -1,0 +1,187 @@
+/* =====================================================================
+ * Mê Cung Ma - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   Bàn chơi là một <canvas> lấp đầy .board; lớp phủ (bắt đầu / tạm dừng / hết ván) nằm trên canvas;
+ *   phím điều hướng trên màn hình (.dpad) nằm dưới bàn chơi (màn ngang thấp: bên phải).
+ * ===================================================================== */
+:root {
+  --overlay-bg: rgba(243, 244, 251, 0.8);
+  --board-bg: #fbfaff;
+  --dpad-bg: #ffffff;
+  --dpad-ink: #4b30c9;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --overlay-bg: rgba(9, 11, 20, 0.76);
+    --board-bg: #0a0b1a;
+    --dpad-bg: #1a1e33;
+    --dpad-ink: #c9bcff;
+  }
+}
+:root[data-theme="dark"] {
+  --overlay-bg: rgba(9, 11, 20, 0.76);
+  --board-bg: #0a0b1a;
+  --dpad-bg: #1a1e33;
+  --dpad-ink: #c9bcff;
+}
+
+/* Vuốt ở bất kỳ đâu trong khung game để đổi hướng: chặn cuộn / kéo-để-tải-lại của trình duyệt */
+.app { touch-action: none; user-select: none; -webkit-user-select: none; }
+
+.hud-small { flex: none; }
+.hud-lives { display: flex; align-items: center; gap: 2px; min-height: 1.15em; }
+.hud-lives svg { width: 18px; height: 18px; flex: none; }
+
+.stage { flex-direction: column; align-items: stretch; gap: 10px; }
+.board {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--board-bg);
+  box-shadow: var(--shadow-sm);
+}
+.board canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  -webkit-touch-callout: none;
+}
+.board-pause {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+}
+
+/* ---------------- Phím điều hướng ảo ---------------- */
+.dpad {
+  flex: none;
+  align-self: center;
+  display: grid;
+  grid-template-columns: repeat(3, 64px);
+  grid-template-rows: repeat(3, 54px);
+  gap: 4px;
+  grid-template-areas: ". up ." "left . right" ". down .";
+}
+.dpad-btn {
+  border-radius: 14px;
+  background: var(--dpad-bg);
+  color: var(--dpad-ink);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.08s, background 0.08s;
+}
+.dpad-btn svg { width: 26px; height: 26px; fill: currentColor; }
+.dpad-btn.on, .dpad-btn:active { transform: scale(0.94); background: var(--accent-soft); }
+.dpad-up { grid-area: up; }
+.dpad-left { grid-area: left; }
+.dpad-right { grid-area: right; }
+.dpad-down { grid-area: down; }
+
+/* ---------------- Lớp phủ trên bàn chơi ---------------- */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--overlay-bg);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.overlay-card {
+  width: 100%;
+  max-width: 340px;
+  max-height: 100%;
+  overflow: auto;
+  text-align: center;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 18px 18px;
+  animation: mcm-card-in 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+.overlay-title { margin: 0; font-size: 1.6rem; font-weight: 800; line-height: 1.3; }
+.overlay-sub { margin: 6px 0 14px; color: var(--muted); line-height: 1.45; font-size: 0.95rem; }
+.overlay-hint { margin: 10px 0 0; font-size: 0.78rem; color: var(--muted); }
+.btn-wide { width: 100%; min-height: 48px; font-size: 1.05rem; }
+.btn-wide .icon { width: 20px; height: 20px; }
+
+.guide {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  text-align: left;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+.guide li { display: flex; align-items: center; gap: 10px; }
+.guide-ico { width: 24px; height: 24px; flex: none; color: var(--accent); }
+
+.over-score { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 0 12px; }
+.over-score div { background: var(--surface-2); border-radius: 12px; padding: 8px 10px; display: flex; flex-direction: column; }
+.over-score div:first-child { background: var(--accent-soft); }
+.over-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.over-score b { font-size: 1.9rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.over-record { margin: -2px 0 12px; font-weight: 800; color: var(--accent); animation: mcm-pop 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.6) 0.2s both; }
+
+.help-body { color: var(--muted); line-height: 1.5; font-size: 0.93rem; }
+.help-body p { margin: 0 0 8px; }
+.help-body ul { margin: 0 0 8px; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.help-body b { color: var(--text); }
+.ghost-dot { display: inline-block; width: 0.7em; height: 0.7em; border-radius: 50% 50% 40% 40%; margin-right: 4px; vertical-align: -0.02em; }
+
+@keyframes mcm-card-in { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: none; } }
+@keyframes mcm-pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+
+/* Điện thoại hẹp: HUD 4 ô gọn lại */
+@media (max-width: 420px) {
+  .hud { gap: 6px; }
+  .hud-box { padding: 6px 8px 7px; }
+  .hud-value { font-size: 1.15rem; }
+  .hud-label { font-size: 0.62rem; letter-spacing: 0.04em; }
+  .hud-lives svg { width: 15px; height: 15px; }
+}
+
+/* Màn thấp (điện thoại xoay ngang): ẩn HUD (điểm vẽ trên canvas), D-pad sang bên phải */
+@media (max-height: 560px) {
+  .hud { display: none; }
+  .overlay { padding: 8px; }
+  .overlay-card { padding: 12px 14px; }
+  .overlay-title { font-size: 1.25rem; }
+  .overlay-sub { margin: 4px 0 8px; font-size: 0.85rem; }
+  .guide { display: none; }
+  .overlay-hint { display: none; }
+  .over-score { margin-bottom: 8px; }
+  .over-score b { font-size: 1.4rem; }
+  .btn-wide { min-height: 42px; }
+}
+@media (max-height: 560px) and (orientation: landscape) {
+  .app { max-width: 900px; }
+  .stage { flex-direction: row; }
+  .dpad { grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(3, 50px); }
+}
+@media (max-height: 700px) {
+  .guide { gap: 4px; padding: 8px 10px; font-size: 0.8rem; }
+  .guide-ico { width: 20px; height: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay-card, .over-record { animation: none; }
+  .dpad-btn { transition: none; }
+}

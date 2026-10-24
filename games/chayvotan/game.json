@@ -1,0 +1,50 @@
+{
+  "id": "chayvotan",
+  "cat": "arcade",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Endless Runner",
+    "vi": "Chạy Vô Tận"
+  },
+  "sub": {
+    "en": "Jump, slide, keep running",
+    "vi": "Endless Runner"
+  },
+  "desc": {
+    "en": "Your runner never stops and keeps speeding up. Jump over posts and pits (hold for a bigger jump), slide under flyers and grab coins: score is metres run plus coins.",
+    "vi": "Nhân vật tự chạy không ngừng và nhanh dần. Nhảy qua cột và hố (giữ để nhảy xa hơn), trượt dưới vật bay, nhặt xu: điểm là số mét đã chạy cộng xu."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "High score"],
+    "vi": ["Phản xạ", "1 người", "Kỷ lục"]
+  },
+  "note": {
+    "en": "How far can you run?",
+    "vi": "Bạn chạy được bao xa?"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 100% at 80% 0%, rgba(255, 168, 92, .3), transparent 55%), linear-gradient(170deg, #26306b, #141838 65%, #1b3a2a)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 80
+        },
+        "points": 5
+      }
+    ]
+  }
+}

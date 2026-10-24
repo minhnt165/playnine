@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước Ghép Ba: kéo viên tròn đỏ xuống ghép đủ ba, ba viên sáng lên rồi biến mất, viên trên rơi xuống,
+       viên mới rơi vào từ trên. Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động.
+       Nền lấy từ preview.bg trong game.json; ảnh này để nền trong suốt. -->
+  <style>
+    .scene { animation: scene 4.5s linear infinite; }
+    .t { transform-origin: 0 0; } /* viên nằm ở gốc của nhóm dịch chuyển: co giãn quanh tâm viên */
+    .mvR { animation: mvR 4.5s ease-in-out infinite; }
+    .hit { animation: hit 4.5s ease-in-out infinite; }
+    .mvB { animation: mvB 4.5s ease-in-out infinite; }
+    .fall { animation: fall 4.5s ease-in infinite; }
+    .new { animation: neu 4.5s ease-in infinite; }
+    .glow { animation: glow 4.5s ease-out infinite; opacity: 0; }
+    .score { animation: score 4.5s ease-out infinite; opacity: 0; }
+    .hand { animation: hand 4.5s ease-in-out infinite; opacity: 0; }
+    @keyframes scene { 0% { opacity: 0; } 5%, 90% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes mvR {
+      0%, 8% { transform: translate(0, 0); opacity: 1; }
+      22%, 26% { transform: translate(0, 18px); opacity: 1; }
+      31%, 34% { transform: translate(0, 18px) scale(1.25); opacity: 1; }
+      42%, 100% { transform: translate(0, 18px) scale(0); opacity: 0; }
+    }
+    @keyframes hit {
+      0%, 26% { transform: none; opacity: 1; }
+      31%, 34% { transform: scale(1.25); opacity: 1; }
+      42%, 100% { transform: scale(0); opacity: 0; }
+    }
+    @keyframes mvB {
+      0%, 8% { transform: translate(0, 0); }
+      22%, 44% { transform: translate(0, -18px); }
+      58%, 100% { transform: translate(0, 0); }
+    }
+    @keyframes fall { 0%, 44% { transform: translate(0, 0); } 58%, 100% { transform: translate(0, 18px); } }
+    @keyframes neu { 0%, 44% { transform: translate(0, -18px); } 58%, 100% { transform: translate(0, 0); } }
+    @keyframes glow { 0%, 26% { opacity: 0; } 31% { opacity: .35; } 42%, 100% { opacity: 0; } }
+    @keyframes score {
+      0%, 34% { opacity: 0; transform: translate(0, 0); }
+      40% { opacity: 1; }
+      62%, 100% { opacity: 0; transform: translate(0, -12px); }
+    }
+    @keyframes hand {
+      0%, 4% { opacity: 0; transform: translate(0, 0); }
+      8% { opacity: .9; transform: translate(0, 0); }
+      22% { opacity: .9; transform: translate(0, 18px); }
+      28%, 100% { opacity: 0; transform: translate(0, 18px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .scene, .mvR, .hit, .mvB, .fall, .new, .glow, .score, .hand { animation: none; }
+      .hand { opacity: .9; }
+    }
+  </style>
+  <defs>
+    <!-- Sáu loại viên, tâm ở gốc tọa độ -->
+    <g id="R"><circle r="6.8" fill="#ef4444" stroke="#b91c1c" stroke-width="1.2"/><ellipse cx="-2" cy="-3" rx="2.8" ry="1.4" fill="#fff" opacity=".45"/></g>
+    <g id="B"><rect x="-6.2" y="-6.2" width="12.4" height="12.4" rx="2.6" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.2"/><ellipse cx="-1.8" cy="-3.4" rx="2.8" ry="1.3" fill="#fff" opacity=".45"/></g>
+    <g id="Y"><path d="M0-7 7 5.6H-7z" fill="#f5b301" stroke="#b45309" stroke-width="1.2" stroke-linejoin="round"/></g>
+    <g id="G"><path d="M0-7.6 6 0 0 7.6-6 0z" fill="#22c55e" stroke="#15803d" stroke-width="1.2" stroke-linejoin="round"/></g>
+    <g id="P"><path d="M0-7 6.1-3.5v7L0 7-6.1 3.5v-7z" fill="#a855f7" stroke="#7e22ce" stroke-width="1.2" stroke-linejoin="round"/></g>
+    <g id="C"><path d="m0-7.6 2.2 4.6 5 .6-3.7 3.4 1 5-4.5-2.5-4.5 2.5 1-5-3.7-3.4 5-.6z" fill="#06b6d4" stroke="#0e7490" stroke-width="1.1" stroke-linejoin="round"/></g>
+    <clipPath id="bd"><rect x="26" y="14" width="108" height="90" rx="5"/></clipPath>
+  </defs>
+
+  <g class="scene">
+    <!-- Bàn 6x5 -->
+    <rect x="24" y="12" width="112" height="94" rx="8" fill="#0b0e22" opacity=".55"/>
+    <g fill="#ffffff" opacity=".07">
+      <path d="M27 15h16v16H27zM45 15h16v16H45zM63 15h16v16H63zM81 15h16v16H81zM99 15h16v16H99zM117 15h16v16h-16z"/>
+      <path d="M27 33h16v16H27zM45 33h16v16H45zM63 33h16v16H63zM81 33h16v16H81zM99 33h16v16H99zM117 33h16v16h-16z"/>
+      <path d="M27 51h16v16H27zM45 51h16v16H45zM63 51h16v16H63zM81 51h16v16H81zM99 51h16v16H99zM117 51h16v16h-16z"/>
+      <path d="M27 69h16v16H27zM45 69h16v16H45zM63 69h16v16H63zM81 69h16v16H81zM99 69h16v16H99zM117 69h16v16h-16z"/>
+      <path d="M27 87h16v16H27zM45 87h16v16H45zM63 87h16v16H63zM81 87h16v16H81zM99 87h16v16H99zM117 87h16v16h-16z"/>
+    </g>
+    <!-- Vệt sáng hàng vừa ghép -->
+    <rect class="glow" x="44" y="50" width="54" height="18" rx="7" fill="#fde68a"/>
+
+    <g clip-path="url(#bd)">
+      <!-- Hàng 0 -->
+      <use href="#B" x="35" y="23"/>
+      <use class="t fall" href="#Y" x="53" y="23"/>
+      <use class="t fall" href="#G" x="71" y="23"/>
+      <use class="t fall" href="#P" x="89" y="23"/>
+      <use href="#C" x="107" y="23"/>
+      <use href="#Y" x="125" y="23"/>
+      <!-- Hàng 1 -->
+      <use href="#P" x="35" y="41"/>
+      <use class="t fall" href="#G" x="53" y="41"/>
+      <use class="t fall" href="#C" x="71" y="41"/>
+      <use href="#B" x="107" y="41"/>
+      <use href="#G" x="125" y="41"/>
+      <!-- Hàng 2 -->
+      <use href="#G" x="35" y="59"/>
+      <g transform="translate(53 59)"><use class="t hit" href="#R"/></g>
+      <g transform="translate(71 59)"><use class="t hit" href="#R"/></g>
+      <use href="#P" x="107" y="59"/>
+      <use href="#Y" x="125" y="59"/>
+      <!-- Hàng 3, 4 -->
+      <use href="#Y" x="35" y="77"/>
+      <use href="#C" x="53" y="77"/>
+      <use href="#P" x="71" y="77"/>
+      <use href="#G" x="89" y="77"/>
+      <use href="#Y" x="107" y="77"/>
+      <use href="#C" x="125" y="77"/>
+      <use href="#C" x="35" y="95"/>
+      <use href="#B" x="53" y="95"/>
+      <use href="#Y" x="71" y="95"/>
+      <use href="#C" x="89" y="95"/>
+      <use href="#G" x="107" y="95"/>
+      <use href="#P" x="125" y="95"/>
+      <!-- Hai viên đổi chỗ: tròn đỏ (1,3) xuống, vuông xanh (2,3) lên rồi rơi lại -->
+      <use class="t mvB" href="#B" x="89" y="59"/>
+      <g transform="translate(89 41)"><use class="t mvR" href="#R"/></g>
+      <!-- Viên mới rơi vào từ trên -->
+      <use class="t new" href="#C" x="53" y="23"/>
+      <use class="t new" href="#B" x="71" y="23"/>
+      <use class="t new" href="#Y" x="89" y="23"/>
+    </g>
+
+    <!-- Ngón tay vuốt -->
+    <g class="hand">
+      <circle cx="92" cy="45" r="5.5" fill="#ffffff" opacity=".85"/>
+      <circle cx="92" cy="45" r="8.5" fill="none" stroke="#ffffff" stroke-width="1.2" opacity=".5"/>
+    </g>
+    <text class="score" x="71" y="54" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="800" fill="#ffffff" stroke="#3b1f6b" stroke-width="3" paint-order="stroke">+30</text>
+  </g>
+</svg>

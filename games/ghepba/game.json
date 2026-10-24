@@ -1,0 +1,64 @@
+{
+  "id": "ghepba",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Match Three",
+    "vi": "Ghép Ba"
+  },
+  "sub": {
+    "en": "Swap gems, line up three",
+    "vi": "Đổi viên, xếp ba"
+  },
+  "desc": {
+    "en": "Swap neighbouring gems to line up three or more, build striped, bomb and rainbow gems and set off chain reactions. Score as much as you can in 30 moves, with no clock. A daily board too.",
+    "vi": "Đổi chỗ hai viên kề nhau để xếp ba viên cùng loại trở lên, tạo viên sọc, bom, cầu vồng và kích hoạt dây chuyền. Ghi điểm cao nhất trong 30 nước, không tính giờ. Có cả bàn hằng ngày."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "30 moves", "Daily puzzle"],
+    "vi": ["Giải đố", "1 người", "30 nước", "Đề hằng ngày"]
+  },
+  "note": {
+    "en": "30 moves, no time pressure",
+    "vi": "30 nước, không áp lực thời gian"
+  },
+  "daily": {
+    "en": "One shared board for everyone",
+    "vi": "Một bàn chung cho mọi người"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(239, 68, 68, .26), transparent 60%), linear-gradient(160deg, #3a2470, #120c26)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 8000,
+          "max_score": 80000
+        },
+        "points": 5
+      },
+      {
+        "key": "daily",
+        "label": {
+          "en": "Daily",
+          "vi": "Hằng ngày"
+        },
+        "rules": {
+          "min_duration_ms": 8000,
+          "max_score": 80000
+        },
+        "points": 5
+      }
+    ]
+  }
+}

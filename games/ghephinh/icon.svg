@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5b3a8c"/>
+      <stop offset="1" stop-color="#2a1747"/>
+    </linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7c5cd6"/>
+      <stop offset=".55" stop-color="#f97362"/>
+      <stop offset="1" stop-color="#ffd27a"/>
+    </linearGradient>
+    <!-- Một mảnh ghép: tai trên + phải, lõm dưới + trái -->
+    <clipPath id="pc">
+      <path d="M13 19h11c-2-3-1-9 5-9s7 6 5 9h12v11c3-2 9-1 9 5s-6 7-9 5v11H35c2-3 1-8-5-8s-7 5-5 8H13V40c3 2 8 1 8-5s-5-7-8-5z"/>
+    </clipPath>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <g clip-path="url(#pc)">
+    <rect x="0" y="0" width="64" height="64" fill="url(#sky)"/>
+    <circle cx="33" cy="33" r="6" fill="#fff3c4"/>
+    <path d="M0 42l12-12 9 7 10-10 12 11 8-5 13 9v22H0z" fill="#3b2a6b"/>
+    <path d="M0 48h64v16H0z" fill="#2a3f7a"/>
+    <path d="M27 50h12M29 53h8" stroke="#ffd27a" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
+  <path d="M13 19h11c-2-3-1-9 5-9s7 6 5 9h12v11c3-2 9-1 9 5s-6 7-9 5v11H35c2-3 1-8-5-8s-7 5-5 8H13V40c3 2 8 1 8-5s-5-7-8-5z" fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="2.2" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,84 @@
+{
+  "id": "mecung",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Maze",
+    "vi": "Mê Cung"
+  },
+  "sub": {
+    "en": "Find the way out",
+    "vi": "Tìm lối ra"
+  },
+  "desc": {
+    "en": "Walk from the entrance at the top to the exit at the bottom of a freshly generated maze. Slide to the next junction with a swipe or a held key, or trace the path with your finger. Three sizes and a daily maze.",
+    "vi": "Đi từ lối vào ở trên tới lối ra ở dưới của một mê cung sinh mới mỗi ván. Vuốt hoặc giữ phím để trượt tới ngã rẽ tiếp theo, hay kéo ngón tay dọc đường đi. Ba cỡ và một mê cung hằng ngày."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "3 sizes", "Daily puzzle"],
+    "vi": ["Giải đố", "1 người", "3 cỡ", "Đề hằng ngày"]
+  },
+  "note": {
+    "en": "Every maze has exactly one way out",
+    "vi": "Mê cung nào cũng có đúng một đường ra"
+  },
+  "daily": {
+    "en": "One shared maze for everyone",
+    "vi": "Một mê cung chung cho mọi người"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(52, 211, 153, .26), transparent 60%), linear-gradient(160deg, #173a33, #0a1614)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 5,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "10x15 · Easy",
+          "vi": "10x15 · Dễ"
+        },
+        "rules": {
+          "min_time_ms": 1000
+        },
+        "points": 3
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "13x21 · Medium",
+          "vi": "13x21 · Vừa"
+        },
+        "rules": {
+          "min_time_ms": 2000
+        },
+        "points": 5
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "17x28 · Hard",
+          "vi": "17x28 · Khó"
+        },
+        "rules": {
+          "min_time_ms": 4000
+        },
+        "points": 8
+      },
+      {
+        "key": "daily",
+        "label": {
+          "en": "Daily",
+          "vi": "Hằng ngày"
+        },
+        "rules": {
+          "min_time_ms": 2000
+        },
+        "points": 5
+      }
+    ]
+  }
+}

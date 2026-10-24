@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: đom đóm chạy dọc hành lang ăn đốm sáng, con ma đuổi phía sau.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động. Nền lấy từ preview.bg trong game.json. -->
+  <style>
+    .run { animation: run 3.2s linear infinite; }
+    .chase { animation: chase 3.2s linear infinite; }
+    .wing { animation: flap .16s ease-in-out infinite alternate; transform-origin: 0 0; }
+    .dot { animation: eat 3.2s linear infinite; }
+    .d2 { animation-delay: .4s; } .d3 { animation-delay: .8s; } .d4 { animation-delay: 1.2s; } .d5 { animation-delay: 1.6s; }
+    .orb { animation: pulse .8s ease-in-out infinite alternate; transform-origin: 136px 62px; }
+    .tail { animation: sway .5s ease-in-out infinite alternate; transform-origin: 0 -4px; }
+    @keyframes run { from { transform: translateX(-10px); } to { transform: translateX(150px); } }
+    @keyframes chase { 0% { transform: translateX(-60px); } 100% { transform: translateX(110px); } }
+    @keyframes flap { from { transform: scaleY(1); } to { transform: scaleY(.45); } }
+    @keyframes eat { 0%, 15% { opacity: 1; } 17%, 96% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes pulse { from { transform: scale(.85); } to { transform: scale(1.1); } }
+    @keyframes sway { from { transform: skewX(-12deg); } to { transform: skewX(12deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .run, .chase, .wing, .dot, .orb, .tail { animation: none; }
+      .run { transform: translateX(40px); }
+      .chase { transform: translateX(-10px); }
+    }
+  </style>
+  <!-- tường hành lang -->
+  <g fill="#1a1840" stroke="#8b6cff" stroke-width="2.5" stroke-linejoin="round">
+    <rect x="8" y="22" width="144" height="18" rx="9"/>
+    <rect x="8" y="84" width="144" height="18" rx="9"/>
+  </g>
+  <!-- đốm sáng (bị ăn lần lượt) -->
+  <g fill="#ffe08a">
+    <circle class="dot" cx="46" cy="62" r="3"/>
+    <circle class="dot d2" cx="66" cy="62" r="3"/>
+    <circle class="dot d3" cx="86" cy="62" r="3"/>
+    <circle class="dot d4" cx="106" cy="62" r="3"/>
+  </g>
+  <circle class="orb" cx="136" cy="62" r="7" fill="#ffd23f"/>
+  <!-- con ma -->
+  <g class="chase">
+    <g transform="translate(20 58)">
+      <path class="tail" d="M-11 0a11 11 0 0 1 22 0c0 8-3 13-7 20-2-6-6-8-10-10-4-2-5-5-5-10z" fill="#b57bff"/>
+      <ellipse cx="-4" cy="0" rx="3" ry="3.6" fill="#fff"/>
+      <ellipse cx="4" cy="0" rx="3" ry="3.6" fill="#fff"/>
+      <circle cx="-2.6" cy="0.6" r="1.6" fill="#1c1f4a"/>
+      <circle cx="5.4" cy="0.6" r="1.6" fill="#1c1f4a"/>
+    </g>
+  </g>
+  <!-- đom đóm -->
+  <g class="run">
+    <g transform="translate(30 62)">
+      <circle r="17" fill="#e6ff6b" opacity=".22"/>
+      <g transform="translate(-2 -7)"><ellipse class="wing" cx="0" cy="0" rx="8" ry="4.5" fill="#cfe8ff" opacity=".9"/></g>
+      <g transform="translate(-2 7)"><ellipse class="wing" cx="0" cy="0" rx="8" ry="4.5" fill="#cfe8ff" opacity=".9"/></g>
+      <ellipse cx="-3" cy="0" rx="8.5" ry="7.5" fill="#d4f53c"/>
+      <circle cx="6" cy="0" r="5.2" fill="#3b3470"/>
+      <circle cx="8" cy="-2.2" r="1.5" fill="#fff"/>
+      <circle cx="8" cy="2.2" r="1.5" fill="#fff"/>
+    </g>
+  </g>
+</svg>

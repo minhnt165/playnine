@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động.
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt.
+       Kịch bản: xe xanh lá dời trái, xe tải vàng xuống, xe đỏ chạy ra cửa bên phải. -->
+  <style>
+    .green { animation: green 6s ease-in-out infinite; }
+    .truck { animation: truck 6s ease-in-out infinite; }
+    .red { animation: red 6s ease-in infinite; }
+    .scene { animation: scene 6s linear infinite; }
+    .chev { animation: chev 1.2s ease-in-out infinite; }
+    @keyframes green { 0%, 14% { transform: none; } 24%, 100% { transform: translateX(-32px); } }
+    @keyframes truck { 0%, 28% { transform: none; } 40%, 100% { transform: translateY(48px); } }
+    @keyframes red {
+      0%, 46% { transform: none; opacity: 1; }
+      60% { transform: translateX(64px); opacity: 1; }
+      72% { transform: translateX(104px); opacity: 0; }
+      100% { transform: translateX(104px); opacity: 0; }
+    }
+    @keyframes scene { 0%, 86% { opacity: 1; } 94% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes chev { 50% { opacity: .35; } }
+    @media (prefers-reduced-motion: reduce) {
+      .green, .truck, .red, .scene, .chev { animation: none; }
+    }
+  </style>
+  <!-- Bãi đỗ 6×6, ô 16 -->
+  <rect x="26" y="6" width="108" height="108" rx="10" fill="#3a3f6b"/>
+  <rect x="32" y="12" width="96" height="96" rx="4" fill="#1a1f3b"/>
+  <g stroke="#ffffff" stroke-opacity=".07" stroke-width="1">
+    <path d="M48 12v96M64 12v96M80 12v96M96 12v96M112 12v96M32 28h96M32 44h96M32 60h96M32 76h96M32 92h96"/>
+  </g>
+  <rect x="32" y="44" width="102" height="16" fill="#f87171" opacity=".14"/>
+  <rect x="128" y="44" width="6" height="16" fill="#1a1f3b"/>
+  <path class="chev" d="M135 47.5l4 4.5-4 4.5M141 47.5l4 4.5-4 4.5" fill="none" stroke="#f87171" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g class="scene">
+    <!-- Xe đứng yên -->
+    <rect x="33.5" y="13.5" width="29" height="13" rx="4" fill="#8b5cf6"/>
+    <rect x="44" y="15.5" width="3" height="9" rx="1" fill="#d8ecff"/>
+    <rect x="33.5" y="61.5" width="13" height="29" rx="4" fill="#3b82f6"/>
+    <rect x="35.5" y="73" width="9" height="3" rx="1" fill="#d8ecff"/>
+    <rect x="113.5" y="61.5" width="13" height="45" rx="4" fill="#14b8a6"/>
+    <rect x="115.5" y="96" width="9" height="3" rx="1" fill="#d8ecff"/>
+    <rect x="97.5" y="13.5" width="29" height="13" rx="4" fill="#ec4899"/>
+    <rect x="97.5" y="18.5" width="29" height="3" fill="#ffffff" opacity=".5"/>
+    <!-- Xe xanh lá chặn đường xe tải -->
+    <g class="green">
+      <rect x="65.5" y="93.5" width="29" height="13" rx="4" fill="#22a559"/>
+      <rect x="80" y="95.5" width="3" height="9" rx="1" fill="#d8ecff"/>
+    </g>
+    <!-- Xe tải vàng chắn làn thoát -->
+    <g class="truck">
+      <rect x="81.5" y="13.5" width="13" height="45" rx="4" fill="#f2b705"/>
+      <path d="M81.5 22h13M81.5 28h13M81.5 34h13" stroke="#000" stroke-opacity=".15" stroke-width="1.2"/>
+      <rect x="83.5" y="49" width="9" height="3" rx="1" fill="#d8ecff"/>
+    </g>
+    <!-- Xe đỏ -->
+    <g class="red">
+      <rect x="33.5" y="45.5" width="29" height="13" rx="4" fill="#e5383b"/>
+      <rect x="40" y="47.5" width="3" height="9" rx="1" fill="#d8ecff"/>
+      <rect x="51" y="47.5" width="3.5" height="9" rx="1" fill="#d8ecff"/>
+      <path d="M56.5 48.5l4 3.5-4 3.5z" fill="#ffffff"/>
+    </g>
+  </g>
+</svg>

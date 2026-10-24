@@ -1,0 +1,172 @@
+/* =====================================================================
+ * Mê Cung - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bảng màu xanh ngọc lục bảo: nền mê cung sáng / tối, tường đậm tương phản cao ở cả hai giao diện
+ *   - Mê cung vẽ bằng canvas (app.js đọc các token --mz-* bên dưới); .stage là ô chứa, canvas tự co vừa khung
+ *   - Màn hình ngang thấp hoặc máy tính: mê cung bên trái, số liệu + chọn cỡ bên phải
+ * ===================================================================== */
+:root {
+  --accent: #0b7f58;
+  --accent-strong: #08664a;
+  --accent-soft: rgba(11, 127, 88, 0.12);
+  --focus: #0b7f58;
+  --mz-floor: #fbfdfc;
+  --mz-edge: rgba(15, 50, 40, 0.14);
+  --mz-wall: #1d2b3a;
+  --mz-trail: #10b981;
+  --mz-seen: rgba(16, 185, 129, 0.1);
+  --mz-start: rgba(59, 130, 246, 0.16);
+  --mz-goal: rgba(234, 88, 12, 0.16);
+  --mz-flag: #e2541b;
+  --mz-player: #f97316;
+  --mz-ring: #ffffff;
+  --mz-hint: #4f46e5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --accent: #34d399;
+    --accent-strong: #6ee7b7;
+    --accent-text: #04261a;
+    --accent-soft: rgba(52, 211, 153, 0.16);
+    --focus: #6ee7b7;
+    --mz-floor: #111a22;
+    --mz-edge: rgba(255, 255, 255, 0.08);
+    --mz-wall: #d5e3f2;
+    --mz-trail: #34d399;
+    --mz-seen: rgba(52, 211, 153, 0.11);
+    --mz-start: rgba(96, 165, 250, 0.2);
+    --mz-goal: rgba(251, 146, 60, 0.2);
+    --mz-flag: #fb923c;
+    --mz-player: #fb923c;
+    --mz-ring: #111a22;
+    --mz-hint: #a5b4fc;
+  }
+}
+:root[data-theme="dark"] {
+  --accent: #34d399;
+  --accent-strong: #6ee7b7;
+  --accent-text: #04261a;
+  --accent-soft: rgba(52, 211, 153, 0.16);
+  --focus: #6ee7b7;
+  --mz-floor: #111a22;
+  --mz-edge: rgba(255, 255, 255, 0.08);
+  --mz-wall: #d5e3f2;
+  --mz-trail: #34d399;
+  --mz-seen: rgba(52, 211, 153, 0.11);
+  --mz-start: rgba(96, 165, 250, 0.2);
+  --mz-goal: rgba(251, 146, 60, 0.2);
+  --mz-flag: #fb923c;
+  --mz-player: #fb923c;
+  --mz-ring: #111a22;
+  --mz-hint: #a5b4fc;
+}
+
+/* ===================== HUD: thời gian, kỷ lục, nút gợi ý ===================== */
+.hud { grid-template-columns: 1fr 1fr auto; grid-auto-flow: row; }
+.hud-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 76px;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: background 0.15s, transform 0.1s;
+}
+.hud-hint .icon { width: 22px; height: 22px; }
+.hud-hint:active { transform: scale(0.96); }
+@media (hover: hover) {
+  .hud-hint:not(:disabled):hover { background: var(--surface-2); }
+}
+
+/* ===================== Chọn cỡ ===================== */
+.modes { flex: none; }
+.modes button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  min-height: 44px;
+  padding: 3px 2px;
+  min-width: 0;
+  line-height: 1.2;
+}
+.modes b { font-weight: 800; font-size: 0.9rem; white-space: nowrap; }
+.modes span { font-size: 0.72rem; font-variant-numeric: tabular-nums; white-space: nowrap; opacity: 0.85; }
+.modes button[aria-checked="true"] b { color: var(--accent); }
+.modes .done span { color: var(--accent); font-weight: 700; opacity: 1; }
+
+/* ===================== Mê cung ===================== */
+.stage { touch-action: none; user-select: none; -webkit-user-select: none; }
+/* Canvas đặt tuyệt đối giữa khung: cỡ của nó không đẩy bố cục (app.js tính cỡ theo khung) */
+.board {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  display: block;
+  border-radius: 10px;
+  background: var(--mz-floor);
+  box-shadow: var(--shadow-sm), 0 0 0 1px var(--mz-edge);
+  touch-action: none;
+  cursor: pointer;
+  transition: filter 0.2s, box-shadow 0.4s;
+  -webkit-touch-callout: none;
+}
+.board:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.board.solved { box-shadow: var(--shadow-sm), 0 0 0 3px var(--accent), 0 0 36px var(--accent-soft); }
+/* Đồng hồ dừng vì đang mở hộp thoại: làm mờ mê cung để không dò đường "miễn phí" */
+.app.paused .board { filter: blur(9px) saturate(0.6); }
+
+/* ===================== Hộp thoại ===================== */
+.win-time { margin: 0; font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.win-badge { margin: 0; font-weight: 700; color: var(--accent); }
+.help-art { width: 150px; height: auto; align-self: center; flex: none; }
+.ha-floor { fill: var(--mz-floor); stroke: var(--mz-edge); }
+.ha-start { fill: var(--mz-start); }
+.ha-goal { fill: var(--mz-goal); }
+.ha-trail { fill: none; stroke: var(--mz-trail); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9; }
+.ha-wall { fill: none; stroke: var(--mz-wall); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.ha-me { fill: var(--mz-player); stroke: var(--mz-ring); stroke-width: 1.5; }
+.ha-flag { fill: var(--mz-flag); stroke: var(--mz-flag); stroke-width: 1.5; stroke-linejoin: round; }
+.help-list { margin: 0; padding-left: 1.2em; color: var(--muted); line-height: 1.5; display: flex; flex-direction: column; gap: 4px; }
+.help-list li::marker { color: var(--accent); }
+.modal-text b { color: var(--text); }
+.stats-note { font-size: 0.82rem; }
+.stat-grid dt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ===================== Màn hình hẹp / thấp ===================== */
+@media (max-width: 360px) {
+  .modes b { font-size: 0.8rem; }
+  .hud-hint { min-width: 64px; }
+}
+
+/* ===================== Màn hình ngang (điện thoại xoay ngang, máy tính): mê cung trái, bảng phải ===================== */
+@media (min-aspect-ratio: 5/4) {
+  .app {
+    max-width: 1060px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 330px);
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+    grid-template-areas: "stage top" "stage hud" "stage modes" "stage ." "stage help";
+    column-gap: 18px;
+  }
+  .topbar { grid-area: top; }
+  .hud { grid-area: hud; }
+  .modes { grid-area: modes; grid-auto-flow: row; grid-template-columns: 1fr 1fr; }
+  .stage { grid-area: stage; }
+  .help { grid-area: help; text-align: left; }
+}
+@media (min-aspect-ratio: 5/4) and (max-height: 520px) {
+  .app { grid-template-rows: auto auto auto minmax(0, 1fr); grid-template-areas: "stage top" "stage hud" "stage modes" "stage ."; }
+  .brand-mark { width: 30px; height: 30px; }
+  .btn-icon { width: 38px; height: 38px; }
+  .modes button { min-height: 40px; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .board, .hud-hint { transition: none; }
+}

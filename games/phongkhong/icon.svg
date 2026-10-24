@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b0b2a"/>
+      <stop offset="1" stop-color="#2a1866"/>
+    </linearGradient>
+    <radialGradient id="boom" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".45" stop-color="#ffe066"/>
+      <stop offset="1" stop-color="#ff8a3d"/>
+    </radialGradient>
+    <clipPath id="clip"><rect width="64" height="64" rx="14"/></clipPath>
+  </defs>
+  <g clip-path="url(#clip)">
+    <rect width="64" height="64" fill="url(#sky)"/>
+    <!-- Tên lửa địch rơi xiên -->
+    <path d="M8 4L20 30" stroke="#ff4d6d" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+    <circle cx="20" cy="30" r="3" fill="#ffe1e8"/>
+    <!-- Đạn chặn + quả cầu nổ -->
+    <path d="M32 50L41 25" stroke="#37f0ff" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="42" cy="20" r="11" fill="url(#boom)"/>
+    <!-- Mặt đất, bệ, thành phố -->
+    <path d="M0 52h64v12H0z" fill="#7c5cff" opacity=".35"/>
+    <path d="M24 52l4-6h8l4 6z" fill="#b18cff"/>
+    <path d="M6 52v-6h4v-4h4v4h3v6zM46 52v-7h4v-3h4v5h4v5z" fill="#4dff9c"/>
+  </g>
+</svg>

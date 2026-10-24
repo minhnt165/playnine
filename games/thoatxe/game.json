@@ -1,0 +1,84 @@
+{
+  "id": "thoatxe",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Traffic Jam",
+    "vi": "Thoát Xe"
+  },
+  "sub": {
+    "en": "Sliding car puzzle",
+    "vi": "Traffic Jam"
+  },
+  "desc": {
+    "en": "Slide cars and trucks along their lanes to clear a path and drive the red car out of the parking lot. 180 generated boards in three levels, each with a known fewest number of moves, plus a daily puzzle.",
+    "vi": "Trượt xe con và xe tải theo làn của chúng để mở đường, đưa xe đỏ ra khỏi bãi đỗ. 180 bàn sinh tự động ở ba mức, bàn nào cũng biết trước số nước tối thiểu, kèm đề hằng ngày."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Levels", "Daily puzzle"],
+    "vi": ["Giải đố", "1 người", "Nhiều bàn", "Đề hằng ngày"]
+  },
+  "note": {
+    "en": "180 boards, every one solvable",
+    "vi": "180 bàn, bàn nào cũng giải được"
+  },
+  "daily": {
+    "en": "One shared parking puzzle every day",
+    "vi": "Mỗi ngày một bãi xe chung cho mọi người"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(229, 56, 59, .26), transparent 60%), linear-gradient(160deg, #2b2f5c, #0f1126)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 4,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 2
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 3250
+        },
+        "points": 4
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 6250
+        },
+        "points": 6
+      },
+      {
+        "key": "daily",
+        "label": {
+          "en": "Daily",
+          "vi": "Hằng ngày"
+        },
+        "rules": {
+          "min_duration_ms": 3500
+        },
+        "points": 4
+      }
+    ]
+  }
+}

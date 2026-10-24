@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: mê cung 7x5 (seed 3 của engine), chấm cam đi từ lối vào xuống lối ra,
+       vết xanh vẽ dần theo sau, tới cờ thì vòng sóng tỏa ra. Hoạt hình CSS, tắt khi giảm chuyển động.
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt. -->
+  <style>
+    .trail { stroke-dasharray: 300; stroke-dashoffset: 300; animation: draw 6s linear infinite; }
+    .me { animation: walk 6s linear infinite; }
+    .ring { transform-origin: 128px 90px; opacity: 0; animation: ring 6s ease-out infinite; }
+    @keyframes draw { 0% { stroke-dashoffset: 300; opacity: 1; } 80% { stroke-dashoffset: 0; opacity: 1; } 95% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @keyframes walk {
+      0% { transform: translate(112px, 12px); } 3.7% { transform: translate(112px, 26px); } 8% { transform: translate(96px, 26px); }
+      12.3% { transform: translate(96px, 42px); } 16.5% { transform: translate(80px, 42px); } 20.8% { transform: translate(80px, 26px); }
+      33.6% { transform: translate(32px, 26px); } 42.1% { transform: translate(32px, 58px); } 46.4% { transform: translate(48px, 58px); }
+      54.9% { transform: translate(48px, 90px); } 76.3% { transform: translate(128px, 90px); } 80%, 95% { transform: translate(128px, 104px); opacity: 1; }
+      100% { transform: translate(128px, 104px); opacity: 0; }
+    }
+    @keyframes ring { 0%, 79% { opacity: 0; transform: scale(.4); } 82% { opacity: .9; } 96%, 100% { opacity: 0; transform: scale(2.2); } }
+    @media (prefers-reduced-motion: reduce) {
+      .trail, .me, .ring { animation: none; }
+      .trail { stroke-dashoffset: 110; }
+      .me { transform: translate(48px, 74px); }
+    }
+  </style>
+  <rect x="24" y="18" width="112" height="80" rx="3" fill="#ffffff" fill-opacity=".07"/>
+  <rect x="104" y="18" width="16" height="16" fill="#60a5fa" fill-opacity=".22"/>
+  <rect x="120" y="82" width="16" height="16" fill="#fb923c" fill-opacity=".25"/>
+  <path class="trail" d="M112 12L112 26L96 26L96 42L80 42L80 26L32 26L32 58L48 58L48 90L128 90L128 104" fill="none" stroke="#34d399" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M24 18H104M120 18H136M56 34H72M40 50H104M24 66H40M104 66H120M88 82H120M24 98H120M24 18V98M40 34V50M40 66V82M56 34V82M72 50V82M88 18V34M88 50V82M104 34V50M104 66V82M120 18V66M136 18V98" fill="none" stroke="#e8f1fb" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M125 96V84l8 3.5-8 3.5" fill="#fb923c" stroke="#fb923c" stroke-width="1.4" stroke-linejoin="round"/>
+  <circle class="ring" cx="128" cy="90" r="9" fill="none" stroke="#6ee7b7" stroke-width="2"/>
+  <circle class="me" cx="0" cy="0" r="5" fill="#fb923c" stroke="#ffffff" stroke-width="1.5"/>
+</svg>

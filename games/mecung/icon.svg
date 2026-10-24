@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Biểu tượng Mê Cung: mê cung 4x4 nét trắng trên nền xanh ngọc, vết đi xanh nhạt từ lối vào tới chấm cam -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1fb886"/>
+      <stop offset="1" stop-color="#0a5a42"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <path d="M25.5 4V25.5H12.5V38.5H38.5" fill="none" stroke="#a7f3d0" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
+  <path d="M19 6H6V58H32M45 58H58V6H32M19 6V19M32 19V32M45 32V58M32 45V58M32 19H45M19 32H45M19 45H32" fill="none" stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="38.5" cy="38.5" r="5" fill="#fb923c" stroke="#ffffff" stroke-width="1.8"/>
+</svg>

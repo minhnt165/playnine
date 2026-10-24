@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: người chạy nhảy qua cột, mặt đất + xu cuộn qua, núi trôi chậm (thị sai).
+       Hoạt hình bằng CSS bên trong file, tắt khi người dùng giảm chuyển động. Nền lấy từ preview.bg trong game.json. -->
+  <style>
+    .far { animation: far 8s linear infinite; }
+    .near { animation: near 1.6s linear infinite; }
+    .jumper { animation: jump 1.6s ease-in-out infinite; }
+    .legs-a { animation: run .32s steps(2) infinite; transform-origin: 46px 77px; }
+    .coin { animation: spin .6s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+    @keyframes far { to { transform: translateX(-80px); } }
+    @keyframes near { to { transform: translateX(-80px); } }
+    @keyframes jump { 0%, 6%, 44%, 100% { transform: translateY(0); } 25% { transform: translateY(-30px); } }
+    @keyframes run { to { transform: scaleX(-1); } }
+    @keyframes spin { to { transform: scaleX(.3); } }
+    @media (prefers-reduced-motion: reduce) { .far, .near, .jumper, .legs-a, .coin { animation: none; } }
+  </style>
+  <circle cx="126" cy="26" r="11" fill="#ffd76a" opacity=".9"/>
+  <g class="far" opacity=".55">
+    <path d="M-80 92l22-28 18 14 20-20 20 34l22-28 18 14 20-20 20 34l22-28 18 14 20-20 20 34l22-28 18 14 20-20 20 34z" fill="#8fa6e0"/>
+  </g>
+  <g class="near">
+    <!-- mặt đất lặp mỗi 80 đơn vị -->
+    <rect x="0" y="92" width="200" height="28" fill="#a97a46"/>
+    <rect x="0" y="90" width="200" height="6" fill="#6cc24f"/>
+    <!-- cột -->
+    <g>
+      <rect x="62" y="70" width="10" height="20" rx="3" fill="#e4664a"/>
+      <rect x="62" y="76" width="10" height="3.5" fill="#fff"/>
+      <rect x="62" y="82" width="10" height="3.5" fill="#fff"/>
+      <rect x="142" y="70" width="10" height="20" rx="3" fill="#e4664a"/>
+      <rect x="142" y="76" width="10" height="3.5" fill="#fff"/>
+      <rect x="142" y="82" width="10" height="3.5" fill="#fff"/>
+    </g>
+    <!-- xu -->
+    <g fill="#ffc93c" stroke="#d99a12" stroke-width="1.4">
+      <circle class="coin" cx="58" cy="56" r="4"/>
+      <circle class="coin" cx="67" cy="50" r="4"/>
+      <circle class="coin" cx="76" cy="56" r="4"/>
+      <circle class="coin" cx="138" cy="56" r="4"/>
+      <circle class="coin" cx="147" cy="50" r="4"/>
+      <circle class="coin" cx="156" cy="56" r="4"/>
+    </g>
+  </g>
+  <!-- người chạy -->
+  <g class="jumper">
+    <ellipse cx="46" cy="90" rx="8" ry="2" fill="#000" opacity=".2"/>
+    <g class="legs-a" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <path d="M46 72l-6 6-5-2" stroke="#2a2d58" stroke-width="4"/>
+      <path d="M46 72l6 5v10" stroke="#34386b" stroke-width="4"/>
+    </g>
+    <g stroke-linecap="round" fill="none" stroke-width="3.2">
+      <path d="M47 61l-7 4" stroke="#d9542a"/>
+      <path d="M47 61l6 5 5-3" stroke="#ff7a45"/>
+    </g>
+    <rect x="42.5" y="58" width="8" height="15" rx="3.5" fill="#ff7a45"/>
+    <circle cx="48" cy="52" r="5.6" fill="#ffd2a8"/>
+    <path d="M42.4 51.4a5.6 5.6 0 0 1 11.2 0z" fill="#3b2a20"/>
+    <path d="M42.3 50.2h11.4v2.4H42.3zM42.6 50.4l-6-1.6 1 3.6z" fill="#7c5cff"/>
+  </g>
+</svg>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4f8de8"/>
+      <stop offset="1" stop-color="#ffc98a"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#sky)"/>
+  <circle cx="48" cy="17" r="7" fill="#ffe08a"/>
+  <path d="M0 44l14-11 10 7 13-13 15 12 12-6v31H0z" fill="#8fb3e3"/>
+  <path d="M0 49h64v15H14Q0 64 0 50z" fill="#c99a62"/>
+  <rect y="47" width="64" height="5" fill="#6cc24f"/>
+  <!-- cột -->
+  <rect x="49" y="35" width="8" height="13" rx="2.5" fill="#d4553b"/>
+  <rect x="49" y="39" width="8" height="2.6" fill="#fff"/>
+  <!-- người chạy -->
+  <g stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M24 33l-6 6-5-2" stroke="#2a2d58" stroke-width="4.4"/>
+    <path d="M24 33l6 5v8" stroke="#34386b" stroke-width="4.4"/>
+    <path d="M25 22l-7 4" stroke="#d9542a" stroke-width="3.6"/>
+    <path d="M25 22l6 5 5-3" stroke="#ff7a45" stroke-width="3.6"/>
+  </g>
+  <rect x="20.5" y="19" width="8" height="15" rx="3.5" fill="#ff7a45"/>
+  <circle cx="26" cy="13" r="5.6" fill="#ffd2a8"/>
+  <path d="M20.4 12.4a5.6 5.6 0 0 1 11.2 0z" fill="#3b2a20"/>
+  <path d="M20.3 11.2h11.4v2.4H20.3zM20.6 11.4l-6 -1.6 1 3.6z" fill="#7c5cff"/>
+</svg>

@@ -1,0 +1,298 @@
+/* =====================================================================
+ * Hạ Cánh - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Vùng chơi vẽ bằng canvas, đặt vị trí / kích thước bằng JS (app.js: layout) theo khung và nút chạm
+ *   - Màu nét vẽ lấy từ token --c-* (app.js đọc lại khi đổi giao diện); tối: bầu trời đêm, nét phát sáng
+ *   - Điều khiển chạm: lớp .touch phủ .stage, hiện khi .app.touch-on (máy cảm ứng hoặc chọn "Hiện")
+ * ===================================================================== */
+:root {
+  --app-max: 760px;
+  --field-bg: linear-gradient(180deg, #dfe3fb 0%, #f4f2ff 55%, #fbf7ff 100%);
+  --field-edge: rgba(17, 20, 45, 0.12);
+  --field-veil: rgba(243, 244, 251, 0.74);
+  --c-ground: #b9b3dc;
+  --c-ground-2: #8f88c0;
+  --c-ridge: #4b3f8f;
+  --c-ship: #2b2f5c;
+  --c-ship-fill: #ffffff;
+  --c-window: #3bc9db;
+  --c-flame: #f76707;
+  --c-flame-2: #ffd43b;
+  --c-pad2: #2b8a3e;
+  --c-pad3: #e67700;
+  --c-pad5: #c2255c;
+  --c-star: rgba(59, 65, 102, 0.16);
+  --c-text: #14162b;
+  --c-repeat: rgba(243, 244, 251, 0.45);
+  --glow: 0;
+  --gauge-bg: rgba(255, 255, 255, 0.78);
+  --ok: #2b8a3e;
+  --bad: #c92a2a;
+  --tc-bg: rgba(106, 76, 245, 0.12);
+  --tc-on: rgba(106, 76, 245, 0.32);
+  --tc-line: rgba(106, 76, 245, 0.35);
+  --tc-ink: #4b30c9;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --field-bg: linear-gradient(180deg, #05060f 0%, #0d1030 60%, #1a1747 100%);
+    --field-edge: rgba(139, 108, 255, 0.28);
+    --field-veil: rgba(5, 6, 15, 0.62);
+    --c-ground: #262447;
+    --c-ground-2: #14132b;
+    --c-ridge: #c9b8ff;
+    --c-ship: #e6f9ff;
+    --c-ship-fill: #20244a;
+    --c-window: #7df9ff;
+    --c-flame: #ff922b;
+    --c-flame-2: #fff3b0;
+    --c-pad2: #69db7c;
+    --c-pad3: #ffc94d;
+    --c-pad5: #ff7ac6;
+    --c-star: rgba(220, 225, 255, 0.6);
+    --c-text: #eef0ff;
+    --c-repeat: rgba(5, 6, 15, 0.45);
+    --glow: 1;
+    --gauge-bg: rgba(19, 22, 38, 0.72);
+    --ok: #69db7c;
+    --bad: #ff8787;
+    --tc-bg: rgba(255, 255, 255, 0.08);
+    --tc-on: rgba(125, 249, 255, 0.28);
+    --tc-line: rgba(255, 255, 255, 0.22);
+    --tc-ink: #e6f9ff;
+  }
+}
+:root[data-theme="dark"] {
+  --field-bg: linear-gradient(180deg, #05060f 0%, #0d1030 60%, #1a1747 100%);
+  --field-edge: rgba(139, 108, 255, 0.28);
+  --field-veil: rgba(5, 6, 15, 0.62);
+  --c-ground: #262447;
+  --c-ground-2: #14132b;
+  --c-ridge: #c9b8ff;
+  --c-ship: #e6f9ff;
+  --c-ship-fill: #20244a;
+  --c-window: #7df9ff;
+  --c-flame: #ff922b;
+  --c-flame-2: #fff3b0;
+  --c-pad2: #69db7c;
+  --c-pad3: #ffc94d;
+  --c-pad5: #ff7ac6;
+  --c-star: rgba(220, 225, 255, 0.6);
+  --c-text: #eef0ff;
+  --c-repeat: rgba(5, 6, 15, 0.45);
+  --glow: 1;
+  --gauge-bg: rgba(19, 22, 38, 0.72);
+  --ok: #69db7c;
+  --bad: #ff8787;
+  --tc-bg: rgba(255, 255, 255, 0.08);
+  --tc-on: rgba(125, 249, 255, 0.28);
+  --tc-line: rgba(255, 255, 255, 0.22);
+  --tc-ink: #e6f9ff;
+}
+
+/* ===================== HUD ===================== */
+.hud { grid-template-columns: 1.25fr 1.25fr 0.8fr 1fr auto; grid-auto-flow: row; align-items: stretch; }
+.hud-box { display: flex; flex-direction: column; justify-content: center; }
+.ships { display: flex; align-items: center; gap: 3px; min-height: 1.55rem; }
+.ships svg { width: 14px; height: 16px; flex: none; color: var(--accent); }
+.btn-pause { height: auto; min-height: 42px; align-self: stretch; }
+.btn-pause .icon-play { display: none; }
+.app.is-paused .btn-pause .icon-play { display: block; }
+.app.is-paused .btn-pause .icon-pause { display: none; }
+.hud-value { transform-origin: left center; }
+.hud-value.bump { animation: bump 0.3s ease-out; }
+@keyframes bump { 40% { transform: scale(1.14); } }
+
+/* ===================== Vùng chơi ===================== */
+.stage { display: block; }
+.field {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--field-bg);
+  box-shadow: 0 0 0 1px var(--field-edge), var(--shadow-sm);
+  container-type: size;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.field:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* Đồng hồ bay */
+.gauges {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+.app:not(.is-playing):not(.is-paused) .gauges { visibility: hidden; }
+.gauge-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.gauge, .fuel-row {
+  background: var(--gauge-bg);
+  border-radius: 9px;
+  padding: 3px 7px 4px;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  box-shadow: 0 0 0 1px var(--field-edge);
+  min-width: 0;
+}
+.gauge { display: flex; flex-direction: column; }
+.gauge-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gauge-value { font-size: clamp(0.85rem, 4cqw, 1.05rem); font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.2; white-space: nowrap; color: var(--c-text); }
+.gauge.ok .gauge-value { color: var(--ok); }
+.gauge.bad .gauge-value { color: var(--bad); }
+.fuel-row { display: flex; align-items: center; gap: 7px; padding: 4px 8px; }
+.fuel-bar { flex: 1; height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; min-width: 40px; }
+.fuel-fill { height: 100%; width: 100%; border-radius: 99px; background: var(--ok); transform-origin: left center; }
+.fuel-fill.low { background: var(--bad); }
+.fuel-pct { font-size: 0.78rem; font-weight: 800; font-variant-numeric: tabular-nums; min-width: 2.6em; text-align: right; }
+.wind { font-size: 0.74rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.wind b { color: var(--c-text); }
+
+/* Dòng chữ giữa vùng chơi: "Màn 2", "Đáp an toàn! +260", "Rơi quá nhanh" */
+.banner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  color: var(--c-text);
+  text-align: center;
+  padding: 0 12px;
+  z-index: 1;
+}
+.banner.show { animation: banner-in 2s ease-out both; }
+.banner-title { font-size: clamp(1.1rem, 7cqw, 2rem); font-weight: 800; letter-spacing: 0.02em; text-shadow: 0 0 calc(var(--glow) * 14px) var(--c-window); }
+.banner-sub { font-size: clamp(0.75rem, 3.4cqw, 0.95rem); font-weight: 600; opacity: 0.85; }
+.banner.good .banner-title { color: var(--ok); }
+.banner.bad .banner-title { color: var(--bad); }
+@keyframes banner-in {
+  0% { opacity: 0; transform: translateY(8px) scale(0.96); }
+  12%, 75% { opacity: 1; transform: none; }
+  100% { opacity: 0; }
+}
+
+/* Lớp phủ trong vùng chơi */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: var(--field-veil);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 3;
+}
+#overlay-start { cursor: pointer; }
+.overlay-card { display: flex; flex-direction: column; align-items: center; gap: clamp(6px, 2.4cqh, 12px); max-width: 320px; text-align: center; cursor: default; }
+.overlay-title { margin: 0; font-size: clamp(1.25rem, 8.5cqw, 2.2rem); font-weight: 800; letter-spacing: 0.01em; line-height: 1.25; }
+.overlay-sub { margin: 0; color: var(--muted); font-size: clamp(0.8rem, 3.8cqw, 0.98rem); line-height: 1.45; }
+.overlay-best { margin: 0; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+.overlay-record { margin: 0; font-weight: 800; color: var(--accent); }
+.overlay-hint { margin: 0; font-size: 0.78rem; color: var(--muted); }
+.overlay-actions { display: flex; gap: 10px; }
+.btn-wide { min-width: 160px; }
+.over-stats { margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: min(280px, 82cqw); }
+.over-stats div { background: var(--surface); border-radius: 10px; padding: 6px 4px; box-shadow: var(--shadow-sm); }
+.over-stats dt { font-size: 0.68rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.over-stats dd { margin: 0; font-size: clamp(1rem, 5.4cqw, 1.3rem); font-weight: 800; font-variant-numeric: tabular-nums; }
+/* Vùng chơi thấp (điện thoại xoay ngang): bỏ bớt chữ phụ, đồng hồ bay gọn một dòng */
+@container (max-height: 300px) {
+  #overlay-start .overlay-sub, .overlay-hint { display: none; }
+  .banner { top: 34%; }
+}
+@container (max-height: 380px) {
+  .gauges { top: 4px; left: 4px; right: 4px; gap: 3px; }
+  .gauge-row { gap: 3px; }
+  .gauge { flex-direction: row; align-items: baseline; gap: 5px; padding: 2px 6px; }
+  .gauge-label { font-size: 0.55rem; flex: none; }
+  .gauge-value { font-size: 0.82rem; }
+  .fuel-row { padding: 2px 6px; gap: 6px; }
+  .fuel-bar { height: 6px; }
+  .fuel-pct, .wind { font-size: 0.7rem; }
+}
+
+/* ===================== Điều khiển chạm ===================== */
+.touch { position: absolute; inset: 0; pointer-events: none; display: none; z-index: 2; }
+.app.touch-on .touch { display: block; }
+.app:not(.is-playing) .touch { visibility: hidden; }
+.tc-cluster { position: absolute; bottom: 4px; pointer-events: auto; display: flex; gap: 12px; align-items: flex-end; }
+.tc-left { left: 2px; }
+.tc-right { right: 2px; }
+.tc-btn {
+  --size: clamp(70px, 20vw, 84px);
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--tc-bg);
+  border: 2px solid var(--tc-line);
+  color: var(--tc-ink);
+  touch-action: none;
+  -webkit-touch-callout: none;
+  transition: background 0.08s, transform 0.08s;
+}
+.tc-btn svg { width: 44%; height: 44%; }
+.tc-btn.on { background: var(--tc-on); transform: scale(0.94); }
+.tc-thrust {
+  --size: clamp(92px, 26vw, 112px);
+  border-radius: 28px;
+  grid-template-rows: 1fr auto;
+  padding: 12px 0 10px;
+}
+.tc-thrust svg { width: 40%; height: 100%; }
+.tc-label { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* ===================== Cách chơi ===================== */
+.help-body { color: var(--muted); line-height: 1.5; font-size: 0.92rem; max-height: 62vh; overflow-y: auto; }
+.help-body p { margin: 0 0 10px; }
+.help-body b { color: var(--text); }
+.help-body .ok { color: var(--ok); font-weight: 700; }
+.help-list { margin: -4px 0 10px; padding-left: 20px; }
+
+/* ===================== Màn hình thấp (điện thoại xoay ngang) ===================== */
+@media (max-height: 560px) {
+  .app { gap: 6px; }
+  .hud-box { padding: 3px 10px 4px; }
+  .hud-value { font-size: 1.05rem; }
+  .hud-label { font-size: 0.6rem; }
+  .btn-pause { min-height: 36px; }
+  .brand-mark { width: 28px; height: 28px; }
+  .btn-icon { width: 36px; height: 36px; }
+  .logo { font-size: 1.1rem; }
+  .tc-btn { --size: clamp(64px, 15vh, 76px); }
+  .tc-thrust { --size: clamp(84px, 22vh, 100px); }
+  .gauge { padding: 2px 6px 3px; }
+  .gauge-label { font-size: 0.56rem; }
+}
+@media (max-width: 420px) {
+  .hud { gap: 6px; }
+  .hud-box { padding: 6px 8px 7px; }
+  .hud-value { font-size: 1.1rem; }
+  .ships svg { width: 12px; height: 14px; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .banner.show { animation: banner-fade 2s linear both; }
+  .hud-value.bump { animation: none; }
+  .tc-btn { transition: none; }
+  .tc-btn.on { transform: none; }
+}
+@keyframes banner-fade { 0%, 80% { opacity: 1; } 100% { opacity: 0; } }

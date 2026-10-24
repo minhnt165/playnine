@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#f3f4fb">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Maze">
+  <meta name="description" content="Maze">
+  <title>Maze</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <script>
+    // Áp giao diện sáng/tối đã chọn trước khi vẽ trang để tránh nháy màu
+    try {
+      var t = JSON.parse(localStorage.getItem('playnine-mecung-settings-v1') || '{}').theme;
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../_kit/kit.css?v=1">
+  <link rel="stylesheet" href="style.css?v=1.0.0">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-mark" src="icon.svg" alt="" width="34" height="34">
+        <h1 class="logo" data-i18n="app.name">Maze</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" type="button" data-open="modal-help" data-i18n-attr="aria-label:kit.help;title:kit.help">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 17h-2v-2h2v2zm2.1-7.7-.9.9c-.7.7-1.2 1.3-1.2 2.8h-2v-.5c0-1.1.5-2.1 1.2-2.8l1.2-1.3a2 2 0 1 0-3.4-1.4H8a4 4 0 1 1 7.1 2.3z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-stats" type="button" data-open="modal-stats" data-i18n-attr="aria-label:kit.stats;title:kit.stats">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
+        </button>
+        <button class="btn-icon" type="button" data-open="modal-settings" data-i18n-attr="aria-label:kit.settings;title:kit.settings">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-new" type="button" data-i18n-attr="aria-label:kit.newGame;title:kit.newGame">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.7 6.3A8 8 0 1 0 20 12h-2a6 6 0 1 1-1.8-4.2L13 11h7V4l-2.3 2.3z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="hud">
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.time">Time</div><div class="hud-value" id="time">0:00</div></div>
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.best">Best</div><div class="hud-value" id="best">–</div></div>
+      <button class="hud-box hud-hint" id="btn-hint" type="button" data-i18n-attr="title:btn.hintKey">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2zm-2 18h4v1a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-1z"/></svg>
+        <span data-i18n="btn.hint">Hint</span>
+      </button>
+    </div>
+
+    <!-- Cỡ mê cung + đề hằng ngày; đổi khi đang đi dở thì hỏi trước -->
+    <div class="segmented modes" id="modes" role="radiogroup" data-i18n-attr="aria-label:mode.name">
+      <button type="button" role="radio" data-mode="easy"><b data-i18n="mode.easy">Easy</b><span>10×15</span></button>
+      <button type="button" role="radio" data-mode="medium"><b data-i18n="mode.medium">Medium</b><span>13×21</span></button>
+      <button type="button" role="radio" data-mode="hard"><b data-i18n="mode.hard">Hard</b><span>17×28</span></button>
+      <button type="button" role="radio" data-mode="daily"><b data-i18n="mode.daily">Daily</b><span id="daily-sub">13×21</span></button>
+    </div>
+
+    <main class="stage" id="stage">
+      <canvas class="board" id="board" tabindex="0" role="img"></canvas>
+    </main>
+
+    <p class="help"><span class="help-keys" data-i18n-html="help.keys"></span><span class="help-touch" data-i18n="help.touch"></span></p>
+    <p class="sr-only" id="sr-status" aria-live="polite"></p>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <!-- Thắng -->
+  <div class="modal" id="modal-win" hidden>
+    <div class="modal-backdrop" data-close="modal-win"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="win-title">
+      <h2 id="win-title" data-i18n="win.title">You made it out!</h2>
+      <p class="win-time" id="win-time"></p>
+      <p class="win-badge" id="win-badge" hidden></p>
+      <p class="modal-text" id="win-note" hidden></p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="btn-again" type="button" data-i18n="win.again">New maze</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bỏ ván đang đi dở (ván mới hoặc đổi cỡ) -->
+  <div class="modal" id="modal-confirm" hidden>
+    <div class="modal-backdrop" data-close="modal-confirm"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+      <h2 id="confirm-title" data-i18n="confirm.title">Leave this maze?</h2>
+      <p class="modal-text" data-i18n="confirm.text">Leaving it counts as a loss.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" data-close="modal-confirm" data-i18n="kit.cancel">Cancel</button>
+        <button class="btn btn-primary" id="btn-confirm" type="button" data-i18n="kit.newGame">New game</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-help" hidden>
+    <div class="modal-backdrop" data-close="modal-help"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <h2 id="help-title" data-i18n="kit.help">How to play</h2>
+      <!-- Ví dụ 5x4: lối vào ở trên, lối ra ở dưới, vết đi màu xanh, chấm cam là người chơi -->
+      <svg class="help-art" viewBox="-4 -4 108 88" aria-hidden="true">
+        <rect class="ha-floor" x="0" y="0" width="100" height="80" rx="4"/>
+        <rect class="ha-start" x="20" y="0" width="20" height="20"/>
+        <rect class="ha-goal" x="60" y="60" width="20" height="20"/>
+        <path class="ha-trail" d="M30 0V30H10V70H50V50H70"/>
+        <path class="ha-wall" d="M20 0H0V80H60M80 80H100V0H40M20 0V20M40 20V40M80 20V40M20 40V60M40 40V60M80 40V60M60 60V80M80 60V80M60 20H80M40 40H60M60 40H80M20 60H40"/>
+        <circle class="ha-me" cx="70" cy="50" r="6"/>
+        <path class="ha-flag" d="M67 77V63l9 4-9 4"/>
+      </svg>
+      <ul class="help-list">
+        <li data-i18n="help.rule1"></li>
+        <li data-i18n="help.rule2"></li>
+        <li data-i18n="help.rule3"></li>
+      </ul>
+      <p class="modal-text" data-i18n-html="help.controls"></p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-help" data-i18n="help.ok">Got it</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-backdrop" data-close="modal-stats"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
+      <h2 id="stats-title" data-i18n="kit.stats">Statistics</h2>
+      <dl class="stat-grid">
+        <div><dt data-i18n="stats.played">Played</dt><dd id="stats-played">0</dd></div>
+        <div><dt data-i18n="stats.won">Escaped</dt><dd id="stats-won">0</dd></div>
+        <div><dt data-i18n="stats.easy">Best 10×15</dt><dd id="stats-best-easy">–</dd></div>
+        <div><dt data-i18n="stats.medium">Best 13×21</dt><dd id="stats-best-medium">–</dd></div>
+        <div><dt data-i18n="stats.hard">Best 17×28</dt><dd id="stats-best-hard">–</dd></div>
+        <div><dt data-i18n="stats.streak">Daily streak</dt><dd id="stats-streak">0</dd></div>
+      </dl>
+      <p class="modal-text stats-note" data-i18n="stats.note"></p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-stats" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-settings" hidden>
+    <div class="modal-backdrop" data-close="modal-settings"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h2 id="settings-title" data-i18n="kit.settings">Settings</h2>
+      <div class="settings-list">
+        <label class="setting-row">
+          <span class="setting-text"><span class="setting-name" data-i18n="set.slide">Slide to the next turn</span><span class="setting-desc" data-i18n="set.slideDesc"></span></span>
+          <input class="switch" type="checkbox" data-setting="slide">
+        </label>
+        <div class="setting">
+          <span class="setting-name" data-i18n="kit.theme">Theme</span>
+          <div class="segmented" data-setting="theme">
+            <button type="button" data-value="auto" data-i18n="kit.themeAuto">Auto</button>
+            <button type="button" data-value="light" data-i18n="kit.themeLight">Light</button>
+            <button type="button" data-value="dark" data-i18n="kit.themeDark">Dark</button>
+          </div>
+        </div>
+        <div class="setting">
+          <span class="setting-name" data-i18n="kit.lang">Language</span>
+          <div class="segmented" data-setting="lang">
+            <button type="button" data-value="en">English</button>
+            <button type="button" data-value="vi">Tiếng Việt</button>
+          </div>
+        </div>
+        <label class="setting-row" id="setting-sound">
+          <span class="setting-text"><span class="setting-name" data-i18n="kit.sound">Sound</span><span class="setting-desc" data-i18n="kit.soundDesc"></span></span>
+          <input class="switch" type="checkbox" id="sw-sound">
+        </label>
+      </div>
+      <p class="app-version" id="app-version"></p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-settings" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <script src="../_kit/kit.js?v=1"></script>
+  <script src="i18n.js?v=1.0.0"></script>
+  <script src="engine.js?v=1.0.0"></script>
+  <script src="../sdk/playnine.js?v=2"></script>
+  <script src="app.js?v=1.0.0"></script>
+</body>
+</html>

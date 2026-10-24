@@ -20,6 +20,7 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 
 - [ ] `supabase/migrations/20261023000700_batch7.sql` — đợt 7, game 70–77: Bắn Tàu, Ô Vuông, Cờ Lục Giác, Cờ Nhảy, Xoay Cờ, Vệt Sáng, Khúc Côn Cầu, Pháo Thủ.
 - [ ] `supabase/migrations/20261023000800_batch8.sql` — đợt 8, game 78–85: Xì Tố, Gin Rummy, Bài Bích, Cờ Vây, Cờ Tào Cáo, Bi-a, Mạt Chược Ghép, Bài Tim.
+- [ ] `supabase/migrations/20261023000900_batch9.sql` — đợt 9, game 86–93: Mê Cung, Ghép Ba, Mê Cung Ma, Hạ Cánh, Chạy Vô Tận, Ghép Hình, Phòng Không, Thoát Xe.
 
 Đợt 0 (nền tảng) không có migration. Áp các file theo đúng thứ tự tên file.
 
@@ -38,6 +39,8 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 
 - [ ] **Cá Ngựa dài:** theo luật quốc tế chuẩn, một ván trung bình khoảng 480 lần tung (vài phút ở tốc độ Nhanh). Có muốn rút ngắn không, ví dụ cho tung thêm khi đá quân hoặc khi về đích? Hiện giữ luật chuẩn.
 
+- [ ] **Ô "Hằng ngày" trên trang chủ mở game ở mode mặc định**, người chơi phải tự chuyển sang đề hằng ngày trong game (Ghép Ba, Mê Cung, Ghép Hình, Mạt Chược Ghép…). Cổng chưa có cách mở thẳng một mode (ví dụ `#/play/<id>?mode=daily`). Đề xuất: thêm tham số mode vào route play và kit đọc nó; nếu chưa làm thì giữ như hiện tại.
+
 ## Quyết định đã tự chốt (xem lại khi rảnh)
 
 - Nhãn "Mới" giờ tính theo `addedAt` (14 ngày), nên Sudoku cũng có nhãn "Mới" tới 03/11/2026 như các game ra mắt cùng đợt.
@@ -51,3 +54,5 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 - Cờ Tào Cáo: trận một ván, bỏ doubling cube (gấp đôi để máy bỏ sẽ kết thúc ván quá sớm, mà cổng chỉ ghi thắng/thua); gammon/backgammon vẫn hiện trong kết quả.
 - Cờ Vây: có thêm bàn 13×13 và chế độ 2 người (không gửi điểm); luật khu vực + siêu ko, không có bước đánh dấu quân chết (để không sửa được kết quả ván xếp hạng).
 - Mạt Chược Ghép: gợi ý và xáo lại gửi `assisted: true` (không phạt cộng giây vì máy chủ từ chối `timeMs` lệch thời gian thật).
+- Thoát Xe: tên tiếng Anh "Traffic Jam" (tên chung của thể loại; "Rush Hour" là nhãn hiệu ThinkFun), đề sinh tự động; metric `wins` theo bàn — chơi lại bàn dễ vẫn được tính thắng nhưng đã bị chặn bởi luật sẵn có "20 ván đầu mỗi người/game/ngày".
+- Ghép Hình: bàn vuông 4×4 / 6×6 / 8×8, không xoay mảnh; "Xem hình" không tính trợ giúp. Mê Cung Ma: nhân vật đom đóm, ma và mê cung tự thiết kế (không dùng tài sản Pac-Man).

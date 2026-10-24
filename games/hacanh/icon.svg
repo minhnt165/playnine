@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b1f5e"/>
+      <stop offset="1" stop-color="#3a2a8f"/>
+    </linearGradient>
+    <linearGradient id="fl" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff3b0"/>
+      <stop offset="1" stop-color="#ff922b"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <circle cx="13" cy="12" r="1.4" fill="#fff" opacity=".8"/>
+  <circle cx="52" cy="9" r="1.1" fill="#fff" opacity=".7"/>
+  <circle cx="48" cy="22" r="1" fill="#fff" opacity=".6"/>
+  <!-- mặt đất + bãi đáp -->
+  <path d="M0 56 10 47 17 52 20 53h24l4-6 7 4 9-6v21H0z" fill="#8f88c0"/>
+  <path d="M20 53h24" stroke="#ff7ac6" stroke-width="3" stroke-linecap="round"/>
+  <!-- lửa -->
+  <path d="M28.5 37h7L32 49z" fill="url(#fl)"/>
+  <!-- tàu -->
+  <g fill="#f4f2ff" stroke="#1b1f5e" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M24.5 33.5 19 43M39.5 33.5 45 43" fill="none" stroke="#f4f2ff" stroke-width="2.6"/>
+    <path d="M16.5 43h5M42.5 43h5" fill="none" stroke="#f4f2ff" stroke-width="2.6"/>
+    <path d="M29 34h6l1.5 3.5h-9z"/>
+    <rect x="22" y="27" width="20" height="8" rx="1.5"/>
+    <path d="M24.5 27 25 19.5 29 16h6l4 3.5.5 7.5z"/>
+  </g>
+  <circle cx="32" cy="22" r="3" fill="#7df9ff"/>
+</svg>
