@@ -1,10 +1,12 @@
-import { useEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import { GAMES } from '../games/catalog'
 import { playHref } from './route'
 
 /** Phím tắt ở trang chủ: 1-9 mở game, t đổi giao diện, l đổi ngôn ngữ (bấm nút của thanh trên như cổng cũ), / tới ô tìm game. */
 export function useShortcuts(playing: boolean): void {
-  useEffect(() => {
+  // Gắn ngay lúc commit (không đợi effect sau lần vẽ): trang chủ dựng trong transition nên useEffect có thể chạy trễ,
+  // trang đã hiện mà phím số chưa có tác dụng (máy chậm / CI).
+  useLayoutEffect(() => {
     if (playing) return
     const onKey = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return
