@@ -28,6 +28,21 @@ test('kit modal opens from its button, closes on Esc and gives focus back', asyn
   await expect(page.locator('#btn-help')).toBeFocused();
 });
 
+test('Escape that closes a kit modal does not reach the game key handler', async ({ page }) => {
+  await page.goto('_kit/demo.html');
+  // Game đăng ký handler phím sau kit: Esc vừa đóng hộp thoại không được tới đây (kẻo game coi là tạm dừng / chơi tiếp).
+  await page.evaluate(() => {
+    (window as unknown as { seen: string[] }).seen = [];
+    document.addEventListener('keydown', (e) => (window as unknown as { seen: string[] }).seen.push(e.key));
+  });
+  await page.locator('#btn-help').click();
+  await expect(page.locator('#modal-help')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#modal-help')).toBeHidden();
+  await page.keyboard.press('Escape');
+  expect(await page.evaluate(() => (window as unknown as { seen: string[] }).seen)).toEqual(['Escape']);
+});
+
 test('kit toast shows and hides by itself', async ({ page }) => {
   await page.goto('_kit/demo.html');
   await page.locator('#btn-toast').click();

@@ -292,7 +292,10 @@
       const open = modal.current();
       if (!open) return;
       if (e.key === 'Escape' && !open.hasAttribute('data-locked')) {
+        // Esc chỉ đóng hộp thoại: chặn luôn handler phím của game (đăng ký sau kit), kẻo nó thấy không còn hộp thoại
+        // rồi coi Esc là phím tạm dừng / chơi tiếp.
         e.preventDefault();
+        e.stopImmediatePropagation();
         modal.close(open.id);
         return;
       }
