@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước Cờ Vây: bàn gỗ 5×5, hai bên lần lượt đặt quân, Đen vây kín quân Trắng ở giữa và bắt nó (+1).
+       Tự chứa, hoạt hình bằng CSS, tắt khi giảm chuyển động (hiện thế cờ sau khi bắt). Nền trong suốt. -->
+  <defs>
+    <linearGradient id="wd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f2d39c"/><stop offset=".55" stop-color="#e3b877"/><stop offset="1" stop-color="#c8955a"/></linearGradient>
+    <radialGradient id="bk" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#6b6f7a"/><stop offset=".45" stop-color="#25272e"/><stop offset="1" stop-color="#0b0c10"/></radialGradient>
+    <radialGradient id="wh" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#eceae4"/><stop offset="1" stop-color="#bdb8ac"/></radialGradient>
+    <g id="b"><circle cx="1" cy="1.6" r="8.6" fill="#3a2408" opacity=".3"/><circle r="8.6" fill="url(#bk)"/></g>
+    <g id="w"><circle cx="1" cy="1.6" r="8.6" fill="#3a2408" opacity=".3"/><circle r="8.6" fill="url(#wh)" stroke="#8a8478" stroke-width=".5"/></g>
+  </defs>
+  <style>
+    .s { animation: 9s infinite; }
+    .s1 { animation-name: a1; } .s3 { animation-name: a3; } .s4 { animation-name: a4; }
+    .s5 { animation-name: a5; } .s6 { animation-name: a6; } .s7 { animation-name: a7; }
+    @keyframes a1 { 0%, 5% { opacity: 0; } 7%, 92% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes a3 { 0%, 21% { opacity: 0; } 23%, 92% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes a4 { 0%, 29% { opacity: 0; } 31%, 92% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes a5 { 0%, 37% { opacity: 0; } 39%, 92% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes a6 { 0%, 45% { opacity: 0; } 47%, 92% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes a7 { 0%, 53% { opacity: 0; } 55%, 92% { opacity: 1; } 100% { opacity: 0; } }
+    /* quân Trắng ở giữa: hiện ở nước 2, bị bắt sau nước 7 */
+    .cap { opacity: 0; animation: cap 9s infinite; }
+    @keyframes cap { 0%, 13% { opacity: 0; } 15%, 57% { opacity: 1; } 62%, 100% { opacity: 0; } }
+    .ring { opacity: 0; animation: ring 9s infinite; }
+    @keyframes ring { 0%, 47% { opacity: 0; } 49%, 55% { opacity: 1; } 57%, 100% { opacity: 0; } }
+    .plus { opacity: 0; animation: plus 9s infinite; }
+    @keyframes plus { 0%, 58% { opacity: 0; transform: translateY(4px); } 62%, 88% { opacity: 1; transform: translateY(0); } 94%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .s, .cap, .ring, .plus { animation: none; }
+      .plus { opacity: 1; }
+    }
+  </style>
+  <rect x="30" y="10" width="100" height="100" rx="7" fill="url(#wd)"/>
+  <path d="M40 20H120M40 40H120M40 60H120M40 80H120M40 100H120M40 20V100M60 20V100M80 20V100M100 20V100M120 20V100" stroke="#4a2f0f" stroke-width="1.3" opacity=".75"/>
+  <circle cx="80" cy="60" r="1.8" fill="#4a2f0f"/>
+  <!-- 1 Đen trái, 2 Trắng giữa (bị bắt), 3 Đen trên, 4 Trắng, 5 Đen dưới, 6 Trắng, 7 Đen phải bắt quân giữa -->
+  <use href="#b" x="60" y="60" class="s s1"/>
+  <use href="#w" x="80" y="60" class="cap"/>
+  <use href="#b" x="80" y="40" class="s s3"/>
+  <use href="#w" x="100" y="80" class="s s4"/>
+  <use href="#b" x="80" y="80" class="s s5"/>
+  <use href="#w" x="100" y="40" class="s s6"/>
+  <circle cx="80" cy="60" r="11" fill="none" stroke="#e8463c" stroke-width="2" stroke-dasharray="3 2.4" class="ring"/>
+  <use href="#b" x="100" y="60" class="s s7"/>
+  <g class="plus">
+    <circle cx="80" cy="60" r="3" fill="#4a2f0f" opacity=".35"/>
+    <rect x="112" y="2" width="34" height="18" rx="9" fill="#15161b"/>
+    <text x="129" y="15" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="800" fill="#fff">+1</text>
+  </g>
+</svg>

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: bàn bầu dục, flop / turn / river lật dần, chip đẩy vào pot, tay thắng sáng lên.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động. Nền ô lấy từ preview.bg trong game.json. -->
+  <style>
+    .c { animation: show 7s infinite both; transform-box: fill-box; transform-origin: 50% 50%; }
+    .c1, .c2, .c3 { animation-name: flop; }
+    .c4 { animation-name: turn; }
+    .c5 { animation-name: river; }
+    .chip { animation: push 7s infinite both; }
+    .glow { animation: glow 7s infinite both; }
+    .pot { animation: pot 7s infinite both; }
+    @keyframes flop { 0%, 10% { opacity: 0; transform: scaleX(0); } 16%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+    @keyframes turn { 0%, 30% { opacity: 0; transform: scaleX(0); } 36%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+    @keyframes river { 0%, 50% { opacity: 0; transform: scaleX(0); } 56%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+    @keyframes push { 0%, 20% { transform: translate(0, 0); opacity: 1; } 28% { transform: translate(-18px, -26px); opacity: 0; } 100% { opacity: 0; } }
+    @keyframes pot { 0%, 26% { opacity: .5; } 30%, 100% { opacity: 1; } }
+    @keyframes glow { 0%, 64% { opacity: 0; } 70%, 92% { opacity: 1; } 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .c, .chip, .glow, .pot { animation: none; }
+      .chip { opacity: 0; }
+    }
+  </style>
+  <defs>
+    <radialGradient id="felt" cx=".5" cy=".45" r=".6">
+      <stop offset="0" stop-color="#2c9a64"/>
+      <stop offset="1" stop-color="#11573a"/>
+    </radialGradient>
+    <symbol id="sp" viewBox="0 0 10 10"><path d="M5 0C3 2.5 0 4 0 6.3a2.3 2.3 0 0 0 4 1.5L3.4 10h3.2L6 7.8a2.3 2.3 0 0 0 4-1.5C10 4 7 2.5 5 0z"/></symbol>
+    <symbol id="ht" viewBox="0 0 10 10"><path d="M5 9.5C1.5 6.6 0 5 0 3a2.6 2.6 0 0 1 5-1 2.6 2.6 0 0 1 5 1c0 2-1.5 3.6-5 6.5z"/></symbol>
+  </defs>
+  <!-- Bàn -->
+  <ellipse cx="80" cy="58" rx="74" ry="46" fill="#6b4429"/>
+  <ellipse cx="80" cy="58" rx="67" ry="39" fill="url(#felt)"/>
+  <!-- Ghế máy -->
+  <circle cx="30" cy="30" r="7" fill="#d6336c" stroke="#fff" stroke-width="1.5"/>
+  <circle cx="80" cy="18" r="7" fill="#2f6fd6" stroke="#fff" stroke-width="1.5"/>
+  <circle cx="130" cy="30" r="7" fill="#e07b12" stroke="#fff" stroke-width="1.5"/>
+  <!-- Pot -->
+  <g class="pot">
+    <rect x="66" y="33" width="28" height="9" rx="4.5" fill="rgba(0,0,0,.3)"/>
+    <circle cx="71" cy="37.5" r="3" fill="#ffd54a" stroke="#b98a0b" stroke-width="1"/>
+    <rect x="76" y="36" width="14" height="3" rx="1.5" fill="#ffd54a"/>
+  </g>
+  <!-- 5 lá chung -->
+  <g fill="#fffefb" stroke="#0b2a1c" stroke-width=".8">
+    <g class="c c1"><rect x="45" y="47" width="13" height="18" rx="2"/><use href="#sp" x="47.5" y="52" width="8" height="8" fill="#191b31" stroke="none"/></g>
+    <g class="c c2"><rect x="59.5" y="47" width="13" height="18" rx="2"/><use href="#ht" x="62" y="52" width="8" height="8" fill="#c62828" stroke="none"/></g>
+    <g class="c c3"><rect x="74" y="47" width="13" height="18" rx="2"/><use href="#sp" x="76.5" y="52" width="8" height="8" fill="#191b31" stroke="none"/></g>
+    <g class="c c4"><rect x="88.5" y="47" width="13" height="18" rx="2"/><use href="#ht" x="91" y="52" width="8" height="8" fill="#c62828" stroke="none"/></g>
+    <g class="c c5"><rect x="103" y="47" width="13" height="18" rx="2"/><use href="#sp" x="105.5" y="52" width="8" height="8" fill="#191b31" stroke="none"/></g>
+  </g>
+  <!-- Chip của bạn đẩy vào pot -->
+  <g class="chip">
+    <circle cx="96" cy="80" r="4.5" fill="#ffd54a" stroke="#b98a0b" stroke-width="1.4" stroke-dasharray="2 1.5"/>
+  </g>
+  <!-- Bài tẩy của bạn + quầng sáng thắng -->
+  <rect class="glow" x="63" y="84" width="34" height="27" rx="4" fill="none" stroke="#ffd54a" stroke-width="2.5"/>
+  <g transform="rotate(-8 72 97)">
+    <rect x="65" y="86" width="15" height="21" rx="2" fill="#fffefb" stroke="#0b2a1c" stroke-width=".8"/>
+    <text x="67.5" y="94" font-family="system-ui, sans-serif" font-size="7" font-weight="800" fill="#191b31">A</text>
+    <use href="#sp" x="69" y="96" width="8" height="8" fill="#191b31"/>
+  </g>
+  <g transform="rotate(8 88 97)">
+    <rect x="80" y="86" width="15" height="21" rx="2" fill="#fffefb" stroke="#0b2a1c" stroke-width=".8"/>
+    <text x="82.5" y="94" font-family="system-ui, sans-serif" font-size="7" font-weight="800" fill="#191b31">K</text>
+    <use href="#sp" x="84" y="96" width="8" height="8" fill="#191b31"/>
+  </g>
+</svg>

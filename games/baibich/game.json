@@ -1,0 +1,69 @@
+{
+  "id": "baibich",
+  "cat": "card",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Spades",
+    "vi": "Bài Bích"
+  },
+  "sub": {
+    "en": "Partnership trick-taking",
+    "vi": "Spades"
+  },
+  "desc": {
+    "en": "Team up with a computer partner against two computer opponents: bid how many tricks you will take, follow suit, and use spades as trump. Make your bids, dodge bags and reach the target first.",
+    "vi": "Cặp với một đồng đội máy đấu hai máy đối thủ: báo số nước sẽ ăn, ra theo chất, dùng bích làm chủ. Ăn đủ số báo, tránh túi và chạm mốc điểm trước."
+  },
+  "tags": {
+    "en": ["Cards", "Vs computer", "Teams"],
+    "vi": ["Bài", "Đấu máy", "Theo đội"]
+  },
+  "note": {
+    "en": "Spades are trump, first team to 300 wins",
+    "vi": "Bích là chủ, đội chạm 300 điểm trước thắng"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(90, 200, 230, .26), transparent 60%), linear-gradient(160deg, #1b4656, #0a1d26)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 10,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 20000
+        },
+        "points": 8
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 20000
+        },
+        "points": 10
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 20000
+        },
+        "points": 12
+      }
+    ]
+  }
+}

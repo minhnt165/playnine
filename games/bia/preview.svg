@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: bi cái lăn tới, bi 1 rơi vào lỗ góc. Tự chứa, hoạt hình bằng CSS,
+       tắt khi người dùng giảm chuyển động. Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt. -->
+  <style>
+    .stick { animation: stick 3.2s ease-in infinite; }
+    .cue { animation: cue 3.2s infinite; }
+    .obj { animation: obj 3.2s infinite; transform-origin: 110px 48px; }
+    .guide { animation: guide 3.2s infinite; }
+    @keyframes stick {
+      0% { transform: translate(-6px, 1.7px); opacity: 1; }
+      12% { transform: translate(2px, -0.5px); opacity: 1; }
+      18%, 92% { transform: translate(2px, -0.5px); opacity: 0; }
+      100% { transform: translate(-6px, 1.7px); opacity: 1; }
+    }
+    @keyframes cue {
+      0%, 12% { transform: translate(0, 0); animation-timing-function: ease-out; }
+      38% { transform: translate(62.4px, -17.2px); animation-timing-function: ease-out; }
+      55%, 90% { transform: translate(66px, -6px); opacity: 1; }
+      96% { transform: translate(66px, -6px); opacity: 0; }
+      97% { transform: translate(0, 0); opacity: 0; }
+      100% { transform: translate(0, 0); opacity: 1; }
+    }
+    @keyframes obj {
+      0%, 38% { transform: translate(0, 0) scale(1); opacity: 1; animation-timing-function: ease-out; }
+      58% { transform: translate(31px, -19.6px) scale(.85); opacity: 1; }
+      64%, 94% { transform: translate(33px, -21px) scale(.2); opacity: 0; }
+      100% { transform: translate(0, 0) scale(1); opacity: 1; }
+    }
+    @keyframes guide { 0%, 10% { opacity: .8; } 16%, 94% { opacity: 0; } 100% { opacity: .8; } }
+    @media (prefers-reduced-motion: reduce) {
+      .stick, .cue, .obj, .guide { animation: none; }
+    }
+  </style>
+  <defs>
+    <radialGradient id="shade" cx=".35" cy=".3" r=".75">
+      <stop offset="0" stop-color="#fff" stop-opacity=".55"/>
+      <stop offset=".5" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".3"/>
+    </radialGradient>
+    <radialGradient id="felt" cx=".5" cy=".5" r=".7">
+      <stop offset="0" stop-color="#23955f"/>
+      <stop offset="1" stop-color="#14683f"/>
+    </radialGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8a5629"/>
+      <stop offset=".5" stop-color="#5e3719"/>
+      <stop offset="1" stop-color="#8a5629"/>
+    </linearGradient>
+  </defs>
+  <!-- Bàn -->
+  <rect x="6" y="16" width="148" height="88" rx="9" fill="url(#wood)"/>
+  <rect x="13" y="23" width="134" height="74" fill="#0f5536"/>
+  <rect x="16" y="26" width="128" height="68" fill="url(#felt)"/>
+  <g fill="#07090c">
+    <circle cx="16.5" cy="26.5" r="6.2"/>
+    <circle cx="143.5" cy="26.5" r="6.2"/>
+    <circle cx="16.5" cy="93.5" r="6.2"/>
+    <circle cx="143.5" cy="93.5" r="6.2"/>
+    <circle cx="80" cy="24.5" r="5.4"/>
+    <circle cx="80" cy="95.5" r="5.4"/>
+  </g>
+  <line x1="48" y1="26" x2="48" y2="94" stroke="#fff" stroke-opacity=".22" stroke-dasharray="2 3"/>
+  <!-- Đường ngắm -->
+  <line class="guide" x1="44" y1="69" x2="102.4" y2="52.8" stroke="#fff" stroke-width="1" stroke-dasharray="2.5 2" opacity=".8"/>
+  <!-- Bi khác -->
+  <g>
+    <circle cx="60" cy="38" r="4.5" fill="#d93a2b"/>
+    <circle cx="88" cy="81" r="4.5" fill="#16171c"/>
+    <circle cx="88" cy="81" r="2" fill="#fbfaf5"/>
+    <circle cx="124" cy="80" r="4.5" fill="#f4f1e8"/>
+    <rect x="119.5" y="77.6" width="9" height="4.8" fill="#1f5fd1"/>
+    <circle cx="124" cy="80" r="4.5" fill="none" stroke="#000" stroke-opacity=".15"/>
+    <circle cx="121" cy="64" r="4.5" fill="#6b3fa0"/>
+    <circle cx="60" cy="38" r="4.5" fill="url(#shade)"/>
+    <circle cx="88" cy="81" r="4.5" fill="url(#shade)"/>
+    <circle cx="124" cy="80" r="4.5" fill="url(#shade)"/>
+    <circle cx="121" cy="64" r="4.5" fill="url(#shade)"/>
+  </g>
+  <!-- Bi 1 rơi vào lỗ góc trên phải -->
+  <g class="obj">
+    <circle cx="110" cy="48" r="4.5" fill="#f2c12e"/>
+    <circle cx="110" cy="48" r="4.5" fill="url(#shade)"/>
+  </g>
+  <!-- Bi cái và gậy -->
+  <g class="cue">
+    <circle cx="40" cy="70" r="4.5" fill="#f4f1e8"/>
+    <circle cx="40" cy="70" r="4.5" fill="url(#shade)"/>
+  </g>
+  <g class="stick">
+    <line x1="2" y1="80.5" x2="33.5" y2="71.8" stroke="#e8c48c" stroke-width="2.6" stroke-linecap="round"/>
+    <line x1="2" y1="80.5" x2="14" y2="77.2" stroke="#7a4a24" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

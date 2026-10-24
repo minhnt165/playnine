@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước Cờ Tào Cáo: nửa bàn gỗ, hai xúc xắc lăn ra 2-1, quân trắng nhảy 3 điểm đánh quân đen lẻ lên thanh giữa.
+       Tự chứa, hoạt hình bằng CSS, tắt khi giảm chuyển động (hiện thế cờ sau nước đi). Nền trong suốt. -->
+  <defs>
+    <linearGradient id="fr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8c5833"/><stop offset="1" stop-color="#5e3a20"/></linearGradient>
+    <linearGradient id="fd" x1="0" y1="0" x2="1" y2=".25"><stop offset="0" stop-color="#f0d9ad"/><stop offset=".5" stop-color="#e2c48f"/><stop offset="1" stop-color="#ecd3a3"/></linearGradient>
+    <radialGradient id="w" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#f3ead8"/><stop offset="1" stop-color="#c9b994"/></radialGradient>
+    <radialGradient id="k" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#77737c"/><stop offset=".6" stop-color="#2e2b31"/><stop offset="1" stop-color="#141216"/></radialGradient>
+  </defs>
+  <style>
+    .w { fill: url(#w); stroke: #8e7b57; stroke-width: .8; }
+    .k { fill: url(#k); stroke: #000; stroke-width: .8; }
+    .ta { fill: #a23e2c; }
+    .tb { fill: #2f5f5b; }
+    .die rect { fill: #fbf6ea; stroke: rgba(0,0,0,.3); stroke-width: .6; }
+    .die circle { fill: #2a1c12; }
+    .die { transform-box: fill-box; transform-origin: center; animation: roll 7s infinite; }
+    .d2 { animation-delay: .08s; }
+    @keyframes roll {
+      0% { transform: translate(-26px, -10px) rotate(-260deg) scale(.6); opacity: 0; }
+      4% { opacity: 1; }
+      13% { transform: translate(2px, 1px) rotate(15deg) scale(1.06); }
+      17%, 90% { transform: none; opacity: 1; }
+      97%, 100% { transform: none; opacity: 0; }
+    }
+    .mv { animation: mv 7s infinite; }
+    @keyframes mv {
+      0%, 22% { transform: none; }
+      29% { transform: translate(-30px, -16px); }
+      36%, 90% { transform: translate(-59px, 16.5px); opacity: 1; }
+      97% { transform: translate(-59px, 16.5px); opacity: 0; }
+      100% { transform: none; opacity: 0; }
+    }
+    .hit { animation: hit 7s infinite; }
+    @keyframes hit {
+      0%, 36% { transform: none; }
+      46%, 90% { transform: translate(78.3px, -41.5px); opacity: 1; }
+      97% { transform: translate(78.3px, -41.5px); opacity: 0; }
+      100% { transform: none; opacity: 0; }
+    }
+    .ring { fill: none; stroke: #ffcf33; stroke-width: 2; opacity: 0; animation: ring 7s infinite; }
+    @keyframes ring { 0%, 18% { opacity: 0; } 20%, 30% { opacity: 1; } 34%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .die, .mv, .hit, .ring { animation: none; }
+      .mv { transform: translate(-59px, 16.5px); }
+      .hit { transform: translate(78.3px, -41.5px); }
+    }
+  </style>
+  <rect x="5" y="10" width="151" height="100" rx="7" fill="url(#fr)"/>
+  <rect x="13" y="17" width="119" height="86" rx="2" fill="url(#fd)"/>
+  <rect x="133" y="14" width="18" height="92" rx="3" fill="#4c2c16"/>
+  <!-- Tam giác hàng trên / dưới -->
+  <path class="ta" d="M14.2 17h19.2l-9.6 36z"/>
+  <path class="tb" d="M33.8 17h19.2l-9.6 36z"/>
+  <path class="ta" d="M53.5 17h19.2l-9.6 36z"/>
+  <path class="tb" d="M73.2 17h19.2l-9.6 36z"/>
+  <path class="ta" d="M92.9 17h19.2l-9.6 36z"/>
+  <path class="tb" d="M112.6 17h19.2l-9.6 36z"/>
+  <path class="tb" d="M14.2 103h19.2l-9.6-36z"/>
+  <path class="ta" d="M33.8 103h19.2l-9.6-36z"/>
+  <path class="tb" d="M53.5 103h19.2l-9.6-36z"/>
+  <path class="ta" d="M73.2 103h19.2l-9.6-36z"/>
+  <path class="tb" d="M92.9 103h19.2l-9.6-36z"/>
+  <path class="ta" d="M112.6 103h19.2l-9.6-36z"/>
+  <!-- Quân -->
+  <circle class="k" cx="23.8" cy="26" r="8"/>
+  <circle class="k" cx="23.8" cy="42.5" r="8"/>
+  <circle class="w" cx="82.8" cy="26" r="8"/>
+  <circle class="w" cx="82.8" cy="42.5" r="8"/>
+  <circle class="k" cx="122.2" cy="26" r="8"/>
+  <circle class="k" cx="122.2" cy="42.5" r="8"/>
+  <circle class="w" cx="23.8" cy="94" r="8"/>
+  <circle class="w" cx="23.8" cy="77.5" r="8"/>
+  <circle class="w" cx="23.8" cy="61" r="8"/>
+  <circle class="w" cx="122.2" cy="94" r="8"/>
+  <circle class="k hit" cx="63.2" cy="93.5" r="8"/>
+  <circle class="ring" cx="122.2" cy="77.5" r="9.5"/>
+  <circle class="w mv" cx="122.2" cy="77.5" r="8"/>
+  <!-- Xúc xắc 2 và 1 -->
+  <g class="die"><rect x="84" y="53" width="13" height="13" rx="2.6"/><circle cx="87.4" cy="56.4" r="1.4"/><circle cx="93.6" cy="62.6" r="1.4"/></g>
+  <g class="die d2"><rect x="101" y="53" width="13" height="13" rx="2.6"/><circle cx="107.5" cy="59.5" r="1.5"/></g>
+</svg>

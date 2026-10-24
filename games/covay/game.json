@@ -1,0 +1,69 @@
+{
+  "id": "covay",
+  "cat": "versus",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Go",
+    "vi": "Cờ Vây"
+  },
+  "sub": {
+    "en": "Territory game",
+    "vi": "Go · cờ vây đất"
+  },
+  "desc": {
+    "en": "Place stones to surround territory and capture groups that run out of liberties. Area scoring with 6.5 komi on a 9×9 or 13×13 board. Play the computer at three levels or a friend.",
+    "vi": "Đặt quân để vây đất và bắt những nhóm hết khí. Tính điểm khu vực, komi 6,5, bàn 9×9 hoặc 13×13. Đấu máy ba mức hoặc chơi hai người."
+  },
+  "tags": {
+    "en": ["Board game", "Vs computer", "2 players"],
+    "vi": ["Cờ bàn", "Đấu máy", "2 người"]
+  },
+  "note": {
+    "en": "Three computer levels · 9×9 and 13×13",
+    "vi": "Máy ba mức · bàn 9×9 và 13×13"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(227, 184, 119, .32), transparent 60%), linear-gradient(160deg, #3b2a17, #140d06)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 8000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 8000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 8000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

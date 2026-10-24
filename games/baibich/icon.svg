@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2f7f93"/>
+      <stop offset="1" stop-color="#0f3442"/>
+    </linearGradient>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e9eef5"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Lá sau (cơ) nghiêng trái, lá trước (bích) thẳng -->
+  <g transform="rotate(-14 26 36)">
+    <rect x="11" y="14" width="26" height="36" rx="4" fill="#f6dfe4" stroke="#0b2530" stroke-opacity=".25"/>
+    <path d="M24 37c-5-4-8-6.5-8-9.6a3.6 3.6 0 0 1 8-1.7 3.6 3.6 0 0 1 8 1.7c0 3.1-3 5.6-8 9.6z" fill="#d6334f"/>
+  </g>
+  <rect x="25" y="11" width="29" height="41" rx="4.5" fill="url(#face)" stroke="#0b2530" stroke-opacity=".3"/>
+  <path d="M39.5 18c-6.5 6-11 9.3-11 13.6 0 3.2 2.4 5.3 5.2 5.3 1.9 0 3.4-.9 4.3-2.3-.4 3.2-1.6 5.3-3.6 6.6h10.2c-2-1.3-3.2-3.4-3.6-6.6.9 1.4 2.4 2.3 4.3 2.3 2.8 0 5.2-2.1 5.2-5.3 0-4.3-4.5-7.6-11-13.6z" fill="#14202b"/>
+</svg>

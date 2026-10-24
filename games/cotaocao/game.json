@@ -1,0 +1,69 @@
+{
+  "id": "cotaocao",
+  "cat": "versus",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Backgammon",
+    "vi": "Cờ Tào Cáo"
+  },
+  "sub": {
+    "en": "Dice race vs the computer",
+    "vi": "Backgammon · đua quân bằng xúc xắc"
+  },
+  "desc": {
+    "en": "Roll two dice and race your 15 checkers around the board, hitting lone blots and blocking the way, then bear them all off before the computer. Three computer levels; gammons and backgammons count double and triple.",
+    "vi": "Gieo hai xúc xắc, đưa 15 quân chạy quanh bàn, đánh quân lẻ và chặn đường đối thủ, rồi gỡ hết quân trước máy. Máy ba mức; gammon tính gấp đôi, backgammon gấp ba."
+  },
+  "tags": {
+    "en": ["Board game", "Dice", "Vs computer"],
+    "vi": ["Cờ bàn", "Xúc xắc", "Đấu máy"]
+  },
+  "note": {
+    "en": "Three computer levels · one-game match",
+    "vi": "Máy ba mức · trận một ván"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(214, 150, 80, .3), transparent 60%), linear-gradient(160deg, #3b2414, #160c06)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 15000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 15000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 15000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

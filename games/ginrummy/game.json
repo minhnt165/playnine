@@ -1,0 +1,69 @@
+{
+  "id": "ginrummy",
+  "cat": "card",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Gin Rummy",
+    "vi": "Gin Rummy"
+  },
+  "sub": {
+    "en": "Knock or go gin",
+    "vi": "Knock hay ù gin"
+  },
+  "desc": {
+    "en": "Draw, discard and build sets and runs against the computer, knock with 10 or less deadwood or go gin. Your hand sorts itself into the best melds; first to 100 points wins the match.",
+    "vi": "Rút, bỏ và ghép sám, sảnh đấu với máy, knock khi lá lẻ còn 10 điểm trở xuống hoặc ù gin. Bài tự xếp thành bộ tốt nhất; ai tới 100 điểm trước thắng trận."
+  },
+  "tags": {
+    "en": ["Cards", "Vs computer", "1 player"],
+    "vi": ["Bài", "Đấu máy", "1 người"]
+  },
+  "note": {
+    "en": "Knock at 10 or less, first to 100",
+    "vi": "Knock khi lá lẻ ≤ 10, ai tới 100 trước thắng"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(47, 209, 159, .28), transparent 60%), linear-gradient(160deg, #18574a, #0a2620)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 10,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 12000
+        },
+        "points": 8
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 12000
+        },
+        "points": 10
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 12000
+        },
+        "points": 12
+      }
+    ]
+  }
+}

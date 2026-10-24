@@ -1,0 +1,69 @@
+{
+  "id": "baitim",
+  "cat": "card",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Hearts",
+    "vi": "Bài Tim"
+  },
+  "sub": {
+    "en": "Trick-taking card game",
+    "vi": "Hearts"
+  },
+  "desc": {
+    "en": "Pass three cards, follow suit and dodge every heart and the queen of spades against three computer players. Take them all to shoot the moon; when someone reaches 100, the lowest score wins.",
+    "vi": "Chuyền 3 lá, ra theo chất, né mọi lá cơ và Q♠ khi đấu ba người máy. Ăn trọn để bắn trăng; khi có người chạm 100 điểm, ai ít điểm nhất thắng."
+  },
+  "tags": {
+    "en": ["Cards", "Vs computer", "1 player"],
+    "vi": ["Bài", "Đấu máy", "1 người"]
+  },
+  "note": {
+    "en": "Hearts 1 point, Q♠ 13, lowest score wins",
+    "vi": "Cơ 1 điểm, Q♠ 13 điểm, ít điểm nhất thắng"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 93, 122, .3), transparent 60%), linear-gradient(160deg, #5a1730, #1f0712)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 10,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 20000
+        },
+        "points": 8
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 20000
+        },
+        "points": 10
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 20000
+        },
+        "points": 12
+      }
+    ]
+  }
+}

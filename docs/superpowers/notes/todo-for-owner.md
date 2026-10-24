@@ -19,6 +19,7 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 - [ ] `supabase/migrations/20261023000600_batch6.sql` — đợt 6, game 62–69: Đoán Chữ, Tìm Chữ, Ghép Chữ, Tính Nhẩm, Tính 24, Nhớ Nhịp, Gõ Nhanh, Dãy Số.
 
 - [ ] `supabase/migrations/20261023000700_batch7.sql` — đợt 7, game 70–77: Bắn Tàu, Ô Vuông, Cờ Lục Giác, Cờ Nhảy, Xoay Cờ, Vệt Sáng, Khúc Côn Cầu, Pháo Thủ.
+- [ ] `supabase/migrations/20261023000800_batch8.sql` — đợt 8, game 78–85: Xì Tố, Gin Rummy, Bài Bích, Cờ Vây, Cờ Tào Cáo, Bi-a, Mạt Chược Ghép, Bài Tim.
 
 Đợt 0 (nền tảng) không có migration. Áp các file theo đúng thứ tự tên file.
 
@@ -30,6 +31,8 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 - [ ] Xem tab Actions trên GitHub: các lần đẩy đợt 0 (từ `34fe71f` tới `397eb86`) có workflow Deploy xanh không. Máy làm việc không có `gh` và không gọi được GitHub API nên Claude chưa kiểm tra được CI; ở máy local toàn bộ `npm test` và e2e (93 test) đều xanh.
 
 - [ ] Thử **Gõ Nhanh** trên điện thoại thật (iOS và Android/Gboard): bàn phím ảo bật lên khung có co vừa không, gõ có bị chặn nhầm là "dán / gõ tự động" khi bàn phím gợi ý từ hay tự sửa không. Máy làm việc chỉ giả lập được.
+
+- [ ] **Chơi thử máy ở các game đợt 8** (test tự động chỉ đo máy đấu máy): **Xì Tố** — máy Khó thắng 3 máy ngẫu nhiên chỉ 72% (poker may rủi; tay đôi 93%), cần xem máy Dễ có quá lỳ, máy Khó tháu cáy/bỏ bài hợp lý không, giải có dài quá 20 phút không; **Cờ Vây** — cảm giác và độ mạnh mức Khó, nhất là trên điện thoại; **Bi-a** — máy Khó vào bi ~75% số cú, có thể quá khó với người chơi thường, và cảm giác ngắm trên điện thoại; **Mạt Chược Ghép** — độ dễ đọc bàn Rùa trên điện thoại dọc (mặc định điện thoại dọc mở bàn Tháp).
 
 ## Cần bạn quyết định
 
@@ -44,3 +47,7 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 - Hiệu năng (mốc 50 game): màn chờ lúc tải lần đầu giờ hiện logo PlayNine ngay (vòng xoay vẫn hiện sau 0,3 s); khối Spotlight đầu trang chỉ trượt lên, không còn mờ dần; trang chủ chỉ dựng 24 thẻ thay vì dựng hết rồi ẩn. Mục đích: Lighthouse điện thoại từ ~60 lên 85–87.
 - Điểm cổng một số game đối kháng thấp hơn mức 10/15/25 của lộ trình: Bắn Tàu 5/10/20 (may rủi nhiều, người chơi bình thường gần như chắc thắng máy Dễ), Vệt Sáng 6/10/16 (trận 1–2 phút, ngang Bóng Bàn).
 - Cờ Lục Giác bật luật đổi bên (pie rule) mặc định, tắt được trong Cài đặt: không có nó thì đặt giữa bàn ở nước đầu là thắng máy quá dễ.
+- Bài Bích: mốc thắng trận mặc định 300 (tùy chọn 500), hai mốc cùng điểm cổng; đồng đội của bạn luôn là máy Khó, mức trong Cài đặt chỉ áp cho đối thủ.
+- Cờ Tào Cáo: trận một ván, bỏ doubling cube (gấp đôi để máy bỏ sẽ kết thúc ván quá sớm, mà cổng chỉ ghi thắng/thua); gammon/backgammon vẫn hiện trong kết quả.
+- Cờ Vây: có thêm bàn 13×13 và chế độ 2 người (không gửi điểm); luật khu vực + siêu ko, không có bước đánh dấu quân chết (để không sửa được kết quả ván xếp hạng).
+- Mạt Chược Ghép: gợi ý và xáo lại gửi `assisted: true` (không phạt cộng giây vì máy chủ từ chối `timeMs` lệch thời gian thật).

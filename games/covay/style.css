@@ -1,0 +1,194 @@
+/* =====================================================================
+ * Cờ Vây - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bàn là một <svg> vuông: nền gỗ, lưới, điểm sao, tọa độ; quân đá có bóng; lớp tô đất; lớp phủ
+ *     (dấu nước vừa đi, quân ma, con trỏ bàn phím). app.js đặt kích thước px theo khung
+ *   - Thanh người chơi + nút Bỏ lượt / Đầu hàng: trên–dưới bàn (màn hình đứng) hoặc cột bên phải (màn hình rộng / ngang thấp)
+ * ===================================================================== */
+:root {
+  --wood-1: #f2d39c;
+  --wood-2: #e3b877;
+  --wood-3: #cf9f5e;
+  --grid: rgba(58, 36, 10, 0.78);
+  --coord: rgba(74, 47, 14, 0.72);
+  --wood-edge: rgba(120, 76, 24, 0.55);
+  --glow: #ffcf33;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --wood-1: #c9a46b;
+    --wood-2: #b58d55;
+    --wood-3: #9b7442;
+    --grid: rgba(36, 22, 4, 0.85);
+    --coord: rgba(36, 22, 4, 0.78);
+    --wood-edge: rgba(0, 0, 0, 0.45);
+  }
+}
+:root[data-theme="dark"] {
+  --wood-1: #c9a46b;
+  --wood-2: #b58d55;
+  --wood-3: #9b7442;
+  --grid: rgba(36, 22, 4, 0.85);
+  --coord: rgba(36, 22, 4, 0.78);
+  --wood-edge: rgba(0, 0, 0, 0.45);
+}
+
+/* ===================== Bố cục ===================== */
+.stage { flex-direction: column; gap: 8px; }
+.side { display: contents; }
+#bar-top { order: 0; }
+.board-box { order: 1; flex: none; display: flex; align-items: center; justify-content: center; }
+#bar-bottom { order: 2; }
+.controls { order: 3; }
+
+/* Màn hình rộng và đủ cao: bàn bên trái, cột thông tin bên phải */
+@media (min-width: 900px) and (min-height: 601px) {
+  :root { --app-max: 1040px; }
+  .stage { flex-direction: row; gap: 18px; }
+  .side { order: 2; display: flex; flex-direction: column; justify-content: center; gap: 10px; width: 300px; flex: none; }
+  .pbar, .controls { width: 100%; }
+}
+
+/* ===================== Bàn ===================== */
+.board {
+  display: block;
+  flex: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(40, 24, 6, 0.28), 0 2px 0 rgba(0, 0, 0, 0.08);
+}
+.board:focus { outline: none; }
+.board:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+.board.wait { cursor: default; }
+
+.wood { fill: url(#g-wood); stroke: var(--wood-edge); stroke-width: 0.03; }
+.gl { fill: none; stroke: var(--grid); stroke-width: 0.035; shape-rendering: crispEdges; }
+.gl.edge { stroke-width: 0.06; }
+.hoshi { fill: var(--grid); }
+.coord { font-size: 24px; font-weight: 700; fill: var(--coord); text-anchor: middle; dominant-baseline: central; font-family: var(--font); }
+
+/* Quân đá: bóng lệch + thân có gradient */
+.stone { pointer-events: none; }
+.stone .sh { fill: rgba(30, 18, 4, 0.32); }
+.stone.black .body { fill: url(#g-black); }
+.stone.white .body { fill: url(#g-white); stroke: rgba(0, 0, 0, 0.22); stroke-width: 0.02; }
+.stone > circle { transform-box: fill-box; transform-origin: center; }
+.stone.drop > circle { animation: drop 0.2s cubic-bezier(0.3, 1.5, 0.5, 1); }
+@keyframes drop {
+  from { transform: scale(0.4); opacity: 0.2; }
+}
+.stone.gone { opacity: 0; transition: opacity 0.26s ease; }
+.stone.ghost { opacity: 0.42; }
+.stone.ghost .sh { display: none; }
+.stone.ghost.picked { opacity: 0.7; }
+.stone.ghost.picked .body { stroke: var(--focus); stroke-width: 0.06; }
+.stone.dead { opacity: 0.4; }
+
+.last-mark { fill: none; stroke-width: 0.075; pointer-events: none; }
+.last-mark.on-black { stroke: rgba(255, 255, 255, 0.92); }
+.last-mark.on-white { stroke: rgba(20, 20, 26, 0.85); }
+.cursor-ring { fill: none; stroke: var(--focus); stroke-width: 0.07; pointer-events: none; }
+
+/* Đất khi hết ván */
+.terr { pointer-events: none; }
+.terr.black { fill: #15161b; }
+.terr.white { fill: #f8f6f0; stroke: rgba(0, 0, 0, 0.45); stroke-width: 0.03; }
+
+/* ===================== Thanh người chơi ===================== */
+.pbar {
+  width: min(100%, 560px);
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 5px 12px;
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid transparent;
+  flex: none;
+  transition: border-color 0.2s;
+}
+.pbar.active { border-color: var(--accent); }
+.pbar.won { border-color: var(--glow); }
+.pdot, .sdot {
+  border-radius: 50%;
+  flex: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+.pdot { width: 20px; height: 20px; }
+.black .pdot, .sdot.black { background: radial-gradient(circle at 35% 30%, #6b6f7a, #25272e 45%, #0b0c10); }
+.white .pdot, .sdot.white { background: radial-gradient(circle at 35% 30%, #fff, #eceae4 60%, #c3bfb4); }
+.pinfo { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.pname { font-weight: 800; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.psub { font-size: 0.78rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pbar.active .psub { color: var(--text); font-weight: 600; }
+.pbar.thinking .psub::after { content: ""; display: inline-block; width: 1.2em; text-align: left; animation: dots 1.2s steps(4) infinite; }
+@keyframes dots {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75% { content: "..."; }
+}
+.pcaps { display: flex; flex-direction: column; align-items: flex-end; flex: none; line-height: 1.1; }
+.pcaps-n { font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.pcaps-l { font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+
+.controls { width: min(100%, 560px); align-self: center; display: flex; gap: 8px; flex: none; }
+.controls .btn { flex: 1; background: var(--surface); box-shadow: var(--shadow-sm); }
+#btn-pass.hot { background: var(--accent); color: var(--accent-text); }
+@media (hover: hover) {
+  .controls .btn:not(:disabled):hover { background: var(--surface-2); }
+  #btn-pass.hot:not(:disabled):hover { background: var(--accent-strong); }
+}
+
+/* ===================== Hộp thoại ===================== */
+.sdot { display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px; }
+.segmented button { display: inline-flex; align-items: center; justify-content: center; }
+.setting[hidden] { display: none; }
+
+.result-card { text-align: center; align-items: center; }
+.result-card .modal-actions { width: 100%; }
+.result-art svg { display: block; width: 64px; height: 64px; margin: 2px auto 0; overflow: visible; }
+.result-art.win .body { stroke: var(--glow); stroke-width: 0.1; }
+.result-art.lose svg { filter: saturate(0.6); opacity: 0.85; }
+
+.score-table { width: 100%; margin: 0; display: flex; flex-direction: column; gap: 4px; font-variant-numeric: tabular-nums; }
+.score-table > div { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 6px 10px; border-radius: 10px; background: var(--surface-2); }
+.score-table dt { font-weight: 700; display: flex; align-items: center; }
+.score-table dd { margin: 0; font-weight: 600; text-align: right; }
+.score-table .lead { background: var(--accent-soft); }
+.pass-note { font-size: 0.85rem; }
+
+.help-card { gap: 12px; }
+.help-art { display: block; width: 100%; max-height: 120px; overflow: visible; }
+.help-ring { fill: none; stroke: var(--red); stroke-width: 0.08; stroke-dasharray: 0.12 0.08; }
+.rules { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; color: var(--muted); line-height: 1.45; font-size: 0.9rem; }
+.rules b { color: var(--text); }
+
+.stats-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.stats-table th, .stats-table td { padding: 6px 4px; text-align: center; border-bottom: 1px solid var(--line); }
+.stats-table thead th { font-size: 0.75rem; color: var(--muted); font-weight: 700; }
+.stats-table tbody th { text-align: left; font-weight: 700; }
+.stats-pvp { font-size: 0.88rem; }
+
+/* ===================== Màn hình ngang thấp ===================== */
+@media (orientation: landscape) and (max-height: 600px) {
+  :root { --app-max: 980px; }
+  .stage { flex-direction: row; gap: 14px; }
+  .side { order: 2; display: flex; flex-direction: column; justify-content: center; gap: 8px; width: 250px; flex: none; }
+  .pbar, .controls { width: 100%; }
+  .pbar { min-height: 40px; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .pbar { transition: none; }
+  .stone.drop > circle { animation: none; }
+  .stone.gone { transition: none; }
+  .pbar.thinking .psub::after { animation: none; content: "…"; }
+}

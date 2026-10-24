@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#27a86f"/>
+      <stop offset="1" stop-color="#0d5034"/>
+    </linearGradient>
+    <radialGradient id="eight" cx=".36" cy=".3" r=".75">
+      <stop offset="0" stop-color="#5b5e6b"/>
+      <stop offset=".45" stop-color="#1c1d24"/>
+      <stop offset="1" stop-color="#050506"/>
+    </radialGradient>
+    <radialGradient id="cue" cx=".36" cy=".3" r=".75">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".6" stop-color="#ece8dc"/>
+      <stop offset="1" stop-color="#b5ae9c"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <circle cx="16" cy="47" r="8.5" fill="#000" opacity=".25" transform="translate(1 1.5)"/>
+  <circle cx="16" cy="47" r="8.5" fill="url(#cue)"/>
+  <circle cx="39" cy="25" r="17" fill="#000" opacity=".25" transform="translate(1.5 2)"/>
+  <circle cx="39" cy="25" r="17" fill="url(#eight)"/>
+  <circle cx="39" cy="25" r="8" fill="#fbfaf5"/>
+  <text x="39" y="29.6" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12.5" font-weight="800" fill="#111">8</text>
+  <ellipse cx="32.5" cy="15.5" rx="4.5" ry="2.6" fill="#fff" opacity=".28" transform="rotate(-30 32.5 15.5)"/>
+</svg>

@@ -1,0 +1,71 @@
+{
+  "id": "xito",
+  "cat": "card",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Hold'em Poker",
+    "vi": "Xì Tố"
+  },
+  "sub": {
+    "en": "No-limit Texas Hold'em",
+    "vi": "Hold'em Poker"
+  },
+  "desc": {
+    "en": "No-limit Texas Hold'em against three computer players: 1000 play chips each and blinds that keep rising. Bet, bluff and read the table until you hold every chip.",
+    "vi": "Texas Hold'em không giới hạn với ba người máy: mỗi người 1000 chip ảo, mù tăng dần. Cược, tháu cáy và đọc bàn cho tới khi ôm hết chip."
+  },
+  "tags": {
+    "en": ["Cards", "Vs computer", "1 player"],
+    "vi": ["Bài", "Đấu máy", "1 người"]
+  },
+  "note": {
+    "en": "4-player sit-and-go, play chips only",
+    "vi": "Giải 4 người, chỉ dùng chip ảo"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(80, 210, 140, .3), transparent 60%), linear-gradient(160deg, #145238, #072217)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "wins",
+    "points": 10,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 5000
+        },
+        "points": 8
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 5000
+        },
+        "points": 10
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 5000
+        },
+        "points": 12
+      }
+    ]
+  }
+}

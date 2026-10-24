@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="felt" cx=".5" cy=".4" r=".75">
+      <stop offset="0" stop-color="#2fa36c"/>
+      <stop offset="1" stop-color="#0d4a30"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#felt)"/>
+  <!-- Hai lá tẩy: A bích, K cơ -->
+  <g transform="rotate(-12 24 34)">
+    <rect x="10" y="14" width="24" height="34" rx="4" fill="#fffefb" stroke="#0b2a1c" stroke-width="1.5"/>
+    <text x="14" y="27" font-family="system-ui, sans-serif" font-size="11" font-weight="800" fill="#191b31">A</text>
+    <path d="M22 31c-3 3-6 5-6 8a3 3 0 0 0 5 2l-1 4h4l-1-4a3 3 0 0 0 5-2c0-3-3-5-6-8z" fill="#191b31"/>
+  </g>
+  <g transform="rotate(10 40 34)">
+    <rect x="28" y="14" width="24" height="34" rx="4" fill="#fffefb" stroke="#0b2a1c" stroke-width="1.5"/>
+    <text x="32" y="27" font-family="system-ui, sans-serif" font-size="11" font-weight="800" fill="#c62828">K</text>
+    <path d="M40 44c-5-4-7-6-7-9a3.5 3.5 0 0 1 7-1 3.5 3.5 0 0 1 7 1c0 3-2 5-7 9z" fill="#c62828"/>
+  </g>
+  <!-- Chip -->
+  <circle cx="47" cy="51" r="9" fill="#ffd54a" stroke="#b98a0b" stroke-width="2.5" stroke-dasharray="4 3"/>
+  <circle cx="47" cy="51" r="4.5" fill="#f2b31b"/>
+</svg>

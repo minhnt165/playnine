@@ -1,0 +1,84 @@
+{
+  "id": "matchuocghep",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Mahjong Solitaire",
+    "vi": "Mạt Chược Ghép"
+  },
+  "sub": {
+    "en": "Match free pairs, clear the stack",
+    "vi": "Ghép cặp quân tự do, gỡ hết bàn"
+  },
+  "desc": {
+    "en": "Clear a stacked board of 144 mahjong tiles by matching pairs of free tiles. Classic Turtle, quicker Tower and Mini boards plus a daily board; every deal can be cleared.",
+    "vi": "Gỡ hết bàn 144 quân mạt chược xếp chồng bằng cách ghép từng cặp quân tự do giống nhau. Bàn Rùa cổ điển, bàn Tháp và bàn Nhỏ chơi nhanh, cùng một bàn mỗi ngày; bàn nào cũng gỡ hết được."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Tile matching", "Daily board"],
+    "vi": ["Giải đố", "1 người", "Ghép quân", "Bàn hằng ngày"]
+  },
+  "note": {
+    "en": "Every deal can be cleared",
+    "vi": "Bàn nào cũng gỡ hết được"
+  },
+  "daily": {
+    "en": "One shared Turtle board every day",
+    "vi": "Mỗi ngày một bàn Rùa chung"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(52, 199, 154, .28), transparent 60%), linear-gradient(160deg, #173a30, #0a1612)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 8,
+    "modes": [
+      {
+        "key": "turtle",
+        "label": {
+          "en": "Turtle · 144",
+          "vi": "Rùa · 144"
+        },
+        "rules": {
+          "min_time_ms": 21000
+        },
+        "points": 8
+      },
+      {
+        "key": "tower",
+        "label": {
+          "en": "Tower · 84",
+          "vi": "Tháp · 84"
+        },
+        "rules": {
+          "min_time_ms": 12000
+        },
+        "points": 5
+      },
+      {
+        "key": "mini",
+        "label": {
+          "en": "Mini · 36",
+          "vi": "Nhỏ · 36"
+        },
+        "rules": {
+          "min_time_ms": 5000
+        },
+        "points": 3
+      },
+      {
+        "key": "daily",
+        "label": {
+          "en": "Daily · Turtle",
+          "vi": "Hằng ngày · Rùa"
+        },
+        "rules": {
+          "min_time_ms": 21000
+        },
+        "points": 8
+      }
+    ]
+  }
+}

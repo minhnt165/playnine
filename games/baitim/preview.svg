@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động.
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt.
+       Một nước: Bắc mở 9♥, Tây theo 4♥, Đông hết cơ đổ Q♠, bạn ra 2♥; Bắc ăn cả nước (+14). -->
+  <style>
+    .c { animation: 5s ease-in-out infinite; }
+    .n { animation-name: n; }
+    .w { animation-name: w; }
+    .e { animation-name: e; }
+    .s { animation-name: s; }
+    .pts { animation: pts 5s ease-out infinite; opacity: 0; }
+    .lift { animation: lift 5s ease-in-out infinite; }
+    @keyframes n { 0% { transform: translate(0, -34px); opacity: 0; } 8%, 56% { transform: none; opacity: 1; } 70%, 100% { transform: translate(0, -40px); opacity: 0; } }
+    @keyframes w { 0%, 12% { transform: translate(-40px, 0); opacity: 0; } 20%, 56% { transform: none; opacity: 1; } 70%, 100% { transform: translate(27px, -60px); opacity: 0; } }
+    @keyframes e { 0%, 24% { transform: translate(40px, 0); opacity: 0; } 32%, 56% { transform: none; opacity: 1; } 70%, 100% { transform: translate(-27px, -60px); opacity: 0; } }
+    @keyframes s { 0%, 36% { transform: translate(0, 40px); opacity: 0; } 44%, 56% { transform: none; opacity: 1; } 70%, 100% { transform: translate(0, -78px); opacity: 0; } }
+    @keyframes pts { 0%, 60% { opacity: 0; transform: translate(0, 6px); } 68%, 88% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translate(0, -4px); } }
+    @keyframes lift { 0%, 34% { transform: translate(0, -5px); } 40%, 100% { transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .c, .pts, .lift { animation: none; }
+      .pts { opacity: 1; }
+    }
+  </style>
+  <defs>
+    <path id="h" d="M0 5S-6 1-6-3a3.2 3.2 0 0 1 6-1.5A3.2 3.2 0 0 1 6-3c0 4-6 8-6 8z"/>
+    <path id="sp" d="M0-6c-2.6 3-5.4 4.8-5.4 7a2.5 2.5 0 0 0 4.3 1.7L-1.9 5.6h3.8L1.1 2.7A2.5 2.5 0 0 0 5.4 1C5.4-1.2 2.6-3 0-6z"/>
+    <rect id="card" x="-13" y="-18" width="26" height="36" rx="3.5" fill="#fff" stroke="#3a2a4a" stroke-opacity=".25"/>
+  </defs>
+
+  <!-- Bắc: 9♥ -->
+  <g transform="translate(80 30)"><g class="c n">
+    <use href="#card"/>
+    <text x="-9" y="-7" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="#d81e4a">9</text>
+    <use href="#h" fill="#d81e4a" transform="translate(1 5) scale(1.3)"/>
+  </g></g>
+  <!-- Tây: 4♥ -->
+  <g transform="translate(53 52) rotate(-8)"><g class="c w">
+    <use href="#card"/>
+    <text x="-9" y="-7" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="#d81e4a">4</text>
+    <use href="#h" fill="#d81e4a" transform="translate(1 5) scale(1.3)"/>
+  </g></g>
+  <!-- Đông: Q♠ -->
+  <g transform="translate(107 52) rotate(8)"><g class="c e">
+    <use href="#card"/>
+    <rect x="-8" y="-9" width="16" height="22" rx="2" fill="none" stroke="#c99a2e" stroke-width="1.2"/>
+    <text x="-11" y="-9" font-family="system-ui, sans-serif" font-size="8" font-weight="800" fill="#1d1730">Q</text>
+    <use href="#sp" fill="#1d1730" transform="translate(0 3) scale(1.25)"/>
+  </g></g>
+  <!-- Nam (bạn): 2♥ -->
+  <g transform="translate(80 70) rotate(3)"><g class="c s">
+    <use href="#card"/>
+    <text x="-9" y="-7" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="#d81e4a">2</text>
+    <use href="#h" fill="#d81e4a" transform="translate(1 5) scale(1.3)"/>
+  </g></g>
+
+  <!-- Điểm Bắc vừa ăn -->
+  <g class="pts">
+    <rect x="94" y="3" width="30" height="15" rx="7.5" fill="#ff5d7a"/>
+    <text x="109" y="14" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" font-weight="800" fill="#fff">+14</text>
+  </g>
+
+  <!-- Bài trên tay: xòe ở đáy, lá ra được nhô lên -->
+  <g transform="translate(0 108)">
+    <g transform="translate(46 0) rotate(-12)"><use href="#card"/><use href="#sp" fill="#1d1730" transform="translate(0 -6)"/></g>
+    <g transform="translate(63 -3) rotate(-6)"><use href="#card"/><text x="-9" y="-7" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="#1d1730">K</text></g>
+    <g class="lift"><g transform="translate(80 -4)"><rect x="-13" y="-18" width="26" height="36" rx="3.5" fill="#fff" stroke="#f2a900" stroke-width="2"/><use href="#h" fill="#d81e4a" transform="translate(0 -6)"/></g></g>
+    <g transform="translate(97 -3) rotate(6)"><use href="#card"/><text x="-9" y="-7" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="#1d1730">7</text></g>
+    <g transform="translate(114 0) rotate(12)"><use href="#card"/><path d="M0-10l5 6-5 6-5-6z" fill="#d81e4a"/></g>
+  </g>
+</svg>
