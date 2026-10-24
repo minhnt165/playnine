@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: bàn bóng bàn nằm ngang, vợt đỏ (bạn) bên trái, vợt máy bên phải,
+       bóng bay qua lại có dội cạnh bàn. Hoạt hình CSS bên trong file, tắt khi giảm chuyển động. Nền trong suốt. -->
+  <style>
+    .ball { animation: ball 2.4s linear infinite; }
+    .t1 { animation: ball 2.4s linear infinite; animation-delay: -2.34s; opacity: .45; }
+    .t2 { animation: ball 2.4s linear infinite; animation-delay: -2.28s; opacity: .22; }
+    .you { animation: you 2.4s ease-in-out infinite; }
+    .cpu { animation: cpu 2.4s ease-in-out infinite; }
+    @keyframes ball {
+      0% { transform: translate(29px, 66px); }
+      50% { transform: translate(131px, 44px); }
+      74% { transform: translate(88px, 92px); }
+      100% { transform: translate(29px, 66px); }
+    }
+    @keyframes you {
+      0%, 100% { transform: translate(0, 0); }
+      55% { transform: translate(0, -10px); }
+      85% { transform: translate(0, 4px); }
+    }
+    @keyframes cpu {
+      0%, 100% { transform: translate(0, 12px); }
+      45% { transform: translate(0, -4px); }
+      70% { transform: translate(0, 0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ball, .t1, .t2, .you, .cpu { animation: none; }
+    }
+  </style>
+  <defs>
+    <linearGradient id="tb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a6bd6"/>
+      <stop offset="1" stop-color="#174a9e"/>
+    </linearGradient>
+    <radialGradient id="bl" cx=".35" cy=".3" r=".75">
+      <stop offset="0" stop-color="#fff3dc"/>
+      <stop offset="1" stop-color="#ff9f1c"/>
+    </radialGradient>
+  </defs>
+  <!-- Bàn -->
+  <rect x="13" y="26" width="134" height="76" rx="5" fill="#0b2554"/>
+  <rect x="13" y="22" width="134" height="76" rx="5" fill="url(#tb)"/>
+  <rect x="16" y="25" width="128" height="70" fill="none" stroke="#fff" stroke-width="1.6" opacity=".9"/>
+  <path d="M16 60h128" stroke="#fff" stroke-width=".8" opacity=".5"/>
+  <text x="48" y="70" font-family="system-ui, sans-serif" font-size="30" font-weight="800" fill="#fff" opacity=".14" text-anchor="middle">7</text>
+  <text x="112" y="70" font-family="system-ui, sans-serif" font-size="30" font-weight="800" fill="#fff" opacity=".14" text-anchor="middle">5</text>
+  <!-- Lưới -->
+  <path d="M80 18v84" stroke="#000" stroke-width="2.6" opacity=".25" transform="translate(1.5 0)"/>
+  <path d="M80 18v84" stroke="#fff" stroke-width="2.4"/>
+  <circle cx="80" cy="18" r="2.4" fill="#fff"/>
+  <circle cx="80" cy="102" r="2.4" fill="#fff"/>
+  <!-- Vợt -->
+  <g class="you"><rect x="20" y="57" width="5" height="20" rx="2.5" fill="#e5484d" stroke="#8f1d22" stroke-width="1"/></g>
+  <g class="cpu"><rect x="135" y="36" width="5" height="20" rx="2.5" fill="#23273a" stroke="#e8ebf7" stroke-width="1"/></g>
+  <!-- Bóng + vệt -->
+  <g class="t2" transform="translate(80 52)"><circle r="2.4" fill="#ff9f1c"/></g>
+  <g class="t1" transform="translate(80 52)"><circle r="3" fill="#ff9f1c"/></g>
+  <g class="ball" transform="translate(80 52)"><circle r="3.6" fill="url(#bl)"/></g>
+</svg>

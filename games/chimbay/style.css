@@ -1,0 +1,234 @@
+/* =====================================================================
+ * Chim Bay - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bảng màu bầu trời / đồi / tre / mặt đất cho canvas là token CSS (--sky-top…): app.js đọc lại khi đổi giao diện
+ *   - Bàn chơi tự co theo khung (app.js đặt kích thước .board), lớp phủ bắt đầu / tạm dừng / hết lượt nằm trên .stage
+ * ===================================================================== */
+:root {
+  --app-max: 760px;
+  /* Ban ngày */
+  --sky-top: #5fb4ea;
+  --sky-bottom: #d4efff;
+  --sun: #ffe08a;
+  --night: 0;
+  --cloud: rgba(255, 255, 255, 0.92);
+  --hill-far: #a9d8c0;
+  --hill-near: #74bf8a;
+  --grass: #7cc95b;
+  --grass-dark: #5aa63f;
+  --soil: #e4c48c;
+  --soil-dark: #d2ad6e;
+  --bamboo: #6cb23f;
+  --bamboo-light: #b5e27c;
+  --bamboo-dark: #3f7a22;
+  --bamboo-node: #2f6418;
+  --leaf: #4f9d2c;
+  --medal-bronze: #cd7f32;
+  --medal-silver: #b8c2cf;
+  --medal-gold: #f5c518;
+  --medal-platinum: #9fe7ff;
+}
+
+/* Ban đêm: theo hệ thống (trừ khi chọn Sáng) hoặc khi chọn Tối */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sky-top: #0a1030;
+    --sky-bottom: #2a3a74;
+    --sun: #f4f1d6;
+    --night: 1;
+    --cloud: rgba(120, 138, 196, 0.35);
+    --hill-far: #22305e;
+    --hill-near: #172244;
+    --grass: #2f7350;
+    --grass-dark: #24593e;
+    --soil: #4a3b2c;
+    --soil-dark: #3b2f23;
+    --bamboo: #3f8a4a;
+    --bamboo-light: #7cc27a;
+    --bamboo-dark: #23552c;
+    --bamboo-node: #183f20;
+    --leaf: #2f7a3a;
+  }
+}
+:root[data-theme="dark"] {
+  --sky-top: #0a1030;
+  --sky-bottom: #2a3a74;
+  --sun: #f4f1d6;
+  --night: 1;
+  --cloud: rgba(120, 138, 196, 0.35);
+  --hill-far: #22305e;
+  --hill-near: #172244;
+  --grass: #2f7350;
+  --grass-dark: #24593e;
+  --soil: #4a3b2c;
+  --soil-dark: #3b2f23;
+  --bamboo: #3f8a4a;
+  --bamboo-light: #7cc27a;
+  --bamboo-dark: #23552c;
+  --bamboo-node: #183f20;
+  --leaf: #2f7a3a;
+}
+
+/* ===================== HUD ===================== */
+.hud { grid-template-columns: 1fr 1fr auto; align-items: stretch; }
+.btn-pause { width: 52px; height: auto; min-height: 42px; }
+.btn-pause .icon-play { display: none; }
+.btn-pause[data-state="paused"] .icon-pause { display: none; }
+.btn-pause[data-state="paused"] .icon-play { display: block; }
+.hud-value.pop { animation: score-pop 0.22s ease-out; }
+@keyframes score-pop { 40% { transform: scale(1.18); } }
+.hud-value { transform-origin: left center; }
+
+/* ===================== Bàn chơi ===================== */
+.stage { touch-action: none; user-select: none; -webkit-user-select: none; }
+.board {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  background: var(--sky-bottom);
+  /* kích thước thật do app.js đặt theo khung; đây là giá trị tạm trước khi script chạy */
+  width: 100%;
+  height: 100%;
+}
+.board canvas { display: block; width: 100%; height: 100%; cursor: pointer; }
+/* Canvas chỉ nhận focus để bắt phím khi chơi: không vẽ viền focus đè lên bầu trời */
+.board canvas:focus-visible { outline: none; }
+
+.ready-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 22%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  max-width: 90%;
+  padding: 8px 14px;
+  border-radius: 14px;
+  background: rgba(10, 14, 36, 0.55);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+  pointer-events: none;
+  animation: hint-bob 1.1s ease-in-out infinite;
+}
+.ready-hint kbd { background: rgba(255, 255, 255, 0.15); color: #fff; border-color: rgba(255, 255, 255, 0.3); }
+.ready-icon { width: 26px; height: 26px; fill: #ffd34d; }
+@keyframes hint-bob { 50% { transform: translate(-50%, -5px); } }
+
+/* ===================== Lớp phủ ===================== */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: rgba(8, 12, 32, 0.28);
+  border-radius: var(--radius);
+  animation: kit-fade-in 0.2s ease;
+}
+.overlay-card {
+  width: min(100%, 360px);
+  max-height: 100%;
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: 18px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  text-align: center;
+}
+.overlay-title { margin: 0; font-size: 1.45rem; font-weight: 800; line-height: 1.3; }
+.overlay-sub { margin: 0; color: var(--muted); line-height: 1.45; font-size: 0.92rem; }
+.overlay-hint { margin: 0; color: var(--muted); font-size: 0.78rem; }
+.overlay-actions { display: flex; gap: 10px; }
+.overlay-actions .btn { flex: 1; }
+.btn-wide { width: 100%; min-height: 48px; font-size: 1.05rem; }
+
+/* Huy chương */
+.dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; flex: none; box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.18); }
+.dot[data-medal="bronze"] { background: var(--medal-bronze); }
+.dot[data-medal="silver"] { background: var(--medal-silver); }
+.dot[data-medal="gold"] { background: var(--medal-gold); }
+.dot[data-medal="platinum"] { background: var(--medal-platinum); }
+.medal-legend { display: flex; justify-content: center; gap: 14px; font-weight: 700; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.medal-legend span { display: inline-flex; align-items: center; gap: 5px; }
+
+.result { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.medal {
+  width: 68px;
+  height: 68px;
+  flex: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px dashed var(--line);
+  background: var(--surface-2);
+}
+.medal svg { width: 34px; height: 34px; fill: var(--line); }
+.medal[data-medal="bronze"],
+.medal[data-medal="silver"],
+.medal[data-medal="gold"],
+.medal[data-medal="platinum"] { border: 3px solid rgba(0, 0, 0, 0.12); }
+.medal[data-medal="bronze"] { background: radial-gradient(circle at 35% 30%, #f3b98a, var(--medal-bronze) 60%, #8a4f1d); }
+.medal[data-medal="silver"] { background: radial-gradient(circle at 35% 30%, #ffffff, var(--medal-silver) 60%, #7d8896); }
+.medal[data-medal="gold"] { background: radial-gradient(circle at 35% 30%, #fff3b0, var(--medal-gold) 60%, #b07d00); }
+.medal[data-medal="platinum"] { background: radial-gradient(circle at 35% 30%, #ffffff, var(--medal-platinum) 55%, #4aa3c9); }
+.medal:not([data-medal=""]) svg { fill: rgba(255, 255, 255, 0.9); filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3)); }
+.medal.shine { animation: medal-in 0.5s cubic-bezier(0.2, 1.6, 0.4, 1); }
+@keyframes medal-in { from { transform: scale(0.3) rotate(-30deg); opacity: 0; } }
+.medal-name { margin: 0; font-weight: 800; font-size: 0.95rem; }
+.result-grid { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; max-width: 200px; }
+.result-grid div { background: var(--surface-2); border-radius: 12px; padding: 6px 10px; }
+.result-grid dt { font-size: 0.72rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.result-grid dd { margin: 0; font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.over-new { margin: 0; color: var(--accent); font-weight: 800; }
+
+/* Thống kê: số huy chương */
+.stats-sub { margin: 0; font-weight: 700; }
+.medal-counts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.medal-counts li { display: flex; align-items: center; gap: 8px; background: var(--surface-2); border-radius: 12px; padding: 8px 12px; }
+.medal-counts span { flex: 1; color: var(--muted); font-weight: 600; font-size: 0.88rem; }
+.medal-counts b { font-variant-numeric: tabular-nums; font-size: 1.1rem; }
+.modal-card .modal-text + .modal-text { margin-top: -4px; }
+
+/* ===================== Màn hình hẹp / thấp ===================== */
+@media (max-width: 420px) {
+  .overlay-card { padding: 16px 14px 12px; gap: 8px; }
+  .overlay-title { font-size: 1.3rem; }
+}
+/* Ngang, thấp (điện thoại xoay ngang): HUD thành cột bên phải để bàn chơi cao hơn */
+@media (max-height: 520px) and (min-aspect-ratio: 1/1) {
+  .app {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .topbar { grid-column: 1 / -1; }
+  .stage { grid-column: 1; grid-row: 2; }
+  .hud { grid-column: 2; grid-row: 2; grid-auto-flow: row; grid-template-columns: 1fr; grid-template-rows: auto auto auto; align-content: start; }
+  .btn-pause { width: 100%; }
+  .help { display: none; }
+  .overlay-card { padding: 12px 14px 10px; gap: 6px; width: min(100%, 420px); }
+  .overlay-title { font-size: 1.15rem; }
+  .overlay-sub { font-size: 0.85rem; }
+  .overlay-hint { display: none; }
+  .medal { width: 52px; height: 52px; }
+  .medal svg { width: 26px; height: 26px; }
+  .result-grid dd { font-size: 1.3rem; }
+  .btn-wide { min-height: 42px; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .ready-hint, .overlay, .medal.shine, .hud-value.pop { animation: none; }
+}

@@ -1,0 +1,50 @@
+{
+  "id": "xeptang",
+  "cat": "arcade",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Tower Stack",
+    "vi": "Xếp Tầng"
+  },
+  "sub": {
+    "en": "Arcade",
+    "vi": "Tower Stack"
+  },
+  "desc": {
+    "en": "Drop the sliding block onto the tower: the overhang is sliced off and the next block gets smaller. Nail perfect drops in a row to grow it back.",
+    "vi": "Thả khối đang trượt lên đỉnh tháp: phần chìa ra bị cắt rơi, khối sau nhỏ dần. Thả khớp hoàn hảo liên tiếp để khối to lại."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "High score"],
+    "vi": ["Phản xạ", "1 người", "Kỷ lục"]
+  },
+  "note": {
+    "en": "Perfect drops in a row grow the block back",
+    "vi": "Thả khớp liên tiếp để khối to lại"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 196, 97, .28), transparent 60%), linear-gradient(160deg, #26306b, #0e1230)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 5
+        },
+        "points": 5
+      }
+    ]
+  }
+}

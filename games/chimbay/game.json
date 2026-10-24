@@ -1,0 +1,50 @@
+{
+  "id": "chimbay",
+  "cat": "arcade",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Flappy Flight",
+    "vi": "Chim Bay"
+  },
+  "sub": {
+    "en": "One-tap flyer",
+    "vi": "Flappy Flight"
+  },
+  "desc": {
+    "en": "Tap to flap and steer a little bird through the gaps between bamboo stalks. The gaps slowly narrow; pass 10, 20, 40 and 80 stalks for bronze, silver, gold and platinum medals.",
+    "vi": "Chạm để vỗ cánh, đưa chú chim nhỏ lách qua khe giữa các thân tre. Khe hẹp dần; qua 10, 20, 40 và 80 cặp tre để giành huy chương đồng, bạc, vàng và bạch kim."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "High score"],
+    "vi": ["Phản xạ", "1 người", "Kỷ lục"]
+  },
+  "note": {
+    "en": "Pass 10 stalks for your first medal",
+    "vi": "Qua 10 cặp tre để có huy chương đầu tiên"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 100% at 80% 0%, rgba(255, 214, 102, .28), transparent 55%), linear-gradient(170deg, #1b3a6b, #0d1b38 70%, #0b2a1f)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 1.3
+        },
+        "points": 5
+      }
+    ]
+  }
+}

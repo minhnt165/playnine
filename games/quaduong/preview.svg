@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <style>
+    .car { animation: drive 3s linear infinite; }
+    .car2 { animation: drive2 4s linear infinite; }
+    .log { animation: drift 5s linear infinite; }
+    .duck { animation: hop 4s ease-in-out infinite; }
+    .light { animation: blink .5s steps(1) infinite; }
+    @keyframes drive { from { transform: translateX(-40px); } to { transform: translateX(150px); } }
+    @keyframes drive2 { from { transform: translateX(150px); } to { transform: translateX(-40px); } }
+    @keyframes drift { from { transform: translateX(-60px); } to { transform: translateX(20px); } }
+    @keyframes hop {
+      0%, 14% { transform: translate(0, 0); }
+      20%, 38% { transform: translate(0, -18px); }
+      44%, 62% { transform: translate(0, -36px); }
+      68%, 86% { transform: translate(0, -54px); }
+      100% { transform: translate(0, 0); }
+    }
+    @keyframes blink { 50% { fill: #5a2a2a; } }
+    @media (prefers-reduced-motion: reduce) {
+      .car, .car2, .log, .duck, .light { animation: none; }
+    }
+  </style>
+  <defs>
+    <clipPath id="b"><rect x="8" y="6" width="144" height="108" rx="12"/></clipPath>
+  </defs>
+  <g clip-path="url(#b)">
+    <!-- làn từ trên xuống: ray, cỏ, sông, cỏ, đường, đường, cỏ -->
+    <rect x="0" y="6" width="160" height="18" fill="#b9ab98"/>
+    <g fill="#7c5a3e"><rect x="12" y="8" width="3" height="14"/><rect x="24" y="8" width="3" height="14"/><rect x="36" y="8" width="3" height="14"/><rect x="48" y="8" width="3" height="14"/><rect x="60" y="8" width="3" height="14"/><rect x="72" y="8" width="3" height="14"/><rect x="84" y="8" width="3" height="14"/><rect x="96" y="8" width="3" height="14"/><rect x="108" y="8" width="3" height="14"/><rect x="120" y="8" width="3" height="14"/><rect x="132" y="8" width="3" height="14"/><rect x="144" y="8" width="3" height="14"/></g>
+    <rect x="0" y="11" width="160" height="2" fill="#7e8697"/>
+    <rect x="0" y="18" width="160" height="2" fill="#7e8697"/>
+    <rect x="0" y="24" width="160" height="18" fill="#a6d96a"/>
+    <rect x="0" y="42" width="160" height="18" fill="#58bfee"/>
+    <rect x="0" y="60" width="160" height="18" fill="#9bd25f"/>
+    <rect x="0" y="78" width="160" height="36" fill="#5c6173"/>
+    <g fill="#eef0f7"><rect x="14" y="95" width="10" height="1.6"/><rect x="38" y="95" width="10" height="1.6"/><rect x="62" y="95" width="10" height="1.6"/><rect x="86" y="95" width="10" height="1.6"/><rect x="110" y="95" width="10" height="1.6"/><rect x="134" y="95" width="10" height="1.6"/></g>
+    <rect x="0" y="78" width="160" height="1.5" fill="#c7cad6"/>
+    <rect x="0" y="114" width="160" height="6" fill="#a6d96a"/>
+    <!-- cây -->
+    <g>
+      <rect x="27" y="34" width="3" height="5" fill="#8a5a33"/><path d="M21 35l3-8h9l3 8z" fill="#37883e"/><path d="M24 27l2-4h5l2 4z" fill="#74cc5e"/>
+      <rect x="117" y="34" width="3" height="5" fill="#8a5a33"/><path d="M111 35l3-8h9l3 8z" fill="#37883e"/><path d="M114 27l2-4h5l2 4z" fill="#74cc5e"/>
+      <rect x="135" y="70" width="3" height="5" fill="#8a5a33"/><path d="M129 71l3-8h9l3 8z" fill="#37883e"/><path d="M132 63l2-4h5l2 4z" fill="#74cc5e"/>
+      <rect x="17" y="70" width="3" height="5" fill="#8a5a33"/><path d="M11 71l3-8h9l3 8z" fill="#37883e"/><path d="M14 63l2-4h5l2 4z" fill="#74cc5e"/>
+    </g>
+    <!-- gỗ trôi -->
+    <g class="log">
+      <rect x="40" y="45" width="40" height="12" rx="6" fill="#9a6034"/><rect x="40" y="45" width="40" height="7" rx="3.5" fill="#c4844b"/><ellipse cx="78" cy="51" rx="2.4" ry="5" fill="#e8b77f"/>
+      <rect x="100" y="45" width="34" height="12" rx="6" fill="#9a6034"/><rect x="100" y="45" width="34" height="7" rx="3.5" fill="#c4844b"/><ellipse cx="132" cy="51" rx="2.4" ry="5" fill="#e8b77f"/>
+      <rect x="150" y="45" width="40" height="12" rx="6" fill="#9a6034"/><rect x="150" y="45" width="40" height="7" rx="3.5" fill="#c4844b"/>
+    </g>
+    <!-- xe -->
+    <g class="car">
+      <rect x="0" y="82" width="28" height="11" rx="3" fill="#b03a37"/><rect x="0" y="80" width="28" height="8" rx="3" fill="#ef5350"/><rect x="7" y="78" width="13" height="6" rx="2" fill="#f58b89"/><rect x="16" y="79" width="4" height="4" rx="1" fill="#cfeaff"/>
+    </g>
+    <g class="car2">
+      <rect x="0" y="100" width="34" height="11" rx="3" fill="#2f6fae"/><rect x="0" y="98" width="34" height="8" rx="3" fill="#42a5f5"/><rect x="0" y="95" width="22" height="10" rx="2" fill="#eef0f6"/><rect x="25" y="99" width="6" height="4" rx="1" fill="#cfeaff"/>
+    </g>
+    <!-- đèn báo tàu -->
+    <rect x="12" y="20" width="2" height="8" fill="#6b7280"/>
+    <rect x="9" y="12" width="8" height="8" rx="3" fill="#262a36"/>
+    <circle class="light" cx="13" cy="16" r="2.4" fill="#ff3b30"/>
+    <!-- vịt con nhảy lên -->
+    <g transform="translate(0 -3)"><g class="duck">
+      <ellipse cx="80" cy="113" rx="7" ry="2" fill="#000" opacity=".18"/>
+      <ellipse cx="80" cy="108" rx="7.5" ry="6" fill="#e5a91c"/>
+      <ellipse cx="80" cy="107" rx="7" ry="5.5" fill="#ffd23f"/>
+      <circle cx="80" cy="100" r="4.6" fill="#ffd23f"/>
+      <ellipse cx="80" cy="96" rx="2" ry="1.5" fill="#ff9f1c"/>
+      <ellipse cx="79" cy="99.5" rx="2.6" ry="1.8" fill="#ffe68a"/>
+    </g></g>
+  </g>
+</svg>

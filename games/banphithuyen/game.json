@@ -1,0 +1,50 @@
+{
+  "id": "banphithuyen",
+  "cat": "arcade",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Space Defenders",
+    "vi": "Bắn Phi Thuyền"
+  },
+  "sub": {
+    "en": "Arcade shooter",
+    "vi": "Space Defenders"
+  },
+  "desc": {
+    "en": "Hold the line as alien waves march down. One shot at a time, crumbling shields and a bonus saucer worth up to 300.",
+    "vi": "Giữ phòng tuyến khi từng đợt phi thuyền địch tiến xuống. Mỗi lần một viên đạn, khiên mòn dần và đĩa bay thưởng tới 300 điểm."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "High score"],
+    "vi": ["Phản xạ", "1 người", "Kỷ lục"]
+  },
+  "note": {
+    "en": "Shoot the saucer for up to 300 points",
+    "vi": "Bắn trúng đĩa bay để nhận tới 300 điểm"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 90% at 50% 0%, rgba(55, 240, 255, .22), transparent 60%), linear-gradient(170deg, #12143a, #05060f)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 80
+        },
+        "points": 5
+      }
+    ]
+  }
+}

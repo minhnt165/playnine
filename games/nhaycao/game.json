@@ -1,0 +1,50 @@
+{
+  "id": "nhaycao",
+  "cat": "arcade",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Sky Jump",
+    "vi": "Nhảy Cao"
+  },
+  "sub": {
+    "en": "Endless platform jumper",
+    "vi": "Sky Jump"
+  },
+  "desc": {
+    "en": "Bounce from platform to platform and steer left and right to climb as high as you can. Watch out for crumbling platforms and storm clouds, and grab springs for a big boost.",
+    "vi": "Nảy từ bệ này sang bệ khác, lái sang trái sang phải để leo cao nhất có thể. Cẩn thận bệ vỡ và mây giông, nhảy lên lò xo để bật thật cao."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "High score"],
+    "vi": ["Phản xạ", "1 người", "Kỷ lục"]
+  },
+  "note": {
+    "en": "How high can you climb?",
+    "vi": "Bạn leo được bao cao?"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(98, 183, 255, .32), transparent 60%), linear-gradient(160deg, #1b2a5c, #0b1028)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 35
+        },
+        "points": 5
+      }
+    ]
+  }
+}

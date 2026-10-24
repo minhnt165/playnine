@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#f3f4fb">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Flappy Flight">
+  <meta name="description" content="Flappy Flight">
+  <title>Flappy Flight</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <script>
+    // Áp giao diện sáng/tối đã chọn trước khi vẽ trang để tránh nháy màu
+    try {
+      var t = JSON.parse(localStorage.getItem('playnine-chimbay-settings-v1') || '{}').theme;
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../_kit/kit.css?v=1">
+  <link rel="stylesheet" href="style.css?v=1.0.0">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-mark" src="icon.svg" alt="" width="34" height="34">
+        <h1 class="logo" data-i18n="app.name">Flappy Flight</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" type="button" data-open="modal-help" data-i18n-attr="aria-label:kit.help;title:kit.help">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 17h-2v-2h2v2zm2.1-7.7-.9.9c-.7.7-1.2 1.3-1.2 2.8h-2v-.5c0-1.1.5-2.1 1.2-2.8l1.2-1.3a2 2 0 1 0-3.4-1.4H8a4 4 0 1 1 7.1 2.3z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-stats" type="button" data-open="modal-stats" data-i18n-attr="aria-label:kit.stats;title:kit.stats">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
+        </button>
+        <button class="btn-icon" type="button" data-open="modal-settings" data-i18n-attr="aria-label:kit.settings;title:kit.settings">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-new" type="button" data-i18n-attr="aria-label:kit.newGame;title:kit.newGame">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.7 6.3A8 8 0 1 0 20 12h-2a6 6 0 1 1-1.8-4.2L13 11h7V4l-2.3 2.3z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="hud">
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.score">Score</div><div class="hud-value" id="score">0</div></div>
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.best">Best</div><div class="hud-value" id="best">0</div></div>
+      <button class="btn-icon btn-pause" id="btn-pause" type="button" aria-label="Pause" title="Pause (P)" disabled>
+        <svg class="icon icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+        <svg class="icon icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+    </div>
+
+    <main class="stage" id="stage">
+      <div class="board" id="board">
+        <canvas id="game-canvas" tabindex="0" role="img" data-i18n-attr="aria-label:board.label" aria-label="Flappy Flight sky"></canvas>
+        <div class="ready-hint" id="ready-hint" hidden>
+          <svg class="ready-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l6 7h-4v8h-4v-8H6z"/></svg>
+          <span class="help-keys" data-i18n-html="ready.keys"></span><span class="help-touch" data-i18n="ready.touch"></span>
+        </div>
+      </div>
+
+      <!-- Màn chờ -->
+      <div class="overlay" id="overlay-start">
+        <div class="overlay-card">
+          <p class="overlay-title" data-i18n="app.name">Flappy Flight</p>
+          <p class="overlay-sub" data-i18n="start.sub"></p>
+          <div class="medal-legend" aria-hidden="true">
+            <span><i class="dot" data-medal="bronze"></i>10</span>
+            <span><i class="dot" data-medal="silver"></i>20</span>
+            <span><i class="dot" data-medal="gold"></i>40</span>
+            <span><i class="dot" data-medal="platinum"></i>80</span>
+          </div>
+          <button class="btn btn-primary btn-wide" type="button" id="btn-start">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            <span data-i18n="btn.play">Play</span>
+          </button>
+          <p class="overlay-hint help-keys" data-i18n-html="start.hint"></p>
+        </div>
+      </div>
+
+      <!-- Tạm dừng -->
+      <div class="overlay" id="overlay-pause" hidden>
+        <div class="overlay-card">
+          <p class="overlay-title" data-i18n="pause.title">Paused</p>
+          <p class="overlay-sub" id="pause-sub"></p>
+          <div class="overlay-actions">
+            <button class="btn btn-ghost" type="button" id="btn-pause-new" data-i18n="kit.newGame">New game</button>
+            <button class="btn btn-primary" type="button" id="btn-resume" data-i18n="btn.resume">Resume</button>
+          </div>
+          <p class="overlay-hint help-keys" data-i18n-html="pause.hint"></p>
+        </div>
+      </div>
+
+      <!-- Hết lượt -->
+      <div class="overlay" id="overlay-over" hidden>
+        <div class="overlay-card">
+          <p class="overlay-title" data-i18n="over.title">Game over</p>
+          <p class="overlay-sub" id="over-cause"></p>
+          <div class="result">
+            <div class="medal" id="over-medal" data-medal="">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.5 5.2 5.7.8-4.1 4 1 5.6L12 16.4l-5.1 2.7 1-5.6-4.1-4 5.7-.8z"/></svg>
+            </div>
+            <dl class="result-grid">
+              <div><dt data-i18n="over.score">Score</dt><dd id="over-score">0</dd></div>
+              <div><dt data-i18n="over.best">Best</dt><dd id="over-best">0</dd></div>
+            </dl>
+          </div>
+          <p class="medal-name" id="over-medal-name"></p>
+          <p class="over-new" id="over-new" hidden data-i18n="over.newBest">New best!</p>
+          <p class="overlay-sub" id="over-next"></p>
+          <button class="btn btn-primary btn-wide" type="button" id="btn-again" data-i18n="kit.playAgain">Play again</button>
+          <p class="overlay-hint help-keys" data-i18n-html="over.hint"></p>
+        </div>
+      </div>
+    </main>
+
+    <p class="help"><span class="help-keys" data-i18n-html="help.keys"></span><span class="help-touch" data-i18n="help.touch"></span></p>
+  </div>
+
+  <div class="sr-only" id="sr-status" aria-live="polite"></div>
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <!-- Kết thúc lượt đang bay -->
+  <div class="modal" id="modal-confirm" hidden>
+    <div class="modal-backdrop" data-close="modal-confirm"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+      <h2 id="confirm-title" data-i18n="confirm.title">End this run?</h2>
+      <p class="modal-text" id="confirm-text"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" data-close="modal-confirm" data-i18n="kit.cancel">Cancel</button>
+        <button class="btn btn-primary" id="btn-confirm-new" type="button" data-i18n="confirm.end">End run</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-help" hidden>
+    <div class="modal-backdrop" data-close="modal-help"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <h2 id="help-title" data-i18n="kit.help">How to play</h2>
+      <p class="modal-text" data-i18n="help.rules"></p>
+      <p class="modal-text" data-i18n="help.score"></p>
+      <p class="modal-text" data-i18n="help.medals"></p>
+      <p class="modal-text" data-i18n="help.controls"></p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-help" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-backdrop" data-close="modal-stats"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
+      <h2 id="stats-title" data-i18n="kit.stats">Statistics</h2>
+      <dl class="stat-grid">
+        <div><dt data-i18n="stats.played">Runs</dt><dd id="stats-played">0</dd></div>
+        <div><dt data-i18n="stats.best">Best</dt><dd id="stats-best">0</dd></div>
+        <div><dt data-i18n="stats.total">Stalks passed</dt><dd id="stats-total">0</dd></div>
+        <div><dt data-i18n="stats.avg">Average</dt><dd id="stats-avg">0</dd></div>
+      </dl>
+      <p class="stats-sub" data-i18n="stats.medals">Medals won</p>
+      <ul class="medal-counts">
+        <li><i class="dot" data-medal="bronze"></i><span data-i18n="medal.bronze">Bronze</span><b id="stats-bronze">0</b></li>
+        <li><i class="dot" data-medal="silver"></i><span data-i18n="medal.silver">Silver</span><b id="stats-silver">0</b></li>
+        <li><i class="dot" data-medal="gold"></i><span data-i18n="medal.gold">Gold</span><b id="stats-gold">0</b></li>
+        <li><i class="dot" data-medal="platinum"></i><span data-i18n="medal.platinum">Platinum</span><b id="stats-platinum">0</b></li>
+      </ul>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-stats" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-settings" hidden>
+    <div class="modal-backdrop" data-close="modal-settings"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h2 id="settings-title" data-i18n="kit.settings">Settings</h2>
+      <div class="settings-list">
+        <div class="setting">
+          <span class="setting-name" data-i18n="kit.theme">Theme</span>
+          <div class="segmented" data-setting="theme">
+            <button type="button" data-value="auto" data-i18n="kit.themeAuto">Auto</button>
+            <button type="button" data-value="light" data-i18n="kit.themeLight">Light</button>
+            <button type="button" data-value="dark" data-i18n="kit.themeDark">Dark</button>
+          </div>
+        </div>
+        <div class="setting">
+          <span class="setting-name" data-i18n="kit.lang">Language</span>
+          <div class="segmented" data-setting="lang">
+            <button type="button" data-value="en">English</button>
+            <button type="button" data-value="vi">Tiếng Việt</button>
+          </div>
+        </div>
+        <label class="setting-row" id="setting-sound">
+          <span class="setting-text"><span class="setting-name" data-i18n="kit.sound">Sound</span><span class="setting-desc" data-i18n="kit.soundDesc"></span></span>
+          <input class="switch" type="checkbox" id="sw-sound">
+        </label>
+        <label class="setting-row">
+          <span class="setting-text"><span class="setting-name" data-i18n="settings.vibrate">Vibration</span><span class="setting-desc" data-i18n="settings.vibrateDesc"></span></span>
+          <input class="switch" type="checkbox" data-setting="vibrate">
+        </label>
+      </div>
+      <p class="app-version" id="app-version"></p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-settings" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <script src="../_kit/kit.js?v=1"></script>
+  <script src="i18n.js?v=1.0.0"></script>
+  <script src="engine.js?v=1.0.0"></script>
+  <script src="../sdk/playnine.js?v=2"></script>
+  <script src="app.js?v=1.0.0"></script>
+</body>
+</html>

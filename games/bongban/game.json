@@ -1,0 +1,71 @@
+{
+  "id": "bongban",
+  "cat": "arcade",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Table Tennis",
+    "vi": "Bóng Bàn"
+  },
+  "sub": {
+    "en": "Paddle duel against the computer",
+    "vi": "Đấu vợt với máy"
+  },
+  "desc": {
+    "en": "Slide your paddle to return the ball and get it past the computer. Hit it off the edge for a wide angle, flick for a curve; first to 11, win by 2, on Easy, Medium or Hard.",
+    "vi": "Trượt vợt đỡ bóng và đánh bóng qua vợt của máy. Chạm mép vợt để bóng đi chéo, lia vợt để bóng cong; ai tới 11 điểm trước và hơn 2 điểm thì thắng, ở mức Dễ, Vừa hoặc Khó."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "Vs computer"],
+    "vi": ["Phản xạ", "1 người", "Đấu với máy"]
+  },
+  "note": {
+    "en": "First to 11 points, win by 2",
+    "vi": "Tới 11 điểm, hơn 2 điểm là thắng"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 159, 28, .28), transparent 60%), linear-gradient(160deg, #123a7a, #08152f)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "wins",
+    "points": 10,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 30000
+        },
+        "points": 6
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 30000
+        },
+        "points": 10
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 30000
+        },
+        "points": 16
+      }
+    ]
+  }
+}

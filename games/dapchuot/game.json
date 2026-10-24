@@ -1,0 +1,51 @@
+{
+  "id": "dapchuot",
+  "cat": "arcade",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Whack a Mole",
+    "vi": "Đập Chuột"
+  },
+  "sub": {
+    "en": "60-second whack-a-mole",
+    "vi": "Whack a Mole"
+  },
+  "desc": {
+    "en": "Bop the moles as they pop out of nine holes. Golden moles, helmet moles and bombs to avoid, combos up to ×3, and 60 seconds that keep getting faster.",
+    "vi": "Đập chuột khi chúng trồi lên khỏi chín cái hang. Có chuột vàng, chuột đội mũ và bom phải tránh, combo tới ×3, 60 giây ngày càng nhanh."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "Reflex"],
+    "vi": ["Phản xạ", "1 người", "Tính giờ"]
+  },
+  "note": {
+    "en": "60 seconds, whack every mole",
+    "vi": "60 giây, đập thật nhiều chuột"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(130, 214, 96, .35), transparent 60%), linear-gradient(160deg, #2c5a2a, #0f2410)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 55000,
+          "max_score": 384,
+          "max_score_per_sec": 13
+        },
+        "points": 5
+      }
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: tháp isometric, khối trên cùng trượt qua lại, mảnh bị cắt rơi xuống.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động; nền lấy từ preview.bg trong game.json. -->
+  <style>
+    .slide { animation: slide 1.8s ease-in-out infinite alternate; }
+    .piece { animation: fall 2.4s ease-in infinite; transform-box: fill-box; transform-origin: center; }
+    .shine { animation: shine 2.4s ease-out infinite; }
+    @keyframes slide { from { transform: translate(-34px, 17px); } to { transform: translate(34px, -17px); } }
+    @keyframes fall {
+      0%, 15% { opacity: 0; transform: translate(0, 0) rotate(0); }
+      20% { opacity: 1; transform: translate(0, 0) rotate(0); }
+      85% { opacity: 1; transform: translate(14px, 46px) rotate(70deg); }
+      100% { opacity: 0; transform: translate(16px, 56px) rotate(85deg); }
+    }
+    @keyframes shine { 0%, 15% { opacity: 0; } 22% { opacity: .9; } 45%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .slide, .piece, .shine { animation: none; }
+      .slide { transform: translate(14px, -7px); }
+      .piece, .shine { opacity: 0; }
+    }
+  </style>
+  <g><polygon points="46,100 80,117 80,157 46,140" fill="#45d3c8"/><polygon points="80,117 114,100 114,140 80,157" fill="#2eada3"/><polygon points="80,83 114,100 80,117 46,100" fill="#73e8de"/></g>
+  <g><polygon points="46,89 80,106 80,117 46,100" fill="#45d398"/><polygon points="80,106 114,89 114,100 80,117" fill="#2ead78"/><polygon points="80,72 114,89 80,106 46,89" fill="#73e8b7"/></g>
+  <g><polygon points="46,78 80,95 80,106 46,89" fill="#45d369"/><polygon points="80,95 114,78 114,89 80,106" fill="#2ead4e"/><polygon points="80,61 114,78 80,95 46,78" fill="#73e890"/></g>
+  <g><polygon points="46,67 80,84 80,95 46,78" fill="#51d345"/><polygon points="80,84 114,67 114,78 80,95" fill="#39ad2e"/><polygon points="80,50 114,67 80,84 46,67" fill="#7ce873"/></g>
+  <polygon class="shine" points="80,47 120,67 80,87 40,67" fill="none" stroke="#ffffff" stroke-width="2"/>
+  <g class="piece">
+    <polygon points="112,66 122,71 122,82 112,77" fill="#a8d345"/><polygon points="122,71 132,66 132,77 122,82" fill="#86ad2e"/><polygon points="122,61 132,66 122,71 112,66" fill="#c6e873"/>
+  </g>
+  <g class="slide">
+    <polygon points="46,56 80,73 80,84 46,67" fill="#d3a445"/><polygon points="80,73 114,56 114,67 80,84" fill="#ad832e"/><polygon points="80,39 114,56 80,73 46,56" fill="#e8c173"/>
+  </g>
+</svg>

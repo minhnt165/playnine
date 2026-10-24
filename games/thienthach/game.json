@@ -1,0 +1,50 @@
+{
+  "id": "thienthach",
+  "cat": "arcade",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Asteroid Field",
+    "vi": "Thiên Thạch"
+  },
+  "sub": {
+    "en": "Rock shooter",
+    "vi": "Asteroid Field"
+  },
+  "desc": {
+    "en": "Pilot a drifting ship through a wrap-around rock field: split every rock, dodge the saucers and clear wave after wave.",
+    "vi": "Lái phi thuyền trôi trong bãi thiên thạch không có mép: bắn vỡ từng tảng đá, né đĩa bay và dọn sạch hết đợt này đến đợt khác."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "High score"],
+    "vi": ["Phản xạ", "1 người", "Kỷ lục"]
+  },
+  "note": {
+    "en": "Small rocks are worth the most",
+    "vi": "Đá càng nhỏ càng nhiều điểm"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(125, 249, 255, .22), transparent 60%), linear-gradient(160deg, #161a46, #05060f)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 500
+        },
+        "points": 5
+      }
+    ]
+  }
+}

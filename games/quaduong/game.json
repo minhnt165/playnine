@@ -1,0 +1,50 @@
+{
+  "id": "quaduong",
+  "cat": "arcade",
+  "addedAt": "2026-10-23",
+  "name": {
+    "en": "Road Crossing",
+    "vi": "Qua Đường"
+  },
+  "sub": {
+    "en": "Endless hopper",
+    "vi": "Road Crossing"
+  },
+  "desc": {
+    "en": "Guide a duckling across endless roads, rivers and railways. Dodge cars, ride the logs, watch for the train light, and don't let the eagle catch you.",
+    "vi": "Dẫn vịt con băng qua đường, qua sông, qua đường ray không có điểm dừng. Né xe, đứng trên gỗ mà qua sông, để ý đèn báo tàu, và đừng để đại bàng tóm."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "High score"],
+    "vi": ["Phản xạ", "1 người", "Kỷ lục"]
+  },
+  "note": {
+    "en": "Every new row is a point: how far can you hop?",
+    "vi": "Mỗi hàng mới là một điểm: bạn nhảy được bao xa?"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 210, 63, .28), transparent 60%), linear-gradient(160deg, #1f3d2c, #0d1a14)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 8
+        },
+        "points": 5
+      }
+    ]
+  }
+}

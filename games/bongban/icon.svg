@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a6bd6"/>
+      <stop offset="1" stop-color="#123a7a"/>
+    </linearGradient>
+    <radialGradient id="ball" cx=".35" cy=".3" r=".75">
+      <stop offset="0" stop-color="#fff3dc"/>
+      <stop offset="1" stop-color="#ff9f1c"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Lưới giữa bàn -->
+  <path d="M6 32h52" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".9"/>
+  <!-- Vợt máy (trên) và vợt người (dưới) -->
+  <rect x="24" y="9" width="22" height="6" rx="3" fill="#23273a" stroke="#e8ebf7" stroke-width="1.5"/>
+  <rect x="14" y="49" width="22" height="6" rx="3" fill="#e5484d" stroke="#ffd1d3" stroke-width="1.5"/>
+  <!-- Vệt bóng -->
+  <circle cx="30" cy="42" r="3" fill="#ff9f1c" opacity=".35"/>
+  <circle cx="33" cy="36" r="3.6" fill="#ff9f1c" opacity=".55"/>
+  <circle cx="37" cy="28" r="5.5" fill="url(#ball)"/>
+</svg>

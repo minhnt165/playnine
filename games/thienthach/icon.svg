@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#232a6e"/>
+      <stop offset="1" stop-color="#070918"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Tảng đá lớn góc trên phải, tảng nhỏ góc dưới trái -->
+  <path d="M37 8l11-1 9 7 1 10-7 7-11-1-6-8z" fill="#c9b8ff" fill-opacity=".14" stroke="#c9b8ff" stroke-width="2.8" stroke-linejoin="round"/>
+  <path d="M8 46l6-4 6 3v6l-6 4-6-3z" fill="#c9b8ff" fill-opacity=".14" stroke="#c9b8ff" stroke-width="2.6" stroke-linejoin="round"/>
+  <!-- Phi thuyền chĩa lên phải, viên đạn bay về phía đá -->
+  <path d="M26 24l10 22-10-5-10 5z" transform="rotate(40 26 37)" fill="#7df9ff" fill-opacity=".12" stroke="#7df9ff" stroke-width="3.4" stroke-linejoin="round"/>
+  <circle cx="36.5" cy="26" r="2.6" fill="#fff3b0"/>
+</svg>

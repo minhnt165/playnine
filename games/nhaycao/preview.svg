@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: nhân vật nảy từ bệ dưới lên bệ trên, lò xo, bệ vỡ, mây giông trôi.
+       Hoạt hình bằng CSS bên trong file, tắt khi người dùng giảm chuyển động. Nền lấy từ preview.bg. -->
+  <style>
+    .hop { animation: hop 2.4s cubic-bezier(.3, 0, .7, 1) infinite; }
+    .body { animation: squash 2.4s ease-in-out infinite; }
+    .cloud { animation: drift 4s ease-in-out infinite alternate; }
+    .slide { animation: slide 3s ease-in-out infinite alternate; }
+    .bolt { animation: flash 1s steps(2) infinite; }
+    @keyframes hop {
+      0% { transform: translate(52px, 98px); }
+      25% { transform: translate(70px, 40px); }
+      50% { transform: translate(86px, 64px); }
+      75% { transform: translate(78px, 20px); }
+      100% { transform: translate(52px, 98px); }
+    }
+    @keyframes squash { 0%, 100% { transform: scale(1.15, .85); } 8%, 92% { transform: scale(1); } 50% { transform: scale(1.12, .88); } 56% { transform: scale(1); } }
+    @keyframes drift { from { transform: translate(112px, 30px); } to { transform: translate(136px, 30px); } }
+    @keyframes slide { from { transform: translateX(-14px); } to { transform: translateX(14px); } }
+    @keyframes flash { 50% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .hop, .body, .cloud, .slide, .bolt { animation: none; }
+      .hop { transform: translate(70px, 50px); }
+      .cloud { transform: translate(124px, 30px); }
+    }
+  </style>
+  <!-- Mây nền -->
+  <g fill="#ffffff" opacity=".18">
+    <ellipse cx="30" cy="30" rx="18" ry="6"/>
+    <ellipse cx="40" cy="26" rx="10" ry="6"/>
+    <ellipse cx="130" cy="106" rx="16" ry="5"/>
+  </g>
+  <!-- Bệ thường, bệ trượt, bệ vỡ -->
+  <rect x="34" y="99" width="36" height="7" rx="3.5" fill="#3fbf6f"/>
+  <rect x="38" y="100.5" width="28" height="2" rx="1" fill="#8be3a8"/>
+  <rect x="70" y="65" width="34" height="7" rx="3.5" fill="#3fbf6f"/>
+  <rect x="74" y="66.5" width="26" height="2" rx="1" fill="#8be3a8"/>
+  <g class="slide"><rect x="60" y="21" width="34" height="7" rx="3.5" fill="#3d8bfd"/><rect x="64" y="22.5" width="26" height="2" rx="1" fill="#9cc4ff"/></g>
+  <rect x="14" y="62" width="34" height="7" rx="3.5" fill="#b07a45"/>
+  <path d="M26 62l3 3-2 4M38 62l-2 3 3 4" fill="none" stroke="#7d5229" stroke-width="1.3"/>
+  <!-- Bệ có lò xo -->
+  <rect x="112" y="84" width="34" height="7" rx="3.5" fill="#3fbf6f"/>
+  <path d="M124 84l8-2-8-2 8-2-8-2" fill="none" stroke="#a7b0c4" stroke-width="1.8" stroke-linejoin="round"/>
+  <rect x="122" y="73" width="12" height="3" rx="1.5" fill="#ef4f5f"/>
+  <!-- Mây giông -->
+  <g class="cloud">
+    <path class="bolt" d="M-2 7h5l-2 4h3l-6 8 1-6h-3z" fill="#ffd23f"/>
+    <g fill="#6b5aa6"><circle cx="-7" cy="1" r="7"/><circle cx="0" cy="-3" r="8.5"/><circle cx="7" cy="1" r="7"/><circle cx="0" cy="3" r="7"/></g>
+    <circle cx="-3.5" cy="0" r="2.4" fill="#fff"/><circle cx="3.5" cy="0" r="2.4" fill="#fff"/>
+    <circle cx="-3" cy="0.5" r="1.2" fill="#1b1530"/><circle cx="3" cy="0.5" r="1.2" fill="#1b1530"/>
+    <path d="M-6.5-4.5l4 1.6M6.5-4.5l-4 1.6" stroke="#1b1530" stroke-width="1.3" stroke-linecap="round"/>
+  </g>
+  <!-- Nhân vật (gốc tọa độ = giữa chân) -->
+  <g class="hop">
+    <g class="body">
+      <path d="M0-20q0-3 1.5-5" fill="none" stroke="#2f9a52" stroke-width="1.4" stroke-linecap="round"/>
+      <ellipse cx="4" cy="-25.5" rx="3.6" ry="1.9" transform="rotate(-25 4 -25.5)" fill="#46c46f"/>
+      <ellipse cx="-3.2" cy="-1.4" rx="3" ry="1.7" fill="#e0731d"/>
+      <ellipse cx="3.8" cy="-1.4" rx="3" ry="1.7" fill="#e0731d"/>
+      <ellipse cx="0" cy="-10" rx="9" ry="10.4" fill="#e8891f"/>
+      <ellipse cx="-.6" cy="-10.8" rx="8.2" ry="9.6" fill="#ffb33d"/>
+      <ellipse cx="1.2" cy="-6.2" rx="4.8" ry="4" fill="#ffd98a"/>
+      <ellipse cx="-.8" cy="-13.4" rx="2.6" ry="3" fill="#fff"/>
+      <ellipse cx="5.2" cy="-13.4" rx="2.6" ry="3" fill="#fff"/>
+      <circle cx="0" cy="-13.2" r="1.4" fill="#2a1a0c"/>
+      <circle cx="6" cy="-13.2" r="1.4" fill="#2a1a0c"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: đội hình phi thuyền đi ngang rồi xuống, tàu bắn lên, khiên, đĩa bay.
+       Hoạt hình bằng CSS bên trong file, tắt khi người dùng giảm chuyển động. Nền trong suốt (preview.bg). -->
+  <style>
+    .f0 { animation: fa 1s steps(1) infinite; }
+    .f1 { animation: fb 1s steps(1) infinite; }
+    @keyframes fa { 0% { opacity: 1; } 50% { opacity: 0; } }
+    @keyframes fb { 0% { opacity: 0; } 50% { opacity: 1; } }
+    .march { animation: march 6s steps(12) infinite alternate; }
+    @keyframes march { from { transform: translate(8px, 16px); } to { transform: translate(42px, 16px); } }
+    .ship { animation: ship 6s ease-in-out infinite alternate; }
+    @keyframes ship { 0% { transform: translate(52px, 100px); } 50% { transform: translate(86px, 100px); } 100% { transform: translate(64px, 100px); } }
+    .shot { animation: shot 1.2s linear infinite; }
+    @keyframes shot { from { transform: translateY(0); opacity: 1; } 85% { opacity: 1; } to { transform: translateY(-62px); opacity: 0; } }
+    .ufo { animation: ufo 7s linear infinite; }
+    @keyframes ufo { from { transform: translate(-30px, 3px); } to { transform: translate(170px, 3px); } }
+    .tw { animation: tw 2.4s ease-in-out infinite; }
+    @keyframes tw { 50% { opacity: .2; } }
+    @media (prefers-reduced-motion: reduce) {
+      .f0, .f1, .march, .ship, .shot, .ufo, .tw { animation: none; }
+      .f1 { opacity: 0; }
+      .march { transform: translate(25px, 16px); }
+      .ship { transform: translate(64px, 100px); }
+      .ufo { transform: translate(110px, 3px); }
+      .shot { transform: translateY(-30px); }
+    }
+  </style>
+  <defs>
+    <filter id="g" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation=".9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <g id="a0"><path class="f0" d="M4 0h4v1h-4zM2 1h8v1h-8zM1 2h10v1h-10zM0 3h2v1h-2zM4 3h4v1h-4zM10 3h2v1h-2zM0 4h12v1h-12zM1 5h1v1h-1zM3 5h1v1h-1zM5 5h2v1h-2zM8 5h1v1h-1zM10 5h1v1h-1zM1 6h1v1h-1zM3 6h1v1h-1zM5 6h2v1h-2zM8 6h1v1h-1zM10 6h1v1h-1zM0 7h1v1h-1zM3 7h1v1h-1zM8 7h1v1h-1zM11 7h1v1h-1z"/><path class="f1" d="M4 0h4v1h-4zM2 1h8v1h-8zM1 2h10v1h-10zM0 3h2v1h-2zM4 3h4v1h-4zM10 3h2v1h-2zM0 4h12v1h-12zM1 5h1v1h-1zM3 5h1v1h-1zM5 5h2v1h-2zM8 5h1v1h-1zM10 5h1v1h-1zM0 6h1v1h-1zM3 6h1v1h-1zM5 6h2v1h-2zM8 6h1v1h-1zM11 6h1v1h-1zM1 7h1v1h-1zM4 7h1v1h-1zM7 7h1v1h-1zM10 7h1v1h-1z"/></g>
+    <g id="a1"><path class="f0" d="M5 0h1v1h-1zM4 1h3v1h-3zM2 2h7v1h-7zM1 3h2v1h-2zM4 3h1v1h-1zM6 3h1v1h-1zM8 3h2v1h-2zM0 4h11v1h-11zM2 5h1v1h-1zM4 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM1 6h1v1h-1zM3 6h1v1h-1zM7 6h1v1h-1zM9 6h1v1h-1zM0 7h1v1h-1zM10 7h1v1h-1z"/><path class="f1" d="M5 0h1v1h-1zM4 1h3v1h-3zM2 2h7v1h-7zM1 3h2v1h-2zM4 3h1v1h-1zM6 3h1v1h-1zM8 3h2v1h-2zM0 4h11v1h-11zM2 5h1v1h-1zM4 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM2 6h1v1h-1zM4 6h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM1 7h1v1h-1zM9 7h1v1h-1z"/></g>
+    <g id="a2"><path class="f0" d="M3 0h2v1h-2zM2 1h4v1h-4zM1 2h2v1h-2zM5 2h2v1h-2zM0 3h2v1h-2zM3 3h2v1h-2zM6 3h2v1h-2zM1 4h2v1h-2zM5 4h2v1h-2zM2 5h4v1h-4zM1 6h1v1h-1zM3 6h2v1h-2zM6 6h1v1h-1zM0 7h1v1h-1zM7 7h1v1h-1z"/><path class="f1" d="M3 0h2v1h-2zM2 1h4v1h-4zM1 2h2v1h-2zM5 2h2v1h-2zM0 3h2v1h-2zM3 3h2v1h-2zM6 3h2v1h-2zM1 4h2v1h-2zM5 4h2v1h-2zM2 5h4v1h-4zM1 6h1v1h-1zM3 6h2v1h-2zM6 6h1v1h-1zM1 7h1v1h-1zM6 7h1v1h-1z"/></g>
+    <path id="sh" d="M3 0h6v1h-6zM1 1h10v1h-10zM0 2h12v1h-12zM0 3h12v1h-12zM0 4h12v1h-12zM0 5h4v1h-4zM8 5h4v1h-4zM0 6h3v1h-3zM9 6h3v1h-3zM0 7h3v1h-3zM9 7h3v1h-3z"/>
+    <path id="shd" d="M3 0h6v1h-6zM1 1h4v1h-4zM6 1h5v1h-5zM0 2h4v1h-4zM7 2h5v1h-5zM0 3h5v1h-5zM6 3h6v1h-6zM0 4h12v1h-12zM0 5h4v1h-4zM8 5h4v1h-4zM0 6h3v1h-3zM9 6h3v1h-3zM0 7h3v1h-3zM9 7h3v1h-3z"/>
+  </defs>
+  <g fill="#fff">
+    <circle class="tw" cx="8" cy="20" r=".7"/><circle cx="150" cy="30" r=".6" opacity=".6"/><circle class="tw" cx="136" cy="70" r=".7" style="animation-delay:-1.2s"/>
+    <circle cx="20" cy="80" r=".5" opacity=".5"/><circle cx="96" cy="46" r=".5" opacity=".4"/><circle class="tw" cx="40" cy="6" r=".6" style="animation-delay:-.6s"/>
+  </g>
+  <g class="ufo"><path fill="#ff4d6d" filter="url(#g)" transform="scale(1.2)" d="M6 0h4v1h-4zM4 1h8v1h-8zM2 2h12v1h-12zM1 3h1v1h-1zM3 3h2v1h-2zM6 3h4v1h-4zM11 3h2v1h-2zM14 3h1v1h-1zM0 4h16v1h-16zM1 5h14v1h-14zM3 6h2v1h-2zM11 6h2v1h-2z"/></g>
+  <g class="march" filter="url(#g)">
+    <g transform="scale(1.2)">
+      <g fill="#d4ff3a"><use href="#a2" x="2" y="0"/><use href="#a2" x="18" y="0"/><use href="#a2" x="34" y="0"/><use href="#a2" x="50" y="0"/><use href="#a2" x="66" y="0"/><use href="#a2" x="82" y="0"/></g>
+      <g fill="#ff5ad9"><use href="#a1" x="0.5" y="13"/><use href="#a1" x="16.5" y="13"/><use href="#a1" x="32.5" y="13"/><use href="#a1" x="48.5" y="13"/><use href="#a1" x="64.5" y="13"/><use href="#a1" x="80.5" y="13"/></g>
+      <g fill="#37f0ff"><use href="#a0" x="0" y="26"/><use href="#a0" x="16" y="26"/><use href="#a0" x="32" y="26"/><use href="#a0" x="48" y="26"/><use href="#a0" x="64" y="26"/><use href="#a0" x="80" y="26"/><use href="#a0" x="0" y="39"/><use href="#a0" x="16" y="39"/><use href="#a0" x="48" y="39"/><use href="#a0" x="64" y="39"/><use href="#a0" x="80" y="39"/></g>
+    </g>
+  </g>
+  <g fill="#3cff8a" filter="url(#g)" opacity=".9">
+    <use href="#shd" transform="translate(14 84) scale(1.5)"/><use href="#sh" transform="translate(58 84) scale(1.5)"/><use href="#sh" transform="translate(102 84) scale(1.5)"/>
+  </g>
+  <rect x="0" y="113" width="160" height=".8" fill="#3cff8a" opacity=".6"/>
+  <g class="ship">
+    <g class="shot"><rect x="10.5" y="-8" width="1.6" height="5" fill="#eafcff" filter="url(#g)"/></g>
+    <path fill="#4dff9c" filter="url(#g)" transform="scale(1.5)" d="M7 0h1v1h-1zM6 1h3v1h-3zM6 2h3v1h-3zM2 3h1v1h-1zM5 3h5v1h-5zM12 3h1v1h-1zM1 4h13v1h-13zM0 5h15v1h-15zM0 6h15v1h-15zM0 7h2v1h-2zM3 7h2v1h-2zM10 7h2v1h-2zM13 7h2v1h-2z"/>
+  </g>
+</svg>

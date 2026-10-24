@@ -1,0 +1,136 @@
+/* =====================================================================
+ * Bóng Bàn - Chuỗi giao diện tiếng Anh (mặc định) + tiếng Việt
+ *   - Kit đọc ngôn ngữ ở khóa dùng chung với cổng: localStorage['playnine-lang']
+ *   - Chuỗi chung (Cài đặt, Đóng, Giao diện…) có sẵn trong kit với khóa kit.*; khóa trùng tên ở đây sẽ đè
+ *   - Chuỗi số nhiều: { one, other }, chọn theo params.n
+ * ===================================================================== */
+window.GAME_DICT = {
+  en: {
+    'meta.title': 'Table Tennis',
+    'meta.description': 'Table Tennis: a paddle duel against the computer. First to 11 points, win by 2.',
+    'app.name': 'Table Tennis',
+    'hud.you': 'You',
+    'hud.cpu': 'CPU',
+    'hud.level': 'Level',
+    'hud.serving': 'serving',
+    'level.easy': 'Easy',
+    'level.medium': 'Medium',
+    'level.hard': 'Hard',
+    'board.role': 'table tennis table',
+    'board.label': 'Table. Move the mouse, drag anywhere or use the arrow keys to move your paddle. P to pause.',
+    'btn.pause': 'Pause',
+    'btn.resume': 'Resume',
+    'btn.newMatch': 'New match',
+    'start.sub': 'First to 11 points, win by 2. Drag anywhere, move the mouse or use the arrow keys to move your paddle.',
+    'start.go': 'Start',
+    'start.continue': 'Continue',
+    'start.saved': 'Match in progress: You {you} – {cpu} CPU',
+    'start.hint': 'Press <kbd>Space</kbd> to start',
+    'pause.title': 'Paused',
+    'pause.sub': 'You {you} – {cpu} CPU · {level}',
+    'pause.hint': 'Press <kbd>P</kbd> or <kbd>Space</kbd> to resume',
+    'canvas.serveYou': 'Your serve',
+    'canvas.serveCpu': 'CPU serves',
+    'canvas.pointYou': 'Your point!',
+    'canvas.pointCpu': 'CPU scores',
+    'canvas.deuce': 'Deuce',
+    'canvas.matchPoint': 'Match point',
+    'live.score': 'You {you}, CPU {cpu}',
+    'result.win': 'You win!',
+    'result.lose': 'CPU wins',
+    'result.text': '{level} · longest rally {n} hits',
+    'result.streak': 'Win streak: {n}',
+    'confirm.title': 'Start a new match?',
+    'confirm.text': 'The current match will count as a loss.',
+    'stats.played': 'Played',
+    'stats.won': 'Won',
+    'stats.rate': 'Win rate',
+    'stats.rally': 'Longest rally',
+    'stats.level': 'Level',
+    'stats.streak': 'Best streak',
+    'set.level': 'Computer level',
+    'set.levelDesc': 'Changing it mid-match applies from the next match.',
+    'set.vibrate': 'Vibration',
+    'set.vibrateDesc': 'Short buzz on hits and points (phones only)',
+    'help.keys': '<kbd>←</kbd><kbd>→</kbd> / mouse: move · <kbd>Space</kbd> start · <kbd>P</kbd> pause · <kbd>N</kbd> new match',
+    'help.touch': 'Drag anywhere on the table to move your paddle',
+    'help.text':
+      '<ul class="help-list">' +
+      '<li>Your paddle is at the bottom (on the left on a wide screen). Return the ball past the computer\'s paddle to win the point.</li>' +
+      '<li>Where the ball meets your paddle sets the angle: the centre sends it straight, the edges send it wide.</li>' +
+      '<li>Moving the paddle as you hit puts a little spin on the ball, so it curves in that direction.</li>' +
+      '<li>The ball gets a little faster with every hit. Serve changes every 2 points (every point from 10–10).</li>' +
+      '<li>First to 11 points wins, but you must be 2 points clear.</li>' +
+      '<li>Controls: drag anywhere or move the mouse, or hold the arrow keys. <kbd>P</kbd> / <kbd>Esc</kbd> pauses.</li>' +
+      '</ul>',
+    'summary.note': 'Won {won} of {played} matches',
+    'summary.none': 'Beat the computer to 11',
+    'summary.resume': 'You {you} – {cpu} CPU · {level}',
+    'toast.saved': 'Match restored',
+    'toast.next': 'The new level applies from the next match',
+  },
+  vi: {
+    'meta.title': 'Bóng Bàn',
+    'meta.description': 'Bóng Bàn: đấu vợt với máy. Ai tới 11 điểm trước và hơn 2 điểm thì thắng.',
+    'app.name': 'Bóng Bàn',
+    'hud.you': 'Bạn',
+    'hud.cpu': 'Máy',
+    'hud.level': 'Mức',
+    'hud.serving': 'đang giao',
+    'level.easy': 'Dễ',
+    'level.medium': 'Vừa',
+    'level.hard': 'Khó',
+    'board.role': 'bàn bóng bàn',
+    'board.label': 'Bàn chơi. Rê chuột, kéo ở bất kỳ đâu hoặc dùng phím mũi tên để di chuyển vợt. P để tạm dừng.',
+    'btn.pause': 'Tạm dừng',
+    'btn.resume': 'Chơi tiếp',
+    'btn.newMatch': 'Trận mới',
+    'start.sub': 'Ai tới 11 điểm trước và hơn 2 điểm thì thắng. Kéo ở bất kỳ đâu, rê chuột hoặc dùng phím mũi tên để di chuyển vợt.',
+    'start.go': 'Bắt đầu',
+    'start.continue': 'Chơi tiếp',
+    'start.saved': 'Trận đang dở: Bạn {you} – {cpu} Máy',
+    'start.hint': 'Nhấn <kbd>Space</kbd> để bắt đầu',
+    'pause.title': 'Tạm dừng',
+    'pause.sub': 'Bạn {you} – {cpu} Máy · {level}',
+    'pause.hint': 'Nhấn <kbd>P</kbd> hoặc <kbd>Space</kbd> để chơi tiếp',
+    'canvas.serveYou': 'Bạn giao bóng',
+    'canvas.serveCpu': 'Máy giao bóng',
+    'canvas.pointYou': 'Điểm cho bạn!',
+    'canvas.pointCpu': 'Máy ghi điểm',
+    'canvas.deuce': 'Hòa',
+    'canvas.matchPoint': 'Điểm quyết định',
+    'live.score': 'Bạn {you}, máy {cpu}',
+    'result.win': 'Bạn thắng!',
+    'result.lose': 'Máy thắng',
+    'result.text': 'Mức {level} · loạt dài nhất {n} chạm',
+    'result.streak': 'Chuỗi thắng: {n}',
+    'confirm.title': 'Chơi trận mới?',
+    'confirm.text': 'Trận đang chơi sẽ tính là thua.',
+    'stats.played': 'Đã chơi',
+    'stats.won': 'Thắng',
+    'stats.rate': 'Tỉ lệ thắng',
+    'stats.rally': 'Loạt dài nhất',
+    'stats.level': 'Mức',
+    'stats.streak': 'Chuỗi thắng dài nhất',
+    'set.level': 'Mức của máy',
+    'set.levelDesc': 'Đổi giữa trận thì áp dụng từ trận sau.',
+    'set.vibrate': 'Rung',
+    'set.vibrateDesc': 'Rung nhẹ khi chạm bóng và khi mất điểm (điện thoại)',
+    'help.keys': '<kbd>←</kbd><kbd>→</kbd> / chuột: di chuyển · <kbd>Space</kbd> bắt đầu · <kbd>P</kbd> dừng · <kbd>N</kbd> trận mới',
+    'help.touch': 'Kéo ở bất kỳ đâu trên bàn để di chuyển vợt',
+    'help.text':
+      '<ul class="help-list">' +
+      '<li>Vợt của bạn ở dưới (bên trái khi màn hình nằm ngang). Đánh bóng qua vợt của máy để ghi điểm.</li>' +
+      '<li>Chỗ bóng chạm vợt quyết định góc bay: giữa vợt bóng đi thẳng, mép vợt bóng đi chéo.</li>' +
+      '<li>Vừa lia vợt vừa đánh sẽ tạo xoáy nhẹ, bóng cong theo hướng lia.</li>' +
+      '<li>Mỗi lần chạm vợt bóng nhanh thêm một chút. Đổi giao mỗi 2 điểm (từ 10–10 đổi mỗi điểm).</li>' +
+      '<li>Ai tới 11 điểm trước thì thắng, nhưng phải hơn 2 điểm.</li>' +
+      '<li>Điều khiển: kéo ở bất kỳ đâu hoặc rê chuột, hoặc giữ phím mũi tên. <kbd>P</kbd> / <kbd>Esc</kbd> tạm dừng.</li>' +
+      '</ul>',
+    'summary.note': 'Thắng {won}/{played} trận',
+    'summary.none': 'Thắng máy 11 điểm',
+    'summary.resume': 'Bạn {you} – {cpu} Máy · {level}',
+    'toast.saved': 'Đã khôi phục trận đấu',
+    'toast.next': 'Mức mới áp dụng từ trận sau',
+  },
+};
