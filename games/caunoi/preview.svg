@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động.
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt.
+       Kịch bản 6 giây: cầu lần lượt hiện ra (có một cầu đôi), đủ cầu thì mọi đảo chuyển xanh, rồi lặp lại. -->
+  <style>
+    .dot { fill: #8fc3f5; opacity: .35; }
+    .br { fill: none; stroke: #f3d2a2; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 1 1; }
+    .isl circle { fill: #ffffff; stroke: #2f6db0; stroke-width: 2.4; }
+    .isl text { fill: #15325a; font: 800 12px system-ui, sans-serif; text-anchor: middle; }
+    .b1 { animation: b1 6s linear infinite both; }
+    .b2 { animation: b2 6s linear infinite both; }
+    .b3 { animation: b3 6s linear infinite both; }
+    .b4 { animation: b4 6s linear infinite both; }
+    .b5 { animation: b5 6s linear infinite both; }
+    .b6 { animation: b6 6s linear infinite both; }
+    .isl circle { animation: done 6s ease-in-out infinite both; }
+    .isl text { animation: done-text 6s ease-in-out infinite both; }
+    @keyframes b1 { 0%, 6% { stroke-dashoffset: 1; opacity: 1; } 13%, 88% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @keyframes b2 { 0%, 18% { stroke-dashoffset: 1; opacity: 1; } 25%, 88% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @keyframes b3 { 0%, 30% { stroke-dashoffset: 1; opacity: 1; } 37%, 88% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @keyframes b4 { 0%, 42% { stroke-dashoffset: 1; opacity: 1; } 49%, 88% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @keyframes b5 { 0%, 54% { stroke-dashoffset: 1; opacity: 1; } 61%, 88% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @keyframes b6 { 0%, 64% { stroke-dashoffset: 1; opacity: 1; } 71%, 88% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @keyframes done { 0%, 72% { fill: #ffffff; stroke: #2f6db0; } 76%, 90% { fill: #22a356; stroke: #4ade80; } 97%, 100% { fill: #ffffff; stroke: #2f6db0; } }
+    @keyframes done-text { 0%, 72% { fill: #15325a; } 76%, 90% { fill: #ffffff; } 97%, 100% { fill: #15325a; } }
+    @media (prefers-reduced-motion: reduce) {
+      .br, .isl circle, .isl text { animation: none; }
+      .br { stroke-dashoffset: 0; }
+    }
+  </style>
+  <!-- Mặt nước: lưới chấm -->
+  <g class="dot">
+    <circle cx="30" cy="45" r="1.4"/><circle cx="50" cy="45" r="1.4"/><circle cx="70" cy="45" r="1.4"/><circle cx="110" cy="45" r="1.4"/><circle cx="130" cy="45" r="1.4"/>
+    <circle cx="50" cy="65" r="1.4"/><circle cx="70" cy="65" r="1.4"/><circle cx="50" cy="85" r="1.4"/><circle cx="70" cy="85" r="1.4"/>
+    <circle cx="110" cy="85" r="1.4"/><circle cx="90" cy="95" r="1.4"/><circle cx="110" cy="95" r="1.4"/>
+    <circle cx="50" cy="105" r="1.4"/><circle cx="70" cy="105" r="1.4"/><circle cx="130" cy="105" r="1.4"/>
+  </g>
+  <!-- Cầu (pathLength = 1 để vẽ dần bằng stroke-dashoffset) -->
+  <path class="br b1" pathLength="1" d="M30 37V83"/>
+  <path class="br b2" pathLength="1" d="M42 21.5H78"/>
+  <path class="br b3" pathLength="1" d="M42 28.5H78"/>
+  <path class="br b4" pathLength="1" d="M102 25H118"/>
+  <path class="br b5" pathLength="1" d="M90 37V53"/>
+  <path class="br b6" pathLength="1" d="M102 65H118"/>
+  <!-- Đảo -->
+  <g class="isl"><circle cx="30" cy="25" r="11"/><text x="30" y="29.3">3</text></g>
+  <g class="isl"><circle cx="90" cy="25" r="11"/><text x="90" y="29.3">4</text></g>
+  <g class="isl"><circle cx="130" cy="25" r="11"/><text x="130" y="29.3">1</text></g>
+  <g class="isl"><circle cx="30" cy="95" r="11"/><text x="30" y="99.3">1</text></g>
+  <g class="isl"><circle cx="90" cy="65" r="11"/><text x="90" y="69.3">2</text></g>
+  <g class="isl"><circle cx="130" cy="65" r="11"/><text x="130" y="69.3">1</text></g>
+</svg>

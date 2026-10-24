@@ -1,0 +1,80 @@
+{
+  "id": "nhiphan",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Binary Grid",
+    "vi": "Nhị Phân"
+  },
+  "sub": {
+    "en": "0s and 1s logic",
+    "vi": "Takuzu / Binairo"
+  },
+  "desc": {
+    "en": "Fill the grid with 0s and 1s: no three alike in a row, as many 0s as 1s in every line, and no two rows or columns the same. Every puzzle has exactly one solution, from 6×6 to 12×12.",
+    "vi": "Điền 0 và 1 cho kín lưới: không ba ô giống nhau liền nhau, số 0 bằng số 1 ở mọi hàng và cột, không hai hàng hay hai cột trùng nhau. Đề nào cũng có đúng một lời giải, từ 6×6 đến 12×12."
+  },
+  "tags": {
+    "en": ["Puzzle", "Logic", "1 player"],
+    "vi": ["Giải đố", "Logic", "1 người"]
+  },
+  "note": {
+    "en": "One solution, solved by logic alone",
+    "vi": "Một lời giải, giải bằng suy luận"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(79, 134, 255, .3), transparent 60%), linear-gradient(160deg, #1f2552, #0c0f24)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 5,
+    "modes": [
+      {
+        "key": "6",
+        "label": {
+          "en": "6×6 Easy",
+          "vi": "6×6 Dễ"
+        },
+        "rules": {
+          "min_time_ms": 3000
+        },
+        "points": 3
+      },
+      {
+        "key": "8",
+        "label": {
+          "en": "8×8 Medium",
+          "vi": "8×8 Vừa"
+        },
+        "rules": {
+          "min_time_ms": 6000
+        },
+        "points": 5
+      },
+      {
+        "key": "10",
+        "label": {
+          "en": "10×10 Hard",
+          "vi": "10×10 Khó"
+        },
+        "rules": {
+          "min_time_ms": 10000
+        },
+        "points": 7
+      },
+      {
+        "key": "12",
+        "label": {
+          "en": "12×12 Expert",
+          "vi": "12×12 Rất khó"
+        },
+        "rules": {
+          "min_time_ms": 15000
+        },
+        "points": 10
+      }
+    ]
+  }
+}

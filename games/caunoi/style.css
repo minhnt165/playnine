@@ -1,0 +1,146 @@
+/* =====================================================================
+ * Cầu Nối - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bàn chơi là một SVG vuông (mặt biển), cạnh = min(rộng, cao) của .stage (container query)
+ *   - Đảo trắng viền xanh biển; đủ cầu thì xanh lá; lỗi thì đỏ; cầu màu gỗ
+ * ===================================================================== */
+:root {
+  --sea: #e3f0fa;
+  --sea-dot: rgba(37, 99, 160, 0.22);
+  --isl: #ffffff;
+  --isl-edge: #2f6db0;
+  --isl-text: #15325a;
+  --done: #16a34a;
+  --done-edge: #15803d;
+  --err: #dc2626;
+  --bridge: #7a5230;
+  --preview: rgba(47, 109, 176, 0.55);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sea: #0d1b30;
+    --sea-dot: rgba(125, 180, 240, 0.2);
+    --isl: #1a2a44;
+    --isl-edge: #6aa8ec;
+    --isl-text: #e6efff;
+    --done: #22a356;
+    --done-edge: #4ade80;
+    --err: #f87171;
+    --bridge: #d9b48a;
+    --preview: rgba(106, 168, 236, 0.6);
+  }
+}
+:root[data-theme="dark"] {
+  --sea: #0d1b30;
+  --sea-dot: rgba(125, 180, 240, 0.2);
+  --isl: #1a2a44;
+  --isl-edge: #6aa8ec;
+  --isl-text: #e6efff;
+  --done: #22a356;
+  --done-edge: #4ade80;
+  --err: #f87171;
+  --bridge: #d9b48a;
+  --preview: rgba(106, 168, 236, 0.6);
+}
+
+/* Nhãn độ khó cạnh tên game: bấm để mở Cài đặt */
+.mode-badge { cursor: pointer; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Nút độ khó trong Cài đặt: tên + cỡ bàn hai dòng */
+.seg-mode button { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; padding: 4px 0; }
+.seg-mode small { font-size: 0.72rem; font-weight: 600; opacity: 0.75; }
+
+/* ===================== Bàn chơi ===================== */
+.stage { container-type: size; }
+.board-wrap {
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+  border-radius: var(--radius);
+  background: var(--sea);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.board {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+}
+.board:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
+.board * { pointer-events: none; } /* vị trí chạm tính theo tọa độ bàn */
+.board .sea-dot { stroke: var(--sea-dot); stroke-width: 0.09; stroke-linecap: round; }
+
+.board .bridge { stroke: var(--bridge); stroke-width: 0.085; stroke-linecap: round; }
+.board .bridge.blocked { stroke: var(--err); animation: blink 0.35s ease-in-out 2; }
+.board .bridge.hinted { stroke: var(--accent); stroke-width: 0.12; }
+.board .preview { stroke: var(--preview); stroke-width: 0.1; stroke-dasharray: 0.16 0.12; stroke-linecap: round; }
+.board .preview.bad { stroke: var(--err); }
+.board .preview.hinted-off { stroke: var(--accent); }
+
+.board .isl-bg { fill: var(--isl); stroke: var(--isl-edge); stroke-width: 0.06; }
+.board .isl text {
+  fill: var(--isl-text);
+  font-family: var(--font);
+  font-weight: 800;
+  text-anchor: middle;
+}
+.board .isl.done .isl-bg { fill: var(--done); stroke: var(--done-edge); }
+.board .isl.done text { fill: #ffffff; }
+.board .isl.err .isl-bg { fill: var(--err); stroke: var(--err); }
+.board .isl.err text { fill: #ffffff; }
+.board .isl.near .isl-bg { stroke: var(--accent); stroke-width: 0.09; }
+.board .isl.sel .isl-bg { stroke: var(--accent); stroke-width: 0.13; }
+.board .isl.armed .isl-bg { stroke-dasharray: 0.2 0.12; }
+.board .kbd-ring { fill: none; stroke: var(--focus); stroke-width: 0.05; }
+.board.won .isl-bg { animation: won-pop 0.6s ease-out; transform-box: fill-box; transform-origin: center; }
+@keyframes won-pop { 40% { transform: scale(1.18); } }
+@keyframes blink { 50% { opacity: 0.25; } }
+
+/* ===================== Nút dưới bàn ===================== */
+.controls { display: flex; gap: 8px; justify-content: center; flex: none; }
+.controls .btn { flex: 1; max-width: 150px; padding: 0 8px; gap: 5px; font-size: 0.86rem; white-space: nowrap; }
+.controls .icon { width: 18px; height: 18px; }
+
+.win-note { color: var(--accent); font-weight: 700; text-align: center; }
+.win-assisted { text-align: center; font-size: 0.9rem; }
+.help-list { margin: 0; padding-left: 1.2em; color: var(--muted); line-height: 1.5; display: flex; flex-direction: column; gap: 4px; }
+.help-kbd { font-size: 0.86rem; }
+
+/* Điện thoại hẹp: bỏ biểu tượng cạnh tên để đủ chỗ cho tên + độ khó; HUD, nút nhỏ lại một chút */
+@media (max-width: 420px) {
+  .brand-mark { display: none; }
+  .mode-size { display: none; }
+  /* Bàn chơi lấn vào lề hai bên để ô 13×13 to thêm một chút */
+  .stage { margin: 0 -8px; }
+  .hud { gap: 6px; }
+  .hud-box { padding: 6px 8px 7px; }
+  .hud-label { font-size: 0.62rem; letter-spacing: 0.03em; }
+  .hud-value { font-size: 1.2rem; }
+  .controls { gap: 6px; }
+  .controls .btn { flex-direction: column; gap: 1px; min-height: 48px; font-size: 0.74rem; padding: 0 4px; }
+}
+
+/* ===================== Màn hình ngang thấp: bàn bên trái, số liệu + nút bên phải ===================== */
+@media (orientation: landscape) and (max-height: 560px) {
+  .app {
+    max-width: 920px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+    grid-template-rows: auto auto auto 1fr;
+    grid-template-areas: "top top" "stage hud" "stage ctrl" "stage .";
+  }
+  .topbar { grid-area: top; }
+  .hud { grid-area: hud; grid-auto-flow: row; grid-template-columns: 1fr 1fr 1fr; }
+  .hud-box { padding: 6px 8px 7px; }
+  .hud-label { font-size: 0.62rem; }
+  .hud-value { font-size: 1.1rem; }
+  .stage { grid-area: stage; }
+  .controls { grid-area: ctrl; display: grid; grid-template-columns: 1fr 1fr; }
+  .controls .btn { max-width: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board.won .isl-bg, .board .bridge.blocked { animation: none; }
+}

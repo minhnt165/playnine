@@ -1,0 +1,220 @@
+/* =====================================================================
+ * Lều Trại - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bàn: khung xanh rừng, ô cát; cây thông, lều cam, cỏ là ô xanh có túm cỏ (hình SVG nhúng sẵn)
+ *   - Cỡ bàn theo ô chứa (.stage là container): luôn vừa khung, không cuộn, cột / hàng số rộng 0,8 ô
+ * ===================================================================== */
+:root {
+  --img-tree: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='14.2' y='22' width='3.6' height='7' rx='1' fill='%238a5a2b'/%3E%3Cpath d='M16 2.5 24 13h-4l6.5 8.5h-21L12 13H8z' fill='%232f9e44'/%3E%3Cpath d='M16 2.5 24 13h-4l6.5 8.5H16z' fill='%23237a36'/%3E%3C/svg%3E");
+  --img-tent: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M2.5 27.5h27' stroke='%23a0522d' stroke-width='1.6' stroke-linecap='round' opacity='.55'/%3E%3Cpath d='M16 4.5 29 27H3z' fill='%23fd7e14'/%3E%3Cpath d='M16 4.5 29 27H16z' fill='%23e8590c'/%3E%3Cpath d='M16 12.5 21 27H11z' fill='%235c2a0d'/%3E%3Cpath d='M16 5V2.5' stroke='%235c2a0d' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  --img-grass: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M10.5 23 13 15.5M16 23v-9.5M21.5 23 19 15.5' stroke='%235c9a32' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  --frame: linear-gradient(160deg, #5a8f4c, #3b6a34);
+  --frame-edge: rgba(255, 255, 255, 0.14);
+  --clue-text: #ffffff;
+  --cell-bg: #f7f2df;
+  --cell-tree: #edf2d9;
+  --cell-grass: #d2eab6;
+  --cell-shade: rgba(60, 40, 10, 0.12);
+  --err: #e03131;
+  --err-bg: #ffe0e0;
+  --bad-bg: #e03131;
+  --hl: #f59f00;
+  --cell-focus: #1971c2;
+  --over: #c92a2a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --img-grass: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M10.5 23 13 15.5M16 23v-9.5M21.5 23 19 15.5' stroke='%2378c25a' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    --frame: linear-gradient(160deg, #24402a, #13231a);
+    --frame-edge: rgba(255, 255, 255, 0.07);
+    --clue-text: #e9f5df;
+    --cell-bg: #2c3127;
+    --cell-tree: #28352a;
+    --cell-grass: #1f4128;
+    --cell-shade: rgba(0, 0, 0, 0.3);
+    --err: #ff6b6b;
+    --err-bg: #4f2323;
+    --bad-bg: #e03131;
+    --hl: #fcc419;
+    --cell-focus: #66d9e8;
+    --over: #ff8787;
+  }
+}
+:root[data-theme="dark"] {
+  --img-grass: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M10.5 23 13 15.5M16 23v-9.5M21.5 23 19 15.5' stroke='%2378c25a' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  --frame: linear-gradient(160deg, #24402a, #13231a);
+  --frame-edge: rgba(255, 255, 255, 0.07);
+  --clue-text: #e9f5df;
+  --cell-bg: #2c3127;
+  --cell-tree: #28352a;
+  --cell-grass: #1f4128;
+  --cell-shade: rgba(0, 0, 0, 0.3);
+  --err: #ff6b6b;
+  --err-bg: #4f2323;
+  --bad-bg: #e03131;
+  --hl: #fcc419;
+  --cell-focus: #66d9e8;
+  --over: #ff8787;
+}
+
+/* ===================== Thanh trên / HUD ===================== */
+/* Ô cỡ bàn trong HUD là nút: chạm để đổi Dễ → Vừa → Khó */
+.hud-size { text-align: left; display: block; color: var(--text); cursor: pointer; transition: background 0.15s, transform 0.1s; }
+.hud-size .hud-label { display: block; color: var(--accent); }
+.hud-size .hud-value { display: block; }
+.hud-size:active { transform: scale(0.97); }
+@media (hover: hover) {
+  .hud-size:hover { background: var(--surface-2); }
+}
+.hud-value.over { color: var(--over); }
+@media (max-width: 420px) {
+  .hud { gap: 6px; }
+  .hud-value { font-size: 1.2rem; }
+  /* Tên tiếng Anh dài: bỏ biểu tượng cạnh tên để tên không bị cắt */
+  html[lang="en"] .brand-mark { display: none; }
+}
+
+/* ===================== Bàn ===================== */
+.stage { container-type: size; }
+.board {
+  /* Tổng bề ngang = 0,8 ô (cột số) + n ô + 0,15 ô (lề) */
+  --k: calc(var(--n, 6) + 0.95);
+  --cell: min(76px, calc(min(100cqw, 100cqh) / var(--k)));
+  --gap: max(1px, calc(var(--cell) * 0.06));
+  --pad: calc(var(--cell) * 0.075);
+  display: grid;
+  grid-template-columns: calc(var(--cell) * 0.8 - var(--gap)) repeat(var(--n, 6), calc(var(--cell) - var(--gap)));
+  grid-template-rows: calc(var(--cell) * 0.8 - var(--gap)) repeat(var(--n, 6), calc(var(--cell) - var(--gap)));
+  gap: var(--gap);
+  padding: var(--pad) calc(var(--pad) + var(--gap)) calc(var(--pad) + var(--gap)) var(--pad);
+  border-radius: calc(var(--cell) * 0.3);
+  background: var(--frame);
+  box-shadow: var(--shadow), inset 0 1px 0 var(--frame-edge);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  transition: box-shadow 0.4s, filter 0.2s;
+}
+.board.solved { box-shadow: var(--shadow), inset 0 1px 0 var(--frame-edge), 0 0 0 3px rgba(252, 196, 25, 0.6), 0 0 44px rgba(252, 196, 25, 0.35); }
+/* Đang mở hộp thoại (đồng hồ dừng): làm mờ bàn để không nghĩ trước được */
+.app.paused .board { filter: blur(9px); }
+
+.corner { min-width: 0; }
+.clue {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: calc(var(--cell) * 0.14);
+  color: var(--clue-text);
+  font-size: max(11px, calc(var(--cell) * 0.44));
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  transition: opacity 0.2s, background 0.2s;
+}
+.clue.done { opacity: 0.38; }
+.clue.over, .clue.short { background: var(--bad-bg); color: #ffffff; opacity: 1; }
+.clue:focus-visible { outline: 3px solid var(--cell-focus); outline-offset: 1px; }
+
+.cell {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border-radius: calc(var(--cell) * 0.14);
+  background-color: var(--cell-bg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 82%;
+  box-shadow: inset 0 calc(var(--cell) * -0.05) 0 var(--cell-shade);
+  transition: background-color 0.12s;
+}
+.cell.tree { background-color: var(--cell-tree); background-image: var(--img-tree); cursor: default; }
+.cell.tent { background-image: var(--img-tent); }
+.cell.grass { background-color: var(--cell-grass); background-image: var(--img-grass); background-size: 64%; }
+.cell.err { background-color: var(--err-bg); box-shadow: inset 0 0 0 max(2px, calc(var(--cell) * 0.07)) var(--err); }
+.cell:focus-visible { outline: none; }
+.board.kbd .cell:focus-visible { outline: 3px solid var(--cell-focus); outline-offset: 1px; z-index: 1; }
+@media (hover: hover) {
+  .cell:not(.tree):hover { filter: brightness(1.06) saturate(1.1); }
+}
+
+/* Dựng lều: lều bật lên */
+.cell.pitch { animation: lt-pitch 0.26s ease-out; }
+@keyframes lt-pitch { from { background-size: 40%; } 60% { background-size: 92%; } }
+/* Gợi ý: vòng hổ phách nhấp nháy quanh ô */
+.cell.hinted::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  border: 3px solid var(--hl);
+  pointer-events: none;
+  animation: lt-hint 1.4s ease-out both;
+}
+@keyframes lt-hint { 0%, 50% { opacity: 1; } 25% { transform: scale(1.12); } 100% { opacity: 0; } }
+
+/* Đề mới: ô hiện dần theo đường chéo */
+.board.deal .cell { animation: lt-deal 0.34s ease-out both; animation-delay: calc(var(--d) * 22ms); }
+@keyframes lt-deal { from { opacity: 0; transform: scale(0.6); } }
+
+/* Giải xong: lều nảy lên theo làn chéo */
+.board.solved .cell.tent { animation: lt-cheer 0.6s ease-out both; animation-delay: calc(var(--d) * 45ms); }
+@keyframes lt-cheer { 40% { transform: translateY(calc(var(--cell) * -0.18)) scale(1.08); } }
+
+/* ===================== Nút dưới bàn ===================== */
+.controls { display: flex; gap: 10px; flex: none; }
+.controls .btn { flex: 1; min-height: 46px; padding: 0 10px; min-width: 0; }
+.controls .btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.btn .icon { width: 20px; height: 20px; }
+@media (max-width: 420px) {
+  .controls { gap: 8px; }
+  .controls .btn { padding: 0 6px; gap: 5px; font-size: 0.94rem; }
+}
+
+/* ===================== Hộp thoại ===================== */
+.segmented[data-setting="size"] button { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; padding: 4px 2px; }
+.segmented small { font-size: 0.74rem; font-weight: 600; opacity: 0.75; }
+.win-score { margin: 0; font-size: 2rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.win-badge { margin: 0; font-weight: 700; color: var(--muted); }
+.win-badge.good { color: var(--accent); }
+.help-art { width: 190px; height: auto; align-self: center; flex: none; }
+.ha-cell rect { fill: var(--cell-bg); stroke: var(--line); }
+.ha-grass rect { fill: var(--cell-grass); stroke: var(--line); }
+.ha-tent { fill: #fd7e14; }
+.ha-door { fill: #5c2a0d; }
+.ha-tree { fill: #2f9e44; }
+.ha-ok, .ha-bad { fill: none; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.ha-ok { stroke: var(--green); }
+.ha-bad { stroke: var(--red); }
+.help-list { margin: 0; padding-left: 1.2em; color: var(--text); line-height: 1.5; display: flex; flex-direction: column; gap: 6px; }
+.stat-grid dt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stats-note { font-size: 0.82rem; }
+
+/* ===================== Màn hình ngang thấp: bàn bên trái, số liệu + nút bên phải ===================== */
+@media (max-height: 520px) and (min-aspect-ratio: 5/4) {
+  .app {
+    max-width: 900px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas: "top top" "stage hud" "stage ." "stage controls";
+    column-gap: 16px;
+  }
+  .topbar { grid-area: top; }
+  .hud { grid-area: hud; grid-auto-flow: row; grid-template-columns: 1fr 1fr; }
+  .stage { grid-area: stage; }
+  .controls { grid-area: controls; flex-direction: column; }
+  .help { display: none; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .board, .cell, .clue { transition: none; }
+  .cell.pitch, .board.deal .cell, .board.solved .cell.tent { animation: none; }
+  .cell.hinted::after { animation: none; opacity: 1; }
+}

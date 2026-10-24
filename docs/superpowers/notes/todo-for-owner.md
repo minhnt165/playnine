@@ -14,6 +14,8 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 
 - [ ] `supabase/migrations/20261023000400_batch4.sql` — đợt 4, game 46–53: Chim Bay, Nhảy Cao, Qua Đường, Đập Chuột, Xếp Tầng, Bóng Bàn, Bắn Phi Thuyền, Thiên Thạch.
 
+- [ ] `supabase/migrations/20261023000500_batch5.sql` — đợt 5, game 54–61: Kakuro, Ô Số Tính, Cầu Nối, Vòng Kín, Nhị Phân, Lều Trại, Hitori, Chia Ô.
+
 Đợt 0 (nền tảng) không có migration. Áp các file theo đúng thứ tự tên file.
 
 ## Repo

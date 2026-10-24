@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: đề 5x4, vòng kín tự vẽ dần quanh các số rồi sáng lên khi khép.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động; nền trong suốt (nền thẻ lấy từ preview.bg). -->
+  <style>
+    .loop { fill: none; stroke: #a48bff; stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 480; stroke-dashoffset: 480; animation: draw 6s ease-in-out infinite; }
+    .fill { fill: #2dd4bf; opacity: 0; animation: fill 6s ease-in-out infinite; }
+    .glow { fill: none; stroke: #2dd4bf; stroke-width: 9; stroke-linejoin: round; opacity: 0; filter: blur(3px); animation: glow 6s ease-in-out infinite; }
+    .num { font-family: system-ui, sans-serif; font-size: 12px; font-weight: 800; fill: #eef0ff; text-anchor: middle; }
+    .x { stroke: #f0a9ba; stroke-width: 1.8; stroke-linecap: round; opacity: 0; animation: mark 6s ease-in-out infinite; }
+    @keyframes draw { 0%, 6% { stroke-dashoffset: 480; stroke: #a48bff; } 58% { stroke-dashoffset: 0; stroke: #a48bff; } 64%, 90% { stroke-dashoffset: 0; stroke: #5eead4; } 100% { stroke-dashoffset: 0; stroke: #5eead4; opacity: 0; } }
+    @keyframes fill { 0%, 58% { opacity: 0; } 66%, 88% { opacity: .18; } 100% { opacity: 0; } }
+    @keyframes glow { 0%, 58% { opacity: 0; } 64% { opacity: .7; } 78%, 100% { opacity: 0; } }
+    @keyframes mark { 0%, 16% { opacity: 0; } 22%, 92% { opacity: 1; } 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .loop, .fill, .glow, .x { animation: none; }
+      .loop { stroke-dashoffset: 0; stroke: #5eead4; }
+      .fill { opacity: .18; }
+      .x { opacity: 1; }
+    }
+  </style>
+  <!-- Vùng trong vòng và vòng: biên của nhóm ô liền nhau -->
+  <path class="fill" d="M50 20H110V60H130V100H90V40H70V100H30V60H50Z"/>
+  <path class="glow" d="M50 20H110V60H130V100H90V40H70V100H30V60H50Z"/>
+  <path class="loop" d="M50 20H110V60H130V100H90V40H70V100H30V60H50Z"/>
+  <!-- Dấu × trên vài cạnh chắc chắn không thuộc vòng -->
+  <g class="x">
+    <path d="M27 27l6 6m0-6l-6 6"/>
+    <path d="M127 27l6 6m0-6l-6 6"/>
+    <path d="M77 77l6 6m0-6l-6 6"/>
+  </g>
+  <!-- Số -->
+  <text class="num" x="40" y="34">1</text>
+  <text class="num" x="80" y="34">2</text>
+  <text class="num" x="120" y="34">1</text>
+  <text class="num" x="80" y="54">3</text>
+  <text class="num" x="80" y="74">2</text>
+  <text class="num" x="120" y="74">2</text>
+  <text class="num" x="40" y="94">2</text>
+  <!-- Lưới 6x5 điểm -->
+  <g fill="#c9cdf0">
+    <circle cx="30" cy="20" r="2"/><circle cx="50" cy="20" r="2"/><circle cx="70" cy="20" r="2"/><circle cx="90" cy="20" r="2"/><circle cx="110" cy="20" r="2"/><circle cx="130" cy="20" r="2"/>
+    <circle cx="30" cy="40" r="2"/><circle cx="50" cy="40" r="2"/><circle cx="70" cy="40" r="2"/><circle cx="90" cy="40" r="2"/><circle cx="110" cy="40" r="2"/><circle cx="130" cy="40" r="2"/>
+    <circle cx="30" cy="60" r="2"/><circle cx="50" cy="60" r="2"/><circle cx="70" cy="60" r="2"/><circle cx="90" cy="60" r="2"/><circle cx="110" cy="60" r="2"/><circle cx="130" cy="60" r="2"/>
+    <circle cx="30" cy="80" r="2"/><circle cx="50" cy="80" r="2"/><circle cx="70" cy="80" r="2"/><circle cx="90" cy="80" r="2"/><circle cx="110" cy="80" r="2"/><circle cx="130" cy="80" r="2"/>
+    <circle cx="30" cy="100" r="2"/><circle cx="50" cy="100" r="2"/><circle cx="70" cy="100" r="2"/><circle cx="90" cy="100" r="2"/><circle cx="110" cy="100" r="2"/><circle cx="130" cy="100" r="2"/>
+  </g>
+</svg>

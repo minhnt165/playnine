@@ -1,0 +1,69 @@
+{
+  "id": "kakuro",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Kakuro",
+    "vi": "Kakuro"
+  },
+  "sub": {
+    "en": "Cross sums",
+    "vi": "Cross Sums"
+  },
+  "desc": {
+    "en": "Fill the white cells with 1 to 9 so every run adds up to its clue, with no digit repeated in a run. Notes, a combination helper and three sizes; every puzzle has exactly one solution.",
+    "vi": "Điền 1 đến 9 vào ô trắng sao cho mỗi đoạn có tổng bằng số gợi ý và không lặp số trong đoạn. Có ghi chú, bảng tổ hợp và ba cỡ đề; đề nào cũng có đúng một lời giải."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Numbers"],
+    "vi": ["Giải đố", "1 người", "Con số"]
+  },
+  "note": {
+    "en": "Every puzzle has exactly one solution",
+    "vi": "Đề nào cũng có đúng một lời giải"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 209, 102, .22), transparent 60%), linear-gradient(160deg, #282c5c, #0f1128)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 3,
+    "modes": [
+      {
+        "key": "s",
+        "label": {
+          "en": "Easy 6×6",
+          "vi": "Dễ 6×6"
+        },
+        "rules": {
+          "min_time_ms": 4000
+        },
+        "points": 3
+      },
+      {
+        "key": "m",
+        "label": {
+          "en": "Medium 8×8",
+          "vi": "Vừa 8×8"
+        },
+        "rules": {
+          "min_time_ms": 8000
+        },
+        "points": 5
+      },
+      {
+        "key": "l",
+        "label": {
+          "en": "Hard 10×10",
+          "vi": "Khó 10×10"
+        },
+        "rules": {
+          "min_time_ms": 13000
+        },
+        "points": 8
+      }
+    ]
+  }
+}

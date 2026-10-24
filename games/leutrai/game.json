@@ -1,0 +1,69 @@
+{
+  "id": "leutrai",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Tents and Trees",
+    "vi": "Lều Trại"
+  },
+  "sub": {
+    "en": "Logic camping puzzle",
+    "vi": "Tents and Trees"
+  },
+  "desc": {
+    "en": "Pitch one tent beside every tree so that no two tents touch, matching the count at the end of each row and column. Every puzzle has exactly one solution, on 6x6, 8x8 and 12x12 boards.",
+    "vi": "Dựng một lều cạnh mỗi cây sao cho các lều không chạm nhau và khớp số lều ở đầu mỗi hàng, cột. Đề nào cũng có đúng một lời giải, bàn 6x6, 8x8 và 12x12."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Logic", "3 sizes"],
+    "vi": ["Giải đố", "1 người", "Logic", "3 cỡ bàn"]
+  },
+  "note": {
+    "en": "One tent beside every tree",
+    "vi": "Dựng một lều cạnh mỗi cây"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(253, 126, 20, .26), transparent 60%), linear-gradient(160deg, #1f4a2a, #0c1d12)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 4,
+    "modes": [
+      {
+        "key": "s",
+        "label": {
+          "en": "Easy 6x6",
+          "vi": "Dễ 6x6"
+        },
+        "rules": {
+          "min_time_ms": 1000
+        },
+        "points": 4
+      },
+      {
+        "key": "m",
+        "label": {
+          "en": "Medium 8x8",
+          "vi": "Vừa 8x8"
+        },
+        "rules": {
+          "min_time_ms": 1800
+        },
+        "points": 6
+      },
+      {
+        "key": "l",
+        "label": {
+          "en": "Hard 12x12",
+          "vi": "Khó 12x12"
+        },
+        "rules": {
+          "min_time_ms": 4000
+        },
+        "points": 9
+      }
+    ]
+  }
+}

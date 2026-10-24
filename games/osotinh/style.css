@@ -1,0 +1,310 @@
+/* =====================================================================
+ * Ô Số Tính - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Lưới kiểu giấy: đường mảnh giữa các ô, đường đậm quanh lồng, nhãn lồng ở góc trên trái
+ *   - Cỡ lưới theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
+ *   - Số người chơi điền màu tím (accent), số cho sẵn màu chữ thường; lỗi màu đỏ
+ * ===================================================================== */
+:root {
+  --cell-bg: #ffffff;
+  --thin: #d9dcef;
+  --cage: #2b2f55;
+  --label: #2b2f55;
+  --given: #14162b;
+  --entry: #5a3be0;
+  --sel: #ddd5ff;
+  --peer: #f1effb;
+  --same: #e8e2ff;
+  --bad-bg: #fde4e4;
+  --err: #c81e1e;
+  --ok-label: #8a8fb0;
+  --sweep: #cbbcff;
+  --cell-focus: #0891b2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cell-bg: #151933;
+    --thin: #2b3054;
+    --cage: #c7cbf2;
+    --label: #d9dcff;
+    --given: #f2f3ff;
+    --entry: #b29dff;
+    --sel: #3a3172;
+    --peer: #1b2040;
+    --same: #2c2860;
+    --bad-bg: #4a1d2a;
+    --err: #ff8a8a;
+    --ok-label: #6f7499;
+    --sweep: #4c3f99;
+    --cell-focus: #22d3ee;
+  }
+}
+:root[data-theme="dark"] {
+  --cell-bg: #151933;
+  --thin: #2b3054;
+  --cage: #c7cbf2;
+  --label: #d9dcff;
+  --given: #f2f3ff;
+  --entry: #b29dff;
+  --sel: #3a3172;
+  --peer: #1b2040;
+  --same: #2c2860;
+  --bad-bg: #4a1d2a;
+  --err: #ff8a8a;
+  --ok-label: #6f7499;
+  --sweep: #4c3f99;
+  --cell-focus: #22d3ee;
+}
+
+/* ===================== Thanh trên ===================== */
+.size-badge { cursor: pointer; font-size: 0.78rem; padding: 4px 9px; transition: background 0.15s; }
+@media (hover: hover) {
+  .size-badge:hover { background: var(--accent); color: var(--accent-text); }
+}
+
+/* ===================== Lưới ===================== */
+.stage { container-type: size; }
+.board {
+  --bsize: min(100cqw, 100cqh);
+  --cell: calc(var(--bsize) / var(--n, 4));
+  --bw: max(1px, calc(var(--cell) * 0.022)); /* nửa bề dày đường lồng (mỗi ô tự vẽ phần của mình) */
+  width: var(--bsize);
+  height: var(--bsize);
+  display: grid;
+  grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--n, 4), minmax(0, 1fr));
+  border: 3px solid var(--cage);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--cell-bg);
+  box-shadow: var(--shadow);
+  transition: filter 0.2s;
+}
+/* Đang dừng vì mở hộp thoại: làm mờ đề để không xem được lúc đồng hồ dừng */
+.board.veiled { filter: blur(9px); }
+
+.cell {
+  --t: 0px;
+  --r: 0px;
+  --b: 0px;
+  --l: 0px;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  background: var(--cell-bg);
+  border-right: 1px solid var(--thin);
+  border-bottom: 1px solid var(--thin);
+  box-shadow: inset 0 var(--t) 0 var(--cage), inset calc(var(--r) * -1) 0 0 var(--cage), inset 0 calc(var(--b) * -1) 0 var(--cage), inset var(--l) 0 0 var(--cage);
+  color: var(--entry);
+  transition: background 0.12s;
+}
+/* Cạnh giáp lồng khác: đường đậm = phần của ô này + viền 1px đậm + phần của ô bên kia */
+.cell.et { --t: var(--bw); }
+.cell.el { --l: var(--bw); }
+.cell.er { --r: var(--bw); border-right-color: var(--cage); }
+.cell.eb { --b: var(--bw); border-bottom-color: var(--cage); }
+.board[data-size="4"] .cell:nth-child(4n), .board[data-size="5"] .cell:nth-child(5n),
+.board[data-size="6"] .cell:nth-child(6n), .board[data-size="7"] .cell:nth-child(7n) { border-right: 0; }
+.board[data-size="4"] .cell:nth-child(n + 13), .board[data-size="5"] .cell:nth-child(n + 21),
+.board[data-size="6"] .cell:nth-child(n + 31), .board[data-size="7"] .cell:nth-child(n + 43) { border-bottom: 0; }
+
+.cell.peer { background: var(--peer); }
+.cell.same { background: var(--same); }
+.cell.bad { background: var(--bad-bg); }
+.cell.sel { background: var(--sel); }
+.cell:focus-visible { outline: 3px solid var(--cell-focus); outline-offset: -3px; z-index: 1; }
+@media (hover: hover) {
+  .cell:not(.sel):hover { background: var(--same); }
+}
+
+.cage-label {
+  position: absolute;
+  top: 5%;
+  left: 7%;
+  font-size: clamp(9px, calc(var(--cell) * 0.2), 17px);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--label);
+  white-space: nowrap;
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+.cage-label.done { color: var(--ok-label); }
+.cage-label.bad { color: var(--err); }
+
+.val {
+  position: absolute;
+  inset: 14% 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--cell) * 0.5);
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+}
+.cell.fixed .val { color: var(--given); font-weight: 800; }
+.cell.err .val { color: var(--err); }
+
+/* Ghi chú: mỗi số một chỗ cố định, nằm dưới nhãn lồng */
+.cell .notes {
+  position: absolute;
+  inset: 32% 6% 6%;
+  display: none;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  align-items: center;
+  justify-items: center;
+  pointer-events: none;
+}
+.board[data-size="5"] .notes, .board[data-size="6"] .notes { grid-template-columns: repeat(3, 1fr); }
+.board[data-size="7"] .notes { grid-template-columns: repeat(4, 1fr); }
+.cell .notes.shown { display: grid; }
+.cell .notes span {
+  font-size: clamp(8px, calc(var(--cell) * 0.17), 15px);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--muted);
+  visibility: hidden;
+}
+.cell .notes span.on { visibility: visible; }
+
+/* Hiệu ứng: chia đề (ô hiện dần theo đường chéo), điền số (nảy), giải xong (làn sáng quét chéo) */
+.board.deal .cell { animation: os-deal 0.34s ease-out both; animation-delay: calc(var(--d) * 22ms); }
+@keyframes os-deal { from { opacity: 0; transform: scale(0.7); } }
+.cell.pop .val, .cell.pop .notes { animation: os-pop 0.2s ease-out; }
+@keyframes os-pop { 45% { transform: scale(1.18); } }
+.board.solved .cell { animation: os-sweep 0.7s ease-out both; animation-delay: calc(var(--d) * 45ms); }
+@keyframes os-sweep { 40% { background: var(--sweep); } }
+
+/* ===================== Bàn số + công cụ ===================== */
+.controls { display: flex; flex-direction: column; gap: 8px; flex: none; }
+.pad { display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 6px; }
+.num {
+  min-height: 50px;
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  transition: background 0.12s, transform 0.08s, opacity 0.15s;
+}
+.num:active { transform: scale(0.94); }
+.num.full { opacity: 0.4; }
+.pad.noting .num { color: var(--accent); font-size: 1.05rem; box-shadow: var(--shadow-sm), inset 0 0 0 2px var(--accent-soft); }
+@media (hover: hover) {
+  .num:hover { background: var(--surface-2); }
+}
+
+.tools { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.tool {
+  position: relative;
+  min-height: 50px;
+  padding: 4px 2px;
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text);
+  transition: background 0.12s, transform 0.08s;
+}
+.tool .icon { width: 20px; height: 20px; }
+.tool span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.tool:active { transform: scale(0.95); }
+.tool.on { background: var(--accent); color: var(--accent-text); }
+@media (hover: hover) {
+  .tool:not(:disabled):not(.on):hover { background: var(--surface-2); }
+}
+
+/* ===================== Hộp thoại ===================== */
+.win-score { margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--muted); }
+.win-score b { font-size: 1.6rem; color: var(--text); font-variant-numeric: tabular-nums; }
+.win-badge { margin: 0; font-weight: 700; color: var(--muted); }
+.win-badge.good { color: var(--accent); }
+
+.size-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.size-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  text-align: left;
+  transition: background 0.12s, transform 0.08s;
+}
+.size-option b { font-size: 1.4rem; font-weight: 800; }
+.size-level { font-size: 0.85rem; font-weight: 600; color: var(--muted); }
+.size-best { font-size: 0.8rem; font-weight: 700; color: var(--accent); min-height: 1.2em; font-variant-numeric: tabular-nums; }
+.size-option.current { box-shadow: inset 0 0 0 2px var(--accent); }
+.size-option:active { transform: scale(0.97); }
+@media (hover: hover) {
+  .size-option:hover { background: var(--accent-soft); }
+}
+.new-warn { color: var(--red); font-weight: 600; }
+
+.best-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.best-table th { text-align: left; font-size: 0.75rem; color: var(--muted); font-weight: 700; padding: 4px 6px; }
+.best-table td { padding: 7px 6px; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.best-table td:not(:first-child), .best-table th:not(:first-child) { text-align: right; }
+.stat-grid dt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.help-art { width: 200px; height: auto; align-self: center; flex: none; }
+.ha-cell { fill: var(--cell-bg); }
+.ha-thin { stroke: var(--thin); stroke-width: 1; fill: none; }
+.ha-cage { stroke: var(--cage); stroke-width: 3; fill: none; }
+.ha-frame { stroke: var(--cage); stroke-width: 3; fill: none; }
+.ha-label { font-size: 8px; font-weight: 700; fill: var(--label); font-family: var(--font); }
+.ha-num { font-size: 15px; font-weight: 700; fill: var(--entry); text-anchor: middle; font-family: var(--font); }
+
+/* ===================== Màn hình ngang thấp: lưới bên trái, số liệu + bàn số bên phải ===================== */
+@media (max-height: 560px) and (min-aspect-ratio: 5/4) {
+  .app {
+    max-width: 900px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(250px, 320px);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas: "top top" "stage hud" "stage ." "stage controls";
+    column-gap: 16px;
+  }
+  .topbar { grid-area: top; }
+  .hud { grid-area: hud; }
+  .stage { grid-area: stage; }
+  .controls { grid-area: controls; }
+  .pad { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .num, .tool { min-height: 44px; }
+  .help { display: none; }
+}
+
+/* Màn hình dọc cao: nút số / công cụ to hơn cho dễ chạm */
+@media (min-height: 760px) and (max-aspect-ratio: 5/4) {
+  .num { min-height: 60px; font-size: 1.7rem; }
+  .tool { min-height: 56px; }
+}
+
+/* Màn hình thấp kiểu điện thoại nhỏ: thu nút cho lưới có chỗ */
+@media (max-height: 680px) and (max-aspect-ratio: 5/4) {
+  .num, .tool { min-height: 42px; }
+  .tool span { display: none; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .board, .cell, .num, .tool, .size-option { transition: none; }
+  .board.deal .cell, .cell.pop .val, .cell.pop .notes, .board.solved .cell { animation: none; }
+}
+
+/* Điện thoại hẹp: bỏ biểu tượng cạnh tên để tên game và huy hiệu cỡ lưới không bị cắt */
+@media (max-width: 420px) {
+  .brand-mark { display: none; }
+}

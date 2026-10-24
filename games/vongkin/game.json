@@ -1,0 +1,69 @@
+{
+  "id": "vongkin",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Loop the Loop",
+    "vi": "Vòng Kín"
+  },
+  "sub": {
+    "en": "Slitherlink",
+    "vi": "Slitherlink"
+  },
+  "desc": {
+    "en": "Draw one closed loop along the dotted grid so every number tells how many sides of its square the loop uses.",
+    "vi": "Vẽ một vòng khép kín theo lưới điểm sao cho mỗi số bằng số cạnh của ô đó nằm trên vòng."
+  },
+  "tags": {
+    "en": ["Puzzle", "Logic", "1 player"],
+    "vi": ["Giải đố", "Logic", "1 người"]
+  },
+  "note": {
+    "en": "Three levels, every puzzle has one solution",
+    "vi": "Ba mức, đề nào cũng chỉ có một lời giải"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(45, 212, 191, .26), transparent 60%), linear-gradient(160deg, #241d55, #0c0b22)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 5,
+    "modes": [
+      {
+        "key": "s",
+        "label": {
+          "en": "Easy 5x5",
+          "vi": "Dễ 5x5"
+        },
+        "rules": {
+          "min_time_ms": 2000
+        },
+        "points": 3
+      },
+      {
+        "key": "m",
+        "label": {
+          "en": "Medium 7x7",
+          "vi": "Vừa 7x7"
+        },
+        "rules": {
+          "min_time_ms": 4000
+        },
+        "points": 5
+      },
+      {
+        "key": "l",
+        "label": {
+          "en": "Hard 10x10",
+          "vi": "Khó 10x10"
+        },
+        "rules": {
+          "min_time_ms": 8000
+        },
+        "points": 8
+      }
+    ]
+  }
+}

@@ -1,0 +1,217 @@
+/* =====================================================================
+ * Nhị Phân - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Hai giá trị khác nhau cả màu (cam / xanh dương, phân biệt được với người mù màu đỏ-lục)
+ *     lẫn chữ số 0 / 1; ô cho sẵn tô đặc, ô người chơi điền tô nhạt có viền
+ *   - Ô sai luật: viền nét đứt + sọc chéo (không chỉ dựa vào màu đỏ)
+ *   - Cỡ lưới theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
+ * ===================================================================== */
+:root {
+  --cell-empty: #e6e8f6;
+  --z-solid: #f28a2e;
+  --z-on: #3b1800;
+  --z-soft: #ffe9d4;
+  --z-text: #b4520a;
+  --z-line: rgba(242, 138, 46, 0.55);
+  --o-solid: #2f6bed;
+  --o-on: #ffffff;
+  --o-soft: #dfe9ff;
+  --o-text: #1d4ed8;
+  --o-line: rgba(47, 107, 237, 0.5);
+  --hint: #f5b301;
+  --sweep: #a48bff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cell-empty: #1f2442;
+    --z-solid: #f59e42;
+    --z-on: #2a1400;
+    --z-soft: rgba(245, 158, 66, 0.16);
+    --z-text: #ffb871;
+    --z-line: rgba(245, 158, 66, 0.5);
+    --o-solid: #4f86ff;
+    --o-on: #ffffff;
+    --o-soft: rgba(79, 134, 255, 0.2);
+    --o-text: #a3c0ff;
+    --o-line: rgba(79, 134, 255, 0.55);
+  }
+}
+:root[data-theme="dark"] {
+  --cell-empty: #1f2442;
+  --z-solid: #f59e42;
+  --z-on: #2a1400;
+  --z-soft: rgba(245, 158, 66, 0.16);
+  --z-text: #ffb871;
+  --z-line: rgba(245, 158, 66, 0.5);
+  --o-solid: #4f86ff;
+  --o-on: #ffffff;
+  --o-soft: rgba(79, 134, 255, 0.2);
+  --o-text: #a3c0ff;
+  --o-line: rgba(79, 134, 255, 0.55);
+}
+
+/* ===================== Lưới ===================== */
+.stage { container-type: size; }
+.board {
+  --bsize: min(100cqw, 100cqh);
+  --cell: calc(var(--bsize) / var(--n, 6));
+  width: var(--bsize);
+  height: var(--bsize);
+  display: grid;
+  grid-template-columns: repeat(var(--n, 6), 1fr);
+  grid-template-rows: repeat(var(--n, 6), 1fr);
+  gap: calc(var(--cell) * 0.08);
+  padding: calc(var(--cell) * 0.14);
+  border-radius: calc(var(--cell) * 0.32);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.4s;
+}
+.board.solved { box-shadow: var(--shadow-sm), 0 0 0 3px rgba(164, 139, 255, 0.55), 0 0 40px rgba(164, 139, 255, 0.35); }
+
+.cell {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20%;
+  background: var(--cell-empty);
+  font-size: calc(var(--cell) * 0.5);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  transition: background-color 0.12s, color 0.12s;
+}
+.cell.v0 { background: var(--z-soft); color: var(--z-text); box-shadow: inset 0 0 0 2px var(--z-line); }
+.cell.v1 { background: var(--o-soft); color: var(--o-text); box-shadow: inset 0 0 0 2px var(--o-line); }
+.cell.given { cursor: default; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.18); }
+.cell.given.v0 { background: var(--z-solid); color: var(--z-on); }
+.cell.given.v1 { background: var(--o-solid); color: var(--o-on); }
+.cell:focus-visible { outline: 3px solid var(--focus); outline-offset: 1px; z-index: 1; }
+@media (hover: hover) {
+  .cell:not(.given):hover { filter: brightness(0.96); }
+  :root[data-theme="dark"] .cell:not(.given):hover { filter: brightness(1.2); }
+}
+@media (hover: hover) and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cell:not(.given):hover { filter: brightness(1.2); }
+}
+
+/* Ô sai luật: viền nét đứt + sọc chéo đỏ */
+.cell.bad::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  border: 2px dashed var(--red);
+  background: repeating-linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0 3px, transparent 3px 8px);
+  pointer-events: none;
+}
+
+/* Che lưới khi mở hộp thoại giữa ván (đồng hồ đang dừng) */
+.board.veiled .cell { color: transparent; background: var(--cell-empty); box-shadow: none; }
+.board.veiled .cell::after { display: none; }
+
+/* Hiệu ứng: điền ô nảy nhẹ, bấm ô cho sẵn lắc, ô gợi ý có vòng vàng */
+.cell.pop { animation: np-pop 0.18s ease-out; }
+.cell.nudge { animation: np-nudge 0.25s ease-in-out; }
+.cell.hinted { animation: np-hint 0.9s ease-out; }
+@keyframes np-pop { 45% { transform: scale(1.1); } }
+@keyframes np-nudge { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+@keyframes np-hint { 0%, 60% { box-shadow: 0 0 0 3px var(--hint), 0 0 16px var(--hint); } }
+
+/* Đề mới: ô hiện dần theo đường chéo */
+.board.deal .cell { animation: np-deal 0.32s ease-out both; animation-delay: calc(var(--d) * 18ms); }
+@keyframes np-deal { from { opacity: 0; transform: scale(0.6); } }
+
+/* Thắng: một làn sáng tím quét chéo qua lưới */
+.board.solved .cell { animation: np-sweep 0.7s ease-out both; animation-delay: calc(var(--d) * 30ms); }
+@keyframes np-sweep { 40% { filter: brightness(1.25); transform: scale(1.06); box-shadow: 0 0 0 2px var(--sweep); } }
+
+/* ===================== Nút dưới lưới ===================== */
+.controls { display: flex; gap: 10px; flex: none; }
+.controls .btn { flex: 1; min-height: 46px; padding: 0 10px; position: relative; }
+.btn .icon { width: 20px; height: 20px; }
+.hint-count {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--hint);
+  color: #2a1d00;
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 20px;
+}
+
+/* ===================== Hộp thoại ===================== */
+.win-time { color: var(--text); font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.win-best { color: var(--accent); font-weight: 700; }
+.new-warn { color: var(--red); font-weight: 600; }
+.size-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.size-opt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  text-align: left;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.size-opt b { font-size: 1.25rem; font-weight: 800; }
+.size-level { font-weight: 700; color: var(--accent); font-size: 0.9rem; }
+.size-best { font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.size-opt.current { box-shadow: inset 0 0 0 2px var(--accent); }
+@media (hover: hover) {
+  .size-opt:hover { background: var(--accent-soft); }
+}
+
+.help-art { width: 188px; height: auto; align-self: center; flex: none; }
+.help-art text { font: 800 17px system-ui, sans-serif; text-anchor: middle; }
+.ha-0 { fill: var(--z-solid); }
+.ha-1 { fill: var(--o-solid); }
+.ha-t0 { fill: var(--z-on); }
+.ha-t1 { fill: var(--o-on); }
+.ha-new { fill: var(--o-soft); stroke: var(--o-solid); stroke-width: 2; }
+.ha-tn { fill: var(--o-text); }
+.ha-arrow { fill: none; stroke: var(--muted); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.help-rules { margin: -6px 0 0; padding-left: 1.3em; color: var(--muted); line-height: 1.5; display: flex; flex-direction: column; gap: 4px; }
+
+.stat-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.stat-grid dt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stat-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.stat-table th { text-align: left; font-size: 0.75rem; color: var(--muted); font-weight: 700; padding: 0 6px 6px; }
+.stat-table td { padding: 8px 6px; border-top: 1px solid var(--line); font-weight: 600; }
+.stat-table th:not(:first-child), .stat-table td:not(:first-child) { text-align: right; }
+
+/* ===================== Màn hình ngang thấp: lưới bên trái, số liệu + nút bên phải ===================== */
+@media (max-height: 520px) and (min-aspect-ratio: 5/4) {
+  .app {
+    max-width: 860px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas: "top top" "stage hud" "stage ." "stage controls";
+    column-gap: 16px;
+  }
+  .topbar { grid-area: top; }
+  .hud { grid-area: hud; }
+  .stage { grid-area: stage; }
+  .controls { grid-area: controls; flex-direction: column; }
+  .help { display: none; }
+}
+
+/* ===================== Màn hình hẹp ===================== */
+@media (max-width: 380px) {
+  .controls .btn span[data-i18n] { font-size: 0.85rem; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .board, .cell, .size-opt { transition: none; }
+  .cell.pop, .cell.nudge, .cell.hinted, .board.deal .cell, .board.solved .cell { animation: none; }
+}

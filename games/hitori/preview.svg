@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: đề Hitori 5x5 thật (một lời giải), các ô thừa được tô đen lần lượt,
+       rồi các ô chắc chắn trắng được khoanh tròn. Nền trong suốt (nền thẻ lấy từ preview.bg); tắt hoạt hình khi giảm chuyển động. -->
+  <style>
+    .cell rect { fill: #fffaf0; }
+    .nums text, .b text { font: 700 11px system-ui, sans-serif; text-anchor: middle; }
+    .nums text { fill: #2b2f45; }
+    .b, .o { opacity: 0; animation-duration: 7s; animation-timing-function: ease-out; animation-iteration-count: infinite; }
+    .b rect { fill: #252839; }
+    .b text { fill: #5a5e78; }
+    .o { fill: none; stroke: #0d8578; stroke-width: 1.8; transform-box: fill-box; transform-origin: center; }
+    @keyframes b0 { 0%, 6% { opacity: 0; } 8.0%, 86% { opacity: 1; } 92%, 100% { opacity: 0; } }
+    @keyframes b1 { 0%, 12.5% { opacity: 0; } 14.5%, 86% { opacity: 1; } 92%, 100% { opacity: 0; } }
+    @keyframes b2 { 0%, 19% { opacity: 0; } 21.0%, 86% { opacity: 1; } 92%, 100% { opacity: 0; } }
+    @keyframes b3 { 0%, 25.5% { opacity: 0; } 27.5%, 86% { opacity: 1; } 92%, 100% { opacity: 0; } }
+    @keyframes b4 { 0%, 32% { opacity: 0; } 34.0%, 86% { opacity: 1; } 92%, 100% { opacity: 0; } }
+    @keyframes b5 { 0%, 38.5% { opacity: 0; } 40.5%, 86% { opacity: 1; } 92%, 100% { opacity: 0; } }
+    @keyframes b6 { 0%, 45% { opacity: 0; } 47.0%, 86% { opacity: 1; } 92%, 100% { opacity: 0; } }
+    @keyframes o0 { 0%, 54% { opacity: 0; transform: scale(.4); } 57%, 86% { opacity: 1; transform: none; } 92%, 100% { opacity: 0; } }
+    @keyframes o1 { 0%, 57% { opacity: 0; transform: scale(.4); } 60%, 86% { opacity: 1; transform: none; } 92%, 100% { opacity: 0; } }
+    @keyframes o2 { 0%, 60% { opacity: 0; transform: scale(.4); } 63%, 86% { opacity: 1; transform: none; } 92%, 100% { opacity: 0; } }
+    @keyframes o3 { 0%, 63% { opacity: 0; transform: scale(.4); } 66%, 86% { opacity: 1; transform: none; } 92%, 100% { opacity: 0; } }
+    @keyframes o4 { 0%, 66% { opacity: 0; transform: scale(.4); } 69%, 86% { opacity: 1; transform: none; } 92%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .b, .o { animation: none !important; opacity: 1; }
+    }
+  </style>
+  <rect x="28" y="8" width="104" height="104" rx="9" fill="#d3c7aa"/>
+  <g class="cell"><rect x="31" y="11" width="18" height="18" rx="3.5"/><rect x="51" y="11" width="18" height="18" rx="3.5"/><rect x="71" y="11" width="18" height="18" rx="3.5"/><rect x="91" y="11" width="18" height="18" rx="3.5"/><rect x="111" y="11" width="18" height="18" rx="3.5"/><rect x="31" y="31" width="18" height="18" rx="3.5"/><rect x="51" y="31" width="18" height="18" rx="3.5"/><rect x="71" y="31" width="18" height="18" rx="3.5"/><rect x="91" y="31" width="18" height="18" rx="3.5"/><rect x="111" y="31" width="18" height="18" rx="3.5"/><rect x="31" y="51" width="18" height="18" rx="3.5"/><rect x="51" y="51" width="18" height="18" rx="3.5"/><rect x="71" y="51" width="18" height="18" rx="3.5"/><rect x="91" y="51" width="18" height="18" rx="3.5"/><rect x="111" y="51" width="18" height="18" rx="3.5"/><rect x="31" y="71" width="18" height="18" rx="3.5"/><rect x="51" y="71" width="18" height="18" rx="3.5"/><rect x="71" y="71" width="18" height="18" rx="3.5"/><rect x="91" y="71" width="18" height="18" rx="3.5"/><rect x="111" y="71" width="18" height="18" rx="3.5"/><rect x="31" y="91" width="18" height="18" rx="3.5"/><rect x="51" y="91" width="18" height="18" rx="3.5"/><rect x="71" y="91" width="18" height="18" rx="3.5"/><rect x="91" y="91" width="18" height="18" rx="3.5"/><rect x="111" y="91" width="18" height="18" rx="3.5"/></g>
+  <g class="nums"><text x="40" y="24.2">5</text><text x="60" y="24.2">1</text><text x="80" y="24.2">2</text><text x="100" y="24.2">4</text><text x="120" y="24.2">3</text><text x="40" y="44.2">5</text><text x="60" y="44.2">2</text><text x="80" y="44.2">2</text><text x="100" y="44.2">5</text><text x="120" y="44.2">2</text><text x="40" y="64.2">2</text><text x="60" y="64.2">2</text><text x="80" y="64.2">4</text><text x="100" y="64.2">3</text><text x="120" y="64.2">1</text><text x="40" y="84.2">4</text><text x="60" y="84.2">3</text><text x="80" y="84.2">2</text><text x="100" y="84.2">1</text><text x="120" y="84.2">2</text><text x="40" y="104.2">4</text><text x="60" y="104.2">4</text><text x="80" y="104.2">3</text><text x="100" y="104.2">2</text><text x="120" y="104.2">2</text></g>
+  <g class="b" style="animation-name:b0"><rect x="31" y="31" width="18" height="18" rx="3.5"/><text x="40" y="44.2">5</text></g><g class="b" style="animation-name:b1"><rect x="111" y="31" width="18" height="18" rx="3.5"/><text x="120" y="44.2">2</text></g><g class="b" style="animation-name:b2"><rect x="71" y="31" width="18" height="18" rx="3.5"/><text x="80" y="44.2">2</text></g><g class="b" style="animation-name:b3"><rect x="51" y="51" width="18" height="18" rx="3.5"/><text x="60" y="64.2">2</text></g><g class="b" style="animation-name:b4"><rect x="71" y="71" width="18" height="18" rx="3.5"/><text x="80" y="84.2">2</text></g><g class="b" style="animation-name:b5"><rect x="31" y="91" width="18" height="18" rx="3.5"/><text x="40" y="104.2">4</text></g><g class="b" style="animation-name:b6"><rect x="111" y="91" width="18" height="18" rx="3.5"/><text x="120" y="104.2">2</text></g>
+  <circle class="o" style="animation-name:o0" cx="40" cy="20" r="7.2"/><circle class="o" style="animation-name:o1" cx="60" cy="40" r="7.2"/><circle class="o" style="animation-name:o2" cx="40" cy="60" r="7.2"/><circle class="o" style="animation-name:o3" cx="40" cy="80" r="7.2"/><circle class="o" style="animation-name:o4" cx="60" cy="100" r="7.2"/>
+</svg>

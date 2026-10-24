@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: bàn Kakuro 4x4, chữ số hiện dần vào từng ô, gợi ý của đoạn
+       vừa xong sáng vàng. Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động;
+       nền trong suốt (nền thẻ lấy từ preview.bg trong game.json). -->
+  <style>
+    text { font-family: system-ui, sans-serif; font-weight: 800; }
+    .clue { fill: #383e6e; }
+    .blk { fill: #2a2f58; }
+    .cell { fill: #f4f3ff; }
+    .diag { stroke: rgba(255, 255, 255, .32); stroke-width: 1.2; }
+    .num { fill: #ffffff; font-size: 8.5px; }
+    .val { fill: #1d2048; font-size: 15px; text-anchor: middle; opacity: 0; animation: val 6s ease-out infinite; }
+    .hot { animation: hot 6s ease-out infinite; }
+    .sel { fill: none; stroke: #a48bff; stroke-width: 2.4; animation: sel 6s steps(1) infinite; }
+    .v1 { animation-delay: 0s; } .v2 { animation-delay: .45s; } .v3 { animation-delay: .9s; } .v4 { animation-delay: 1.35s; }
+    .v5 { animation-delay: 1.8s; } .v6 { animation-delay: 2.25s; } .v7 { animation-delay: 2.7s; }
+    .h1 { animation-delay: .45s; } .h2 { animation-delay: .9s; } .h3 { animation-delay: 1.8s; } .h4 { animation-delay: 2.25s; } .h5 { animation-delay: 2.7s; }
+    @keyframes val { 0% { opacity: 0; transform: translateY(3px); } 4%, 82% { opacity: 1; transform: none; } 88%, 100% { opacity: 0; } }
+    @keyframes hot { 0%, 2% { fill: #ffffff; } 6%, 80% { fill: #ffd166; } 86%, 100% { fill: #ffffff; } }
+    @keyframes sel {
+      0% { transform: translate(0, 0); } 7.5% { transform: translate(26px, 0); } 15% { transform: translate(0, 26px); }
+      22.5% { transform: translate(26px, 26px); } 30% { transform: translate(52px, 26px); } 37.5% { transform: translate(26px, 52px); }
+      45% { transform: translate(52px, 52px); } 52%, 100% { transform: translate(200px, 0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .val, .hot, .sel { animation: none; }
+      .val { opacity: 1; }
+      .sel { display: none; }
+    }
+  </style>
+  <!-- Bàn 4x4: hàng 0 / cột 0 là ô gợi ý; lời giải 9 7 / 8 9 6 / 5 4 -->
+  <rect x="27" y="7" width="106" height="106" rx="8" fill="#14162f"/>
+  <rect class="blk" x="30" y="10" width="24" height="24" rx="2"/>
+  <rect class="clue" x="56" y="10" width="24" height="24" rx="2"/>
+  <rect class="clue" x="82" y="10" width="24" height="24" rx="2"/>
+  <rect class="blk" x="108" y="10" width="24" height="24" rx="2"/>
+  <rect class="clue" x="30" y="36" width="24" height="24" rx="2"/>
+  <rect class="cell" x="56" y="36" width="24" height="24" rx="2"/>
+  <rect class="cell" x="82" y="36" width="24" height="24" rx="2"/>
+  <rect class="clue" x="108" y="36" width="24" height="24" rx="2"/>
+  <rect class="clue" x="30" y="62" width="24" height="24" rx="2"/>
+  <rect class="cell" x="56" y="62" width="24" height="24" rx="2"/>
+  <rect class="cell" x="82" y="62" width="24" height="24" rx="2"/>
+  <rect class="cell" x="108" y="62" width="24" height="24" rx="2"/>
+  <rect class="blk" x="30" y="88" width="24" height="24" rx="2"/>
+  <rect class="clue" x="56" y="88" width="24" height="24" rx="2"/>
+  <rect class="cell" x="82" y="88" width="24" height="24" rx="2"/>
+  <rect class="cell" x="108" y="88" width="24" height="24" rx="2"/>
+  <path class="diag" d="M57 11l22 22M83 11l22 22M31 37l22 22M109 37l22 22M31 63l22 22M57 89l22 22"/>
+  <!-- Gợi ý: dọc ở góc dưới trái, ngang ở góc trên phải -->
+  <text class="num hot h2" x="59" y="31">17</text>
+  <text class="num hot h4" x="85" y="31">21</text>
+  <text class="num hot h1" x="51" y="45" text-anchor="end">16</text>
+  <text class="num hot h3" x="51" y="71" text-anchor="end">23</text>
+  <text class="num hot h5" x="111" y="57">10</text>
+  <text class="num hot h5" x="77" y="97" text-anchor="end">9</text>
+  <!-- Chữ số người chơi điền -->
+  <text class="val v1" x="68" y="53.5">9</text>
+  <text class="val v2" x="94" y="53.5">7</text>
+  <text class="val v3" x="68" y="79.5">8</text>
+  <text class="val v4" x="94" y="79.5">9</text>
+  <text class="val v5" x="120" y="79.5">6</text>
+  <text class="val v6" x="94" y="105.5">5</text>
+  <text class="val v7" x="120" y="105.5">4</text>
+  <!-- Khung ô đang chọn -->
+  <rect class="sel" x="57" y="37" width="22" height="22" rx="2"/>
+</svg>

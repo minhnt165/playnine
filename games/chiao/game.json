@@ -1,0 +1,69 @@
+{
+  "id": "chiao",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Rectangles",
+    "vi": "Chia Ô"
+  },
+  "sub": {
+    "en": "Shikaku",
+    "vi": "Shikaku"
+  },
+  "desc": {
+    "en": "Split the grid into rectangles so that each one holds exactly one number, equal to its area. Every puzzle has a single solution, from Easy 7x7 to Hard 13x13.",
+    "vi": "Chia lưới thành các hình chữ nhật sao cho mỗi hình chứa đúng một số bằng diện tích của nó. Đề nào cũng có một lời giải duy nhất, từ Dễ 7x7 đến Khó 13x13."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Logic"],
+    "vi": ["Giải đố", "1 người", "Logic"]
+  },
+  "note": {
+    "en": "Every puzzle has exactly one solution",
+    "vi": "Đề nào cũng có đúng một lời giải"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(63, 208, 142, .24), transparent 60%), linear-gradient(160deg, #26245e, #0f0e2a)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 4,
+    "modes": [
+      {
+        "key": "s",
+        "label": {
+          "en": "Easy 7x7",
+          "vi": "Dễ 7x7"
+        },
+        "rules": {
+          "min_time_ms": 1400
+        },
+        "points": 4
+      },
+      {
+        "key": "m",
+        "label": {
+          "en": "Medium 10x10",
+          "vi": "Vừa 10x10"
+        },
+        "rules": {
+          "min_time_ms": 2000
+        },
+        "points": 6
+      },
+      {
+        "key": "l",
+        "label": {
+          "en": "Hard 13x13",
+          "vi": "Khó 13x13"
+        },
+        "rules": {
+          "min_time_ms": 3000
+        },
+        "points": 8
+      }
+    ]
+  }
+}

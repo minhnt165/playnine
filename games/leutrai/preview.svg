@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: bàn 4x4 có cây, lều lần lượt được dựng cạnh cây, cỏ phủ ô còn lại,
+       số hàng / cột mờ đi khi đủ. Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động.
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt. -->
+  <style>
+    .num { font: 800 12px system-ui, sans-serif; fill: #f1fbe9; text-anchor: middle; animation: done 5s ease-in-out infinite; }
+    .tent, .ring { transform-box: fill-box; transform-origin: 50% 100%; }
+    .ring { transform-origin: 50% 50%; opacity: 0; }
+    .t1 { animation: t1 5s ease-out infinite; }
+    .t2 { animation: t2 5s ease-out infinite; }
+    .t3 { animation: t3 5s ease-out infinite; }
+    .r1 { animation: r1 5s ease-out infinite; }
+    .r2 { animation: r2 5s ease-out infinite; }
+    .r3 { animation: r3 5s ease-out infinite; }
+    .grass { animation: grass 5s ease-in-out infinite; }
+    @keyframes t1 { 0%, 9% { opacity: 0; transform: scale(.3); } 14% { opacity: 1; transform: scale(1.15); } 18%, 88% { opacity: 1; transform: none; } 94%, 100% { opacity: 0; } }
+    @keyframes t2 { 0%, 27% { opacity: 0; transform: scale(.3); } 32% { opacity: 1; transform: scale(1.15); } 36%, 88% { opacity: 1; transform: none; } 94%, 100% { opacity: 0; } }
+    @keyframes t3 { 0%, 45% { opacity: 0; transform: scale(.3); } 50% { opacity: 1; transform: scale(1.15); } 54%, 88% { opacity: 1; transform: none; } 94%, 100% { opacity: 0; } }
+    @keyframes r1 { 0%, 5% { opacity: 0; transform: scale(.4); } 8% { opacity: .9; } 16%, 100% { opacity: 0; transform: scale(1.5); } }
+    @keyframes r2 { 0%, 23% { opacity: 0; transform: scale(.4); } 26% { opacity: .9; } 34%, 100% { opacity: 0; transform: scale(1.5); } }
+    @keyframes r3 { 0%, 41% { opacity: 0; transform: scale(.4); } 44% { opacity: .9; } 52%, 100% { opacity: 0; transform: scale(1.5); } }
+    @keyframes grass { 0%, 58% { opacity: 0; } 66%, 88% { opacity: 1; } 94%, 100% { opacity: 0; } }
+    @keyframes done { 0%, 66% { opacity: 1; } 72%, 88% { opacity: .38; } 94%, 100% { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) {
+      .num, .tent, .ring, .grass { animation: none; }
+    }
+  </style>
+  <defs>
+    <g id="tree">
+      <rect x="8.6" y="14" width="2.8" height="4.5" rx=".8" fill="#8a5a2b"/>
+      <path d="M10 2 16 9h-3l5 7H2l5-7H4z" fill="#2f9e44"/>
+      <path d="M10 2 16 9h-3l5 7H10z" fill="#237a36"/>
+    </g>
+    <g id="tentg">
+      <path d="M10 3 18.5 17.5h-17z" fill="#fd7e14"/>
+      <path d="M10 3 18.5 17.5H10z" fill="#e8590c"/>
+      <path d="M10 9 13 17.5H7z" fill="#5c2a0d"/>
+    </g>
+    <g id="tuft">
+      <rect width="20" height="20" rx="3" fill="#cde8b0"/>
+      <path d="M6.5 15 8 10m2 5V9m3.5 6L12 10" stroke="#5c9a32" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    </g>
+  </defs>
+  <rect x="26" y="6" width="113" height="113" rx="9" fill="#3d6c36"/>
+  <rect x="26.5" y="6.5" width="112" height="112" rx="8.5" fill="none" stroke="#ffffff" stroke-opacity=".12"/>
+  <!-- Số cột (1 1 0 1) và số hàng (1 0 2 0) -->
+  <text class="num" x="54" y="20">1</text><text class="num" x="77" y="20">1</text><text class="num" x="100" y="20">0</text><text class="num" x="123" y="20">1</text>
+  <text class="num" x="35" y="40">1</text><text class="num" x="35" y="63">0</text><text class="num" x="35" y="86">2</text><text class="num" x="35" y="109">0</text>
+  <!-- Ô cát -->
+  <g fill="#f7f2df">
+    <rect x="44" y="26" width="20" height="20" rx="3"/><rect x="67" y="26" width="20" height="20" rx="3"/><rect x="90" y="26" width="20" height="20" rx="3"/><rect x="113" y="26" width="20" height="20" rx="3"/>
+    <rect x="44" y="49" width="20" height="20" rx="3"/><rect x="67" y="49" width="20" height="20" rx="3"/><rect x="90" y="49" width="20" height="20" rx="3"/><rect x="113" y="49" width="20" height="20" rx="3"/>
+    <rect x="44" y="72" width="20" height="20" rx="3"/><rect x="67" y="72" width="20" height="20" rx="3"/><rect x="90" y="72" width="20" height="20" rx="3"/><rect x="113" y="72" width="20" height="20" rx="3"/>
+    <rect x="44" y="95" width="20" height="20" rx="3"/><rect x="67" y="95" width="20" height="20" rx="3"/><rect x="90" y="95" width="20" height="20" rx="3"/><rect x="113" y="95" width="20" height="20" rx="3"/>
+  </g>
+  <!-- Cỏ: mọi ô không có cây / lều -->
+  <g class="grass">
+    <use href="#tuft" xlink:href="#tuft" x="90" y="26"/><use href="#tuft" xlink:href="#tuft" x="113" y="26"/>
+    <use href="#tuft" xlink:href="#tuft" x="44" y="49"/><use href="#tuft" xlink:href="#tuft" x="67" y="49"/><use href="#tuft" xlink:href="#tuft" x="90" y="49"/>
+    <use href="#tuft" xlink:href="#tuft" x="67" y="72"/><use href="#tuft" xlink:href="#tuft" x="90" y="72"/>
+    <use href="#tuft" xlink:href="#tuft" x="67" y="95"/><use href="#tuft" xlink:href="#tuft" x="90" y="95"/><use href="#tuft" xlink:href="#tuft" x="113" y="95"/>
+  </g>
+  <!-- Cây -->
+  <use href="#tree" xlink:href="#tree" x="44" y="26"/>
+  <use href="#tree" xlink:href="#tree" x="113" y="49"/>
+  <use href="#tree" xlink:href="#tree" x="44" y="95"/>
+  <!-- Chạm rồi dựng lều cạnh từng cây -->
+  <circle class="ring r1" cx="77" cy="36" r="11" fill="none" stroke="#ffe066" stroke-width="2.5"/>
+  <circle class="ring r2" cx="54" cy="82" r="11" fill="none" stroke="#ffe066" stroke-width="2.5"/>
+  <circle class="ring r3" cx="123" cy="82" r="11" fill="none" stroke="#ffe066" stroke-width="2.5"/>
+  <g class="tent t1"><use href="#tentg" xlink:href="#tentg" x="67" y="26"/></g>
+  <g class="tent t2"><use href="#tentg" xlink:href="#tentg" x="44" y="72"/></g>
+  <g class="tent t3"><use href="#tentg" xlink:href="#tentg" x="113" y="72"/></g>
+</svg>

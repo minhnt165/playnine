@@ -1,0 +1,80 @@
+{
+  "id": "osotinh",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Math Cages",
+    "vi": "Ô Số Tính"
+  },
+  "sub": {
+    "en": "Arithmetic grid puzzle",
+    "vi": "Math Cages"
+  },
+  "desc": {
+    "en": "Fill the grid so every row and column holds each number once and every cage makes its target with + − × ÷. Every puzzle has exactly one solution; notes, unlimited undo and hints. 4x4 to 7x7 grids.",
+    "vi": "Điền lưới sao cho mỗi hàng, mỗi cột có đủ các số và mỗi lồng ra đúng kết quả với + − × ÷. Đề nào cũng có đúng một lời giải; có ghi chú, hoàn tác không giới hạn và gợi ý. Lưới 4x4 đến 7x7."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Math", "4 sizes"],
+    "vi": ["Giải đố", "1 người", "Tính nhẩm", "4 cỡ lưới"]
+  },
+  "note": {
+    "en": "Every puzzle has one solution",
+    "vi": "Đề nào cũng có đúng một lời giải"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(139, 108, 255, .3), transparent 60%), linear-gradient(160deg, #23285a, #0e1029)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 5,
+    "modes": [
+      {
+        "key": "4",
+        "label": {
+          "en": "4x4",
+          "vi": "4x4"
+        },
+        "rules": {
+          "min_time_ms": 4000
+        },
+        "points": 3
+      },
+      {
+        "key": "5",
+        "label": {
+          "en": "5x5",
+          "vi": "5x5"
+        },
+        "rules": {
+          "min_time_ms": 6500
+        },
+        "points": 5
+      },
+      {
+        "key": "6",
+        "label": {
+          "en": "6x6",
+          "vi": "6x6"
+        },
+        "rules": {
+          "min_time_ms": 10000
+        },
+        "points": 7
+      },
+      {
+        "key": "7",
+        "label": {
+          "en": "7x7",
+          "vi": "7x7"
+        },
+        "rules": {
+          "min_time_ms": 14000
+        },
+        "points": 10
+      }
+    ]
+  }
+}

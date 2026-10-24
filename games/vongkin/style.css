@@ -1,0 +1,165 @@
+/* =====================================================================
+ * Vòng Kín - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bàn là một SVG vuông, một ô = 100 đơn vị: nét / chữ tính bằng px theo đơn vị đó nên tự co theo cỡ bàn
+ *   - Vòng màu tím PlayNine; giải xong thì vòng chuyển sang xanh ngọc và phần trong vòng tô dần
+ *   - Cỡ bàn theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
+ * ===================================================================== */
+:root {
+  --board-bg: #ffffff;
+  --dot: #3b3f63;
+  --faint: rgba(20, 22, 43, 0.07);
+  --loop: #6a4cf5;
+  --mark: #9a5b6a;
+  --clue: #1d2040;
+  --win: #0d9488;
+  --inside: rgba(13, 148, 136, 0.13);
+  --err: #d92d20;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --board-bg: #151a30;
+    --dot: #c5c9ea;
+    --faint: rgba(255, 255, 255, 0.07);
+    --loop: #a48bff;
+    --mark: #e1a3b2;
+    --clue: #eef0ff;
+    --win: #2dd4bf;
+    --inside: rgba(45, 212, 191, 0.14);
+    --err: #f87171;
+  }
+}
+:root[data-theme="dark"] {
+  --board-bg: #151a30;
+  --dot: #c5c9ea;
+  --faint: rgba(255, 255, 255, 0.07);
+  --loop: #a48bff;
+  --mark: #e1a3b2;
+  --clue: #eef0ff;
+  --win: #2dd4bf;
+  --inside: rgba(45, 212, 191, 0.14);
+  --err: #f87171;
+}
+
+/* ===================== Ô mức (bấm để đổi mức) ===================== */
+.hud-mode { display: block; width: 100%; text-align: left; color: var(--text); transition: background 0.15s, transform 0.1s; }
+.hud-mode .hud-label, .hud-mode .hud-value { display: block; }
+.hud-mode .hud-label { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.hud-swap { width: 13px; height: 13px; fill: currentColor; margin-left: auto; opacity: 0.8; flex: none; }
+.hud-mode:active { transform: scale(0.97); }
+@media (hover: hover) {
+  .hud-mode:hover { background: var(--surface-2); }
+}
+
+/* ===================== Bàn ===================== */
+.stage { container-type: size; }
+.board {
+  --lw: 12px; /* bề dày vòng (đơn vị SVG) */
+  display: block;
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+  background: var(--board-bg);
+  border-radius: 18px;
+  box-shadow: var(--shadow-sm);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: crosshair;
+  transition: box-shadow 0.4s;
+}
+.board[data-n="7"] { --lw: 13px; }
+.board[data-n="10"] { --lw: 15px; }
+.board:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.board.solved { box-shadow: var(--shadow-sm), 0 0 0 3px color-mix(in srgb, var(--win) 45%, transparent), 0 0 40px color-mix(in srgb, var(--win) 30%, transparent); }
+
+.cell { fill: transparent; transition: fill 0.5s ease-out; }
+.cell.in { fill: var(--inside); transition-delay: calc(var(--d, 0) * 35ms); }
+
+.clue {
+  font-family: var(--font);
+  font-size: 60px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--clue);
+  transition: opacity 0.2s, fill 0.2s;
+  pointer-events: none;
+}
+.clue.done { opacity: 0.3; }
+.clue.err { fill: var(--err); opacity: 1; }
+.board.solved .clue { opacity: 0.55; }
+
+.edge { stroke: var(--faint); stroke-width: 3px; stroke-linecap: round; transition: stroke 0.15s; pointer-events: none; }
+.edge.on { stroke: var(--loop); stroke-width: var(--lw); }
+.edge.on.bad { stroke: var(--err); }
+.board.solved .edge.on { stroke: var(--win); }
+.mark { stroke: var(--mark); stroke-width: 6px; stroke-linecap: round; fill: none; opacity: 0; pointer-events: none; }
+.mark.show { opacity: 1; }
+
+.dot { fill: var(--dot); pointer-events: none; transform-box: fill-box; transform-origin: center; transition: transform 0.15s, fill 0.15s; }
+.dot.err { fill: var(--err); transform: scale(1.9); }
+
+/* Con trỏ bàn phím (chỉ hiện khi đang dùng phím); đỏ đứt nét khi X đang chờ mũi tên */
+.cursor { fill: none; stroke: var(--focus); stroke-width: 7px; opacity: 0; pointer-events: none; }
+.board.kbd .cursor { opacity: 1; }
+.cursor.x { stroke: var(--err); stroke-dasharray: 12 9; }
+
+/* Gợi ý: cạnh vừa đổi nháy sáng */
+.edge.flash, .mark.flash { animation: vk-flash 0.9s ease-out; }
+@keyframes vk-flash { 0%, 40% { stroke: #f59e0b; } }
+.edge.on.flash { animation: vk-flash-on 0.9s ease-out; }
+@keyframes vk-flash-on { 0%, 40% { stroke: #f59e0b; stroke-width: calc(var(--lw) * 1.6); } }
+
+/* Đề mới: số hiện dần theo đường chéo */
+.board.deal .clue { animation: vk-deal 0.35s ease-out both; animation-delay: calc(var(--d, 0) * 22ms); }
+@keyframes vk-deal { from { opacity: 0; } }
+
+/* Thắng: vòng sáng lên một nhịp */
+.board.solved .edges { animation: vk-glow 1.1s ease-out; }
+@keyframes vk-glow { 40% { filter: drop-shadow(0 0 10px var(--win)); } }
+
+/* ===================== Nút dưới bàn ===================== */
+.controls { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; flex: none; }
+/* Biểu tượng trên, chữ nhỏ dưới: đủ chỗ cho nhãn tiếng Việt ở 390px */
+.controls .btn { flex-direction: column; gap: 2px; min-height: 54px; padding: 4px 4px; min-width: 0; font-size: 0.78rem; line-height: 1.2; }
+.controls .btn span { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btn .icon { width: 20px; height: 20px; }
+
+/* ===================== Hộp thoại ===================== */
+.win-time { font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+.win-best { color: var(--accent); font-weight: 700; }
+.win-hints { color: var(--muted); }
+.help-art { width: 220px; max-width: 100%; height: auto; align-self: center; flex: none; }
+.ha-grid { fill: none; stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 3; }
+.ha-num text { font: 700 12px var(--font); fill: var(--text); text-anchor: middle; }
+.ha-loop { fill: color-mix(in srgb, var(--accent) 12%, transparent); stroke: var(--accent); stroke-width: 3; stroke-linejoin: round; }
+.ha-dots { stroke: var(--text); stroke-width: 4; stroke-linecap: round; }
+.ha-arrow { fill: none; stroke: var(--muted); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.stat-grid dt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (hover: none) and (pointer: coarse) {
+  .help-keyboard { display: none; }
+}
+
+/* ===================== Màn hình ngang thấp: bàn bên trái, số liệu + nút bên phải ===================== */
+@media (max-height: 520px) and (min-aspect-ratio: 5/4) {
+  .app {
+    max-width: 860px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas: "top top" "stage hud" "stage ." "stage controls";
+    column-gap: 16px;
+  }
+  .topbar { grid-area: top; }
+  .hud { grid-area: hud; }
+  .stage { grid-area: stage; }
+  .controls { grid-area: controls; }
+  .help { display: none; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .board, .cell, .clue, .edge, .dot { transition: none; }
+  .cell.in { transition-delay: 0s; }
+  .board.deal .clue, .board.solved .edges, .edge.flash, .mark.flash, .edge.on.flash { animation: none; }
+}

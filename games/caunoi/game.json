@@ -1,0 +1,69 @@
+{
+  "id": "caunoi",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Bridges",
+    "vi": "Cầu Nối"
+  },
+  "sub": {
+    "en": "Island-linking logic puzzle",
+    "vi": "Bridges"
+  },
+  "desc": {
+    "en": "Link the numbered islands with straight bridges: each island takes exactly its number, bridges never cross, and every island must join one network. Three sizes, ranked by fastest time.",
+    "vi": "Nối các đảo có số bằng những cây cầu thẳng: đảo nào cũng đủ đúng số cầu, cầu không cắt nhau và mọi đảo phải liền một khối. Ba cỡ bàn, xếp hạng theo thời gian nhanh nhất."
+  },
+  "tags": {
+    "en": ["Puzzle", "Logic", "1 player"],
+    "vi": ["Giải đố", "Logic", "1 người"]
+  },
+  "note": {
+    "en": "Three sizes, every puzzle has exactly one solution",
+    "vi": "Ba độ khó, đề nào cũng chỉ có một lời giải"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(56, 152, 236, .32), transparent 60%), linear-gradient(160deg, #12305a, #071427)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 5,
+    "modes": [
+      {
+        "key": "s",
+        "label": {
+          "en": "Easy 7×7",
+          "vi": "Dễ 7×7"
+        },
+        "rules": {
+          "min_time_ms": 1500
+        },
+        "points": 3
+      },
+      {
+        "key": "m",
+        "label": {
+          "en": "Medium 10×10",
+          "vi": "Vừa 10×10"
+        },
+        "rules": {
+          "min_time_ms": 3500
+        },
+        "points": 5
+      },
+      {
+        "key": "l",
+        "label": {
+          "en": "Hard 13×13",
+          "vi": "Khó 13×13"
+        },
+        "rules": {
+          "min_time_ms": 6000
+        },
+        "points": 8
+      }
+    ]
+  }
+}

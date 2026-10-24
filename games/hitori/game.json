@@ -1,0 +1,69 @@
+{
+  "id": "hitori",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Hitori",
+    "vi": "Hitori"
+  },
+  "sub": {
+    "en": "Shade the repeats",
+    "vi": "Tô đen số trùng"
+  },
+  "desc": {
+    "en": "Shade cells so no number repeats in a row or column, without two shaded cells touching and with all white cells joined. Every 5x5, 7x7 and 9x9 puzzle has exactly one solution.",
+    "vi": "Tô đen một số ô để không số nào lặp lại trong hàng hay cột, hai ô đen không kề nhau và mọi ô trắng liền một khối. Đề 5x5, 7x7, 9x9 nào cũng có đúng một lời giải."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Logic", "3 sizes"],
+    "vi": ["Giải đố", "1 người", "Logic", "3 cỡ"]
+  },
+  "note": {
+    "en": "Every puzzle has one solution",
+    "vi": "Đề nào cũng có đúng một lời giải"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(45, 212, 191, .28), transparent 60%), linear-gradient(160deg, #1b3a40, #0a1418)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 4,
+    "modes": [
+      {
+        "key": "5",
+        "label": {
+          "en": "5x5 · Easy",
+          "vi": "5x5 · Dễ"
+        },
+        "rules": {
+          "min_time_ms": 700
+        },
+        "points": 4
+      },
+      {
+        "key": "7",
+        "label": {
+          "en": "7x7 · Medium",
+          "vi": "7x7 · Vừa"
+        },
+        "rules": {
+          "min_time_ms": 1700
+        },
+        "points": 6
+      },
+      {
+        "key": "9",
+        "label": {
+          "en": "9x9 · Hard",
+          "vi": "9x9 · Khó"
+        },
+        "rules": {
+          "min_time_ms": 2800
+        },
+        "points": 9
+      }
+    ]
+  }
+}

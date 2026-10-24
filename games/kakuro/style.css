@@ -1,0 +1,289 @@
+/* =====================================================================
+ * Kakuro - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bàn: ô gợi ý màu chàm đậm có đường chéo (tổng ngang góc trên phải, tổng dọc góc dưới trái),
+ *     ô trắng sáng; ô chọn tím, ô cùng đoạn tô nhạt, gợi ý của đoạn đang chọn vàng
+ *   - Cỡ bàn theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
+ *   - Dưới bàn: bảng tổ hợp, bàn số 1-9, hàng công cụ (hoàn tác, làm lại, xóa, ghi chú, gợi ý)
+ * ===================================================================== */
+:root {
+  --grid-line: #262a4d;
+  --cell-bg: #ffffff;
+  --cell-peer: #eceafd;
+  --cell-sel: #d7cfff;
+  --cell-text: #191c3a;
+  --note: #6a6f96;
+  --clue-bg: #383e6e;
+  --blk-bg: #2c3159;
+  --clue-text: #ffffff;
+  --clue-diag: rgba(255, 255, 255, 0.3);
+  --clue-on: #ffd166;
+  --clue-done: rgba(255, 255, 255, 0.4);
+  --clue-bad: #ff8585;
+  --dup-bg: #ffe0e0;
+  --dup-text: #c62828;
+  --glow: rgba(106, 76, 245, 0.28);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --grid-line: #04050b;
+    --cell-bg: #282d58;
+    --cell-peer: #343a78;
+    --cell-sel: #5244ad;
+    --cell-text: #f1f2ff;
+    --note: #a3a9d6;
+    --clue-bg: #13152e;
+    --blk-bg: #0a0b18;
+    --clue-diag: rgba(255, 255, 255, 0.2);
+    --clue-done: rgba(255, 255, 255, 0.35);
+    --dup-bg: #4c1d2c;
+    --dup-text: #ff8a8a;
+    --glow: rgba(164, 139, 255, 0.35);
+  }
+}
+:root[data-theme="dark"] {
+  --grid-line: #04050b;
+  --cell-bg: #282d58;
+  --cell-peer: #343a78;
+  --cell-sel: #5244ad;
+  --cell-text: #f1f2ff;
+  --note: #a3a9d6;
+  --clue-bg: #13152e;
+  --blk-bg: #0a0b18;
+  --clue-diag: rgba(255, 255, 255, 0.2);
+  --clue-done: rgba(255, 255, 255, 0.35);
+  --dup-bg: #4c1d2c;
+  --dup-text: #ff8a8a;
+  --glow: rgba(164, 139, 255, 0.35);
+}
+
+/* ===================== Thanh trên ===================== */
+.size-badge { cursor: pointer; font-size: 0.78rem; padding: 4px 9px; transition: background 0.15s; }
+@media (hover: hover) {
+  .size-badge:hover { background: var(--accent); color: var(--accent-text); }
+}
+
+/* ===================== Bàn ===================== */
+.stage { container-type: size; }
+.board {
+  --bsize: min(100cqw, 100cqh);
+  --gap: max(1px, calc(var(--bsize) / var(--n, 6) * 0.05));
+  --cell: calc((var(--bsize) - 8px) / var(--n, 6));
+  width: var(--bsize);
+  height: var(--bsize);
+  display: grid;
+  grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--n, 6), minmax(0, 1fr));
+  gap: var(--gap);
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--grid-line);
+  box-shadow: var(--shadow);
+  font-variant-numeric: tabular-nums;
+  transition: box-shadow 0.4s;
+}
+.board.solved { box-shadow: var(--shadow), 0 0 0 3px rgba(164, 139, 255, 0.55), 0 0 44px rgba(164, 139, 255, 0.4); }
+
+.cell, .clue, .blk { position: relative; min-width: 0; min-height: 0; border-radius: 3px; }
+.cell {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cell-bg);
+  color: var(--cell-text);
+  font-weight: 700;
+  font-size: calc(var(--cell) * 0.56);
+  line-height: 1;
+  transition: background-color 0.12s;
+}
+.cell .v { display: block; }
+.cell .notes {
+  position: absolute;
+  inset: 5%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  font-size: calc(var(--cell) * 0.22);
+  font-weight: 600;
+  color: var(--note);
+  pointer-events: none;
+}
+.cell .notes:empty { display: none; }
+.cell .notes i { font-style: normal; display: flex; align-items: center; justify-content: center; line-height: 1; }
+.cell.peer { background: var(--cell-peer); }
+.cell.sel { background: var(--cell-sel); box-shadow: inset 0 0 0 2px var(--accent); z-index: 1; }
+.cell.dup { background: var(--dup-bg); }
+.cell.dup .v { color: var(--dup-text); }
+.cell.sel.dup { box-shadow: inset 0 0 0 2px var(--dup-text); }
+.cell:focus-visible { outline: 3px solid var(--focus); outline-offset: 1px; z-index: 2; }
+@media (hover: hover) {
+  .cell:not(.sel):hover { filter: brightness(0.96); }
+}
+
+.blk { background: var(--blk-bg); }
+/* Ô gợi ý: đường chéo từ góc trên trái xuống góc dưới phải */
+.clue {
+  background:
+    linear-gradient(to top right, transparent calc(50% - 0.75px), var(--clue-diag) calc(50% - 0.75px), var(--clue-diag) calc(50% + 0.75px), transparent calc(50% + 0.75px)),
+    var(--clue-bg);
+  color: var(--clue-text);
+  font-weight: 700;
+  font-size: calc(var(--cell) * 0.31);
+  line-height: 1;
+}
+.clue .ca, .clue .cd { position: absolute; transition: color 0.15s, opacity 0.2s; }
+.clue .ca { top: 9%; right: 9%; }
+.clue .cd { bottom: 9%; left: 9%; }
+.clue .done { color: var(--clue-done); }
+.clue .on { color: var(--clue-on); }
+.clue .bad { color: var(--clue-bad); text-decoration: underline; text-decoration-thickness: 2px; }
+
+/* Hiệu ứng: chia đề, điền số, đoạn xong, gợi ý, thắng */
+.board.deal > * { animation: kk-deal 0.34s ease-out both; animation-delay: calc(var(--d) * 16ms); }
+@keyframes kk-deal { from { opacity: 0; transform: scale(0.7); } }
+.cell.pop .v { animation: kk-pop 0.2s ease-out; }
+@keyframes kk-pop { 40% { transform: scale(1.22); } }
+.cell.glow { animation: kk-glow 0.7s ease-out; }
+@keyframes kk-glow { 30% { box-shadow: inset 0 0 0 99px var(--glow); } }
+.clue .flash { animation: kk-flash 0.6s ease-out; }
+@keyframes kk-flash { 35% { transform: scale(1.35); color: var(--clue-on); } }
+.cell.hinted { animation: kk-hint 0.9s ease-out; }
+@keyframes kk-hint { 25% { box-shadow: inset 0 0 0 99px rgba(255, 209, 102, 0.55); } }
+.board.solved .cell { animation: kk-sweep 0.7s ease-out both; animation-delay: calc(var(--d) * 40ms); }
+@keyframes kk-sweep { 40% { background: #a48bff; color: #ffffff; transform: scale(1.05); } }
+
+/* ===================== Bảng tổ hợp ===================== */
+.combo { flex: none; display: flex; flex-direction: column; gap: 4px; }
+.combo-row { display: flex; align-items: center; gap: 8px; height: 26px; min-width: 0; }
+.cb-head { flex: none; display: inline-flex; align-items: baseline; gap: 3px; min-width: 62px; font-variant-numeric: tabular-nums; }
+.cb-dir { color: var(--accent); font-weight: 800; width: 1em; }
+.cb-head b { font-size: 1.02rem; font-weight: 800; }
+.cb-head small { color: var(--muted); font-weight: 600; font-size: 0.78rem; }
+.cb-list {
+  flex: 1;
+  display: flex;
+  gap: 5px;
+  overflow: hidden;
+  min-width: 0;
+  -webkit-mask-image: linear-gradient(to right, #000 85%, transparent);
+  mask-image: linear-gradient(to right, #000 85%, transparent);
+}
+.chip {
+  flex: none;
+  padding: 3px 7px;
+  border-radius: 7px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.chip.off { opacity: 0.45; background: transparent; box-shadow: none; text-decoration: line-through; letter-spacing: 0.04em; }
+.cb-pick { color: var(--muted); font-size: 0.82rem; }
+
+/* ===================== Bàn số ===================== */
+.pad { flex: none; display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 5px; }
+.key {
+  height: 46px;
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font-size: 1.3rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  transition: background 0.12s, transform 0.08s;
+}
+.key:active { transform: scale(0.94); }
+.key.on { background: var(--accent); color: var(--accent-text); }
+.pad.notes .key { color: var(--accent); font-size: 1.02rem; box-shadow: inset 0 0 0 1.5px var(--accent-soft), var(--shadow-sm); }
+.pad.notes .key.on { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); }
+@media (hover: hover) {
+  .key:not(.on):hover { background: var(--surface-2); }
+}
+
+/* ===================== Công cụ ===================== */
+.tools { flex: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.tool {
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: background 0.12s, transform 0.08s;
+}
+.tool:active { transform: scale(0.96); }
+.tool .icon { width: 20px; height: 20px; }
+.tool span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.tool.on { background: var(--accent); color: var(--accent-text); }
+@media (hover: hover) {
+  .tool:not(.on):not(:disabled):hover { background: var(--accent-soft); }
+}
+
+/* ===================== Hộp thoại ===================== */
+.win-time { margin: 0; font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.win-badge { margin: 0; font-weight: 700; color: var(--muted); }
+.win-badge.good { color: var(--accent); }
+.help-art { width: 132px; height: auto; align-self: center; flex: none; }
+.ha-clue { fill: #383e6e; }
+.ha-cell { fill: var(--surface-2); stroke: var(--line); }
+.ha-diag { stroke: rgba(255, 255, 255, 0.35); stroke-width: 1.5; }
+.ha-num { fill: #ffd166; font: 700 12px var(--font); }
+.ha-val { fill: var(--text); font: 800 20px var(--font); text-anchor: middle; }
+.help-keys-text kbd { font-size: 0.68rem; }
+.stat-grid dt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stats-note { font-size: 0.82rem; }
+
+/* ===================== Màn hình thấp ===================== */
+@media (max-height: 700px) {
+  .key { height: 42px; }
+  .tool { height: 42px; flex-direction: row; gap: 5px; }
+  .tool span { display: none; }
+}
+@media (max-height: 600px) and (max-aspect-ratio: 5/4) {
+  .combo-row { height: 22px; }
+  .chip { padding: 1px 6px; }
+}
+
+/* ===================== Màn hình ngang thấp: bàn bên trái, số liệu + bàn số bên phải ===================== */
+@media (max-height: 560px) and (min-aspect-ratio: 5/4) {
+  .app {
+    max-width: 900px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(250px, 300px);
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+    grid-template-areas: "top top" "stage hud" "stage combo" "stage pad" "stage tools";
+    column-gap: 16px;
+    row-gap: 8px;
+  }
+  .topbar { grid-area: top; }
+  .hud { grid-area: hud; }
+  .stage { grid-area: stage; }
+  .combo { grid-area: combo; }
+  .pad { grid-area: pad; grid-template-columns: repeat(3, minmax(0, 1fr)); align-content: center; }
+  .key { height: auto; min-height: 30px; }
+  .pad { grid-auto-rows: minmax(30px, 1fr); }
+  .tools { grid-area: tools; }
+  .tool { height: 38px; }
+  .help { display: none; }
+  .hud-box { padding: 5px 10px 6px; }
+  .hud-value { font-size: 1.15rem; }
+  .combo-row { height: 22px; }
+  .chip { padding: 1px 6px; font-size: 0.78rem; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .board, .cell, .clue .ca, .clue .cd, .key, .tool { transition: none; }
+  .board.deal > *, .cell.pop .v, .cell.glow, .clue .flash, .cell.hinted, .board.solved .cell { animation: none; }
+}

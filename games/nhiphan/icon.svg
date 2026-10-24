@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b3f9e"/>
+      <stop offset="1" stop-color="#171a46"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- 2×2 ô: 0 cam / 1 xanh, chữ số vẽ bằng nét để rõ ở cỡ nhỏ -->
+  <rect x="7" y="7" width="23" height="23" rx="6" fill="#f28a2e"/>
+  <rect x="34" y="7" width="23" height="23" rx="6" fill="#3d7bfd"/>
+  <rect x="7" y="34" width="23" height="23" rx="6" fill="#3d7bfd"/>
+  <rect x="34" y="34" width="23" height="23" rx="6" fill="#f28a2e"/>
+  <g fill="none" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="18.5" cy="18.5" rx="4.6" ry="6.4" stroke="#3b1800"/>
+    <ellipse cx="45.5" cy="45.5" rx="4.6" ry="6.4" stroke="#3b1800"/>
+    <path d="M42.5 15l3.5-2.6v12.8" stroke="#ffffff"/>
+    <path d="M15.5 42l3.5-2.6v12.8" stroke="#ffffff"/>
+  </g>
+</svg>
