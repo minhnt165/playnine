@@ -706,6 +706,8 @@
     /* ---------- Hiệu ứng xuất hiện ---------- */
     .reveal { opacity: 0; transform: translateY(14px); animation: rise .7s cubic-bezier(.2, .8, .2, 1) forwards; animation-delay: calc(var(--i, 0) * 80ms); }
     @keyframes rise { to { opacity: 1; transform: none; } }
+    /* Spotlight chứa nội dung lớn nhất màn đầu (LCP): chỉ trượt lên, không mờ dần, để hiện ngay khi vẽ */
+    .spotlight.reveal { opacity: 1; }
 
     /* ---------- Khung chơi game (game chạy trong iframe, thanh cổng ở trên) ---------- */
     body.playing { overflow: hidden; }

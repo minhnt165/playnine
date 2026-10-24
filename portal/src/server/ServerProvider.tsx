@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { ServerApi } from './api'
 import { restoreReturnHash } from './returnHash'
-import { createSupabaseApi } from './supabaseApi'
+import { lazyApi } from './lazyApi'
 import type { AuthUser, GameMeta } from './types'
 
 export type ServerCtx = {
@@ -21,7 +21,8 @@ const ServerContext = createContext<ServerCtx>(NO_SERVER)
 function defaultApi(): ServerApi | null {
   const url = import.meta.env.VITE_SUPABASE_URL
   const key = import.meta.env.VITE_SUPABASE_ANON_KEY
-  return url && key ? createSupabaseApi(url, key) : null
+  // supabase-js chỉ được tải khi cổng gọi server lần đầu (ngay sau lần vẽ đầu), không nằm trong bundle chính.
+  return url && key ? lazyApi(() => import('./supabaseApi').then((m) => m.createSupabaseApi(url, key))) : null
 }
 
 let sharedApi: ServerApi | null | undefined

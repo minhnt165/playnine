@@ -1,14 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AdminPage } from './admin/AdminPage'
-import { GamePage } from './detail/GamePage'
-import { EventPage } from './events/EventPage'
-import { EventsPage } from './events/EventsPage'
-import { GamesPage } from './home/GamesPage'
-import { HistoryPage } from './history/HistoryPage'
-import { LeaderboardsPage } from './leaderboards/LeaderboardsPage'
-import { NewsPage } from './news/NewsPage'
-import { PostPage } from './news/PostPage'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Home } from './home/Home'
+import { PageLoading } from './home/PageLoading'
 import { prefersReducedMotion } from './home/media'
 import { markPlayed } from './data/recent'
 import { useFavoritesSync } from './data/favorites'
@@ -19,12 +11,23 @@ import type { GameDef } from './games/catalog'
 import { startGlyphs } from './legacy/glyphs'
 import { nextFrameIds } from './player/frames'
 import { Player } from './player/Player'
-import { ProfilePage } from './profile/ProfilePage'
 import { recordPlayThrottled } from './server/playCount'
 import { useServer } from './server/ServerProvider'
 import { isPlaying } from './player/playing'
 import { parseRoute, type Route } from './player/route'
 import { useShortcuts } from './player/useShortcuts'
+
+// Trang phụ tải lười để bundle trang chủ nhẹ (Lighthouse điện thoại); trang chủ và Player vẫn nạp sẵn.
+const AdminPage = lazy(() => import('./admin/AdminPage').then((m) => ({ default: m.AdminPage })))
+const GamePage = lazy(() => import('./detail/GamePage').then((m) => ({ default: m.GamePage })))
+const EventPage = lazy(() => import('./events/EventPage').then((m) => ({ default: m.EventPage })))
+const EventsPage = lazy(() => import('./events/EventsPage').then((m) => ({ default: m.EventsPage })))
+const GamesPage = lazy(() => import('./home/GamesPage').then((m) => ({ default: m.GamesPage })))
+const HistoryPage = lazy(() => import('./history/HistoryPage').then((m) => ({ default: m.HistoryPage })))
+const LeaderboardsPage = lazy(() => import('./leaderboards/LeaderboardsPage').then((m) => ({ default: m.LeaderboardsPage })))
+const NewsPage = lazy(() => import('./news/NewsPage').then((m) => ({ default: m.NewsPage })))
+const PostPage = lazy(() => import('./news/PostPage').then((m) => ({ default: m.PostPage })))
+const ProfilePage = lazy(() => import('./profile/ProfilePage').then((m) => ({ default: m.ProfilePage })))
 
 const currentGame = (): GameDef | null => {
   const r = parseRoute(location.hash)
@@ -89,10 +92,21 @@ export function App() {
   useEffect(() => {
     const canvas = document.getElementById('bg') as HTMLCanvasElement | null
     if (!canvas) return
-    const g = startGlyphs(canvas, { isPlaying, reduceMotion: prefersReducedMotion() })
-    glyphs.current = g
+    // Bật nền chữ sau lần vẽ đầu: nó đọc kích thước cửa sổ, làm ngay lúc mount sẽ ép tính layout cả trang
+    // trong cùng tác vụ dựng trang (tác vụ dài trên điện thoại).
+    let g: ReturnType<typeof startGlyphs> | null = null
+    let timer = 0
+    const raf = requestAnimationFrame(() => {
+      timer = window.setTimeout(() => {
+        g = startGlyphs(canvas, { isPlaying, reduceMotion: prefersReducedMotion() })
+        glyphs.current = g
+        g.recolor()
+      })
+    })
     return () => {
-      g.stop()
+      cancelAnimationFrame(raf)
+      clearTimeout(timer)
+      g?.stop()
       glyphs.current = null
     }
   }, [])
@@ -102,6 +116,7 @@ export function App() {
 
   return (
     <>
+      <Suspense fallback={<PageLoading />}>
       {page.name === 'profile' ? (
         <ProfilePage userId={page.userId} onThemeApplied={recolor} />
       ) : page.name === 'detail' ? (
@@ -125,6 +140,7 @@ export function App() {
       ) : (
         <Home openIds={openIds} refreshKey={refreshKey} onThemeApplied={recolor} />
       )}
+      </Suspense>
       {!game && <ScrollTop />}
       {/* Chỉ mời tải lại ngoài game, để không mất ván đang chơi */}
       {!game && <UpdateNotice />}

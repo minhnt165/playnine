@@ -33,3 +33,4 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 - Thể loại chưa có game (Bài, Chữ và số) không hiện nút trên bộ lọc cho tới khi có game đầu tiên.
 - Đô-mi-nô: ngưỡng chống gian lận 8 giây thay vì 20 giây đã dự kiến, vì mô phỏng 100.000 trận cho thấy 1,5–3,7% trận thắng thật tới 50 điểm xong dưới 20 giây; 8 giây là mức sàn chứng minh được từ nhịp máy.
 - Nút "Game" ở sidebar vẫn mở menu nhanh; trang `#/games` vào từ nút "Xem tất cả N game" dưới lưới trang chủ (hiện khi có hơn 24 game).
+- Hiệu năng (mốc 50 game): màn chờ lúc tải lần đầu giờ hiện logo PlayNine ngay (vòng xoay vẫn hiện sau 0,3 s); khối Spotlight đầu trang chỉ trượt lên, không còn mờ dần; trang chủ chỉ dựng 24 thẻ thay vì dựng hết rồi ẩn. Mục đích: Lighthouse điện thoại từ ~60 lên 85–87.

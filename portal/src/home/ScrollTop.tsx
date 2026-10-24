@@ -19,7 +19,8 @@ export function ScrollTop() {
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(check)
     }
-    check()
+    // Kiểm lần đầu ở khung hình sau: đọc scrollY ngay lúc mount ép trình duyệt tính layout cả trang giữa chừng.
+    onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
     return () => {

@@ -7,6 +7,9 @@ import { createFakeApi } from '../server/fakeApi'
 import { ServerProvider } from '../server/ServerProvider'
 import { Home } from './Home'
 
+// Trang chủ dựng tối đa 24 thẻ (phần còn lại ở #/games).
+const CARDS = Math.min(GAMES.length, 24)
+
 const renderHome = (openIds = new Set<string>()) =>
   render(
     <I18nProvider>
@@ -28,10 +31,10 @@ afterEach(() => {
 })
 
 describe('Home', () => {
-  it(`hiện ${GAMES.length} thẻ game, mỗi thẻ có preview và liên kết tới trang giới thiệu #/game/<id>`, () => {
+  it(`hiện ${CARDS} thẻ game đầu, mỗi thẻ có preview và liên kết tới trang giới thiệu #/game/<id>`, () => {
     const { container } = renderHome()
     const items = container.querySelectorAll('#games > li')
-    expect(items).toHaveLength(GAMES.length)
+    expect(items).toHaveLength(CARDS)
     expect(items[0].querySelector('a.card')!.getAttribute('href')).toBe('#/game/co9o')
     expect(items[0].querySelector('.preview.pv-co9o[data-game="co9o"]')).not.toBeNull()
     expect(items[0].querySelectorAll('.kbd')).toHaveLength(1)
@@ -50,10 +53,10 @@ describe('Home', () => {
     expect(today.textContent).toContain(evil)
   })
 
-  it('bấm nút lọc versus ẩn thẻ arcade và lưu khóa filter', () => {
+  it('bấm nút lọc versus bỏ thẻ arcade khỏi lưới và lưu khóa filter', () => {
     const { container } = renderHome()
     fireEvent.click(container.querySelector('#filters button:nth-child(3)')!)
-    expect(container.querySelector('li[data-cat="arcade"]')!.hasAttribute('hidden')).toBe(true)
+    expect(container.querySelector('li[data-cat="arcade"]')).toBeNull()
     expect(container.querySelector('li[data-cat="versus"]')!.hasAttribute('hidden')).toBe(false)
     expect(localStorage.getItem('game-portal-filter-v1')).toBe('versus')
     expect(container.querySelector('#filters button[aria-pressed="true"]')!.textContent).toMatch(/^Versus/)
@@ -73,7 +76,7 @@ describe('Home', () => {
       throw new Error('blocked')
     })
     const { container } = renderHome()
-    expect(container.querySelectorAll('#games > li')).toHaveLength(GAMES.length)
+    expect(container.querySelectorAll('#games > li')).toHaveLength(CARDS)
     expect(container.querySelector('#stats')!.textContent).toBe(DICT.en['stats.empty'])
   })
 
@@ -133,13 +136,14 @@ describe('Home', () => {
         </ServerProvider>
       </I18nProvider>,
     )
-    await waitFor(() => expect(container.querySelectorAll('#games > li')).toHaveLength(GAMES.length - 1))
+    await waitFor(() => expect(container.querySelector('#filters button:first-child b')!.textContent).toBe(String(GAMES.length - 1)))
+    expect(container.querySelectorAll('#games > li')).toHaveLength(Math.min(GAMES.length - 1, 24))
     expect(container.querySelector('a.card[href="#/game/2048"]')).toBeNull()
     expect(container.querySelector('#filters button:first-child b')!.textContent).toBe(String(GAMES.length - 1))
     expect(container.querySelector('#today')!.innerHTML).not.toContain('2048')
     cleanup()
     const plain = renderHome()
-    expect(plain.container.querySelectorAll('#games > li')).toHaveLength(GAMES.length)
+    expect(plain.container.querySelectorAll('#games > li')).toHaveLength(CARDS)
     expect(plain.container.querySelector('#filters button:first-child b')!.textContent).toBe(String(GAMES.length))
   })
 

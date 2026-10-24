@@ -6,9 +6,17 @@ const gameCount = (JSON.parse(readFileSync('games/order.json', 'utf8')) as strin
 
 // Tên test là hợp đồng "ngang bằng" - giữ nguyên khi chuyển sang cổng React (Task 8).
 
+// Trang chủ chỉ dựng tối đa 24 thẻ; nút "Xem tất cả" dẫn tới #/games có đủ mọi game.
+const HOME_LIMIT = 24;
+
 test('home lists every game', async ({ page }) => {
   await page.goto('');
-  await expect(page.locator('#games > li')).toHaveCount(gameCount);
+  await expect(page.locator('#games > li')).toHaveCount(Math.min(gameCount, HOME_LIMIT));
+  if (gameCount > HOME_LIMIT) {
+    await expect(page.locator('a.games-more')).toContainText(String(gameCount));
+    await page.locator('a.games-more').click();
+    await expect(page.locator('#games > li')).toHaveCount(gameCount);
+  }
 });
 
 test('filter persists after reload', async ({ page }) => {
@@ -19,7 +27,7 @@ test('filter persists after reload', async ({ page }) => {
   await page.reload();
   await expect(btn()).toHaveAttribute('aria-pressed', 'true');
   const count = Number(await btn().locator('b').innerText());
-  await expect(page.locator('#games > li:not([hidden])')).toHaveCount(count);
+  await expect(page.locator('#games > li:not([hidden])')).toHaveCount(Math.min(count, HOME_LIMIT));
 });
 
 test('language toggle', async ({ page }) => {

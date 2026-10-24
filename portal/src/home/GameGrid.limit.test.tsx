@@ -34,6 +34,8 @@ describe('GameGrid limit', () => {
     const { container } = render(grid())
     expect(visible(container)).toHaveLength(24)
     expect(container.querySelector('#games > li:not([hidden]) a.card')!.getAttribute('href')).toBe('#/game/g0')
+    // Thẻ ngoài 24 suất không được dựng (trang chủ nhẹ hơn), không chỉ bị ẩn.
+    expect(container.querySelectorAll('#games > li')).toHaveLength(24)
     const more = container.querySelector('a.games-more')!
     expect(more.getAttribute('href')).toBe('#/games')
     expect(more.textContent).toContain('30')

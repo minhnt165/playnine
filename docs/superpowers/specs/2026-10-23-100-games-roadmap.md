@@ -284,7 +284,7 @@ Golf Mini, Bowling, Phi Tiêu (darts), Shogi, Cribbage, Golf Solitaire, Sudoku S
 ## 8. Mốc kiểm tra
 
 - **Sau đợt 0:** thêm một game thử bằng `new-game` chỉ cần tạo thư mục + một dòng trong `order.json` + chạy `seed-sql`; không file nào khác của cổng thay đổi. — Đạt ngày 2026-10-23 (thử với game `demo`: e2e tự có 3 test, toàn bộ test xanh).
-- **Mốc 50 game (sau đợt 4):** Lighthouse trang chủ điện thoại ≥ 85; e2e < 6 phút; xem lại 4.7 có cần thêm gì.
+- **Mốc 50 game (sau đợt 4):** Lighthouse trang chủ điện thoại ≥ 85; e2e < 6 phút; xem lại 4.7 có cần thêm gì. — Đạt ngày 2026-10-24 (53 game): Lighthouse 13.5 điện thoại, server có gzip như GitHub Pages, trung vị 5 lần: Performance 85 (simulate) / 87 (devtools), Accessibility 92, Best practices 100, SEO 100; e2e 281 test trong 1,2–2 phút. Lúc đầu chỉ 57–60 (37–42 khi không nén); đã sửa: supabase-js tải lười, trang phụ tải lười, preview game cũ dựng khi cuộn tới, trang chủ chỉ dựng 24 thẻ, React dựng trong transition, bỏ hai chỗ ép tính layout lúc mount, logo màn chờ hiện ngay, Spotlight không mờ dần. 4.7 chưa cần thêm gì.
 - **Mốc 100:** cập nhật README, mô tả meta/manifest, bài viết "100 game" trên trang tin, sự kiện kỷ niệm.
 
 ## 9. Để lại cho người làm quyết định

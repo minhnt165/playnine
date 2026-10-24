@@ -81,3 +81,38 @@ describe('startGlyphs', () => {
     vi.unstubAllGlobals()
   })
 })
+
+describe('mountPreviews với IntersectionObserver', () => {
+  // IO giả: giữ callback để test tự báo phần tử nào vào màn hình.
+  let fire: (el: Element, on: boolean) => void
+  beforeEach(() => {
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        constructor(cb: (e: { target: Element; isIntersecting: boolean }[]) => void) {
+          fire = (el, on) => cb([{ target: el, isIntersecting: on }])
+        }
+        observe() {}
+        disconnect() {}
+      },
+    )
+  })
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('chỉ dựng preview khi phần tử vào màn hình, và chỉ dựng một lần', () => {
+    const root = mkRoot()
+    const stop = mountPreviews(root, { isPlaying: () => false, reduceMotion: false })
+    const [a, b] = root.querySelectorAll('.preview[data-game]')
+    expect(a.children).toHaveLength(0)
+    expect(b.children).toHaveLength(0)
+    fire(a, true)
+    const count = a.children.length
+    expect(a.children.length).toBeGreaterThan(0)
+    expect(b.children).toHaveLength(0)
+    fire(a, false)
+    fire(a, true)
+    expect(a.children).toHaveLength(count)
+    stop()
+    expect(a.children).toHaveLength(0)
+  })
+})

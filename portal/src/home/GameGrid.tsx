@@ -54,12 +54,14 @@ export function GameGrid({ sd, xq, rec, sums, openIds, now, query = '', onClearQ
   const { api, games } = useServer()
   // Game bị admin ẩn thì bỏ hẳn khỏi lưới (phím số vẫn dùng chỉ số gốc trong GAMES).
   const shown = list.filter((g) => !isHidden(games, g.id))
-  const cardKey = shown.map((g) => g.id).join()
   const matched = new Set(shown.filter((g) => matchesQuery(g, query)).map((g) => g.id))
   const inView = shown.filter((g) => matched.has(g.id) && (filter === 'all' || g.cat === filter))
   const visibleCount = inView.length
   // Trang chủ chỉ hiện `limit` thẻ đầu; đang tìm thì hiện hết kết quả.
   const capped = limit !== undefined && !query.trim() && visibleCount > limit ? new Set(inView.slice(0, limit).map((g) => g.id)) : null
+  // Chỉ dựng thẻ đang hiện (trang chủ có hàng chục game, dựng hết rồi ẩn làm nặng lần tải đầu trên điện thoại).
+  const cards = capped ? inView.filter((g) => capped.has(g.id)) : inView
+  const cardKey = cards.map((g) => g.id).join()
 
   // Chỉ gắn lại preview khi tập thẻ đổi (không phải mỗi lần render); dọn khi gỡ.
   useEffect(() => mountPreviews(listRef.current!, { isPlaying, reduceMotion: prefersReducedMotion() }), [cardKey])
@@ -84,12 +86,12 @@ export function GameGrid({ sd, xq, rec, sums, openIds, now, query = '', onClearQ
         />
       </div>
       <ul className="games" id="games" ref={listRef}>
-        {shown.map((g) => (
+        {cards.map((g) => (
           <GameCard
             key={g.id}
             game={g}
             index={GAMES.indexOf(g)}
-            hidden={(filter !== 'all' && g.cat !== filter) || !matched.has(g.id) || (capped !== null && !capped.has(g.id))}
+            hidden={false}
             plays={api ? totals[g.id] : undefined}
             rating={ratings[g.id]}
             ribbon={ribbonFor(g, { openIds, lastId, rec, t, now: now.getTime() })}

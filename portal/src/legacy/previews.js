@@ -15,18 +15,19 @@ export function mountPreviews(root, opts) {
       this.timers = [];
       this.injected = [];
       if (this.io) this.io.disconnect();
-      // Chỉ chạy ô xem trước đang nằm trong màn hình (tiết kiệm pin trên điện thoại)
+      // Chỉ chạy ô xem trước đang nằm trong màn hình (tiết kiệm pin trên điện thoại), và chỉ dựng DOM của nó
+      // khi nó sắp cuộn tới (trang chủ nhẹ hơn nhiều lúc mới tải).
       this.io = 'IntersectionObserver' in window
-        ? new IntersectionObserver((entries) => entries.forEach((e) => { e.target.vis = e.isIntersecting; }))
+        ? new IntersectionObserver((entries) => entries.forEach((e) => {
+          e.target.vis = e.isIntersecting;
+          if (e.isIntersecting && e.target.pvBuild) this.build(e.target);
+        }), { rootMargin: '200px' })
         : null;
       root.querySelectorAll('.preview[data-game]').forEach((el) => {
         el.vis = !this.io;
+        el.pvBuild = this['pv_' + el.dataset.game] || null;
         if (this.io) this.io.observe(el);
-        const before = new Set(el.childNodes);
-        const fn = this['pv_' + el.dataset.game];
-        if (fn) fn.call(this, el);
-        // Ghi lại phần tử preview vừa chèn để dọn khi gỡ (không đụng tới con do React quản lý)
-        el.childNodes.forEach((n) => { if (!before.has(n)) this.injected.push(n); });
+        else if (el.pvBuild) this.build(el);
       });
       return () => this.stop();
     },
@@ -40,6 +41,14 @@ export function mountPreviews(root, opts) {
       this.injected = [];
     },
     idle(host) { return document.hidden || opts.isPlaying() || !host.vis; },
+    /** Dựng preview của `el` (một lần); ghi lại phần tử vừa chèn để dọn khi gỡ (không đụng tới con do React quản lý). */
+    build(el) {
+      const fn = el.pvBuild;
+      el.pvBuild = null;
+      const before = new Set(el.childNodes);
+      fn.call(this, el);
+      el.childNodes.forEach((n) => { if (!before.has(n)) this.injected.push(n); });
+    },
     pv_sudoku(host) { this.sudoku(host); },
     pv_xiangqi(host) { this.xiangqi(host); },
 

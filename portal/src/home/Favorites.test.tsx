@@ -103,4 +103,17 @@ describe('ScrollTop', () => {
     expect(calls[0]).toMatchObject({ top: 0 })
     Object.defineProperty(window, 'scrollY', { value: 0, configurable: true })
   })
+
+  it('lúc mount không đọc vị trí cuộn đồng bộ (tránh ép tính layout cả trang), kiểm ở khung hình sau', async () => {
+    let reads = 0
+    Object.defineProperty(window, 'scrollY', { get: () => (reads++, window.innerHeight * 3), configurable: true })
+    const { container } = mountWith(null, <ScrollTop />)
+    expect(reads).toBe(0)
+    await act(async () => {
+      await new Promise((r) => requestAnimationFrame(() => r(null)))
+    })
+    expect(reads).toBeGreaterThan(0)
+    expect(container.querySelector('.scroll-top')!.classList.contains('on')).toBe(true)
+    Object.defineProperty(window, 'scrollY', { value: 0, configurable: true })
+  })
 })
