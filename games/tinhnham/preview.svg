@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động.
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt.
+       Thẻ câu hỏi 7 × 8 = ?, bàn phím số bấm 5 rồi 6, đáp án đúng: thẻ sáng xanh và nổi +4. -->
+  <style>
+    text { font-family: system-ui, "Segoe UI", sans-serif; font-weight: 800; }
+    .bar { transform-origin: 26px 13px; animation: bar 12s linear infinite; }
+    .d5 { opacity: 0; animation: d5 4s ease-out infinite; }
+    .d6 { opacity: 0; animation: d6 4s ease-out infinite; }
+    .k5 { opacity: 0; animation: k5 4s ease-out infinite; }
+    .k6 { opacity: 0; animation: k6 4s ease-out infinite; }
+    .ok { opacity: 0; animation: ok 4s ease-out infinite; }
+    .plus { opacity: 0; animation: plus 4s ease-out infinite; }
+    .caret { animation: caret 4s steps(1) infinite; }
+    @keyframes bar { from { transform: scaleX(1); } to { transform: scaleX(0.15); } }
+    @keyframes d5 { 0%, 24% { opacity: 0; } 27%, 78% { opacity: 1; } 84%, 100% { opacity: 0; } }
+    @keyframes d6 { 0%, 46% { opacity: 0; } 49%, 78% { opacity: 1; } 84%, 100% { opacity: 0; } }
+    @keyframes k5 { 0%, 22% { opacity: 0; } 24% { opacity: 1; } 32%, 100% { opacity: 0; } }
+    @keyframes k6 { 0%, 44% { opacity: 0; } 46% { opacity: 1; } 54%, 100% { opacity: 0; } }
+    @keyframes ok { 0%, 48% { opacity: 0; } 52% { opacity: 1; } 76%, 100% { opacity: 0; } }
+    @keyframes plus { 0%, 49% { opacity: 0; transform: translateY(6px); } 55% { opacity: 1; transform: translateY(0); } 72% { opacity: 1; } 82%, 100% { opacity: 0; transform: translateY(-8px); } }
+    @keyframes caret { 0%, 24% { transform: none; } 25%, 46% { transform: translateX(16px); } 47%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .bar, .d5, .d6, .k5, .k6, .ok, .plus, .caret { animation: none; }
+      .d5, .d6, .ok, .plus { opacity: 1; }
+      .caret { opacity: 0; }
+    }
+  </style>
+
+  <!-- Thẻ câu hỏi -->
+  <rect x="18" y="6" width="124" height="54" rx="9" fill="#ffffff" fill-opacity=".1" stroke="#ffffff" stroke-opacity=".22" stroke-width="1.2"/>
+  <rect class="ok" x="18" y="6" width="124" height="54" rx="9" fill="#4ade80" fill-opacity=".12" stroke="#4ade80" stroke-width="1.8"/>
+  <!-- đồng hồ -->
+  <rect x="26" y="12" width="108" height="2.4" rx="1.2" fill="#ffffff" fill-opacity=".15"/>
+  <rect class="bar" x="26" y="12" width="108" height="2.4" rx="1.2" fill="#2dd4bf"/>
+  <!-- phép tính -->
+  <text x="28" y="44" font-size="19" fill="#ffffff">7</text>
+  <text x="43" y="44" font-size="19" fill="#fb923c">×</text>
+  <text x="59" y="44" font-size="19" fill="#ffffff">8</text>
+  <text x="75" y="44" font-size="19" fill="#ffffff" fill-opacity=".6">=</text>
+  <!-- ô đáp án -->
+  <rect x="95" y="25" width="14" height="22" rx="3" fill="#ffffff" fill-opacity=".14"/>
+  <rect x="111" y="25" width="14" height="22" rx="3" fill="#ffffff" fill-opacity=".14"/>
+  <rect class="caret" x="95" y="45" width="14" height="2" rx="1" fill="#a78bfa"/>
+  <text class="d5" x="102" y="42.5" font-size="17" fill="#c4b5fd" text-anchor="middle">5</text>
+  <text class="d6" x="118" y="42.5" font-size="17" fill="#c4b5fd" text-anchor="middle">6</text>
+  <text class="plus" x="135" y="24" font-size="11" fill="#4ade80" text-anchor="end">+4</text>
+
+  <!-- Bàn phím số 3 × 4 -->
+  <g fill="#ffffff" fill-opacity=".14">
+    <rect x="40" y="65" width="25" height="11" rx="3"/><rect x="68" y="65" width="25" height="11" rx="3"/><rect x="96" y="65" width="25" height="11" rx="3"/>
+    <rect x="40" y="78.5" width="25" height="11" rx="3"/><rect x="68" y="78.5" width="25" height="11" rx="3"/><rect x="96" y="78.5" width="25" height="11" rx="3"/>
+    <rect x="40" y="92" width="25" height="11" rx="3"/><rect x="68" y="92" width="25" height="11" rx="3"/><rect x="96" y="92" width="25" height="11" rx="3"/>
+    <rect x="40" y="105.5" width="25" height="11" rx="3"/><rect x="68" y="105.5" width="25" height="11" rx="3"/>
+  </g>
+  <rect x="96" y="105.5" width="25" height="11" rx="3" fill="#8b6cff"/>
+  <!-- phím đang bấm -->
+  <rect class="k5" x="68" y="78.5" width="25" height="11" rx="3" fill="#2dd4bf" fill-opacity=".7"/>
+  <rect class="k6" x="96" y="78.5" width="25" height="11" rx="3" fill="#2dd4bf" fill-opacity=".7"/>
+  <g font-size="7.5" fill="#ffffff" text-anchor="middle">
+    <text x="52.5" y="73.6">1</text><text x="80.5" y="73.6">2</text><text x="108.5" y="73.6">3</text>
+    <text x="52.5" y="87.1">4</text><text x="80.5" y="87.1">5</text><text x="108.5" y="87.1">6</text>
+    <text x="52.5" y="100.6">7</text><text x="80.5" y="100.6">8</text><text x="108.5" y="100.6">9</text>
+    <text x="80.5" y="114.1">0</text>
+  </g>
+  <path d="M48.5 111h8M48.5 111l2.5-2.5M48.5 111l2.5 2.5" stroke="#ffffff" stroke-opacity=".7" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M104.5 111.2l2.6 2.4 5-5" stroke="#ffffff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,58 @@
+{
+  "id": "tinh24",
+  "cat": "brain",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Make 24",
+    "vi": "Tính 24"
+  },
+  "sub": {
+    "en": "Four numbers, one 24",
+    "vi": "Bốn số, một đích 24"
+  },
+  "desc": {
+    "en": "Combine four numbers from 1 to 13 with + − × ÷, using each exactly once, to make 24. Race through sets of five puzzles, easy or hard; every puzzle has an answer.",
+    "vi": "Ghép bốn số từ 1 đến 13 bằng + − × ÷, mỗi số dùng đúng một lần, để ra 24. Giải nhanh từng bộ năm đề, mức dễ hoặc khó; đề nào cũng có lời giải."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Math", "2 levels"],
+    "vi": ["Giải đố", "1 người", "Tính nhẩm", "2 mức"]
+  },
+  "note": {
+    "en": "Five puzzles per set, all solvable",
+    "vi": "Mỗi bộ 5 đề, đề nào cũng giải được"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 138, 76, .3), transparent 60%), linear-gradient(160deg, #173d30, #0b1a14)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 4,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_time_ms": 5000
+        },
+        "points": 4
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_time_ms": 5000
+        },
+        "points": 8
+      }
+    ]
+  }
+}

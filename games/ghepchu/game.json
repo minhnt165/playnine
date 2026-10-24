@@ -1,0 +1,51 @@
+{
+  "id": "ghepchu",
+  "cat": "brain",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Anagrams",
+    "vi": "Ghép Chữ"
+  },
+  "sub": {
+    "en": "90-second English word builder",
+    "vi": "Anagrams"
+  },
+  "desc": {
+    "en": "Make as many English words as you can from 6–7 scrambled letters in 90 seconds. Longer words score far more, and every round hides a word that uses all the letters.",
+    "vi": "Ghép càng nhiều từ tiếng Anh càng tốt từ 6–7 chữ cái bị xáo trong 90 giây. Từ càng dài càng nhiều điểm, và vòng nào cũng giấu một từ dùng hết các chữ."
+  },
+  "tags": {
+    "en": ["Word", "1 player", "Timed"],
+    "vi": ["Chữ", "1 người", "Tính giờ"]
+  },
+  "note": {
+    "en": "90 seconds, find every English word",
+    "vi": "90 giây, ghép thật nhiều từ tiếng Anh"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 196, 92, .32), transparent 60%), linear-gradient(160deg, #3a2a52, #15102a)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 85000,
+          "max_score": 40000,
+          "max_score_per_sec": 950
+        },
+        "points": 5
+      }
+    ]
+  }
+}

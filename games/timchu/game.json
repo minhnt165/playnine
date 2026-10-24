@@ -1,0 +1,69 @@
+{
+  "id": "timchu",
+  "cat": "brain",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Word Search",
+    "vi": "Tìm Chữ"
+  },
+  "sub": {
+    "en": "Find the hidden words",
+    "vi": "Tìm từ giấu trong lưới"
+  },
+  "desc": {
+    "en": "Find every hidden English word in the letter grid: drag across a word to circle it. Themed or mixed word lists on 8x8, 11x11 and 14x14 grids, from across and down up to all eight directions.",
+    "vi": "Tìm hết các từ tiếng Anh giấu trong lưới chữ cái: kéo qua một từ để khoanh nó. Danh sách từ theo chủ đề hoặc ngẫu nhiên trên lưới 8x8, 11x11 và 14x14, từ ngang dọc đến cả tám hướng."
+  },
+  "tags": {
+    "en": ["Words", "1 player", "English", "3 sizes"],
+    "vi": ["Chữ", "1 người", "Tiếng Anh", "3 cỡ"]
+  },
+  "note": {
+    "en": "Find the hidden English words",
+    "vi": "Tìm các từ tiếng Anh giấu trong lưới"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 146, 43, .3), transparent 60%), linear-gradient(160deg, #3d2414, #140b07)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 3,
+    "modes": [
+      {
+        "key": "s",
+        "label": {
+          "en": "8x8 · Easy",
+          "vi": "8x8 · Dễ"
+        },
+        "rules": {
+          "min_time_ms": 1400
+        },
+        "points": 3
+      },
+      {
+        "key": "m",
+        "label": {
+          "en": "11x11 · Medium",
+          "vi": "11x11 · Vừa"
+        },
+        "rules": {
+          "min_time_ms": 2400
+        },
+        "points": 5
+      },
+      {
+        "key": "l",
+        "label": {
+          "en": "14x14 · Hard",
+          "vi": "14x14 · Khó"
+        },
+        "rules": {
+          "min_time_ms": 3600
+        },
+        "points": 8
+      }
+    ]
+  }
+}

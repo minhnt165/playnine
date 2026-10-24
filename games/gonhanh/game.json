@@ -1,0 +1,62 @@
+{
+  "id": "gonhanh",
+  "cat": "brain",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Typing Speed",
+    "vi": "Gõ Nhanh"
+  },
+  "sub": {
+    "en": "Typing test",
+    "vi": "Typing Speed"
+  },
+  "desc": {
+    "en": "A 60- or 30-second typing test with common English words. Letters light up as you type, and you get your WPM, accuracy and a per-second speed chart.",
+    "vi": "Bài kiểm tra tốc độ gõ 60 hoặc 30 giây với các từ tiếng Anh phổ biến (giao diện tiếng Việt). Chữ sáng lên khi gõ đúng, cuối bài có WPM, độ chính xác và biểu đồ tốc độ theo giây."
+  },
+  "tags": {
+    "en": ["Words", "1 player", "Timed"],
+    "vi": ["Chữ", "1 người", "Tính giờ"]
+  },
+  "note": {
+    "en": "How many words per minute can you type?",
+    "vi": "Bạn gõ được bao nhiêu từ mỗi phút?"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(45, 212, 191, .3), transparent 60%), linear-gradient(160deg, #0f3b3a, #071617)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "60s",
+        "label": {
+          "en": "60 seconds",
+          "vi": "60 giây"
+        },
+        "rules": {
+          "min_duration_ms": 58000,
+          "max_score": 250
+        },
+        "points": 5
+      },
+      {
+        "key": "30s",
+        "label": {
+          "en": "30 seconds",
+          "vi": "30 giây"
+        },
+        "rules": {
+          "min_duration_ms": 28000,
+          "max_score": 275
+        },
+        "points": 3
+      }
+    ]
+  }
+}

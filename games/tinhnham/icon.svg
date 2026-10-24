@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- đường chia bốn ô -->
+  <path d="M32 12v40M12 32h40" stroke="#ffffff" stroke-opacity=".25" stroke-width="2" stroke-linecap="round"/>
+  <g fill="#ffffff">
+    <!-- cộng -->
+    <rect x="11" y="19" width="15" height="5" rx="2.5"/>
+    <rect x="16" y="14" width="5" height="15" rx="2.5"/>
+    <!-- trừ -->
+    <rect x="38" y="19" width="15" height="5" rx="2.5"/>
+    <!-- chia -->
+    <rect x="38" y="43" width="15" height="5" rx="2.5"/>
+    <circle cx="45.5" cy="37.5" r="2.8"/>
+    <circle cx="45.5" cy="53.5" r="2.8"/>
+  </g>
+  <!-- nhân (vàng, nổi bật) -->
+  <g fill="#fde047" transform="rotate(45 18.5 45.5)">
+    <rect x="11" y="43" width="15" height="5" rx="2.5"/>
+    <rect x="16" y="38" width="5" height="15" rx="2.5"/>
+  </g>
+</svg>

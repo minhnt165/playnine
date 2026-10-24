@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động.
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt.
+       Ô gõ: chữ sáng dần theo con trỏ (một chữ gõ sai màu đỏ), dòng sau còn mờ; dưới là WPM và biểu đồ tốc độ vẽ dần. -->
+  <style>
+    .card { fill: rgba(8, 30, 30, .78); stroke: rgba(45, 212, 191, .35); stroke-width: 1; }
+    .tx text { font: 600 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fill: #5f8582; }
+    .l { animation: lit 4.6s linear infinite both; }
+    .l.bad { animation-name: litbad; }
+    @keyframes lit { 0% { fill: #5f8582; } 1%, 82% { fill: #f0fffd; } 84%, 100% { fill: #5f8582; } }
+    @keyframes litbad { 0% { fill: #5f8582; } 1%, 82% { fill: #ff6b6b; } 84%, 100% { fill: #5f8582; } }
+    .caret { fill: #2dd4bf; animation: caret 4.6s linear infinite; }
+    @keyframes caret { 0% { transform: translateX(0); } 55% { transform: translateX(117.0px); } 82% { transform: translateX(117.0px); } 84%, 100% { transform: translateX(0); } }
+    .chart { fill: none; stroke: #2dd4bf; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 120; animation: draw 4.6s ease-out infinite; }
+    @keyframes draw { 0% { stroke-dashoffset: 120; } 60%, 100% { stroke-dashoffset: 0; } }
+    .raw { fill: none; stroke: #7fa8a4; stroke-width: 1.4; stroke-dasharray: 3 2.5; opacity: .8; }
+    .pill { fill: #2dd4bf; }
+    .num { font: 800 15px system-ui, sans-serif; fill: #04201c; }
+    .unit { font: 800 7px system-ui, sans-serif; fill: #04201c; letter-spacing: .06em; }
+    @media (prefers-reduced-motion: reduce) {
+      .l, .caret, .chart { animation: none; }
+      .l { fill: #f0fffd; }
+      .l.bad { fill: #ff6b6b; }
+      .caret { transform: translateX(117.0px); }
+    }
+  </style>
+  <rect class="card" x="12" y="24" width="136" height="52" rx="10"/>
+  <g class="tx">
+    <text class="l" x="22.0" y="47" style="animation-delay:0.00s">t</text>
+    <text class="l" x="29.8" y="47" style="animation-delay:0.17s">y</text>
+    <text class="l" x="37.6" y="47" style="animation-delay:0.34s">p</text>
+    <text class="l" x="45.4" y="47" style="animation-delay:0.51s">e</text>
+    <text class="l" x="61.0" y="47" style="animation-delay:0.85s">f</text>
+    <text class="l bad" x="68.8" y="47" style="animation-delay:1.02s">e</text>
+    <text class="l" x="76.6" y="47" style="animation-delay:1.19s">s</text>
+    <text class="l" x="84.4" y="47" style="animation-delay:1.36s">t</text>
+    <text class="l" x="100.0" y="47" style="animation-delay:1.70s">w</text>
+    <text class="l" x="107.8" y="47" style="animation-delay:1.87s">o</text>
+    <text class="l" x="115.6" y="47" style="animation-delay:2.04s">r</text>
+    <text class="l" x="123.4" y="47" style="animation-delay:2.21s">d</text>
+    <text class="l" x="131.2" y="47" style="animation-delay:2.38s">s</text>
+    <text x="22.0" y="66">e</text><text x="29.8" y="66">v</text><text x="37.6" y="66">e</text><text x="45.4" y="66">r</text><text x="53.2" y="66">y</text><text x="68.8" y="66">k</text><text x="76.6" y="66">e</text><text x="84.4" y="66">y</text><text x="100.0" y="66">c</text><text x="107.8" y="66">o</text><text x="115.6" y="66">u</text><text x="123.4" y="66">n</text><text x="131.2" y="66">t</text><text x="139.0" y="66">s</text>
+  </g>
+  <rect class="caret" x="20.4" y="36.5" width="2" height="13" rx="1"/>
+  <rect class="pill" x="12" y="84" width="46" height="24" rx="8"/>
+  <text class="num" x="17" y="101.5">92</text>
+  <text class="unit" x="38" y="100">WPM</text>
+  <path class="raw" d="M66 102L76 92L86 96L96 89L106 93L116 87L126 90L136 85L146 88"/>
+  <path class="chart" d="M66 104L76 97L86 95L96 93L106 92L116 91L126 90L136 89.5L146 89"/>
+</svg>

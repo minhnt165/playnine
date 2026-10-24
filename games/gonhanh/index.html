@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#f3f4fb">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Typing Speed">
+  <meta name="description" content="Typing Speed">
+  <title>Typing Speed</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <script>
+    // Áp giao diện sáng/tối đã chọn trước khi vẽ trang để tránh nháy màu
+    try {
+      var t = JSON.parse(localStorage.getItem('playnine-gonhanh-settings-v1') || '{}').theme;
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../_kit/kit.css?v=1">
+  <link rel="stylesheet" href="style.css?v=1.0.0">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-mark" src="icon.svg" alt="" width="34" height="34">
+        <h1 class="logo" data-i18n="app.name">Typing Speed</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" type="button" data-open="modal-help" data-i18n-attr="aria-label:kit.help;title:kit.help">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 17h-2v-2h2v2zm2.1-7.7-.9.9c-.7.7-1.2 1.3-1.2 2.8h-2v-.5c0-1.1.5-2.1 1.2-2.8l1.2-1.3a2 2 0 1 0-3.4-1.4H8a4 4 0 1 1 7.1 2.3z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-stats" type="button" data-open="modal-stats" data-i18n-attr="aria-label:kit.stats;title:kit.stats">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
+        </button>
+        <button class="btn-icon" type="button" data-open="modal-settings" data-i18n-attr="aria-label:kit.settings;title:kit.settings">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-new" type="button" data-i18n-attr="aria-label:kit.newGame;title:kit.newGame">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.7 6.3A8 8 0 1 0 20 12h-2a6 6 0 1 1-1.8-4.2L13 11h7V4l-2.3 2.3z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="hud">
+      <div class="hud-box hud-time" id="time-box">
+        <div class="hud-label" data-i18n="hud.time">Time</div><div class="hud-value" id="time">60</div>
+        <div class="time-bar" aria-hidden="true"><span id="time-fill"></span></div>
+      </div>
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.wpm">WPM</div><div class="hud-value" id="wpm">–</div></div>
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.acc">Accuracy</div><div class="hud-value" id="acc">–</div></div>
+      <div class="hud-box hud-best"><div class="hud-label" data-i18n="hud.best">Best</div><div class="hud-value" id="best">–</div></div>
+      <button class="btn-icon hud-pause" id="btn-pause" type="button" disabled>
+        <svg class="icon icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+        <svg class="icon icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+    </div>
+
+    <main class="stage" id="stage">
+      <!-- Ô gõ: 3 dòng từ, con trỏ, ô nhập ẩn bật bàn phím hệ thống -->
+      <div class="typing" id="typing">
+        <div class="mode-tag" id="mode-tag" aria-hidden="true"></div>
+        <div class="clip" id="clip">
+          <div class="words" id="words" aria-hidden="true"></div>
+        </div>
+        <input class="ghost-input" id="inp" type="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+          enterkeyhint="next" inputmode="text" data-i18n-attr="aria-label:typing.label">
+        <p class="typing-hint" id="typing-hint"></p>
+        <button class="focus-hint" id="focus-hint" type="button" hidden><span data-i18n="typing.refocus">Tap here to keep typing</span></button>
+      </div>
+
+      <!-- Màn chờ -->
+      <div class="overlay" id="overlay-start">
+        <div class="overlay-card">
+          <p class="overlay-title" data-i18n="app.name">Typing Speed</p>
+          <p class="overlay-sub" data-i18n="start.sub">Type the English words as fast and accurately as you can.</p>
+          <div class="segmented mode-seg" data-setting="mode" data-i18n-attr="aria-label:start.mode">
+            <button type="button" data-value="60s" data-i18n="mode.60s">60 seconds</button>
+            <button type="button" data-value="30s" data-i18n="mode.30s">30 seconds</button>
+          </div>
+          <p class="overlay-best" id="start-best"></p>
+          <div class="overlay-actions">
+            <button class="btn btn-primary btn-big" id="btn-start" type="button" data-i18n="start.btn">Start</button>
+          </div>
+          <p class="overlay-hint help-keys" data-i18n-html="start.hint"></p>
+        </div>
+      </div>
+
+      <!-- Tạm dừng -->
+      <div class="overlay" id="overlay-pause" hidden>
+        <div class="overlay-card">
+          <p class="overlay-title" data-i18n="pause.title">Paused</p>
+          <p class="overlay-sub" id="pause-sub"></p>
+          <div class="overlay-actions">
+            <button class="btn btn-primary btn-big" id="btn-resume" type="button" data-i18n="btn.resume">Resume</button>
+          </div>
+          <p class="overlay-hint help-keys" data-i18n-html="pause.hint"></p>
+        </div>
+      </div>
+
+      <!-- Kết quả -->
+      <div class="overlay overlay-over" id="overlay-over" hidden>
+        <div class="overlay-card over-card">
+          <div class="over-head">
+            <div class="over-main">
+              <p class="over-wpm"><b id="over-wpm">0</b><span data-i18n="over.wpm">WPM</span></p>
+              <p class="over-best" id="over-best" hidden data-i18n="over.best">New best!</p>
+            </div>
+            <dl class="over-stats">
+              <div><dt data-i18n="over.acc">Accuracy</dt><dd id="over-acc">–</dd></div>
+              <div><dt data-i18n="over.raw">Raw</dt><dd id="over-raw">0</dd></div>
+              <div><dt data-i18n="over.chars">Characters</dt><dd class="over-chars" id="over-chars"></dd></div>
+              <div><dt data-i18n="over.mode">Test</dt><dd id="over-mode"></dd></div>
+            </dl>
+          </div>
+          <p class="over-flag" id="over-flag" hidden data-i18n="over.flagged">Characters arrived all at once (paste or auto-typing), so this test does not count.</p>
+          <figure class="chart" id="chart">
+            <figcaption class="chart-legend">
+              <span class="lg lg-wpm" data-i18n="chart.wpm">WPM</span>
+              <span class="lg lg-raw" data-i18n="chart.raw">Raw</span>
+              <span class="lg lg-err" data-i18n="chart.err">Errors</span>
+            </figcaption>
+            <div class="chart-box" id="chart-box"></div>
+            <div class="chart-tip" id="chart-tip" hidden></div>
+          </figure>
+          <div class="over-actions">
+            <div class="segmented mode-seg" data-setting="mode" data-i18n-attr="aria-label:start.mode">
+              <button type="button" data-value="60s" data-i18n="mode.short60s">60 s</button>
+              <button type="button" data-value="30s" data-i18n="mode.short30s">30 s</button>
+            </div>
+            <button class="btn btn-primary btn-big" id="btn-again" type="button" data-i18n="kit.playAgain">Play again</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <p class="help"><span class="help-keys" data-i18n-html="help.keys"></span><span class="help-touch" data-i18n="help.touch"></span></p>
+  </div>
+
+  <div class="sr-only" id="sr" aria-live="polite"></div>
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <!-- Bỏ bài đang gõ -->
+  <div class="modal" id="modal-confirm" hidden>
+    <div class="modal-backdrop" data-close="modal-confirm"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+      <h2 id="confirm-title" data-i18n="confirm.title">Restart the test?</h2>
+      <p class="modal-text" id="confirm-text"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" data-close="modal-confirm" data-i18n="kit.cancel">Cancel</button>
+        <button class="btn btn-primary" id="btn-confirm-new" type="button" data-i18n="kit.newGame">New game</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-help" hidden>
+    <div class="modal-backdrop" data-close="modal-help"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <h2 id="help-title" data-i18n="kit.help">How to play</h2>
+      <ul class="help-list">
+        <li data-i18n-html="help.l1"></li>
+        <li data-i18n-html="help.l2"></li>
+        <li data-i18n-html="help.l3"></li>
+        <li data-i18n-html="help.l4"></li>
+      </ul>
+      <p class="modal-text help-keys" data-i18n-html="help.more"></p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-help" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-backdrop" data-close="modal-stats"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
+      <h2 id="stats-title" data-i18n="kit.stats">Statistics</h2>
+      <dl class="stat-grid">
+        <div><dt data-i18n="stats.played">Tests</dt><dd id="stats-played">0</dd></div>
+        <div><dt data-i18n="stats.avg">Average (last 10)</dt><dd id="stats-avg">–</dd></div>
+        <div><dt data-i18n="stats.best60">Best · 60 s</dt><dd id="stats-best60">–</dd></div>
+        <div><dt data-i18n="stats.best30">Best · 30 s</dt><dd id="stats-best30">–</dd></div>
+        <div><dt data-i18n="stats.acc">Best accuracy</dt><dd id="stats-acc">–</dd></div>
+        <div><dt data-i18n="stats.words">Correct words</dt><dd id="stats-words">0</dd></div>
+      </dl>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-stats" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-settings" hidden>
+    <div class="modal-backdrop" data-close="modal-settings"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h2 id="settings-title" data-i18n="kit.settings">Settings</h2>
+      <div class="settings-list">
+        <div class="setting">
+          <span class="setting-name" data-i18n="kit.theme">Theme</span>
+          <div class="segmented" data-setting="theme">
+            <button type="button" data-value="auto" data-i18n="kit.themeAuto">Auto</button>
+            <button type="button" data-value="light" data-i18n="kit.themeLight">Light</button>
+            <button type="button" data-value="dark" data-i18n="kit.themeDark">Dark</button>
+          </div>
+        </div>
+        <div class="setting">
+          <span class="setting-name" data-i18n="kit.lang">Language</span>
+          <div class="segmented" data-setting="lang">
+            <button type="button" data-value="en">English</button>
+            <button type="button" data-value="vi">Tiếng Việt</button>
+          </div>
+        </div>
+        <label class="setting-row" id="setting-sound">
+          <span class="setting-text"><span class="setting-name" data-i18n="kit.sound">Sound</span><span class="setting-desc" data-i18n="kit.soundDesc"></span></span>
+          <input class="switch" type="checkbox" id="sw-sound">
+        </label>
+        <label class="setting-row">
+          <span class="setting-text"><span class="setting-name" data-i18n="settings.keySound">Key clicks</span><span class="setting-desc" data-i18n="settings.keySoundDesc"></span></span>
+          <input class="switch" type="checkbox" data-setting="keySound">
+        </label>
+        <label class="setting-row">
+          <span class="setting-text"><span class="setting-name" data-i18n="settings.vibrate">Vibrate on mistakes</span><span class="setting-desc" data-i18n="settings.vibrateDesc"></span></span>
+          <input class="switch" type="checkbox" data-setting="vibrate">
+        </label>
+      </div>
+      <p class="app-version" id="app-version"></p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-settings" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <script src="../_kit/kit.js?v=1"></script>
+  <script src="i18n.js?v=1.0.0"></script>
+  <script src="words.js?v=1.0.0"></script>
+  <script src="engine.js?v=1.0.0"></script>
+  <script src="../sdk/playnine.js?v=2"></script>
+  <script src="app.js?v=1.0.0"></script>
+</body>
+</html>

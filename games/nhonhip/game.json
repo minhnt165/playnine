@@ -1,0 +1,62 @@
+{
+  "id": "nhonhip",
+  "cat": "brain",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Echo Pattern",
+    "vi": "Nhớ Nhịp"
+  },
+  "sub": {
+    "en": "Repeat the light-and-tone sequence",
+    "vi": "Nhớ chuỗi màu và nốt nhạc"
+  },
+  "desc": {
+    "en": "Watch the pads light up and sing, then play the sequence back. One more step every round, a little faster each time: how long a pattern can you remember?",
+    "vi": "Xem các ô sáng lên kèm nốt nhạc rồi bấm lại đúng thứ tự. Mỗi vòng chuỗi dài thêm một bước và phát nhanh hơn: bạn nhớ được chuỗi dài bao nhiêu?"
+  },
+  "tags": {
+    "en": ["Memory", "1 player", "Music"],
+    "vi": ["Trí nhớ", "1 người", "Âm nhạc"]
+  },
+  "note": {
+    "en": "Remember the longest sequence",
+    "vi": "Nhớ chuỗi dài nhất có thể"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(96, 165, 250, .32), transparent 60%), linear-gradient(160deg, #1d2450, #0b0e24)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 1000,
+          "max_score_per_sec": 1.8
+        },
+        "points": 5
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 1000,
+          "max_score_per_sec": 1.9
+        },
+        "points": 8
+      }
+    ]
+  }
+}

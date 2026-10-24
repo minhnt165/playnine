@@ -1,0 +1,62 @@
+{
+  "id": "doanchu",
+  "cat": "brain",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Word Guess",
+    "vi": "Đoán Chữ"
+  },
+  "sub": {
+    "en": "5 letters, 6 tries",
+    "vi": "5 chữ, 6 lượt"
+  },
+  "desc": {
+    "en": "Guess the hidden 5-letter English word in six tries; colored tiles show which letters are in the right spot. One daily word for everyone, plus free play.",
+    "vi": "Đoán từ tiếng Anh 5 chữ trong 6 lượt; ô màu cho biết chữ nào đúng chỗ, chữ nào có trong từ. Mỗi ngày một từ chung cho mọi người, kèm chế độ chơi tự do."
+  },
+  "tags": {
+    "en": ["Word", "1 player", "English words", "Daily word"],
+    "vi": ["Chữ", "1 người", "Từ tiếng Anh", "Từ hằng ngày"]
+  },
+  "note": {
+    "en": "A new English word every day",
+    "vi": "Mỗi ngày một từ tiếng Anh mới"
+  },
+  "daily": {
+    "en": "A new word every day",
+    "vi": "Mỗi ngày một từ mới"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(52, 163, 98, .3), transparent 60%), linear-gradient(160deg, #1d3a35, #0b1517)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 6,
+    "modes": [
+      {
+        "key": "daily",
+        "label": {
+          "en": "Daily",
+          "vi": "Hằng ngày"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 6
+      },
+      {
+        "key": "free",
+        "label": {
+          "en": "Free play",
+          "vi": "Tự do"
+        },
+        "rules": {
+          "min_duration_ms": 3000
+        },
+        "points": 3
+      }
+    ]
+  }
+}

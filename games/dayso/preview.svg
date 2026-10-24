@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: lưới 4x3, các số 2, 3, 4… hiện dần và nối với số trước
+       (ngang, dọc, chéo) thành một dãy từ 1 đến 12. Tự chứa, hoạt hình bằng CSS, tắt khi người dùng
+       giảm chuyển động; nền trong suốt (nền thẻ lấy từ preview.bg trong game.json). -->
+  <style>
+    text { font-family: system-ui, sans-serif; font-weight: 800; text-anchor: middle; }
+    .cell { fill: rgba(255, 255, 255, .1); }
+    .given { fill: #e6e0ff; }
+    .gnum { fill: #20184f; font-size: 15px; }
+    .num { fill: #ffffff; font-size: 15px; }
+    .link { stroke: #ff7fb4; stroke-width: 4; stroke-linecap: round; }
+    .a { opacity: 0; animation: show 7s ease-out infinite both; }
+    @keyframes show { 0% { opacity: 0; transform: scale(.6); } 4%, 80% { opacity: 1; transform: none; } 88%, 100% { opacity: 0; } }
+    .num.a, .link.a { transform-box: fill-box; transform-origin: center; }
+  </style>
+  <rect class="given" x="22" y="17" width="26" height="26" rx="5"/>
+  <rect class="cell" x="52" y="17" width="26" height="26" rx="5"/>
+  <rect class="cell" x="22" y="47" width="26" height="26" rx="5"/>
+  <rect class="cell" x="22" y="77" width="26" height="26" rx="5"/>
+  <rect class="given" x="52" y="77" width="26" height="26" rx="5"/>
+  <rect class="cell" x="52" y="47" width="26" height="26" rx="5"/>
+  <rect class="cell" x="82" y="17" width="26" height="26" rx="5"/>
+  <rect class="given" x="112" y="17" width="26" height="26" rx="5"/>
+  <rect class="cell" x="112" y="47" width="26" height="26" rx="5"/>
+  <rect class="cell" x="82" y="47" width="26" height="26" rx="5"/>
+  <rect class="cell" x="82" y="77" width="26" height="26" rx="5"/>
+  <rect class="given" x="112" y="77" width="26" height="26" rx="5"/>
+  <line class="link a" style="animation-delay:0.30s" x1="44" y1="30" x2="56" y2="30"/>
+  <line class="link a" style="animation-delay:0.72s" x1="56" y1="39" x2="44" y2="51"/>
+  <line class="link a" style="animation-delay:1.14s" x1="35" y1="69" x2="35" y2="81"/>
+  <line class="link a" style="animation-delay:1.14s" x1="44" y1="90" x2="56" y2="90"/>
+  <line class="link a" style="animation-delay:1.56s" x1="65" y1="81" x2="65" y2="69"/>
+  <line class="link a" style="animation-delay:1.98s" x1="74" y1="51" x2="86" y2="39"/>
+  <line class="link a" style="animation-delay:1.98s" x1="104" y1="30" x2="116" y2="30"/>
+  <line class="link a" style="animation-delay:2.40s" x1="125" y1="39" x2="125" y2="51"/>
+  <line class="link a" style="animation-delay:2.82s" x1="116" y1="60" x2="104" y2="60"/>
+  <line class="link a" style="animation-delay:3.24s" x1="95" y1="69" x2="95" y2="81"/>
+  <line class="link a" style="animation-delay:3.24s" x1="104" y1="90" x2="116" y2="90"/>
+  <text class="gnum" x="35" y="35.5">1</text>
+  <text class="num a" style="animation-delay:0.30s" x="65" y="35.5">2</text>
+  <text class="num a" style="animation-delay:0.72s" x="35" y="65.5">3</text>
+  <text class="num a" style="animation-delay:1.14s" x="35" y="95.5">4</text>
+  <text class="gnum" x="65" y="95.5">5</text>
+  <text class="num a" style="animation-delay:1.56s" x="65" y="65.5">6</text>
+  <text class="num a" style="animation-delay:1.98s" x="95" y="35.5">7</text>
+  <text class="gnum" x="125" y="35.5">8</text>
+  <text class="num a" style="animation-delay:2.40s" x="125" y="65.5">9</text>
+  <text class="num a" style="animation-delay:2.82s" x="95" y="65.5">10</text>
+  <text class="num a" style="animation-delay:3.24s" x="95" y="95.5">11</text>
+  <text class="gnum" x="125" y="95.5">12</text>
+</svg>

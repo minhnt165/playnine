@@ -1,0 +1,11 @@
+-- Đợt 6 của lộ trình 100 game (game 62–69): Đoán Chữ, Tìm Chữ, Ghép Chữ, Tính Nhẩm, Tính 24, Nhớ Nhịp, Gõ Nhanh, Dãy Số.
+-- Sinh bởi `npm run seed-sql -- doanchu timchu ghepchu tinhnham tinh24 nhonhip gonhanh dayso` từ games/*/game.json.
+insert into public.games (id, metric, modes, points) values
+('doanchu', 'wins', '[{"key":"daily","label":{"en":"Daily","vi":"Hằng ngày"},"rules":{"min_duration_ms":3000},"points":6},{"key":"free","label":{"en":"Free play","vi":"Tự do"},"rules":{"min_duration_ms":3000},"points":3}]'::jsonb, 6),
+('timchu', 'time_low', '[{"key":"s","label":{"en":"8x8 · Easy","vi":"8x8 · Dễ"},"rules":{"min_time_ms":1400},"points":3},{"key":"m","label":{"en":"11x11 · Medium","vi":"11x11 · Vừa"},"rules":{"min_time_ms":2400},"points":5},{"key":"l","label":{"en":"14x14 · Hard","vi":"14x14 · Khó"},"rules":{"min_time_ms":3600},"points":8}]'::jsonb, 3),
+('ghepchu', 'score_high', '[{"key":"classic","label":{"en":"Classic","vi":"Cổ điển"},"rules":{"min_duration_ms":85000,"max_score":40000,"max_score_per_sec":950},"points":5}]'::jsonb, 5),
+('tinhnham', 'score_high', '[{"key":"classic","label":{"en":"Classic","vi":"Cổ điển"},"rules":{"min_duration_ms":55000,"max_score":2520,"max_score_per_sec":42},"points":5}]'::jsonb, 5),
+('tinh24', 'time_low', '[{"key":"easy","label":{"en":"Easy","vi":"Dễ"},"rules":{"min_time_ms":5000},"points":4},{"key":"hard","label":{"en":"Hard","vi":"Khó"},"rules":{"min_time_ms":5000},"points":8}]'::jsonb, 4),
+('nhonhip', 'score_high', '[{"key":"classic","label":{"en":"Classic","vi":"Cổ điển"},"rules":{"min_duration_ms":1000,"max_score_per_sec":1.8},"points":5},{"key":"hard","label":{"en":"Hard","vi":"Khó"},"rules":{"min_duration_ms":1000,"max_score_per_sec":1.9},"points":8}]'::jsonb, 5),
+('gonhanh', 'score_high', '[{"key":"60s","label":{"en":"60 seconds","vi":"60 giây"},"rules":{"min_duration_ms":58000,"max_score":250},"points":5},{"key":"30s","label":{"en":"30 seconds","vi":"30 giây"},"rules":{"min_duration_ms":28000,"max_score":275},"points":3}]'::jsonb, 5),
+('dayso', 'time_low', '[{"key":"s","label":{"en":"Easy 6×6","vi":"Dễ 6×6"},"rules":{"min_time_ms":2700},"points":3},{"key":"m","label":{"en":"Medium 8×8","vi":"Vừa 8×8"},"rules":{"min_time_ms":5400},"points":5},{"key":"l","label":{"en":"Hard 10×10","vi":"Khó 10×10"},"rules":{"min_time_ms":8400},"points":8}]'::jsonb, 3);

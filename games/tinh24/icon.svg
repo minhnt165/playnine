@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Biểu tượng Tính 24: nền cam, một lá bài xanh nỉ phía sau, lá kem phía trước ghi "24" thật to -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff9a5a"/>
+      <stop offset="1" stop-color="#c2410c"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <rect x="17" y="8" width="34" height="44" rx="6" fill="#1c6448" transform="rotate(12 34 30)"/>
+  <rect x="11" y="12" width="36" height="46" rx="6" fill="#7a2a07" opacity=".35" transform="rotate(-8 29 35)"/>
+  <rect x="11" y="10" width="36" height="46" rx="6" fill="#fffdf6" transform="rotate(-8 29 33)"/>
+  <text x="29" y="42" transform="rotate(-8 29 33)" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-weight="800" font-size="22" letter-spacing="-1" fill="#23263a">24</text>
+  <text x="16.5" y="21" transform="rotate(-8 29 33)" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#c92a2a">♥</text>
+</svg>

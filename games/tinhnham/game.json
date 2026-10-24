@@ -1,0 +1,51 @@
+{
+  "id": "tinhnham",
+  "cat": "brain",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Quick Math",
+    "vi": "Tính Nhẩm"
+  },
+  "sub": {
+    "en": "60-second mental math",
+    "vi": "Tính nhẩm 60 giây"
+  },
+  "desc": {
+    "en": "Solve as many sums as you can in 60 seconds: plus, minus, times and divide on a big number pad. Every right answer in a row makes the next one harder and worth more.",
+    "vi": "Giải thật nhiều phép tính trong 60 giây: cộng, trừ, nhân, chia trên bàn phím số lớn. Càng đúng liên tiếp, câu sau càng khó và càng nhiều điểm."
+  },
+  "tags": {
+    "en": ["Brain", "1 player", "Numbers"],
+    "vi": ["Trí tuệ", "1 người", "Con số"]
+  },
+  "note": {
+    "en": "60 seconds of mental math",
+    "vi": "60 giây tính nhẩm"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(45, 212, 191, .3), transparent 60%), linear-gradient(160deg, #134e4a, #081c1d)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 55000,
+          "max_score": 2520,
+          "max_score_per_sec": 42
+        },
+        "points": 5
+      }
+    ]
+  }
+}

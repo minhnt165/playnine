@@ -1,0 +1,250 @@
+/* =====================================================================
+ * Đoán Chữ - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Màu ô: --c-correct (đúng chỗ), --c-present (có trong từ), --c-absent (không có); .contrast trên <html> = mù màu
+ *   - Cỡ ô --tile do app.js tính theo khung (.stage) để vừa 390×844 dọc, 844×390 ngang và máy tính
+ * ===================================================================== */
+:root {
+  --c-correct: #2f9a58;
+  --c-present: #c9a019;
+  --c-absent: #7a7f99;
+  --tile-line: #cfd2e3;
+  --tile-line-on: #8a8fac;
+  --key-bg: #dfe2f0;
+  --key-text: #14162b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --c-correct: #3a9d5d;
+    --c-present: #b8951f;
+    --c-absent: #2e3249;
+    --tile-line: #2d3150;
+    --tile-line-on: #5c6188;
+    --key-bg: #4d5378;
+    --key-text: #eef0ff;
+  }
+}
+:root[data-theme="dark"] {
+  --c-correct: #3a9d5d;
+  --c-present: #b8951f;
+  --c-absent: #2e3249;
+  --tile-line: #2d3150;
+  --tile-line-on: #5c6188;
+  --key-bg: #4d5378;
+  --key-text: #eef0ff;
+}
+/* Chế độ người mù màu: cam = đúng chỗ, xanh dương = có trong từ */
+:root.contrast {
+  --c-correct: #e8692d;
+  --c-present: #3a86d6;
+}
+
+/* ===================== Bố cục ===================== */
+.app { gap: 8px; }
+.play { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
+.col-board { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.dock { flex: none; }
+
+/* Chọn mode (dùng khung .segmented của kit, trạng thái bằng aria-pressed) */
+.modes { flex: none; align-self: center; width: min(100%, 340px); }
+.modes button { min-height: 36px; border-radius: 9px; font-weight: 700; font-size: 0.9rem; color: var(--muted); white-space: nowrap; }
+.modes button[aria-pressed="true"] { background: var(--seg-on); color: var(--text); box-shadow: var(--shadow-sm); }
+.mode-no { font-weight: 600; opacity: 0.7; font-variant-numeric: tabular-nums; }
+
+/* ===================== Bàn đoán ===================== */
+.board { --tile: 56px; display: grid; grid-template-rows: repeat(6, var(--tile)); gap: 6px; }
+.row { display: grid; grid-template-columns: repeat(5, var(--tile)); gap: 6px; }
+.tile {
+  width: var(--tile);
+  height: var(--tile);
+  border: 2px solid var(--tile-line);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--tile) * 0.54);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text);
+  background: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.tile.filled { border-color: var(--tile-line-on); }
+.tile.c, .tile.p, .tile.a { color: #fff; border-color: transparent; }
+.tile.c { background: var(--c-correct); }
+.tile.p { background: var(--c-present); }
+.tile.a { background: var(--c-absent); }
+.tile.pop { animation: tile-pop 0.1s ease-out; }
+.tile.flip { animation: tile-flip 0.34s ease-in-out; }
+.tile.bounce { animation: tile-bounce 0.9s ease both; }
+.row.shake { animation: row-shake 0.42s ease; }
+@keyframes tile-pop { 50% { transform: scale(1.1); } }
+@keyframes tile-flip { 0% { transform: rotateX(0); } 50% { transform: rotateX(90deg); } 100% { transform: rotateX(0); } }
+@keyframes tile-bounce {
+  0%, 20% { transform: translateY(0); }
+  40% { transform: translateY(-30%); }
+  50% { transform: translateY(5%); }
+  60% { transform: translateY(-15%); }
+  80% { transform: translateY(2%); }
+  100% { transform: translateY(0); }
+}
+@keyframes row-shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-6px); }
+  40%, 60% { transform: translateX(6px); }
+}
+
+/* ===================== Bàn phím ảo ===================== */
+.keyboard { display: flex; flex-direction: column; gap: 7px; width: 100%; max-width: 500px; margin: 0 auto; }
+.kb-row { display: flex; gap: 5px; justify-content: center; }
+.kb-row:nth-child(2) { padding: 0 4.5%; }
+.key {
+  flex: 1 1 0;
+  min-width: 0;
+  height: clamp(44px, 6.8vh, 58px);
+  border-radius: 7px;
+  background: var(--key-bg);
+  color: var(--key-text);
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s, transform 0.08s;
+}
+.key:active { transform: scale(0.94); }
+.key-wide { flex: 1.55 1 0; font-size: 0.78rem; letter-spacing: 0.02em; text-transform: uppercase; }
+.key.c, .key.p, .key.a { color: #fff; }
+.key.c { background: var(--c-correct); }
+.key.p { background: var(--c-present); }
+.key.a { background: var(--c-absent); }
+@media (hover: hover) {
+  .key:not(.c):not(.p):not(.a):hover { filter: brightness(0.96); }
+}
+
+/* Thanh cuối ván (thay bàn phím) */
+.endbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 12px 14px;
+  max-width: 500px;
+  margin: 0 auto;
+  min-height: clamp(150px, 22vh, 190px);
+  flex-direction: column;
+  justify-content: center;
+}
+.endbar-text { text-align: center; min-width: 0; }
+.endbar-word { font-size: 1.6rem; font-weight: 800; letter-spacing: 0.18em; color: var(--c-correct); }
+.endbar-sub { font-size: 0.9rem; color: var(--muted); font-variant-numeric: tabular-nums; margin-top: 2px; }
+.endbar-actions { display: flex; gap: 10px; width: 100%; }
+.endbar-actions .btn { flex: 1; }
+
+/* Toast ở trên bàn, không che bàn phím */
+.toast { top: calc(110px + env(safe-area-inset-top)); bottom: auto; }
+
+/* ===================== Hộp Kết quả ===================== */
+.end-card h2 { text-align: center; }
+.end-meta { margin: -8px 0 0; text-align: center; color: var(--muted); font-weight: 600; font-variant-numeric: tabular-nums; }
+.end-answer { text-align: center; color: var(--muted); }
+.end-answer b { display: block; color: var(--text); font-size: 1.7rem; letter-spacing: 0.2em; margin-top: 2px; }
+.mini { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.mini div { display: flex; gap: 4px; }
+.sq { width: 20px; height: 20px; border-radius: 4px; background: var(--c-absent); }
+.sq.c { background: var(--c-correct); }
+.sq.p { background: var(--c-present); }
+.end-next { margin: 0; text-align: center; font-size: 0.9rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.share-text {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text);
+  padding: 8px;
+  resize: none;
+}
+
+/* ===================== Cách chơi ===================== */
+.help-card .modal-text { font-size: 0.93rem; }
+.example { display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; align-items: center; }
+.example p { margin: 0; font-size: 0.88rem; color: var(--muted); line-height: 1.4; }
+.ex-row { display: flex; gap: 3px; }
+.ex-tile {
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--tile-line-on);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+.ex-tile.c, .ex-tile.p, .ex-tile.a { color: #fff; border-color: transparent; }
+.ex-tile.c { background: var(--c-correct); }
+.ex-tile.p { background: var(--c-present); }
+.ex-tile.a { background: var(--c-absent); }
+
+/* ===================== Thống kê ===================== */
+.stat-4 { grid-template-columns: repeat(4, 1fr); }
+.stat-4 div { padding: 8px; text-align: center; }
+.stat-4 dt { font-size: 0.7rem; line-height: 1.25; min-height: 2.5em; display: flex; align-items: center; justify-content: center; }
+.dist-title { margin: 0; font-size: 0.95rem; font-weight: 800; }
+.dist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.dist li { display: flex; align-items: center; gap: 8px; }
+.dist-n { width: 1em; font-weight: 700; text-align: center; font-variant-numeric: tabular-nums; }
+.dist-track { flex: 1; }
+.dist-bar {
+  display: block;
+  min-width: 26px;
+  padding: 2px 8px;
+  border-radius: 5px;
+  background: var(--c-absent);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.dist li.last .dist-bar { background: var(--c-correct); }
+
+/* ===================== Màn hình hẹp / thấp / ngang ===================== */
+/* Dòng phím tắt chỉ cho máy tính đủ rộng; điện thoại dành chỗ cho bàn */
+@media (hover: none) and (pointer: coarse), (max-width: 480px) {
+  .help { display: none; }
+}
+@media (max-width: 400px) {
+  .topbar-actions { gap: 4px; }
+  .topbar .btn-icon { width: 40px; height: 40px; }
+}
+@media (max-width: 360px) {
+  .kb-row { gap: 4px; }
+  .key { font-size: 0.92rem; }
+  .key-wide { font-size: 0.68rem; }
+}
+/* Điện thoại xoay ngang: bàn đoán bên trái, bàn phím bên phải */
+@media (orientation: landscape) and (max-height: 560px) {
+  .app { max-width: 960px; }
+  .play { flex-direction: row; align-items: stretch; gap: 16px; }
+  .dock { flex: 1 1 52%; display: flex; flex-direction: column; justify-content: center; }
+  .col-board { flex: 1 1 48%; }
+  .key { height: clamp(38px, 13vh, 52px); }
+  .endbar { min-height: 0; width: 100%; }
+  .help { display: none; }
+}
+/* Máy tính màn rộng: phím cao hơn một chút */
+@media (min-height: 760px) and (min-width: 700px) {
+  .key { height: 56px; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .tile.pop, .tile.flip, .tile.bounce, .row.shake { animation: none; }
+  .key { transition: none; }
+}

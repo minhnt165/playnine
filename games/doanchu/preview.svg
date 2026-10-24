@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: ba lượt đoán lật ô lần lượt (CRANE → SLANT → PLANT), lặp lại.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động (khi đó hiện sẵn kết quả).
+       Nền ô xem trước lấy từ preview.bg trong game.json; ảnh này để nền trong suốt. -->
+  <style>
+    .box { fill: none; stroke: #ffffff; stroke-opacity: .35; stroke-width: 1.5; }
+    .f { transform-box: fill-box; transform-origin: center; animation: rev 7s ease-in-out infinite backwards; }
+    .c { fill: #34a362; }
+    .p { fill: #d4a619; }
+    .a { fill: #5d6584; }
+    text { fill: #fff; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-weight: 800; font-size: 13px; text-anchor: middle; }
+    @keyframes rev {
+      0%, 9% { opacity: 0; transform: scaleY(1); }
+      10.5% { opacity: 0; transform: scaleY(.1); }
+      12% { opacity: 1; transform: scaleY(1); }
+      90% { opacity: 1; }
+      96%, 100% { opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) { .f { animation: none; } }
+  </style>
+  <!-- Lượt 1: CRANE (C, R xám; A, N xanh; E xám) -->
+  <g>
+    <rect class="box" x="22" y="12" width="20" height="20" rx="3"/><rect class="box" x="46" y="12" width="20" height="20" rx="3"/><rect class="box" x="70" y="12" width="20" height="20" rx="3"/><rect class="box" x="94" y="12" width="20" height="20" rx="3"/><rect class="box" x="118" y="12" width="20" height="20" rx="3"/>
+    <rect class="f a" style="animation-delay:0s" x="22" y="12" width="20" height="20" rx="3"/>
+    <rect class="f a" style="animation-delay:.15s" x="46" y="12" width="20" height="20" rx="3"/>
+    <rect class="f c" style="animation-delay:.3s" x="70" y="12" width="20" height="20" rx="3"/>
+    <rect class="f c" style="animation-delay:.45s" x="94" y="12" width="20" height="20" rx="3"/>
+    <rect class="f a" style="animation-delay:.6s" x="118" y="12" width="20" height="20" rx="3"/>
+    <text x="32" y="26.5">C</text><text x="56" y="26.5">R</text><text x="80" y="26.5">A</text><text x="104" y="26.5">N</text><text x="128" y="26.5">E</text>
+  </g>
+  <!-- Lượt 2: SLANT (S xám, còn lại xanh) -->
+  <g>
+    <rect class="box" x="22" y="36" width="20" height="20" rx="3"/><rect class="box" x="46" y="36" width="20" height="20" rx="3"/><rect class="box" x="70" y="36" width="20" height="20" rx="3"/><rect class="box" x="94" y="36" width="20" height="20" rx="3"/><rect class="box" x="118" y="36" width="20" height="20" rx="3"/>
+    <rect class="f a" style="animation-delay:1.4s" x="22" y="36" width="20" height="20" rx="3"/>
+    <rect class="f c" style="animation-delay:1.55s" x="46" y="36" width="20" height="20" rx="3"/>
+    <rect class="f c" style="animation-delay:1.7s" x="70" y="36" width="20" height="20" rx="3"/>
+    <rect class="f c" style="animation-delay:1.85s" x="94" y="36" width="20" height="20" rx="3"/>
+    <rect class="f c" style="animation-delay:2s" x="118" y="36" width="20" height="20" rx="3"/>
+    <text x="32" y="50.5">S</text><text x="56" y="50.5">L</text><text x="80" y="50.5">A</text><text x="104" y="50.5">N</text><text x="128" y="50.5">T</text>
+  </g>
+  <!-- Lượt 3: PLANT (đúng hết) -->
+  <g>
+    <rect class="box" x="22" y="60" width="20" height="20" rx="3"/><rect class="box" x="46" y="60" width="20" height="20" rx="3"/><rect class="box" x="70" y="60" width="20" height="20" rx="3"/><rect class="box" x="94" y="60" width="20" height="20" rx="3"/><rect class="box" x="118" y="60" width="20" height="20" rx="3"/>
+    <rect class="f c" style="animation-delay:2.8s" x="22" y="60" width="20" height="20" rx="3"/>
+    <rect class="f c" style="animation-delay:2.95s" x="46" y="60" width="20" height="20" rx="3"/>
+    <rect class="f c" style="animation-delay:3.1s" x="70" y="60" width="20" height="20" rx="3"/>
+    <rect class="f c" style="animation-delay:3.25s" x="94" y="60" width="20" height="20" rx="3"/>
+    <rect class="f c" style="animation-delay:3.4s" x="118" y="60" width="20" height="20" rx="3"/>
+    <text x="32" y="74.5">P</text><text x="56" y="74.5">L</text><text x="80" y="74.5">A</text><text x="104" y="74.5">N</text><text x="128" y="74.5">T</text>
+  </g>
+  <!-- Hai hàng trống còn lại -->
+  <g>
+    <rect class="box" x="22" y="84" width="20" height="20" rx="3"/><rect class="box" x="46" y="84" width="20" height="20" rx="3"/><rect class="box" x="70" y="84" width="20" height="20" rx="3"/><rect class="box" x="94" y="84" width="20" height="20" rx="3"/><rect class="box" x="118" y="84" width="20" height="20" rx="3"/>
+  </g>
+</svg>

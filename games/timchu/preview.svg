@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: lưới 6x6 chữ cái, ba từ CAT, DOG, OWL lần lượt được khoanh và gạch khỏi danh sách.
+       Nền trong suốt (nền thẻ lấy từ preview.bg); tắt hoạt hình khi giảm chuyển động. -->
+  <style>
+    .g text { font: 800 10px system-ui, sans-serif; text-anchor: middle; fill: #2a2236; }
+    .chip text { font: 800 8.5px system-ui, sans-serif; text-anchor: middle; fill: #fffaf0; letter-spacing: .5px; }
+    .mk { fill: none; stroke-linecap: round; stroke-width: 11; stroke-opacity: .55; stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: 6s ease-out infinite; }
+    .st { stroke: #fffaf0; stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: 6s ease-out infinite; }
+    .m1 { stroke: #ff6b6b; animation-name: d1; }
+    .m2 { stroke: #22c3b5; animation-name: d2; }
+    .m3 { stroke: #f5d10a; animation-name: d3; }
+    .s1 { animation-name: s1; }
+    .s2 { animation-name: s2; }
+    .s3 { animation-name: s3; }
+    @keyframes d1 { 0%, 6% { stroke-dashoffset: 1; } 16%, 88% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @keyframes d2 { 0%, 30% { stroke-dashoffset: 1; } 40%, 88% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @keyframes d3 { 0%, 54% { stroke-dashoffset: 1; } 64%, 88% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @keyframes s1 { 0%, 16% { stroke-dashoffset: 1; } 20%, 88% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @keyframes s2 { 0%, 40% { stroke-dashoffset: 1; } 44%, 88% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @keyframes s3 { 0%, 64% { stroke-dashoffset: 1; } 68%, 88% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .mk, .st { animation: none; stroke-dashoffset: 0; }
+    }
+  </style>
+  <rect x="8" y="12" width="96" height="96" rx="9" fill="#fffaf0" stroke="#ecd9bb" stroke-width="3"/>
+  <line class="mk m1" pathLength="1" x1="21" y1="25" x2="49" y2="25"/>
+  <line class="mk m2" pathLength="1" x1="49" y1="39" x2="77" y2="39"/>
+  <line class="mk m3" pathLength="1" x1="35" y1="39" x2="35" y2="67"/>
+  <g class="g">
+    <text x="21" y="28.5">C</text><text x="35" y="28.5">A</text><text x="49" y="28.5">T</text><text x="63" y="28.5">Q</text><text x="77" y="28.5">L</text><text x="91" y="28.5">M</text>
+    <text x="21" y="42.5">R</text><text x="35" y="42.5">O</text><text x="49" y="42.5">D</text><text x="63" y="42.5">O</text><text x="77" y="42.5">G</text><text x="91" y="42.5">E</text>
+    <text x="21" y="56.5">B</text><text x="35" y="56.5">W</text><text x="49" y="56.5">E</text><text x="63" y="56.5">N</text><text x="77" y="56.5">S</text><text x="91" y="56.5">P</text>
+    <text x="21" y="70.5">H</text><text x="35" y="70.5">L</text><text x="49" y="70.5">I</text><text x="63" y="70.5">O</text><text x="77" y="70.5">W</text><text x="91" y="70.5">K</text>
+    <text x="21" y="84.5">F</text><text x="35" y="84.5">U</text><text x="49" y="84.5">X</text><text x="63" y="84.5">A</text><text x="77" y="84.5">E</text><text x="91" y="84.5">T</text>
+    <text x="21" y="98.5">S</text><text x="35" y="98.5">Y</text><text x="49" y="98.5">D</text><text x="63" y="98.5">V</text><text x="77" y="98.5">R</text><text x="91" y="98.5">J</text>
+  </g>
+  <g class="chip">
+    <rect x="113" y="30" width="38" height="16" rx="8" fill="#ffffff" fill-opacity=".16"/>
+    <text x="132" y="41">CAT</text>
+    <rect x="113" y="52" width="38" height="16" rx="8" fill="#ffffff" fill-opacity=".16"/>
+    <text x="132" y="63">DOG</text>
+    <rect x="113" y="74" width="38" height="16" rx="8" fill="#ffffff" fill-opacity=".16"/>
+    <text x="132" y="85">OWL</text>
+  </g>
+  <line class="st s1" pathLength="1" x1="119" y1="38" x2="145" y2="38"/>
+  <line class="st s2" pathLength="1" x1="119" y1="60" x2="145" y2="60"/>
+  <line class="st s3" pathLength="1" x1="119" y1="82" x2="145" y2="82"/>
+</svg>
