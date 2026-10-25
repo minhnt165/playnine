@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 // Số game lấy từ games/order.json (mỗi id một thư mục có game.json).
 const gameCount = (JSON.parse(readFileSync('games/order.json', 'utf8')) as string[]).length;
@@ -68,12 +68,42 @@ test('play route opens iframe', async ({ page }) => {
   await expect(page).toHaveTitle('2048 · PlayNine');
 });
 
+// Ghi lại tin pn:* game gửi lên khung trên cùng, để biết game đã bắt đầu ván chưa.
+async function captureStarts(page: Page) {
+  await page.addInitScript(() => {
+    if (window !== window.top) return;
+    const w = window as unknown as { __starts: number };
+    w.__starts = 0;
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'pn:start') w.__starts++;
+    });
+  });
+  return () => page.evaluate(() => (window as unknown as { __starts: number }).__starts);
+}
+
 test('back from deep link goes home', async ({ page }) => {
+  const starts = await captureStarts(page);
   await page.goto('#/play/2048');
+  // 2048 bắt đầu ván ngay khi mở: Back phải hỏi lại trước khi rời.
+  await expect.poll(starts).toBeGreaterThan(0);
   await page.locator('#p-back').click();
+  const dialog = page.getByRole('alertdialog');
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'Leave' }).click();
   await expect(page).not.toHaveURL(/#\/play/);
   await expect(page.locator('body')).not.toHaveClass(/playing/);
   await expect(page.locator('#games')).toBeVisible();
+});
+
+test('back while a game is in progress asks first and Keep playing stays', async ({ page }) => {
+  const starts = await captureStarts(page);
+  await page.goto('#/play/2048');
+  await expect.poll(starts).toBeGreaterThan(0);
+  await page.locator('#p-back').click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Keep playing' }).click();
+  await expect(page.getByRole('alertdialog')).toHaveCount(0);
+  await expect(page).toHaveURL(/#\/play\/2048$/);
+  await expect(page.locator('body')).toHaveClass(/playing/);
 });
 
 test('switch game keeps history', async ({ page }) => {

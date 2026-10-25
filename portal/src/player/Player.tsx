@@ -61,6 +61,9 @@ export function Player({ game, heldIds, portalSeen }: Props) {
   const [frame, setFrame] = useState<HTMLIFrameElement | null>(null)
   const [runStatus, setRunStatus] = useState<RunStatus>({ kind: 'idle' })
   const [notice, setNotice] = useState<Notice | null>(null)
+  // Game đã báo bắt đầu ván (pn:start) mà chưa báo kết thúc (pn:end): rời game phải hỏi lại.
+  const [inRun, setInRun] = useState(false)
+  const [confirmLeave, setConfirmLeave] = useState(false)
   // Tắt tiếng lưu ở khóa chung với SDK: game trong iframe nghe sự kiện storage nên im ngay.
   const [muted, setMuted] = useState(() => readRaw(SOUND_KEY) === 'off')
   const toggleSound = () => {
@@ -79,6 +82,8 @@ export function Player({ game, heldIds, portalSeen }: Props) {
   useEffect(() => {
     setRunStatus({ kind: 'idle' })
     setNotice(null)
+    setInRun(false)
+    setConfirmLeave(false)
   }, [gameId])
   useEffect(() => {
     setFrame(gameId ? (frameRefs.current[gameId] ?? null) : null)
@@ -90,12 +95,14 @@ export function Player({ game, heldIds, portalSeen }: Props) {
   const onGameMessage = (m: GameToPortal) => {
     if (m.type === 'pn:start') {
       const id = m.gameId
+      setInRun(true)
       runs.start(id, m.mode, m.resume).then(
         (s) => alive.current && gameRef.current?.id === id && setRunStatus(s),
         () => alive.current && gameRef.current?.id === id && setRunStatus({ kind: 'unscored', why: 'error' }),
       )
     } else if (m.type === 'pn:end') {
       const { mode } = m
+      setInRun(false)
       runs.end(m.gameId, mode, { score: m.score, timeMs: m.timeMs, won: m.won, assisted: m.assisted ?? false }).then(
         (o) => {
           if (o.kind === 'saved') {
@@ -180,10 +187,24 @@ export function Player({ game, heldIds, portalSeen }: Props) {
       {loc(x.name)}
     </button>
   )
-  const onBack = () => {
+  const leave = () => {
+    setConfirmLeave(false)
     if (portalSeen) history.back()
     else location.hash = ''
   }
+  const onBack = () => {
+    if (inRun) setConfirmLeave(true)
+    else leave()
+  }
+  // Hộp xác nhận rời game: Escape = ở lại chơi tiếp.
+  useEffect(() => {
+    if (!confirmLeave) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setConfirmLeave(false)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [confirmLeave])
   const onFull = () => {
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {})
     else playerRef.current?.requestFullscreen().catch(() => {})
@@ -333,6 +354,29 @@ export function Player({ game, heldIds, portalSeen }: Props) {
               </button>
             </>
           )}
+        </div>
+      )}
+      {confirmLeave && (
+        <div className="pconfirm-backdrop" onClick={() => setConfirmLeave(false)}>
+          <div
+            className="pconfirm"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="pconfirm-title"
+            aria-describedby="pconfirm-text"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="pconfirm-title">{t('player.leaveTitle')}</h2>
+            <p id="pconfirm-text">{t('player.leaveText')}</p>
+            <div className="pconfirm-actions">
+              <button type="button" autoFocus onClick={() => setConfirmLeave(false)}>
+                {t('player.leaveStay')}
+              </button>
+              <button type="button" className="pconfirm-leave" onClick={leave}>
+                {t('player.leaveGo')}
+              </button>
+            </div>
+          </div>
         </div>
       )}
       <Toast notice={notice} />

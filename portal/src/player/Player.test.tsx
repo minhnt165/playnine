@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, waitFor } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { reloadFavorites } from '../data/favorites'
 import { GAMES, gameById } from '../games/catalog'
@@ -10,6 +10,7 @@ import { Player } from './Player'
 import { SWITCH_MAX } from './switchList'
 
 const g2048 = gameById('2048')!
+const vi = (k: string) => DICT.vi[k] as string
 const NAME = (g2048.name as { en: string }).en
 const mount = (portalSeen = false, game = g2048 as typeof g2048 | null) =>
   render(
@@ -180,6 +181,36 @@ describe('Player + server', () => {
   const start = { type: 'pn:start', v: 1, gameId: '2048', mode: 'classic', resume: false }
   const end = { type: 'pn:end', v: 1, gameId: '2048', mode: 'classic', score: 10, won: true }
   const has = (api: ReturnType<typeof createFakeApi>, m: string) => api.calls.some((c) => c.method === m)
+
+  it('đang có ván (pn:start, chưa pn:end): Back hỏi xác nhận; "Chơi tiếp" ở lại, "Thoát" mới rời', async () => {
+    location.hash = '#/play/2048'
+    const { send, container } = mountServer(createFakeApi())
+    await settle()
+    send(start)
+    fireEvent.click(container.querySelector('#p-back')!)
+    const dlg = screen.getByRole('alertdialog', { name: vi('player.leaveTitle') })
+    expect(location.hash).toBe('#/play/2048')
+    fireEvent.click(within(dlg).getByRole('button', { name: vi('player.leaveStay') }))
+    expect(screen.queryByRole('alertdialog')).toBeNull()
+    expect(location.hash).toBe('#/play/2048')
+    fireEvent.click(container.querySelector('#p-back')!)
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(screen.queryByRole('alertdialog')).toBeNull()
+    fireEvent.click(container.querySelector('#p-back')!)
+    fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: vi('player.leaveGo') }))
+    expect(location.hash).toBe('')
+  })
+
+  it('ván đã kết thúc (pn:end): Back rời ngay, không hỏi', async () => {
+    location.hash = '#/play/2048'
+    const { send, container } = mountServer(createFakeApi())
+    await settle()
+    send(start)
+    send(end)
+    fireEvent.click(container.querySelector('#p-back')!)
+    expect(screen.queryByRole('alertdialog')).toBeNull()
+    expect(location.hash).toBe('')
+  })
 
   it('đã đăng nhập: pn:start rồi pn:end → toast "Đã ghi điểm · hạng #1"', async () => {
     const api = createFakeApi({ user: U, finish: { status: 'finished', reason: null, ranks: { week: 1 } } })
