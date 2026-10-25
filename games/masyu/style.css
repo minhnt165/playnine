@@ -1,0 +1,172 @@
+/* =====================================================================
+ * Masyu - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bàn là một SVG vuông, một ô = 100 đơn vị: nét / hạt tính theo đơn vị đó nên tự co theo cỡ bàn
+ *   - Vòng màu tím PlayNine đi dưới hạt; giải xong thì vòng chuyển xanh ngọc và hạt sáng lần lượt theo vòng
+ *   - Hạt trắng: nền sáng viền đậm; hạt đen: đặc, có viền sáng ở giao diện tối để không chìm vào nền
+ *   - Cỡ bàn theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
+ * ===================================================================== */
+:root {
+  --board-bg: #ffffff;
+  --grid: rgba(20, 22, 43, 0.1);
+  --dot: rgba(20, 22, 43, 0.22);
+  --loop: #6a4cf5;
+  --mark: #b0506a;
+  --pearl-w: #ffffff;
+  --pearl-w-edge: #1d2040;
+  --pearl-b: #1d2040;
+  --pearl-b-edge: #1d2040;
+  --ok: #0d9488;
+  --win: #0d9488;
+  --err: #d92d20;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --board-bg: #151a30;
+    --grid: rgba(255, 255, 255, 0.09);
+    --dot: rgba(255, 255, 255, 0.2);
+    --loop: #a48bff;
+    --mark: #e1a3b2;
+    --pearl-w: #f4f5ff;
+    --pearl-w-edge: #f4f5ff;
+    --pearl-b: #04050c;
+    --pearl-b-edge: #9ea3d6;
+    --ok: #2dd4bf;
+    --win: #2dd4bf;
+    --err: #f87171;
+  }
+}
+:root[data-theme="dark"] {
+  --board-bg: #151a30;
+  --grid: rgba(255, 255, 255, 0.09);
+  --dot: rgba(255, 255, 255, 0.2);
+  --loop: #a48bff;
+  --mark: #e1a3b2;
+  --pearl-w: #f4f5ff;
+  --pearl-w-edge: #f4f5ff;
+  --pearl-b: #04050c;
+  --pearl-b-edge: #9ea3d6;
+  --ok: #2dd4bf;
+  --win: #2dd4bf;
+  --err: #f87171;
+}
+
+/* ===================== Ô cỡ (bấm để đổi) ===================== */
+.hud-mode { display: block; width: 100%; text-align: left; color: var(--text); transition: background 0.15s, transform 0.1s; }
+.hud-mode .hud-label, .hud-mode .hud-value { display: block; }
+.hud-mode .hud-label { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.hud-mode .hud-value { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hud-swap { width: 13px; height: 13px; fill: currentColor; margin-left: auto; opacity: 0.8; flex: none; }
+.hud-mode:active { transform: scale(0.97); }
+@media (hover: hover) {
+  .hud-mode:hover { background: var(--surface-2); }
+}
+
+/* ===================== Bàn ===================== */
+.stage { container-type: size; }
+.board {
+  --lw: 17px; /* bề dày vòng (đơn vị SVG) */
+  display: block;
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+  background: var(--board-bg);
+  border-radius: 18px;
+  box-shadow: var(--shadow-sm);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: crosshair;
+  transition: box-shadow 0.4s;
+}
+.board[data-n="10"] { --lw: 19px; }
+.board.crossing { cursor: cell; }
+.board:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.board.solved { box-shadow: var(--shadow-sm), 0 0 0 3px color-mix(in srgb, var(--win) 45%, transparent), 0 0 40px color-mix(in srgb, var(--win) 30%, transparent); }
+
+.grid { fill: none; stroke: var(--grid); stroke-width: 2px; pointer-events: none; }
+.cell { fill: var(--dot); pointer-events: none; transform-box: fill-box; transform-origin: center; transition: transform 0.15s, fill 0.15s; }
+.cell.lit { opacity: 0; }
+.cell.err { fill: var(--err); transform: scale(3.2); stroke: var(--board-bg); stroke-width: 3px; }
+
+.edge { stroke: transparent; stroke-width: var(--lw); stroke-linecap: round; transition: stroke 0.15s; pointer-events: none; }
+.edge.on { stroke: var(--loop); }
+.edge.on.bad { stroke: var(--err); }
+.board.solved .edge.on { stroke: var(--win); }
+.mark { stroke: var(--mark); stroke-width: 7px; stroke-linecap: round; fill: none; opacity: 0; pointer-events: none; }
+.mark.show { opacity: 1; }
+
+.pearl { pointer-events: none; stroke-width: 7px; transform-box: fill-box; transform-origin: center; transition: stroke 0.2s, fill 0.2s; }
+.pearl.white { fill: var(--pearl-w); stroke: var(--pearl-w-edge); }
+.pearl.black { fill: var(--pearl-b); stroke: var(--pearl-b-edge); }
+.pearl.ok { stroke: var(--ok); stroke-width: 9px; }
+.pearl.bad { stroke: var(--err); stroke-width: 10px; }
+.pearl.white.bad { fill: color-mix(in srgb, var(--err) 22%, var(--pearl-w)); }
+
+/* Con trỏ bàn phím (chỉ hiện khi đang dùng phím); đỏ đứt nét khi X đang chờ mũi tên */
+.cursor { fill: none; stroke: var(--focus); stroke-width: 6px; opacity: 0; pointer-events: none; }
+.board.kbd .cursor { opacity: 1; }
+.cursor.x { stroke: var(--err); stroke-dasharray: 14 10; }
+
+/* Gợi ý: cạnh vừa đổi nháy sáng */
+.edge.flash, .mark.flash { animation: ms-flash 0.9s ease-out; }
+@keyframes ms-flash { 0%, 40% { stroke: #f59e0b; } }
+.edge.on.flash { animation: ms-flash-on 0.9s ease-out; }
+@keyframes ms-flash-on { 0%, 40% { stroke: #f59e0b; stroke-width: calc(var(--lw) * 1.5); } }
+
+/* Đề mới: hạt hiện dần theo đường chéo */
+.board.deal .pearl { animation: ms-deal 0.35s ease-out both; animation-delay: calc(var(--d, 0) * 25ms); }
+@keyframes ms-deal { from { opacity: 0; transform: scale(0.4); } }
+
+/* Thắng: vòng sáng lên, hạt nảy lần lượt theo thứ tự trên vòng */
+.board.solved .edges { animation: ms-glow 1.2s ease-out; }
+@keyframes ms-glow { 40% { filter: drop-shadow(0 0 10px var(--win)); } }
+.board.solved .pearl { animation: ms-pop 0.45s ease-out both; animation-delay: calc(var(--i, 0) * 14ms); }
+@keyframes ms-pop { 45% { transform: scale(1.3); } }
+
+/* ===================== Nút dưới bàn ===================== */
+.controls { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; flex: none; }
+/* Biểu tượng trên, chữ nhỏ dưới: đủ chỗ cho nhãn tiếng Việt ở 390px */
+.controls .btn { flex-direction: column; gap: 2px; min-height: 54px; padding: 4px 2px; min-width: 0; font-size: 0.74rem; line-height: 1.2; }
+.controls .btn span { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btn .icon { width: 20px; height: 20px; }
+.btn-cross[aria-pressed="true"] { background: color-mix(in srgb, var(--mark) 20%, var(--surface)); color: var(--text); box-shadow: inset 0 0 0 2px var(--mark); }
+
+/* ===================== Hộp thoại ===================== */
+.win-time { font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+.win-best, .win-daily { color: var(--accent); font-weight: 700; }
+.win-hints { color: var(--muted); }
+.help-art { width: 240px; max-width: 100%; height: auto; align-self: center; flex: none; }
+.ha-grid { fill: none; stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 3; }
+.ha-loop { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
+.ha-white { fill: var(--pearl-w); stroke: var(--pearl-w-edge); stroke-width: 2.4; }
+.ha-black { fill: var(--pearl-b); stroke: var(--pearl-b-edge); stroke-width: 2.4; }
+.stat-grid dt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.segmented[data-setting="mode"] button { padding-left: 6px; padding-right: 6px; }
+@media (hover: none) and (pointer: coarse) {
+  .help-keyboard { display: none; }
+}
+
+/* ===================== Màn hình ngang thấp: bàn bên trái, số liệu + nút bên phải ===================== */
+@media (max-height: 520px) and (min-aspect-ratio: 5/4) {
+  .app {
+    max-width: 860px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas: "top top" "stage hud" "stage ." "stage controls";
+    column-gap: 16px;
+  }
+  .topbar { grid-area: top; }
+  .hud { grid-area: hud; }
+  .stage { grid-area: stage; }
+  .controls { grid-area: controls; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .controls .btn { min-height: 46px; }
+  .help { display: none; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .board, .cell, .edge, .pearl { transition: none; }
+  .board.deal .pearl, .board.solved .edges, .board.solved .pearl, .edge.flash, .mark.flash, .edge.on.flash { animation: none; }
+}

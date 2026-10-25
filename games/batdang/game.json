@@ -1,0 +1,84 @@
+{
+  "id": "batdang",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Inequality",
+    "vi": "Bất Đẳng"
+  },
+  "sub": {
+    "en": "Greater or less than",
+    "vi": "Lớn hơn hay nhỏ hơn"
+  },
+  "desc": {
+    "en": "Fill the grid so no number repeats in a row or column and every < > sign between two cells holds. Notes, hints, three sizes and a daily puzzle; every puzzle has exactly one solution.",
+    "vi": "Điền số sao cho mỗi hàng, mỗi cột không trùng và mọi dấu < > giữa hai ô kề đều đúng. Có ghi chú, gợi ý, ba cỡ đề và đề hằng ngày; đề nào cũng có đúng một lời giải."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Numbers", "Daily puzzle"],
+    "vi": ["Giải đố", "1 người", "Con số", "Đề hằng ngày"]
+  },
+  "note": {
+    "en": "Every puzzle has exactly one solution",
+    "vi": "Đề nào cũng có đúng một lời giải"
+  },
+  "daily": {
+    "en": "One shared puzzle a day",
+    "vi": "Mỗi ngày một đề chung"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 181, 71, .24), transparent 60%), linear-gradient(160deg, #2d2463, #100d26)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 5,
+    "modes": [
+      {
+        "key": "5",
+        "label": {
+          "en": "5×5 · Easy",
+          "vi": "5×5 · Dễ"
+        },
+        "rules": {
+          "min_time_ms": 4000
+        },
+        "points": 3
+      },
+      {
+        "key": "6",
+        "label": {
+          "en": "6×6 · Medium",
+          "vi": "6×6 · Vừa"
+        },
+        "rules": {
+          "min_time_ms": 5500
+        },
+        "points": 5
+      },
+      {
+        "key": "7",
+        "label": {
+          "en": "7×7 · Hard",
+          "vi": "7×7 · Khó"
+        },
+        "rules": {
+          "min_time_ms": 8000
+        },
+        "points": 8
+      },
+      {
+        "key": "daily",
+        "label": {
+          "en": "Daily",
+          "vi": "Hằng ngày"
+        },
+        "rules": {
+          "min_time_ms": 5500
+        },
+        "points": 5
+      }
+    ]
+  }
+}

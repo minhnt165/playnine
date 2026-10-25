@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7c5cff"/>
+      <stop offset="1" stop-color="#2b2e6e"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Vòng kín qua tâm ô; hạt đen ở góc rẽ, hạt trắng trên đoạn thẳng -->
+  <path d="M15 15H49V35H33V49H15Z" fill="none" stroke="#ffffff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="15" cy="15" r="7.5" fill="#14162e" stroke="#ffffff" stroke-width="2.6"/>
+  <circle cx="32" cy="15" r="7" fill="#ffffff" stroke="#14162e" stroke-width="2.6"/>
+  <circle cx="15" cy="32" r="7" fill="#ffffff" stroke="#14162e" stroke-width="2.6"/>
+  <circle cx="49" cy="35" r="7.5" fill="#14162e" stroke="#ffffff" stroke-width="2.6"/>
+</svg>

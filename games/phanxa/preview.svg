@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: mục tiêu hiện ra, co lại, bị chạm trúng (+điểm) rồi mục tiêu mới hiện ở chỗ khác.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động. Nền ô lấy từ preview.bg trong game.json. -->
+  <style>
+    .t { transform-box: fill-box; transform-origin: center; }
+    .t1 { animation: t1 3s linear infinite; }
+    .t2 { animation: t2 3s linear infinite; }
+    .t3 { animation: t3 3s linear infinite; }
+    .hit1 { animation: hit1 3s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+    .hit2 { animation: hit2 3s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+    .pts1 { animation: pts1 3s ease-out infinite; }
+    .pts2 { animation: pts2 3s ease-out infinite; }
+    .tap { animation: tap 3s ease-in-out infinite; }
+    /* Mục tiêu 1: hiện 0–1,1 s, co lại, trúng lúc 1,1 s */
+    @keyframes t1 { 0% { transform: scale(1); opacity: 1; } 36% { transform: scale(.7); opacity: 1; } 37%, 100% { transform: scale(.7); opacity: 0; } }
+    /* Mục tiêu 2: hiện 1,2 s, trúng lúc 2,3 s */
+    @keyframes t2 { 0%, 39% { transform: scale(1); opacity: 0; } 40% { transform: scale(1); opacity: 1; } 76% { transform: scale(.68); opacity: 1; } 77%, 100% { transform: scale(.68); opacity: 0; } }
+    /* Mục tiêu 3 (nhỏ, ở góc): co hẳn rồi biến mất */
+    @keyframes t3 { 0%, 20% { transform: scale(1); opacity: 0; } 21% { transform: scale(1); opacity: .95; } 95% { transform: scale(.05); opacity: .95; } 96%, 100% { opacity: 0; } }
+    @keyframes hit1 { 0%, 36% { transform: scale(.7); opacity: 0; } 37% { transform: scale(.7); opacity: 1; } 50%, 100% { transform: scale(1.4); opacity: 0; } }
+    @keyframes hit2 { 0%, 76% { transform: scale(.7); opacity: 0; } 77% { transform: scale(.7); opacity: 1; } 90%, 100% { transform: scale(1.4); opacity: 0; } }
+    @keyframes pts1 { 0%, 36% { transform: translateY(0); opacity: 0; } 38% { opacity: 1; } 58% { transform: translateY(-10px); opacity: 0; } 100% { opacity: 0; } }
+    @keyframes pts2 { 0%, 76% { transform: translateY(0); opacity: 0; } 78% { opacity: 1; } 98% { transform: translateY(-10px); opacity: 0; } 100% { opacity: 0; } }
+    /* Con trỏ đi từ mục tiêu 1 sang mục tiêu 2 */
+    @keyframes tap { 0%, 30% { transform: translate(0, 0); } 36% { transform: translate(0, 2px); } 42%, 66% { transform: translate(0, 0); } 70% { transform: translate(52px, -28px); } 76% { transform: translate(52px, -26px); } 82%, 92% { transform: translate(52px, -28px); } 100% { transform: translate(0, 0); } }
+    @media (prefers-reduced-motion: reduce) {
+      .t1, .t2, .t3, .hit1, .hit2, .pts1, .pts2, .tap { animation: none; }
+      .t2, .hit1, .hit2, .pts2 { opacity: 0; }
+      .pts1 { opacity: 1; transform: translateY(-6px); }
+    }
+  </style>
+  <!-- Mục tiêu 3 -->
+  <g class="t t3">
+    <circle cx="128" cy="92" r="11" fill="#ff5d6c"/>
+    <circle cx="128" cy="92" r="7.7" fill="#fff1f3"/>
+    <circle cx="128" cy="92" r="4.6" fill="#ff5d6c"/>
+    <circle cx="128" cy="92" r="1.8" fill="#fff1f3"/>
+  </g>
+  <!-- Mục tiêu 1 -->
+  <g class="t t1">
+    <circle cx="54" cy="70" r="22" fill="#ff5d6c"/>
+    <circle cx="54" cy="70" r="15.4" fill="#fff1f3"/>
+    <circle cx="54" cy="70" r="9.2" fill="#ff5d6c"/>
+    <circle cx="54" cy="70" r="3.5" fill="#fff1f3"/>
+  </g>
+  <circle class="hit1" cx="54" cy="70" r="22" fill="none" stroke="#ff8a96" stroke-width="3"/>
+  <!-- Mục tiêu 2 -->
+  <g class="t t2">
+    <circle cx="106" cy="42" r="18" fill="#ff5d6c"/>
+    <circle cx="106" cy="42" r="12.6" fill="#fff1f3"/>
+    <circle cx="106" cy="42" r="7.6" fill="#ff5d6c"/>
+    <circle cx="106" cy="42" r="2.9" fill="#fff1f3"/>
+  </g>
+  <circle class="hit2" cx="106" cy="42" r="18" fill="none" stroke="#ff8a96" stroke-width="3"/>
+  <!-- Điểm bay lên -->
+  <g class="pts1"><text x="54" y="44" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="800" fill="#ffd23f" stroke="#2a0f1e" stroke-width="3" paint-order="stroke">+96</text></g>
+  <g class="pts2"><text x="106" y="20" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="800" fill="#ff9a52" stroke="#2a0f1e" stroke-width="3" paint-order="stroke">+180</text></g>
+  <!-- Con trỏ ngắm -->
+  <g class="tap">
+    <g stroke="#2a0f1e" stroke-width="4.4" stroke-linecap="round" fill="none" opacity=".55">
+      <circle cx="54" cy="70" r="6"/>
+      <path d="M54 59v5M54 76v5M43 70h5M60 70h5"/>
+    </g>
+    <g stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" fill="none">
+      <circle cx="54" cy="70" r="6"/>
+      <path d="M54 59v5M54 76v5M43 70h5M60 70h5"/>
+    </g>
+  </g>
+</svg>

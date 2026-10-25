@@ -1,0 +1,69 @@
+{
+  "id": "cotyphu",
+  "cat": "versus",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Tycoon",
+    "vi": "Cờ Tỷ Phú"
+  },
+  "sub": {
+    "en": "Property trading vs 3 computers",
+    "vi": "Mua đất, xây nhà, đấu 3 máy"
+  },
+  "desc": {
+    "en": "Roll the dice around a board of world and Vietnamese cities: buy land, complete colour sets, build houses and hotels, and trade with three computer players. After 30 rounds the richest player wins.",
+    "vi": "Gieo xúc xắc đi vòng quanh bàn các thành phố Việt Nam và thế giới: mua đất, gom đủ nhóm màu, xây nhà và khách sạn, mua bán đất với ba máy. Hết 30 vòng, ai giàu nhất thắng."
+  },
+  "tags": {
+    "en": ["Board game", "Dice", "Vs computer"],
+    "vi": ["Cờ bàn", "Xúc xắc", "Đấu máy"]
+  },
+  "note": {
+    "en": "1 vs 3 computers · 30 rounds · richest wins",
+    "vi": "1 đấu 3 máy · 30 vòng · giàu nhất thắng"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(124, 92, 255, .32), transparent 60%), linear-gradient(160deg, #1f2a4d, #0b1022)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "wins",
+    "points": 15,
+    "modes": [
+      {
+        "key": "easy",
+        "label": {
+          "en": "Easy",
+          "vi": "Dễ"
+        },
+        "rules": {
+          "min_duration_ms": 15000
+        },
+        "points": 10
+      },
+      {
+        "key": "medium",
+        "label": {
+          "en": "Medium",
+          "vi": "Vừa"
+        },
+        "rules": {
+          "min_duration_ms": 15000
+        },
+        "points": 15
+      },
+      {
+        "key": "hard",
+        "label": {
+          "en": "Hard",
+          "vi": "Khó"
+        },
+        "rules": {
+          "min_duration_ms": 15000
+        },
+        "points": 25
+      }
+    ]
+  }
+}

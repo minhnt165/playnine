@@ -1,0 +1,63 @@
+{
+  "id": "phanxa",
+  "cat": "arcade",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Reflex",
+    "vi": "Phản Xạ"
+  },
+  "sub": {
+    "en": "Aim and reaction trainer",
+    "vi": "Luyện ngắm và phản ứng"
+  },
+  "desc": {
+    "en": "Tap the shrinking targets before they vanish: dead centre and fast scores more, streaks multiply up to ×5, and the pace keeps rising for 60 seconds. Or test your pure reaction time on red-to-green.",
+    "vi": "Chạm các mục tiêu đang co lại trước khi chúng biến mất: càng trúng tâm, càng nhanh càng nhiều điểm, chuỗi nhân tới ×5, nhịp tăng dần trong 60 giây. Hoặc đo thời gian phản ứng thuần với màn đỏ chuyển xanh."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "Reflex"],
+    "vi": ["Phản xạ", "1 người", "Tính giờ"]
+  },
+  "note": {
+    "en": "60 seconds of quick, precise taps",
+    "vi": "60 giây chạm thật nhanh và chuẩn"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 92, 120, .32), transparent 60%), linear-gradient(160deg, #3a1630, #12091c)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Aim 60s",
+          "vi": "Ngắm bắn 60s"
+        },
+        "rules": {
+          "min_duration_ms": 58000,
+          "max_score": 60000,
+          "max_score_per_sec": 1300
+        },
+        "points": 5
+      },
+      {
+        "key": "reaction",
+        "label": {
+          "en": "Reaction test",
+          "vi": "Đo phản ứng"
+        },
+        "rules": {
+          "min_duration_ms": 11000,
+          "max_score": 900
+        },
+        "points": 2
+      }
+    ]
+  }
+}

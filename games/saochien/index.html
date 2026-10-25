@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#f3f4fb">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Star Battle">
+  <meta name="description" content="Star Battle">
+  <title>Star Battle</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <script>
+    // Áp giao diện sáng/tối đã chọn trước khi vẽ trang để tránh nháy màu
+    try {
+      var t = JSON.parse(localStorage.getItem('playnine-saochien-settings-v1') || '{}').theme;
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../_kit/kit.css?v=1">
+  <link rel="stylesheet" href="style.css?v=1.0.0">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-mark" src="icon.svg" alt="" width="34" height="34">
+        <h1 class="logo" data-i18n="app.name">Star Battle</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" type="button" data-open="modal-help" data-i18n-attr="aria-label:kit.help;title:kit.help">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 17h-2v-2h2v2zm2.1-7.7-.9.9c-.7.7-1.2 1.3-1.2 2.8h-2v-.5c0-1.1.5-2.1 1.2-2.8l1.2-1.3a2 2 0 1 0-3.4-1.4H8a4 4 0 1 1 7.1 2.3z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-stats" type="button" data-open="modal-stats" data-i18n-attr="aria-label:kit.stats;title:kit.stats">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
+        </button>
+        <button class="btn-icon" type="button" data-open="modal-settings" data-i18n-attr="aria-label:kit.settings;title:kit.settings">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1L11 21h4l.4-2.7a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+        </button>
+        <button class="btn-icon" id="btn-new" type="button" data-i18n-attr="aria-label:kit.newGame;title:kit.newGame">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.7 6.3A8 8 0 1 0 20 12h-2a6 6 0 1 1-1.8-4.2L13 11h7V4l-2.3 2.3z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="hud">
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.time">Time</div><div class="hud-value" id="time">0:00</div></div>
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.stars">Stars</div><div class="hud-value" id="stars">0/5</div></div>
+      <div class="hud-box"><div class="hud-label" data-i18n="hud.best">Best</div><div class="hud-value" id="best">–</div></div>
+    </div>
+
+    <!-- Cỡ đề + đề hằng ngày; đổi khi đang chơi dở thì hỏi trước -->
+    <div class="segmented modes" id="modes" role="radiogroup" data-i18n-attr="aria-label:mode.name">
+      <button type="button" role="radio" data-mode="5"><b>5×5</b><span data-i18n="mode.5">1★ · Easy</span></button>
+      <button type="button" role="radio" data-mode="8"><b>8×8</b><span data-i18n="mode.8">1★ · Medium</span></button>
+      <button type="button" role="radio" data-mode="10"><b>10×10</b><span data-i18n="mode.10">2★ · Hard</span></button>
+      <button type="button" role="radio" data-mode="daily"><b data-i18n="mode.daily">Daily</b><span id="daily-sub">8×8</span></button>
+    </div>
+
+    <main class="stage" id="stage">
+      <!-- Bàn: lưới ô (nút), lớp SVG vẽ đường lưới + viền vùng dày, cột / hàng đếm sao còn thiếu ở mép phải / dưới -->
+      <div class="board" id="board">
+        <div class="grid" id="grid" role="group"></div>
+        <svg class="lines" id="lines" aria-hidden="true" preserveAspectRatio="none"></svg>
+        <div class="edge edge-r" id="edge-r" aria-hidden="true"></div>
+        <div class="edge edge-b" id="edge-b" aria-hidden="true"></div>
+      </div>
+    </main>
+
+    <div class="controls">
+      <button class="btn btn-ghost" id="btn-undo" type="button" data-i18n-attr="title:btn.undoKey">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+        <span data-i18n="btn.undo">Undo</span>
+      </button>
+      <button class="btn btn-ghost" id="btn-redo" type="button" data-i18n-attr="title:btn.redoKey">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z"/></svg>
+        <span data-i18n="btn.redo">Redo</span>
+      </button>
+      <button class="btn btn-ghost" id="btn-hint" type="button" data-i18n-attr="title:btn.hintKey">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2zm-2 18h4v1a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-1z"/></svg>
+        <span data-i18n="btn.hint">Hint</span>
+      </button>
+    </div>
+
+    <p class="help"><span class="help-keys" data-i18n-html="help.keys"></span><span class="help-touch" data-i18n="help.touch"></span></p>
+    <p class="sr-only" id="sr-status" aria-live="polite"></p>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <!-- Thắng -->
+  <div class="modal" id="modal-win" hidden>
+    <div class="modal-backdrop" data-close="modal-win"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="win-title">
+      <h2 id="win-title" data-i18n="win.title">Solved!</h2>
+      <p class="win-time" id="win-time"></p>
+      <p class="win-badge" id="win-badge" hidden></p>
+      <p class="modal-text" id="win-note" hidden></p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="btn-again" type="button" data-i18n="win.again">Next puzzle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bỏ ván đang chơi (ván mới hoặc đổi cỡ) -->
+  <div class="modal" id="modal-confirm" hidden>
+    <div class="modal-backdrop" data-close="modal-confirm"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+      <h2 id="confirm-title" data-i18n="confirm.title">Leave this puzzle?</h2>
+      <p class="modal-text" data-i18n="confirm.text">Leaving it counts as a loss.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" data-close="modal-confirm" data-i18n="kit.cancel">Cancel</button>
+        <button class="btn btn-primary" id="btn-confirm" type="button" data-i18n="kit.newGame">New game</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-help" hidden>
+    <div class="modal-backdrop" data-close="modal-help"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <h2 id="help-title" data-i18n="kit.help">How to play</h2>
+      <!-- Ví dụ 5x5 một sao: đề (trái) và lời giải (phải) -->
+      <svg class="help-art" viewBox="0 0 156 64" aria-hidden="true"><g class="ha-board"><rect class="ha-r0" x="2" y="2" width="12" height="12"/><rect class="ha-r0" x="14" y="2" width="12" height="12"/><rect class="ha-r0" x="26" y="2" width="12" height="12"/><rect class="ha-r1" x="38" y="2" width="12" height="12"/><rect class="ha-r1" x="50" y="2" width="12" height="12"/><rect class="ha-r0" x="2" y="14" width="12" height="12"/><rect class="ha-r2" x="14" y="14" width="12" height="12"/><rect class="ha-r2" x="26" y="14" width="12" height="12"/><rect class="ha-r1" x="38" y="14" width="12" height="12"/><rect class="ha-r3" x="50" y="14" width="12" height="12"/><rect class="ha-r0" x="2" y="26" width="12" height="12"/><rect class="ha-r4" x="14" y="26" width="12" height="12"/><rect class="ha-r2" x="26" y="26" width="12" height="12"/><rect class="ha-r3" x="38" y="26" width="12" height="12"/><rect class="ha-r3" x="50" y="26" width="12" height="12"/><rect class="ha-r4" x="2" y="38" width="12" height="12"/><rect class="ha-r4" x="14" y="38" width="12" height="12"/><rect class="ha-r2" x="26" y="38" width="12" height="12"/><rect class="ha-r2" x="38" y="38" width="12" height="12"/><rect class="ha-r3" x="50" y="38" width="12" height="12"/><rect class="ha-r4" x="2" y="50" width="12" height="12"/><rect class="ha-r4" x="14" y="50" width="12" height="12"/><rect class="ha-r4" x="26" y="50" width="12" height="12"/><rect class="ha-r3" x="38" y="50" width="12" height="12"/><rect class="ha-r3" x="50" y="50" width="12" height="12"/><path class="ha-thin" d="M14 2v60M2 14h60M26 2v60M2 26h60M38 2v60M2 38h60M50 2v60M2 50h60"/><path class="ha-thick" d="M14 14h12M38 2v12M26 14h12M50 14h12M14 14v12M14 26h12M38 14v12M50 14v12M38 26h12M14 26v12M2 38h12M26 26v12M38 26v12M38 38h12M26 38v12M26 50h12M50 38v12M38 50h12M38 50v12"/><rect class="ha-frame" x="2" y="2" width="60" height="60"/></g><path class="ha-arrow" d="M70 32h16m-5-5 5 5-5 5"/><g class="ha-board"><rect class="ha-r0" x="94" y="2" width="12" height="12"/><rect class="ha-r0" x="106" y="2" width="12" height="12"/><rect class="ha-r0" x="118" y="2" width="12" height="12"/><rect class="ha-r1" x="130" y="2" width="12" height="12"/><rect class="ha-r1" x="142" y="2" width="12" height="12"/><rect class="ha-r0" x="94" y="14" width="12" height="12"/><rect class="ha-r2" x="106" y="14" width="12" height="12"/><rect class="ha-r2" x="118" y="14" width="12" height="12"/><rect class="ha-r1" x="130" y="14" width="12" height="12"/><rect class="ha-r3" x="142" y="14" width="12" height="12"/><rect class="ha-r0" x="94" y="26" width="12" height="12"/><rect class="ha-r4" x="106" y="26" width="12" height="12"/><rect class="ha-r2" x="118" y="26" width="12" height="12"/><rect class="ha-r3" x="130" y="26" width="12" height="12"/><rect class="ha-r3" x="142" y="26" width="12" height="12"/><rect class="ha-r4" x="94" y="38" width="12" height="12"/><rect class="ha-r4" x="106" y="38" width="12" height="12"/><rect class="ha-r2" x="118" y="38" width="12" height="12"/><rect class="ha-r2" x="130" y="38" width="12" height="12"/><rect class="ha-r3" x="142" y="38" width="12" height="12"/><rect class="ha-r4" x="94" y="50" width="12" height="12"/><rect class="ha-r4" x="106" y="50" width="12" height="12"/><rect class="ha-r4" x="118" y="50" width="12" height="12"/><rect class="ha-r3" x="130" y="50" width="12" height="12"/><rect class="ha-r3" x="142" y="50" width="12" height="12"/><path class="ha-thin" d="M106 2v60M94 14h60M118 2v60M94 26h60M130 2v60M94 38h60M142 2v60M94 50h60"/><path class="ha-thick" d="M106 14h12M130 2v12M118 14h12M142 14h12M106 14v12M106 26h12M130 14v12M142 14v12M130 26h12M106 26v12M94 38h12M118 26v12M130 26v12M130 38h12M118 38v12M118 50h12M142 38v12M130 50h12M130 50v12"/><rect class="ha-frame" x="94" y="2" width="60" height="60"/><circle class="ha-dot" cx="100" cy="8" r="1.08"/><circle class="ha-dot" cx="112" cy="8" r="1.08"/><circle class="ha-dot" cx="124" cy="8" r="1.08"/><path class="ha-star" d="M136.0 3.6L137.3 6.7L140.6 6.9L138.1 9.1L138.8 12.3L136.0 10.6L133.2 12.3L133.9 9.1L131.4 6.9L134.7 6.7Z"/><circle class="ha-dot" cx="148" cy="8" r="1.08"/><path class="ha-star" d="M100.0 15.6L101.3 18.7L104.6 18.9L102.1 21.1L102.8 24.3L100.0 22.6L97.2 24.3L97.9 21.1L95.4 18.9L98.7 18.7Z"/><circle class="ha-dot" cx="112" cy="20" r="1.08"/><circle class="ha-dot" cx="124" cy="20" r="1.08"/><circle class="ha-dot" cx="136" cy="20" r="1.08"/><circle class="ha-dot" cx="148" cy="20" r="1.08"/><circle class="ha-dot" cx="100" cy="32" r="1.08"/><circle class="ha-dot" cx="112" cy="32" r="1.08"/><path class="ha-star" d="M124.0 27.6L125.3 30.7L128.6 30.9L126.1 33.1L126.8 36.3L124.0 34.6L121.2 36.3L121.9 33.1L119.4 30.9L122.7 30.7Z"/><circle class="ha-dot" cx="136" cy="32" r="1.08"/><circle class="ha-dot" cx="148" cy="32" r="1.08"/><circle class="ha-dot" cx="100" cy="44" r="1.08"/><circle class="ha-dot" cx="112" cy="44" r="1.08"/><circle class="ha-dot" cx="124" cy="44" r="1.08"/><circle class="ha-dot" cx="136" cy="44" r="1.08"/><path class="ha-star" d="M148.0 39.6L149.3 42.7L152.6 42.9L150.1 45.1L150.8 48.3L148.0 46.6L145.2 48.3L145.9 45.1L143.4 42.9L146.7 42.7Z"/><circle class="ha-dot" cx="100" cy="56" r="1.08"/><path class="ha-star" d="M112.0 51.6L113.3 54.7L116.6 54.9L114.1 57.1L114.8 60.3L112.0 58.6L109.2 60.3L109.9 57.1L107.4 54.9L110.7 54.7Z"/><circle class="ha-dot" cx="124" cy="56" r="1.08"/><circle class="ha-dot" cx="136" cy="56" r="1.08"/><circle class="ha-dot" cx="148" cy="56" r="1.08"/></g></svg>
+      <ul class="help-list">
+        <li data-i18n="help.rule1"></li>
+        <li data-i18n="help.rule2"></li>
+        <li data-i18n="help.rule3"></li>
+      </ul>
+      <p class="modal-text" data-i18n-html="help.marks"></p>
+      <p class="modal-text" data-i18n="help.tip"></p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-help" data-i18n="help.ok">Got it</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-backdrop" data-close="modal-stats"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
+      <h2 id="stats-title" data-i18n="kit.stats">Statistics</h2>
+      <dl class="stat-grid">
+        <div><dt data-i18n="stats.played">Played</dt><dd id="stats-played">0</dd></div>
+        <div><dt data-i18n="stats.won">Solved</dt><dd id="stats-won">0</dd></div>
+        <div><dt data-i18n="stats.streak">Win streak</dt><dd id="stats-streak">0</dd></div>
+        <div><dt data-i18n="stats.daily">Daily streak</dt><dd id="stats-daily">0</dd></div>
+        <div><dt data-i18n="stats.best5">Best 5×5</dt><dd id="stats-best-5">–</dd></div>
+        <div><dt data-i18n="stats.best8">Best 8×8</dt><dd id="stats-best-8">–</dd></div>
+        <div><dt data-i18n="stats.best10">Best 10×10</dt><dd id="stats-best-10">–</dd></div>
+        <div><dt data-i18n="stats.bestDaily">Best daily</dt><dd id="stats-best-daily">–</dd></div>
+      </dl>
+      <p class="modal-text stats-note" data-i18n="stats.note"></p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-stats" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-settings" hidden>
+    <div class="modal-backdrop" data-close="modal-settings"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h2 id="settings-title" data-i18n="kit.settings">Settings</h2>
+      <div class="settings-list">
+        <div class="setting">
+          <span class="setting-name" data-i18n="set.order">Tap a cell</span>
+          <div class="segmented" data-setting="order">
+            <button type="button" data-value="dot" data-i18n="set.orderDot">Dot, then star</button>
+            <button type="button" data-value="star" data-i18n="set.orderStar">Star first</button>
+          </div>
+        </div>
+        <label class="setting-row">
+          <span class="setting-text"><span class="setting-name" data-i18n="set.auto">Dot around stars</span><span class="setting-desc" data-i18n="set.autoDesc"></span></span>
+          <input class="switch" type="checkbox" data-setting="auto">
+        </label>
+        <label class="setting-row">
+          <span class="setting-text"><span class="setting-name" data-i18n="set.errors">Show mistakes</span><span class="setting-desc" data-i18n="set.errorsDesc"></span></span>
+          <input class="switch" type="checkbox" data-setting="errors">
+        </label>
+        <div class="setting">
+          <span class="setting-name" data-i18n="kit.theme">Theme</span>
+          <div class="segmented" data-setting="theme">
+            <button type="button" data-value="auto" data-i18n="kit.themeAuto">Auto</button>
+            <button type="button" data-value="light" data-i18n="kit.themeLight">Light</button>
+            <button type="button" data-value="dark" data-i18n="kit.themeDark">Dark</button>
+          </div>
+        </div>
+        <div class="setting">
+          <span class="setting-name" data-i18n="kit.lang">Language</span>
+          <div class="segmented" data-setting="lang">
+            <button type="button" data-value="en">English</button>
+            <button type="button" data-value="vi">Tiếng Việt</button>
+          </div>
+        </div>
+        <label class="setting-row" id="setting-sound">
+          <span class="setting-text"><span class="setting-name" data-i18n="kit.sound">Sound</span><span class="setting-desc" data-i18n="kit.soundDesc"></span></span>
+          <input class="switch" type="checkbox" id="sw-sound">
+        </label>
+      </div>
+      <p class="app-version" id="app-version"></p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" data-close="modal-settings" data-i18n="kit.close">Close</button></div>
+    </div>
+  </div>
+
+  <script src="../_kit/kit.js?v=1"></script>
+  <script src="i18n.js?v=1.0.0"></script>
+  <script src="puzzles.js?v=1.0.0"></script>
+  <script src="engine.js?v=1.0.0"></script>
+  <script src="../sdk/playnine.js?v=2"></script>
+  <script src="app.js?v=1.0.0"></script>
+</body>
+</html>

@@ -12,15 +12,17 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 
 - [x] `supabase/migrations/20261023000300_batch3.sql` — đợt 3, game 38–45: Xì Dách, Xếp Bài Nhện, Ô Trống, Kim Tự Tháp, Ba Đỉnh, Bài Tám, Poker Rút, Đô-mi-nô.
 
-- [ ] `supabase/migrations/20261023000400_batch4.sql` — đợt 4, game 46–53: Chim Bay, Nhảy Cao, Qua Đường, Đập Chuột, Xếp Tầng, Bóng Bàn, Bắn Phi Thuyền, Thiên Thạch.
+- [x] `supabase/migrations/20261023000400_batch4.sql` — đợt 4, game 46–53: Chim Bay, Nhảy Cao, Qua Đường, Đập Chuột, Xếp Tầng, Bóng Bàn, Bắn Phi Thuyền, Thiên Thạch.
 
-- [ ] `supabase/migrations/20261023000500_batch5.sql` — đợt 5, game 54–61: Kakuro, Ô Số Tính, Cầu Nối, Vòng Kín, Nhị Phân, Lều Trại, Hitori, Chia Ô.
+- [x] `supabase/migrations/20261023000500_batch5.sql` — đợt 5, game 54–61: Kakuro, Ô Số Tính, Cầu Nối, Vòng Kín, Nhị Phân, Lều Trại, Hitori, Chia Ô.
 
-- [ ] `supabase/migrations/20261023000600_batch6.sql` — đợt 6, game 62–69: Đoán Chữ, Tìm Chữ, Ghép Chữ, Tính Nhẩm, Tính 24, Nhớ Nhịp, Gõ Nhanh, Dãy Số.
+- [x] `supabase/migrations/20261023000600_batch6.sql` — đợt 6, game 62–69: Đoán Chữ, Tìm Chữ, Ghép Chữ, Tính Nhẩm, Tính 24, Nhớ Nhịp, Gõ Nhanh, Dãy Số.
 
-- [ ] `supabase/migrations/20261023000700_batch7.sql` — đợt 7, game 70–77: Bắn Tàu, Ô Vuông, Cờ Lục Giác, Cờ Nhảy, Xoay Cờ, Vệt Sáng, Khúc Côn Cầu, Pháo Thủ.
-- [ ] `supabase/migrations/20261023000800_batch8.sql` — đợt 8, game 78–85: Xì Tố, Gin Rummy, Bài Bích, Cờ Vây, Cờ Tào Cáo, Bi-a, Mạt Chược Ghép, Bài Tim.
-- [ ] `supabase/migrations/20261023000900_batch9.sql` — đợt 9, game 86–93: Mê Cung, Ghép Ba, Mê Cung Ma, Hạ Cánh, Chạy Vô Tận, Ghép Hình, Phòng Không, Thoát Xe.
+- [x] `supabase/migrations/20261023000700_batch7.sql` — đợt 7, game 70–77: Bắn Tàu, Ô Vuông, Cờ Lục Giác, Cờ Nhảy, Xoay Cờ, Vệt Sáng, Khúc Côn Cầu, Pháo Thủ.
+- [x] `supabase/migrations/20261023000800_batch8.sql` — đợt 8, game 78–85: Xì Tố, Gin Rummy, Bài Bích, Cờ Vây, Cờ Tào Cáo, Bi-a, Mạt Chược Ghép, Bài Tim.
+- [x] `supabase/migrations/20261023000900_batch9.sql` — đợt 9, game 86–93: Mê Cung, Ghép Ba, Mê Cung Ma, Hạ Cánh, Chạy Vô Tận, Ghép Hình, Phòng Không, Thoát Xe.
+- [ ] `supabase/migrations/20261023001000_batch10.sql` — đợt 10, game 94–100: Sao Chiến, Masyu, Bất Đẳng, Phản Xạ, Pinball, Cột Ngọc, Cờ Tỷ Phú.
+- [ ] `supabase/migrations/20261023001100_milestone100.sql` — mốc 100: bài viết "PlayNine đã có 100 game" (ghim, đăng 25/10) và sự kiện "Mừng 100 game: Ghép Ba" (26/10 8:00 → 2/11 8:00, giờ VN; sửa được trong admin trước khi bắt đầu).
 
 Đợt 0 (nền tảng) không có migration. Áp các file theo đúng thứ tự tên file.
 
@@ -34,6 +36,10 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 - [ ] Thử **Gõ Nhanh** trên điện thoại thật (iOS và Android/Gboard): bàn phím ảo bật lên khung có co vừa không, gõ có bị chặn nhầm là "dán / gõ tự động" khi bàn phím gợi ý từ hay tự sửa không. Máy làm việc chỉ giả lập được.
 
 - [ ] **Chơi thử máy ở các game đợt 8** (test tự động chỉ đo máy đấu máy): **Xì Tố** — máy Khó thắng 3 máy ngẫu nhiên chỉ 72% (poker may rủi; tay đôi 93%), cần xem máy Dễ có quá lỳ, máy Khó tháu cáy/bỏ bài hợp lý không, giải có dài quá 20 phút không; **Cờ Vây** — cảm giác và độ mạnh mức Khó, nhất là trên điện thoại; **Bi-a** — máy Khó vào bi ~75% số cú, có thể quá khó với người chơi thường, và cảm giác ngắm trên điện thoại; **Mạt Chược Ghép** — độ dễ đọc bàn Rùa trên điện thoại dọc (mặc định điện thoại dọc mở bàn Tháp).
+
+- [ ] **Liên kết Google cho tài khoản khách**: trong Supabase → Authentication → Sign In / Providers, kiểm tra đã bật **Allow manual linking** (thiếu thì nút "Liên kết tài khoản Google" báo "chưa được bật"). Nếu tài khoản Google đó đã từng đăng nhập PlayNine thì Supabase không cho liên kết vào tài khoản khách: cổng giờ báo rõ và hướng dẫn chọn "Đã có tài khoản: đăng nhập bằng Google" (điểm của tài khoản khách hiện tại không chuyển sang). Nếu vẫn lỗi, gửi mình nguyên URL sau khi quay về từ Google hoặc dòng chữ báo lỗi.
+
+- [ ] **Chơi thử Cờ Tỷ Phú và Pinball**: Cờ Tỷ Phú — ván 30 vòng khoảng 13–16 phút ở tốc độ Thường, máy mỗi lượt 5–7 s (chậm thì giảm `pace()` trong `games/cotyphu/app.js`); máy Khó về nhất 65% trước 3 máy Dễ. Pinball — cảm giác flipper và độ khó bàn "Tinh Vân" trên điện thoại.
 
 ## Cần bạn quyết định
 
@@ -55,4 +61,7 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 - Cờ Vây: có thêm bàn 13×13 và chế độ 2 người (không gửi điểm); luật khu vực + siêu ko, không có bước đánh dấu quân chết (để không sửa được kết quả ván xếp hạng).
 - Mạt Chược Ghép: gợi ý và xáo lại gửi `assisted: true` (không phạt cộng giây vì máy chủ từ chối `timeMs` lệch thời gian thật).
 - Thoát Xe: tên tiếng Anh "Traffic Jam" (tên chung của thể loại; "Rush Hour" là nhãn hiệu ThinkFun), đề sinh tự động; metric `wins` theo bàn — chơi lại bàn dễ vẫn được tính thắng nhưng đã bị chặn bởi luật sẵn có "20 ván đầu mỗi người/game/ngày".
+- Cờ Tỷ Phú: bàn 28 ô tự thiết kế (địa danh VN và thế giới, tiền ảo ¤), bỏ đấu giá, giao dịch chỉ là mua đất bằng tiền, hết ván sau 30 vòng tính theo tài sản; không dùng tên/tài sản Monopoly.
+- Phản Xạ: thêm mode `reaction` (đo phản ứng 5 lần, điểm = 1000 − ms trung bình, 2 điểm cổng) bên cạnh `classic` (ngắm bắn 60 s).
+- Cổng cho 100 game: thanh đổi game trong màn chơi chỉ còn 8 game (đang chơi, gần đây, yêu thích), mục Games ở thanh bên mở trang Tất cả game (bỏ popup tìm game), trang Tất cả game mặc định xem gọn, nhãn "Mới" chỉ cho 12 game mới nhất.
 - Ghép Hình: bàn vuông 4×4 / 6×6 / 8×8, không xoay mảnh; "Xem hình" không tính trợ giúp. Mê Cung Ma: nhân vật đom đóm, ma và mê cung tự thiết kế (không dùng tài sản Pac-Man).

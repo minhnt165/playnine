@@ -1,0 +1,225 @@
+/* =====================================================================
+ * Cột Ngọc - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Màu giếng cho canvas là token CSS (--well-top…): app.js đọc lại khi đổi giao diện
+ *   - Giếng tự co theo khung (app.js đặt kích thước .board theo ô vuông), cột phụ bên phải: khối kế tiếp
+ *   - Nút cảm ứng (.pad) chỉ hiện khi máy có màn cảm ứng; điện thoại xoay ngang thì chia hai bên giếng
+ *   - Lớp phủ bắt đầu / tạm dừng / hết ván phủ cả trang (dưới thanh trên)
+ * ===================================================================== */
+:root {
+  --app-max: 600px;
+  --well-top: #2a2350;
+  --well-bottom: #171331;
+  --well-line: rgba(255, 255, 255, 0.05);
+  --well-edge: #3b3270;
+  --well-danger: rgba(255, 82, 82, 0.22);
+  --ghost: rgba(255, 255, 255, 0.55);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --well-top: #141029;
+    --well-bottom: #07060f;
+    --well-line: rgba(255, 255, 255, 0.04);
+    --well-edge: #2a2450;
+  }
+}
+:root[data-theme="dark"] {
+  --well-top: #141029;
+  --well-bottom: #07060f;
+  --well-line: rgba(255, 255, 255, 0.04);
+  --well-edge: #2a2450;
+}
+
+.app { position: relative; }
+.topbar { position: relative; z-index: 6; }
+
+/* ===================== HUD ===================== */
+.hud { grid-template-columns: 1.3fr 0.8fr 1fr auto; grid-auto-flow: row; align-items: stretch; }
+.btn-pause { width: 52px; height: auto; min-height: 42px; }
+.btn-pause .icon-play { display: none; }
+.btn-pause[data-state="paused"] .icon-pause { display: none; }
+.btn-pause[data-state="paused"] .icon-play { display: block; }
+.hud-value { transform-origin: left center; overflow: hidden; text-overflow: ellipsis; }
+.hud-value.bump { animation: score-pop 0.22s ease-out; }
+@keyframes score-pop { 40% { transform: scale(1.14); } }
+
+/* ===================== Giếng + cột phụ ===================== */
+.stage { touch-action: none; user-select: none; -webkit-user-select: none; }
+.playfield { display: flex; align-items: stretch; gap: 10px; }
+.board {
+  position: relative;
+  flex: none;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--well-bottom);
+  box-shadow: 0 0 0 3px var(--well-edge), var(--shadow-sm);
+}
+.board canvas { display: block; width: 100%; height: 100%; cursor: pointer; }
+.board canvas:focus-visible { outline: none; }
+.side { flex: none; width: 74px; display: flex; flex-direction: column; gap: 8px; }
+.side-box {
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  padding: 6px 6px 8px;
+  text-align: center;
+}
+.side-label { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.side-value { font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+#next-canvas { display: block; margin: 4px auto 0; }
+
+/* Chữ nổi giữa giếng: dây chuyền, lên cấp, ma thuật */
+.pop {
+  position: absolute;
+  left: 50%;
+  top: 38%;
+  transform: translate(-50%, -50%);
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgba(10, 8, 30, 0.55);
+  color: #fff;
+  font-weight: 800;
+  font-size: clamp(1rem, 4.2vw, 1.35rem);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.pop.show { animation: pop-up 1s ease-out forwards; }
+.pop[data-kind="level"] { color: #ffe27a; }
+.pop[data-kind="magic"] { color: #ffd6ff; }
+@keyframes pop-up {
+  0% { opacity: 0; transform: translate(-50%, -30%) scale(0.7); }
+  15% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+  70% { opacity: 1; transform: translate(-50%, -60%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -80%) scale(1); }
+}
+
+/* ===================== Nút cảm ứng ===================== */
+.pad { display: none; flex: none; gap: 10px; touch-action: none; }
+.pad-l, .pad-r { display: flex; gap: 8px; }
+.pad-l { flex: 3; }
+.pad-r { flex: 2; }
+.pad-btn {
+  flex: 1;
+  min-width: 0;
+  height: 62px;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm), inset 0 -3px 0 var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  touch-action: none;
+}
+.pad-btn svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.pad-btn svg .fill { fill: currentColor; stroke: none; }
+.pad-btn.is-down { background: var(--accent-soft); transform: translateY(2px); box-shadow: var(--shadow-sm); }
+.pad-rotate { background: var(--accent); color: var(--accent-text); box-shadow: var(--shadow-sm), inset 0 -3px 0 var(--accent-strong); }
+.pad-rotate.is-down { background: var(--accent-strong); }
+@media (any-pointer: coarse) {
+  .pad { display: flex; }
+}
+
+/* ===================== Lớp phủ ===================== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 16px 16px;
+  background: rgba(8, 8, 28, 0.32);
+  animation: kit-fade-in 0.2s ease;
+}
+.overlay-card {
+  width: min(100%, 360px);
+  max-height: 100%;
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: 18px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  text-align: center;
+}
+.overlay-title { margin: 0; font-size: 1.45rem; font-weight: 800; line-height: 1.3; }
+.overlay-sub { margin: 0; color: var(--muted); line-height: 1.45; font-size: 0.92rem; }
+.overlay-hint { margin: 0; color: var(--muted); font-size: 0.78rem; }
+.overlay-actions { display: flex; gap: 10px; }
+.overlay-actions .btn { flex: 1; }
+.btn-wide { width: 100%; min-height: 48px; font-size: 1.05rem; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.result-grid { margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.result-grid div { background: var(--surface-2); border-radius: 12px; padding: 6px 8px; min-width: 0; }
+.result-grid .result-main { grid-column: 1 / -1; }
+.result-grid dt { font-size: 0.68rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.result-grid dd { margin: 0; font-size: 1.25rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.result-grid .result-main dd { font-size: 1.9rem; }
+.over-new { margin: 0; color: var(--accent); font-weight: 800; }
+
+/* Hướng dẫn: hàng ngọc mẫu */
+.legend { display: block; width: 100%; height: 46px; }
+.modal-card .modal-text + .modal-text { margin-top: -4px; }
+.modal-text.help-touch { display: none; }
+@media (hover: none) and (pointer: coarse) {
+  .modal-text.help-touch { display: block; }
+  .modal-text.help-keys { display: none; }
+}
+
+/* ===================== Màn hình hẹp / thấp ===================== */
+@media (max-width: 420px) {
+  .logo { font-size: 1.05rem; letter-spacing: -0.01em; }
+  .overlay-card { padding: 16px 14px 12px; gap: 8px; }
+  .overlay-title { font-size: 1.3rem; }
+  .side { width: 64px; }
+  .hud { gap: 6px; }
+  .hud-value { font-size: 1.2rem; }
+  .btn-pause { width: 46px; }
+}
+/* Ngang, thấp (điện thoại xoay ngang): HUD và nút trái bên trái giếng, nút phải bên phải */
+@media (max-height: 520px) and (min-aspect-ratio: 1/1) {
+  .app {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr);
+    column-gap: 14px;
+  }
+  .topbar { grid-column: 1 / -1; }
+  .hud { grid-column: 1; grid-row: 2; grid-template-columns: 1fr 1fr; align-self: start; }
+  .hud-score { grid-column: 1 / -1; }
+  .btn-pause { width: 100%; }
+  .stage { grid-column: 2; grid-row: 2 / 4; }
+  .pad { display: contents; }
+  .pad-l, .pad-r { display: none; }
+  .help { display: none; }
+  .overlay { padding-top: 56px; }
+  .overlay-card { padding: 12px 14px 10px; gap: 6px; width: min(100%, 440px); }
+  .overlay-title { font-size: 1.15rem; }
+  .overlay-sub { font-size: 0.85rem; }
+  .overlay-hint { display: none; }
+  .result-grid .result-main { grid-column: auto; }
+  .result-grid { grid-template-columns: repeat(4, 1fr); }
+  .result-grid .result-main dd, .result-grid dd { font-size: 1.15rem; }
+  .btn-wide { min-height: 42px; }
+}
+@media (max-height: 520px) and (min-aspect-ratio: 1/1) and (any-pointer: coarse) {
+  .pad-l, .pad-r { display: grid; gap: 8px; align-self: end; }
+  .pad-l { grid-column: 1; grid-row: 3; grid-template-columns: 1fr 1fr; }
+  .pad-l [data-act="soft"] { grid-column: 1 / -1; grid-row: 2; }
+  .pad-r { grid-column: 3; grid-row: 2 / 4; grid-template-columns: 1fr; }
+  .pad-btn { height: 58px; }
+  .pad-rotate { height: 84px; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .overlay, .hud-value.bump { animation: none; }
+  .pop.show { animation: pop-still 1s steps(1) forwards; }
+  @keyframes pop-still { 0% { opacity: 1; } 100% { opacity: 0; } }
+  .pad-btn.is-down { transform: none; }
+}

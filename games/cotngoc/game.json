@@ -1,0 +1,50 @@
+{
+  "id": "cotngoc",
+  "cat": "arcade",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Jewel Columns",
+    "vi": "Cột Ngọc"
+  },
+  "sub": {
+    "en": "Falling jewel matcher",
+    "vi": "Xếp ngọc rơi"
+  },
+  "desc": {
+    "en": "Drop columns of three jewels into the well and line up three or more of a colour across, down or diagonally. Cleared jewels let the ones above fall into new lines: chain reactions multiply your score.",
+    "vi": "Thả các cột ba viên ngọc vào giếng, xếp từ ba viên cùng màu theo hàng ngang, dọc hoặc chéo để xóa. Ngọc phía trên rơi xuống tạo hàng mới: dây chuyền nhân điểm."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "High score"],
+    "vi": ["Phản xạ", "1 người", "Kỷ lục"]
+  },
+  "note": {
+    "en": "Line up three jewels of a colour",
+    "vi": "Xếp ba viên ngọc cùng màu"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 100% at 50% 0%, rgba(164, 85, 240, .35), transparent 60%), linear-gradient(165deg, #2a2350, #0e0b22)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 3000
+        },
+        "points": 5
+      }
+    ]
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "id": "masyu",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Masyu",
+    "vi": "Masyu"
+  },
+  "sub": {
+    "en": "Pearl loop",
+    "vi": "Vòng ngọc trai"
+  },
+  "desc": {
+    "en": "Draw one closed loop through the cells that passes every pearl: straight through white pearls with a turn next to them, turning on black pearls and going straight after them.",
+    "vi": "Vẽ một vòng khép kín qua các ô, đi qua mọi hạt: đi thẳng qua hạt trắng và rẽ ngay cạnh nó, rẽ tại hạt đen rồi đi thẳng thêm một ô."
+  },
+  "tags": {
+    "en": ["Puzzle", "Logic", "1 player", "Daily puzzle"],
+    "vi": ["Giải đố", "Logic", "1 người", "Đề hằng ngày"]
+  },
+  "note": {
+    "en": "Three sizes and a daily puzzle, each with one solution",
+    "vi": "Ba cỡ và đề hằng ngày, đề nào cũng chỉ có một lời giải"
+  },
+  "daily": {
+    "en": "One shared 8×8 loop for everyone",
+    "vi": "Một vòng 8×8 chung cho mọi người"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(164, 139, 255, .28), transparent 60%), linear-gradient(160deg, #262a5c, #0b0c1f)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 5,
+    "modes": [
+      {
+        "key": "s",
+        "label": {
+          "en": "6x6 · Easy",
+          "vi": "6x6 · Dễ"
+        },
+        "rules": {
+          "min_time_ms": 800
+        },
+        "points": 3
+      },
+      {
+        "key": "m",
+        "label": {
+          "en": "8x8 · Medium",
+          "vi": "8x8 · Vừa"
+        },
+        "rules": {
+          "min_time_ms": 1500
+        },
+        "points": 5
+      },
+      {
+        "key": "l",
+        "label": {
+          "en": "10x10 · Hard",
+          "vi": "10x10 · Khó"
+        },
+        "rules": {
+          "min_time_ms": 3500
+        },
+        "points": 8
+      },
+      {
+        "key": "daily",
+        "label": {
+          "en": "Daily 8x8",
+          "vi": "Hằng ngày 8x8"
+        },
+        "rules": {
+          "min_time_ms": 1500
+        },
+        "points": 5
+      }
+    ]
+  }
+}

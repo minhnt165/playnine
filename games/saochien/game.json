@@ -1,0 +1,84 @@
+{
+  "id": "saochien",
+  "cat": "puzzle",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Star Battle",
+    "vi": "Sao Chiến"
+  },
+  "sub": {
+    "en": "Stars in every region",
+    "vi": "Sao khắp mọi vùng"
+  },
+  "desc": {
+    "en": "Place stars so every row, column and outlined region holds the same number, and no two stars touch, not even diagonally. Every 5x5, 8x8 and 10x10 puzzle has exactly one solution.",
+    "vi": "Đặt sao sao cho mỗi hàng, mỗi cột và mỗi vùng có cùng số sao, hai sao không chạm nhau kể cả chéo. Đề 5x5, 8x8, 10x10 nào cũng có đúng một lời giải."
+  },
+  "tags": {
+    "en": ["Puzzle", "1 player", "Logic", "Daily puzzle"],
+    "vi": ["Giải đố", "1 người", "Logic", "Đề hằng ngày"]
+  },
+  "note": {
+    "en": "Every puzzle has one solution",
+    "vi": "Đề nào cũng có đúng một lời giải"
+  },
+  "daily": {
+    "en": "One shared star puzzle a day",
+    "vi": "Mỗi ngày một đề sao chung"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(120% 120% at 50% 0%, rgba(255, 211, 77, .22), transparent 60%), linear-gradient(160deg, #2a2468, #0d0b24)"
+  },
+  "e2e": {},
+  "server": {
+    "metric": "time_low",
+    "points": 6,
+    "modes": [
+      {
+        "key": "5",
+        "label": {
+          "en": "5x5 · Easy",
+          "vi": "5x5 · Dễ"
+        },
+        "rules": {
+          "min_time_ms": 700
+        },
+        "points": 3
+      },
+      {
+        "key": "8",
+        "label": {
+          "en": "8x8 · Medium",
+          "vi": "8x8 · Vừa"
+        },
+        "rules": {
+          "min_time_ms": 1100
+        },
+        "points": 6
+      },
+      {
+        "key": "10",
+        "label": {
+          "en": "10x10 · Hard",
+          "vi": "10x10 · Khó"
+        },
+        "rules": {
+          "min_time_ms": 2800
+        },
+        "points": 10
+      },
+      {
+        "key": "daily",
+        "label": {
+          "en": "Daily",
+          "vi": "Hằng ngày"
+        },
+        "rules": {
+          "min_time_ms": 1100
+        },
+        "points": 6
+      }
+    ]
+  }
+}

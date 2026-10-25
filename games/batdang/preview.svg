@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: lưới 4×4 có dấu bất đẳng thức, số được điền dần rồi xóa để chơi lại;
+       hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động. Nền ô xem trước lấy từ preview.bg trong game.json. -->
+  <style>
+    .cell { fill: #ffffff; opacity: .94; }
+    .giv { fill: #e3e0f7; }
+    .num { font: 800 14px system-ui, sans-serif; text-anchor: middle; }
+    .g { fill: #241b5e; }
+    .d { fill: #6a4cf5; opacity: 0; animation: fill 9s ease-out infinite; }
+    .s { fill: none; stroke: #ffb547; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+    .p { transform-box: fill-box; transform-origin: center; animation: pulse 1.8s ease-in-out infinite; }
+    @keyframes fill { 0% { opacity: 0; transform: translateY(3px); } 4%, 84% { opacity: 1; transform: none; } 92%, 100% { opacity: 0; } }
+    @keyframes pulse { 50% { transform: scale(1.2); stroke: #ffd38a; } }
+    @media (prefers-reduced-motion: reduce) { .d { animation: none; opacity: 1; } .p { animation: none; } }
+  </style>
+  <rect class="cell" x="24.5" y="4.5" width="21" height="21" rx="4"/>
+  <rect class="cell" x="54.5" y="4.5" width="21" height="21" rx="4"/>
+  <rect class="cell giv" x="84.5" y="4.5" width="21" height="21" rx="4"/>
+  <rect class="cell" x="114.5" y="4.5" width="21" height="21" rx="4"/>
+  <rect class="cell" x="24.5" y="34.5" width="21" height="21" rx="4"/>
+  <rect class="cell giv" x="54.5" y="34.5" width="21" height="21" rx="4"/>
+  <rect class="cell" x="84.5" y="34.5" width="21" height="21" rx="4"/>
+  <rect class="cell" x="114.5" y="34.5" width="21" height="21" rx="4"/>
+  <rect class="cell" x="24.5" y="64.5" width="21" height="21" rx="4"/>
+  <rect class="cell" x="54.5" y="64.5" width="21" height="21" rx="4"/>
+  <rect class="cell" x="84.5" y="64.5" width="21" height="21" rx="4"/>
+  <rect class="cell" x="114.5" y="64.5" width="21" height="21" rx="4"/>
+  <rect class="cell giv" x="24.5" y="94.5" width="21" height="21" rx="4"/>
+  <rect class="cell" x="54.5" y="94.5" width="21" height="21" rx="4"/>
+  <rect class="cell" x="84.5" y="94.5" width="21" height="21" rx="4"/>
+  <rect class="cell" x="114.5" y="94.5" width="21" height="21" rx="4"/>
+  <path class="s p" d="M52.5 11l-5 4 5 4"/>
+  <path class="s" d="M107.5 11l5 4-5 4"/>
+  <path class="s" d="M77.5 71l5 4-5 4"/>
+  <path class="s" d="M112.5 101l-5 4 5 4"/>
+  <path class="s" d="M52.5 41l-5 4 5 4"/>
+  <path class="s" d="M121 27.5l4 5 4-5"/>
+  <path class="s" d="M31 62.5l4-5 4 5"/>
+  <path class="s" d="M91 92.5l4-5 4 5"/>
+  <path class="s" d="M61 57.5l4 5 4-5"/>
+  <path class="s" d="M61 32.5l4-5 4 5"/>
+  <text class="num d" x="35" y="20" style="animation-delay:0.00s">1</text>
+  <text class="num d" x="65" y="20" style="animation-delay:0.45s">3</text>
+  <text class="num g" x="95" y="20">4</text>
+  <text class="num d" x="125" y="20" style="animation-delay:0.90s">2</text>
+  <text class="num d" x="35" y="50" style="animation-delay:1.35s">3</text>
+  <text class="num g" x="65" y="50">4</text>
+  <text class="num d" x="95" y="50" style="animation-delay:1.80s">2</text>
+  <text class="num d" x="125" y="50" style="animation-delay:2.25s">1</text>
+  <text class="num d" x="35" y="80" style="animation-delay:2.70s">4</text>
+  <text class="num d" x="65" y="80" style="animation-delay:3.15s">2</text>
+  <text class="num d" x="95" y="80" style="animation-delay:3.60s">1</text>
+  <text class="num d" x="125" y="80" style="animation-delay:4.05s">3</text>
+  <text class="num g" x="35" y="110">2</text>
+  <text class="num d" x="65" y="110" style="animation-delay:4.50s">1</text>
+  <text class="num d" x="95" y="110" style="animation-delay:4.95s">3</text>
+  <text class="num d" x="125" y="110" style="animation-delay:5.40s">4</text>
+</svg>

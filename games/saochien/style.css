@@ -1,0 +1,295 @@
+/* =====================================================================
+ * Sao Chiến - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
+ *   - Bàn kiểu "bầu trời đêm": vùng tô màu nhạt + viền vùng dày (vẽ bằng lớp SVG phủ trên lưới ô),
+ *     sao chàm đậm (giao diện sáng) / vàng (giao diện tối), chấm loại trừ màu xám
+ *   - Vùng phân biệt chủ yếu bằng viền dày, màu chỉ để phụ (đủ rõ cho người mù màu)
+ *   - Cỡ bàn theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
+ *   - Báo lỗi: sao vi phạm màu đỏ, vùng thừa sao / hết chỗ có sọc đỏ, số đếm ở mép đỏ khi hàng / cột sai
+ * ===================================================================== */
+:root {
+  --accent: #4338ca;
+  --accent-strong: #3730a3;
+  --accent-soft: rgba(67, 56, 202, 0.12);
+  --focus: #4338ca;
+  --frame: #ffffff;
+  --line-thin: rgba(29, 26, 64, 0.2);
+  --line-thick: #1d1a40;
+  --star: #2b2366;
+  --dot: #4b4f6b;
+  --err: #d92d20;
+  --warn: rgba(217, 45, 32, 0.2);
+  --ok: #15803d;
+  --cell-focus: #2563eb;
+  --glow: #f5b400;
+  /* Màu vùng (nhạt, khác sắc độ rõ) */
+  --r0: #ffd6dc;
+  --r1: #ffeeb0;
+  --r2: #cdeccd;
+  --r3: #cfe3ff;
+  --r4: #e4d7ff;
+  --r5: #ffdcbc;
+  --r6: #bfeee6;
+  --r7: #e8d6bf;
+  --r8: #e2efb8;
+  --r9: #dde1ea;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --accent: #f5c542;
+    --accent-strong: #ffd76a;
+    --accent-text: #1f1600;
+    --accent-soft: rgba(245, 197, 66, 0.16);
+    --focus: #f5c542;
+    --frame: #0f1222;
+    --line-thin: rgba(255, 255, 255, 0.12);
+    --line-thick: #e8eaff;
+    --star: #ffd34d;
+    --dot: #c3c8e6;
+    --err: #ff6b5e;
+    --warn: rgba(255, 107, 94, 0.24);
+    --ok: #4ade80;
+    --cell-focus: #67e8f9;
+    --glow: #ffd34d;
+    --r0: #4a2934;
+    --r1: #45391c;
+    --r2: #1f3d28;
+    --r3: #1e3150;
+    --r4: #33285a;
+    --r5: #4b301e;
+    --r6: #173f3b;
+    --r7: #40362a;
+    --r8: #36401c;
+    --r9: #2c3142;
+  }
+}
+:root[data-theme="dark"] {
+  --accent: #f5c542;
+  --accent-strong: #ffd76a;
+  --accent-text: #1f1600;
+  --accent-soft: rgba(245, 197, 66, 0.16);
+  --focus: #f5c542;
+  --frame: #0f1222;
+  --line-thin: rgba(255, 255, 255, 0.12);
+  --line-thick: #e8eaff;
+  --star: #ffd34d;
+  --dot: #c3c8e6;
+  --err: #ff6b5e;
+  --warn: rgba(255, 107, 94, 0.24);
+  --ok: #4ade80;
+  --cell-focus: #67e8f9;
+  --glow: #ffd34d;
+  --r0: #4a2934;
+  --r1: #45391c;
+  --r2: #1f3d28;
+  --r3: #1e3150;
+  --r4: #33285a;
+  --r5: #4b301e;
+  --r6: #173f3b;
+  --r7: #40362a;
+  --r8: #36401c;
+  --r9: #2c3142;
+}
+
+/* ===================== HUD + thanh chọn cỡ ===================== */
+.hud { grid-template-columns: 1fr 0.8fr 1fr; }
+.modes { flex: none; }
+.modes button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 46px;
+  padding: 3px 2px;
+  line-height: 1.2;
+}
+.modes b { font-weight: 800; font-size: 0.95rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.modes span { font-size: 0.72rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.modes button[aria-checked="true"] b { color: var(--accent); }
+.modes button.done span { color: var(--ok); }
+
+/* ===================== Bàn chơi ===================== */
+.stage { container-type: size; }
+.board {
+  --avail: min(100cqw, 100cqh);
+  --pad: calc(var(--avail) * 0.022 + 3px);
+  --cell: calc((var(--avail) - 2 * var(--pad)) / (var(--n, 5) + 0.62));
+  --edge: calc(var(--cell) * 0.62);
+  --thick: max(2.5px, calc(var(--cell) * 0.075));
+  position: relative;
+  display: grid;
+  grid-template-columns: calc(var(--cell) * var(--n, 5)) var(--edge);
+  grid-template-rows: calc(var(--cell) * var(--n, 5)) var(--edge);
+  padding: var(--pad);
+  border-radius: calc(var(--pad) + 6px);
+  background: var(--frame);
+  box-shadow: var(--shadow);
+  transition: filter 0.2s, box-shadow 0.4s;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.board.solved { box-shadow: var(--shadow), 0 0 0 3px var(--glow), 0 0 44px var(--accent-soft); }
+
+.grid {
+  grid-area: 1 / 1;
+  display: grid;
+  grid-template-columns: repeat(var(--n, 5), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--n, 5), minmax(0, 1fr));
+  border-radius: 3px;
+  overflow: hidden;
+}
+/* Đường lưới mảnh + viền vùng dày, phủ trên ô (không nhận chạm) */
+.lines { grid-area: 1 / 1; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 2; }
+.lines .thin { fill: none; stroke: var(--line-thin); stroke-width: 1px; vector-effect: non-scaling-stroke; }
+.lines .thick {
+  fill: none;
+  stroke: var(--line-thick);
+  stroke-width: var(--thick);
+  stroke-linecap: square;
+  vector-effect: non-scaling-stroke;
+}
+.lines .frame { fill: none; stroke: var(--line-thick); stroke-width: var(--thick); vector-effect: non-scaling-stroke; }
+
+.cell {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--rc, var(--r9));
+  -webkit-touch-callout: none;
+}
+.cell::before { content: ""; display: block; pointer-events: none; }
+/* Chấm loại trừ; chấm tự động nhạt hơn một chút */
+.cell.dot::before, .cell.auto::before {
+  width: calc(var(--cell) * 0.17);
+  height: calc(var(--cell) * 0.17);
+  border-radius: 50%;
+  background: var(--dot);
+}
+.cell.auto::before { opacity: 0.6; }
+/* Sao năm cánh */
+.cell.star::before {
+  width: calc(var(--cell) * 0.72);
+  height: calc(var(--cell) * 0.72);
+  margin-top: calc(var(--cell) * -0.03);
+  background: var(--star);
+  clip-path: polygon(50% 0%, 61.2% 34.5%, 97.6% 34.5%, 68.2% 55.9%, 79.4% 90.5%, 50% 69.1%, 20.6% 90.5%, 31.8% 55.9%, 2.4% 34.5%, 38.8% 34.5%);
+}
+.cell.bad.star::before { background: var(--err); }
+/* Vùng thừa sao hoặc hết chỗ đặt sao: sọc đỏ */
+.cell.warn {
+  background-image: repeating-linear-gradient(135deg, var(--warn) 0 4px, transparent 4px 9px);
+}
+/* Ô đang chọn bằng bàn phím: vòng trong ô (không bị viền vùng che) */
+.cell:focus-visible { outline: none; }
+.cell::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--thick) * 0.6 + 2px);
+  border-radius: 5px;
+  pointer-events: none;
+  opacity: 0;
+}
+.cell:focus-visible::after { opacity: 1; box-shadow: 0 0 0 2.5px var(--cell-focus); }
+@media (hover: hover) {
+  .cell:hover { filter: brightness(0.96); }
+  :root[data-theme="dark"] .cell:hover { filter: brightness(1.25); }
+}
+@media (hover: hover) and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cell:hover { filter: brightness(1.25); }
+}
+
+/* Số sao còn thiếu ở mép phải (theo hàng) và mép dưới (theo cột) */
+.edge { display: grid; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--muted); }
+.edge-r { grid-area: 1 / 2; grid-template-rows: repeat(var(--n, 5), minmax(0, 1fr)); }
+.edge-b { grid-area: 2 / 1; grid-template-columns: repeat(var(--n, 5), minmax(0, 1fr)); }
+.edge span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: max(10px, calc(var(--cell) * 0.32));
+  line-height: 1;
+  min-width: 0;
+  min-height: 0;
+}
+.edge span.done { color: var(--ok); opacity: 0.8; }
+.edge span.bad { color: var(--err); }
+
+/* Hiệu ứng: sao vừa đặt nảy nhẹ, ô gợi ý có quầng sáng */
+.cell.pop::before { animation: sc-pop 0.22s ease-out; }
+@keyframes sc-pop { 0% { transform: scale(0.5); } 60% { transform: scale(1.12); } }
+.cell.hinted::after { animation: sc-hint 1.2s ease-out; }
+@keyframes sc-hint {
+  0%, 40% { opacity: 1; box-shadow: 0 0 0 3px var(--glow), 0 0 16px var(--glow); }
+  100% { opacity: 0; box-shadow: 0 0 0 0 transparent; }
+}
+
+/* Đề mới: ô hiện dần theo đường chéo */
+.board.deal .cell { animation: sc-deal 0.32s ease-out both; animation-delay: calc(var(--d) * 16ms); }
+@keyframes sc-deal { from { opacity: 0; transform: scale(0.75); } }
+
+/* Thắng: sao lấp lánh lần lượt */
+.board.solved .cell.star::before { animation: sc-twinkle 0.9s ease-out both; animation-delay: calc(var(--d) * 40ms); }
+@keyframes sc-twinkle {
+  40% { transform: scale(1.3) rotate(18deg); background: var(--glow); }
+}
+
+/* Đồng hồ dừng vì đang mở hộp thoại: làm mờ bàn */
+.app.paused .board { filter: blur(10px) saturate(0.6); }
+
+/* ===================== Nút dưới bàn ===================== */
+.controls { display: flex; gap: 8px; flex: none; }
+.controls .btn { flex: 1; min-height: 46px; padding: 0 10px; min-width: 0; }
+.controls .btn span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btn .icon { width: 20px; height: 20px; }
+
+/* ===================== Hộp thoại ===================== */
+.win-time { margin: 0; font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.win-badge { margin: 0; font-weight: 700; color: var(--accent); }
+.help-art { width: 230px; max-width: 100%; height: auto; align-self: center; flex: none; }
+.ha-r0 { fill: var(--r0); }
+.ha-r1 { fill: var(--r1); }
+.ha-r2 { fill: var(--r2); }
+.ha-r3 { fill: var(--r3); }
+.ha-r4 { fill: var(--r4); }
+.ha-thin { fill: none; stroke: var(--line-thin); stroke-width: 0.6; }
+.ha-thick { fill: none; stroke: var(--line-thick); stroke-width: 1.5; stroke-linecap: square; }
+.ha-frame { fill: none; stroke: var(--line-thick); stroke-width: 1.6; }
+.ha-star { fill: var(--star); }
+.ha-dot { fill: var(--dot); }
+.ha-arrow { fill: none; stroke: var(--muted); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.help-list { margin: 0; padding-left: 1.2em; color: var(--muted); line-height: 1.5; display: flex; flex-direction: column; gap: 4px; }
+.help-list li::marker { color: var(--accent); }
+.modal-text b { color: var(--text); }
+.stats-note { font-size: 0.82rem; }
+.stat-grid dt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ===================== Màn hình ngang thấp: bàn bên trái, số liệu + nút bên phải ===================== */
+@media (max-height: 520px) and (min-aspect-ratio: 5/4) {
+  .app {
+    max-width: 900px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+    grid-template-areas: "top top" "stage hud" "stage modes" "stage ." "stage controls";
+    column-gap: 16px;
+  }
+  .topbar { grid-area: top; }
+  .hud { grid-area: hud; }
+  .modes { grid-area: modes; }
+  .stage { grid-area: stage; }
+  .controls { grid-area: controls; }
+  .help { display: none; }
+}
+
+/* ===================== Giảm chuyển động ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .board { transition: none; }
+  .cell.pop::before, .cell.hinted::after, .board.deal .cell, .board.solved .cell.star::before { animation: none; }
+}

@@ -1,0 +1,50 @@
+{
+  "id": "pinball",
+  "cat": "arcade",
+  "addedAt": "2026-10-24",
+  "name": {
+    "en": "Pinball",
+    "vi": "Pinball"
+  },
+  "sub": {
+    "en": "Nebula table",
+    "vi": "Bàn Tinh Vân"
+  },
+  "desc": {
+    "en": "Launch the ball and keep it alive with the flippers: pop the planet bumpers, drop the meteor targets and ride the orbit ramp into multiball.",
+    "vi": "Phóng bi và giữ bi bằng flipper: đập hành tinh, hạ dãy thiên thạch, chạy ramp quỹ đạo để mở multiball."
+  },
+  "tags": {
+    "en": ["Arcade", "1 player", "High score"],
+    "vi": ["Phản xạ", "1 người", "Kỷ lục"]
+  },
+  "note": {
+    "en": "Three orbits start multiball",
+    "vi": "Ba vòng quỹ đạo mở multiball"
+  },
+  "sdk": true,
+  "preview": {
+    "bg": "radial-gradient(110% 90% at 30% 20%, rgba(255, 95, 168, .28), transparent 60%), radial-gradient(90% 80% at 80% 80%, rgba(46, 230, 197, .2), transparent 60%), linear-gradient(165deg, #1d1450, #07061a)"
+  },
+  "e2e": {
+    "start": "#btn-start"
+  },
+  "server": {
+    "metric": "score_high",
+    "points": 5,
+    "modes": [
+      {
+        "key": "classic",
+        "label": {
+          "en": "Classic",
+          "vi": "Cổ điển"
+        },
+        "rules": {
+          "min_duration_ms": 5000,
+          "max_score_per_sec": 20000
+        },
+        "points": 5
+      }
+    ]
+  }
+}

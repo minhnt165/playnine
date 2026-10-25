@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">
+  <!-- Ảnh xem trước trên thẻ game ở cổng: đề 6x5, vòng tự vẽ dần qua tâm các ô, đi qua mọi hạt rồi sáng lên khi khép.
+       Tự chứa, hoạt hình bằng CSS, tắt khi người dùng giảm chuyển động; nền trong suốt (nền thẻ lấy từ preview.bg). -->
+  <style>
+    .grid { fill: none; stroke: #ffffff; stroke-opacity: .1; stroke-width: 1; }
+    .dot { fill: #c9cdf0; opacity: .45; }
+    .loop { fill: none; stroke: #a48bff; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 360; stroke-dashoffset: 360; animation: draw 6s ease-in-out infinite; }
+    .glow { fill: none; stroke: #2dd4bf; stroke-width: 10; stroke-linejoin: round; opacity: 0; filter: blur(3px); animation: glow 6s ease-in-out infinite; }
+    .w { fill: #f4f5ff; stroke: #14162e; stroke-width: 2; }
+    .b { fill: #070814; stroke: #b9bdf0; stroke-width: 2; }
+    .p { transform-box: fill-box; transform-origin: center; animation: pop 6s ease-out infinite; }
+    @keyframes draw { 0%, 6% { stroke-dashoffset: 360; stroke: #a48bff; } 62% { stroke-dashoffset: 0; stroke: #a48bff; } 68%, 90% { stroke-dashoffset: 0; stroke: #5eead4; } 100% { stroke-dashoffset: 0; stroke: #5eead4; opacity: 0; } }
+    @keyframes glow { 0%, 62% { opacity: 0; } 68% { opacity: .7; } 82%, 100% { opacity: 0; } }
+    @keyframes pop { 0%, 64% { transform: scale(1); } 70% { transform: scale(1.25); } 76%, 100% { transform: scale(1); } }
+    @media (prefers-reduced-motion: reduce) {
+      .loop, .glow, .p { animation: none; }
+      .loop { stroke-dashoffset: 0; stroke: #5eead4; }
+    }
+  </style>
+  <path class="grid" d="M20 10h120v100H20zM40 10v100M60 10v100M80 10v100M100 10v100M120 10v100M20 30h120M20 50h120M20 70h120M20 90h120"/>
+  <g class="dot">
+    <circle cx="110" cy="20" r="1.8"/><circle cx="130" cy="20" r="1.8"/><circle cx="110" cy="40" r="1.8"/><circle cx="130" cy="40" r="1.8"/>
+    <circle cx="50" cy="40" r="1.8"/><circle cx="70" cy="40" r="1.8"/><circle cx="50" cy="60" r="1.8"/><circle cx="70" cy="60" r="1.8"/>
+    <circle cx="30" cy="100" r="1.8"/><circle cx="50" cy="100" r="1.8"/><circle cx="90" cy="80" r="1.8"/><circle cx="110" cy="80" r="1.8"/>
+  </g>
+  <path class="glow" d="M30 20H90V60H130V100H70V80H30Z"/>
+  <path class="loop" d="M30 20H90V60H130V100H70V80H30Z"/>
+  <!-- Hạt: đen ở chỗ rẽ (hai nhánh đi thẳng), trắng trên đoạn thẳng cạnh một chỗ rẽ -->
+  <circle class="p b" cx="30" cy="20" r="6.5"/>
+  <circle class="p w" cx="50" cy="20" r="6.5" style="animation-delay: .05s"/>
+  <circle class="p w" cx="90" cy="40" r="6.5" style="animation-delay: .1s"/>
+  <circle class="p b" cx="130" cy="60" r="6.5" style="animation-delay: .15s"/>
+  <circle class="p b" cx="130" cy="100" r="6.5" style="animation-delay: .2s"/>
+  <circle class="p w" cx="110" cy="100" r="6.5" style="animation-delay: .25s"/>
+  <circle class="p w" cx="30" cy="60" r="6.5" style="animation-delay: .35s"/>
+</svg>
