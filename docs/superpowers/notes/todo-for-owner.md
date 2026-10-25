@@ -12,17 +12,18 @@ Ghi lại trong lúc Claude chạy lộ trình 100 game không dừng. Làm xong
 
 - [x] `supabase/migrations/20261023000300_batch3.sql` — đợt 3, game 38–45: Xì Dách, Xếp Bài Nhện, Ô Trống, Kim Tự Tháp, Ba Đỉnh, Bài Tám, Poker Rút, Đô-mi-nô.
 
-- [x] `supabase/migrations/20261023000400_batch4.sql` — đợt 4, game 46–53: Chim Bay, Nhảy Cao, Qua Đường, Đập Chuột, Xếp Tầng, Bóng Bàn, Bắn Phi Thuyền, Thiên Thạch.
+- [ ] `supabase/migrations/20261023000400_batch4.sql` — đợt 4, game 46–53: Chim Bay, Nhảy Cao, Qua Đường, Đập Chuột, Xếp Tầng, Bóng Bàn, Bắn Phi Thuyền, Thiên Thạch.
 
-- [x] `supabase/migrations/20261023000500_batch5.sql` — đợt 5, game 54–61: Kakuro, Ô Số Tính, Cầu Nối, Vòng Kín, Nhị Phân, Lều Trại, Hitori, Chia Ô.
+- [ ] `supabase/migrations/20261023000500_batch5.sql` — đợt 5, game 54–61: Kakuro, Ô Số Tính, Cầu Nối, Vòng Kín, Nhị Phân, Lều Trại, Hitori, Chia Ô.
 
-- [x] `supabase/migrations/20261023000600_batch6.sql` — đợt 6, game 62–69: Đoán Chữ, Tìm Chữ, Ghép Chữ, Tính Nhẩm, Tính 24, Nhớ Nhịp, Gõ Nhanh, Dãy Số.
+- [ ] `supabase/migrations/20261023000600_batch6.sql` — đợt 6, game 62–69: Đoán Chữ, Tìm Chữ, Ghép Chữ, Tính Nhẩm, Tính 24, Nhớ Nhịp, Gõ Nhanh, Dãy Số.
 
 - [x] `supabase/migrations/20261023000700_batch7.sql` — đợt 7, game 70–77: Bắn Tàu, Ô Vuông, Cờ Lục Giác, Cờ Nhảy, Xoay Cờ, Vệt Sáng, Khúc Côn Cầu, Pháo Thủ.
-- [x] `supabase/migrations/20261023000800_batch8.sql` — đợt 8, game 78–85: Xì Tố, Gin Rummy, Bài Bích, Cờ Vây, Cờ Tào Cáo, Bi-a, Mạt Chược Ghép, Bài Tim.
+- [ ] `supabase/migrations/20261023000800_batch8.sql` — đợt 8, game 78–85: Xì Tố, Gin Rummy, Bài Bích, Cờ Vây, Cờ Tào Cáo, Bi-a, Mạt Chược Ghép, Bài Tim.
 - [x] `supabase/migrations/20261023000900_batch9.sql` — đợt 9, game 86–93: Mê Cung, Ghép Ba, Mê Cung Ma, Hạ Cánh, Chạy Vô Tận, Ghép Hình, Phòng Không, Thoát Xe.
-- [ ] `supabase/migrations/20261023001000_batch10.sql` — đợt 10, game 94–100: Sao Chiến, Masyu, Bất Đẳng, Phản Xạ, Pinball, Cột Ngọc, Cờ Tỷ Phú.
-- [ ] `supabase/migrations/20261023001100_milestone100.sql` — mốc 100: bài viết "PlayNine đã có 100 game" (ghim, đăng 25/10) và sự kiện "Mừng 100 game: Ghép Ba" (26/10 8:00 → 2/11 8:00, giờ VN; sửa được trong admin trước khi bắt đầu).
+- [x] `supabase/migrations/20261023001000_batch10.sql` — đợt 10, game 94–100: Sao Chiến, Masyu, Bất Đẳng, Phản Xạ, Pinball, Cột Ngọc, Cờ Tỷ Phú.
+- [x] `supabase/migrations/20261023001100_milestone100.sql` — mốc 100: bài viết "PlayNine đã có 100 game" (ghim, đăng 25/10) và sự kiện "Mừng 100 game: Ghép Ba" (26/10 8:00 → 2/11 8:00, giờ VN; sửa được trong admin trước khi bắt đầu).
+- [ ] Kiểm tra production 2026-10-25: bảng `games` chỉ có 68/100 game, thiếu game 46–69 và 78–85 (đợt 4, 5, 6, 8 chưa áp; vì vậy Bi-a 8 bóng và các game đó không chấm sao, không ghi điểm được). Thay cho bốn file đợt đó, chạy một file `apply-all-100-games.sql`: chỉ thêm game còn thiếu, game đã có giữ nguyên; dòng kiểm tra cuối phải ra `games = 100`, `bia = 1`.
 
 Đợt 0 (nền tảng) không có migration. Áp các file theo đúng thứ tự tên file.
 
