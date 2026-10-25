@@ -6,3 +6,4 @@ playwright-report/
 portal/.vite/
 portal/.env.local
 .superpowers/
+.playwright-mcp/
