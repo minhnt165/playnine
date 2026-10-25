@@ -1,11 +1,13 @@
 import { act, cleanup, fireEvent, render, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { reloadFavorites } from '../data/favorites'
 import { GAMES, gameById } from '../games/catalog'
 import { I18nProvider } from '../i18n/i18n'
 import { DICT } from '../i18n/dict'
 import { createFakeApi } from '../server/fakeApi'
 import { ServerProvider } from '../server/ServerProvider'
 import { Player } from './Player'
+import { SWITCH_MAX } from './switchList'
 
 const g2048 = gameById('2048')!
 const NAME = (g2048.name as { en: string }).en
@@ -43,13 +45,24 @@ describe('Player', () => {
     expect(document.title).toBe(NAME + ' · PlayNine')
   })
 
-  it('#p-switch có nút cho mọi game, nút 2048 aria-current', () => {
+  it('#p-switch chỉ có SWITCH_MAX nút (cổng có cả trăm game), nút đầu là 2048 aria-current', () => {
     const { container } = mount()
     const btns = container.querySelectorAll('#p-switch button')
-    expect(btns).toHaveLength(GAMES.length)
+    expect(btns).toHaveLength(Math.min(SWITCH_MAX, GAMES.length))
     const cur = [...btns].filter((b) => b.getAttribute('aria-current') === 'true')
     expect(cur).toHaveLength(1)
+    expect(cur[0]).toBe(btns[0])
     expect(cur[0].getAttribute('title')).toBe(NAME)
+  })
+
+  it('#p-switch ưu tiên game chơi gần đây và game yêu thích', () => {
+    localStorage.setItem('game-portal-recent-v1', JSON.stringify({ sudoku: 2, xiangqi: 1 }))
+    localStorage.setItem('playnine-favorites-v1', JSON.stringify(['co9o']))
+    reloadFavorites()
+    const { container } = mount()
+    const titles = [...container.querySelectorAll('#p-switch button')].map((b) => b.getAttribute('title'))
+    const name = (id: string) => (gameById(id)!.name as { en: string }).en
+    expect(titles.slice(0, 4)).toEqual([NAME, name('sudoku'), name('xiangqi'), name('co9o')])
   })
 
   it('chip streak ẩn khi 0, hiện khi summary daily.streak = 4', () => {

@@ -52,6 +52,26 @@ describe('GamesPage', () => {
     expect(visibleNames(container)).toHaveLength(GAMES.filter((g) => g.cat === 'versus').length)
   })
 
+  it('mặc định xem gọn; bấm "Thẻ lớn" thì bỏ lớp compact và lựa chọn được nhớ', () => {
+    const { container } = renderPage()
+    const grid = () => container.querySelector('#games')!
+    expect(grid().classList.contains('compact')).toBe(true)
+    expect(screen.getByRole('button', { name: en('games.viewCompact') })).toHaveAttribute('aria-pressed', 'true')
+    fireEvent.click(screen.getByRole('button', { name: en('games.viewCards') }))
+    expect(grid().classList.contains('compact')).toBe(false)
+    expect(localStorage.getItem('game-portal-view-v1')).toBe('cards')
+    cleanup()
+    const again = renderPage()
+    expect(again.container.querySelector('#games')!.classList.contains('compact')).toBe(false)
+  })
+
+  it('sắp xếp mới nhất: cùng ngày thêm thì game đứng sau trong danh mục (thêm sau) lên trước', () => {
+    const { container } = renderPage()
+    fireEvent.change(screen.getByRole('combobox', { name: en('games.sort') }), { target: { value: 'newest' } })
+    const latest = GAMES.reduce((a, g) => (g.addedAt >= a.addedAt ? g : a))
+    expect(visibleNames(container)[0]).toBe(latest.name.en)
+  })
+
   it('ô tìm kiếm lọc theo tên', () => {
     const { container } = renderPage()
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'sudoku' } })

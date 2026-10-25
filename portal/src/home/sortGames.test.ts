@@ -16,8 +16,8 @@ describe('sortGames', () => {
   it('order: giữ thứ tự gốc', () => {
     expect(ids(sortGames(list, 'order', ctx))).toEqual(['aa', 'bb', 'cc', 'dd'])
   })
-  it('newest: ngày thêm mới trước, cùng ngày giữ thứ tự gốc', () => {
-    expect(ids(sortGames(list, 'newest', ctx))).toEqual(['bb', 'dd', 'cc', 'aa'])
+  it('newest: ngày thêm mới trước, cùng ngày thì game đứng sau trong danh mục (thêm sau) trước', () => {
+    expect(ids(sortGames(list, 'newest', ctx))).toEqual(['dd', 'bb', 'cc', 'aa'])
   })
   it('plays: lượt chơi nhiều trước, thiếu số liệu tính 0', () => {
     expect(ids(sortGames(list, 'plays', { ...ctx, totals: { cc: 9, aa: 3 } }))).toEqual(['cc', 'aa', 'bb', 'dd'])

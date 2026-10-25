@@ -11,9 +11,11 @@ type Ctx = { totals: Record<string, number>; ratings: Record<string, RatingSumma
 export function sortGames(list: GameDef[], key: SortKey, { totals, ratings, lang }: Ctx): GameDef[] {
   const name = (g: GameDef) => g.name[lang] ?? g.name.en
   const collator = new Intl.Collator(lang === 'vi' ? 'vi-VN' : 'en-US', { sensitivity: 'base' })
+  const pos = new Map(list.map((g, i) => [g.id, i]))
   const by: Record<SortKey, (a: GameDef, b: GameDef) => number> = {
     order: () => 0,
-    newest: (a, b) => b.addedAt.localeCompare(a.addedAt),
+    // Cả chục game thêm cùng ngày: game đứng sau trong danh mục là game thêm sau.
+    newest: (a, b) => b.addedAt.localeCompare(a.addedAt) || pos.get(b.id)! - pos.get(a.id)!,
     plays: (a, b) => (totals[b.id] ?? 0) - (totals[a.id] ?? 0),
     rating: (a, b) => {
       const ra = ratings[a.id]

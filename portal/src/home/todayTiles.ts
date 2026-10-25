@@ -1,6 +1,6 @@
 import type { I18nApi } from '../i18n/i18n'
 import { GAMES, gameById, type GameDef } from '../games/catalog'
-import { isNewGame } from '../games/manifest'
+import { newestIds } from '../games/manifest'
 import type { SudokuData } from '../data/sudoku'
 import { SUDOKU_DIFF } from '../data/sudoku'
 import type { XqData } from '../data/xiangqi'
@@ -111,7 +111,8 @@ export function buildTodayTiles({ sd, xq, rec, sums, now, i18n, hiddenIds }: Inp
     }
   })
 
-  const tried = GAMES.filter((g) => isNewGame(g, now.getTime()) && !rec[g.id])
+  // Game mới nhất trước: cổng thêm cả chục game một lượt, gợi ý game vừa ra chứ không phải game đầu danh mục.
+  const tried = [...newestIds(GAMES, now.getTime())].map((id) => gameById(id)!).filter((g) => !rec[g.id] && !hiddenIds?.has(g.id))
   if (tried.length) {
     const g = tried[0]
     extras.push({

@@ -3,6 +3,7 @@ import { useCloudStatus } from '../data/useCloudSync'
 import { useI18n } from '../i18n/i18n'
 import { usePoints } from '../leaderboards/usePoints'
 import { historyHref } from '../player/route'
+import { authErrorKind, takeUrlAuthError, type AuthErrorKind } from '../server/authError'
 import { rememberReturnHash } from '../server/returnHash'
 import { useServer } from '../server/ServerProvider'
 
@@ -64,8 +65,14 @@ export function AuthButton() {
   const { t } = useI18n()
   const { api, user, authReady } = useServer()
   const [open, setOpen] = useState(false)
-  const [failed, setFailed] = useState(false)
+  const [error, setError] = useState<AuthErrorKind | null>(null)
   const ref = useRef<HTMLDivElement>(null)
+
+  // Quay về từ Google mà đăng nhập / liên kết bị từ chối: Supabase báo lỗi trên URL, cổng phải nói ra thay vì im lặng.
+  useEffect(() => {
+    const kind = takeUrlAuthError()
+    if (kind) setError(kind)
+  }, [])
 
   useEffect(() => {
     if (!open) return
@@ -86,9 +93,14 @@ export function AuthButton() {
   if (!api || !authReady) return null
 
   const run = (fn: () => Promise<void>) => {
-    setFailed(false)
-    fn().catch(() => setFailed(true))
+    setError(null)
+    fn().catch((e: unknown) => setError(authErrorKind(e instanceof Error ? e.message : String(e))))
   }
+  const alert = error && (
+    <span className="auth-error" role="alert">
+      {t(error === 'linkDisabled' ? 'auth.linkDisabled' : error === 'alreadyLinked' ? 'auth.alreadyLinked' : 'auth.failed')}
+    </span>
+  )
 
   if (!user) {
     return (
@@ -115,11 +127,7 @@ export function AuthButton() {
             {t('auth.guestShort')}
           </span>
         </button>
-        {failed && (
-          <span className="auth-error" role="alert">
-            {t('auth.failed')}
-          </span>
-        )}
+        {alert}
       </>
     )
   }
@@ -134,7 +142,10 @@ export function AuthButton() {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={`${t('auth.menu')}: ${user.displayName}`}
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => {
+          setError(null)
+          setOpen((o) => !o)
+        }}
       >
         {avatar ? <img src={avatar} alt="" referrerPolicy="no-referrer" /> : <span aria-hidden="true">{initial}</span>}
       </button>
@@ -199,11 +210,7 @@ export function AuthButton() {
           )}
         </div>
       )}
-      {failed && (
-        <span className="auth-error" role="alert">
-          {t('auth.failed')}
-        </span>
-      )}
+      {alert}
     </div>
   )
 }

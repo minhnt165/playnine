@@ -22,6 +22,12 @@ describe('ribbonFor', () => {
     expect(ribbonFor(fresh, { openIds: none, rec: {}, t, now })).toEqual([t('ribbon.new'), t('ribbon.new')])
     expect(ribbonFor(fresh, { openIds: none, lastId: 'x', rec: { co9o: 1 }, t, now })).toBeNull()
   })
+  it('có newIds: game mới nhưng không nằm trong nhóm mới nhất thì không có ribbon.new', () => {
+    const now = Date.parse('2026-10-23T09:00:00Z')
+    const fresh = { ...g('co9o'), addedAt: '2026-10-20' }
+    expect(ribbonFor(fresh, { openIds: none, rec: {}, t, now, newIds: new Set(['sudoku']) })).toBeNull()
+    expect(ribbonFor(fresh, { openIds: none, rec: {}, t, now, newIds: new Set(['co9o']) })).toEqual([t('ribbon.new'), t('ribbon.new')])
+  })
   it('game thêm quá 14 ngày: không còn ribbon.new', () => {
     const fresh = { ...g('co9o'), addedAt: '2026-10-20' }
     expect(ribbonFor(fresh, { openIds: none, rec: {}, t, now: Date.parse('2026-11-10T09:00:00Z') })).toBeNull()

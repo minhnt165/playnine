@@ -7,7 +7,6 @@ import './styles/portal.css'
 import './styles/events.css'
 import './styles/server.css'
 import './styles/admin.css'
-import './styles/gamemenu.css'
 import './styles/favorites.css'
 import './styles/history.css'
 

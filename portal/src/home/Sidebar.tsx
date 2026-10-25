@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { recent } from '../data/recent'
 import { isHidden } from '../events/model'
 import { gameById, type GameDef } from '../games/catalog'
@@ -7,7 +7,6 @@ import { detailHref } from '../player/route'
 import { useServer } from '../server/ServerProvider'
 import { BrandMark } from './BrandMark'
 import { useFavoriteGames } from './FavoriteRow'
-import { GameMenu } from './GameMenu'
 
 const MAX_RECENT = 5
 
@@ -67,7 +66,6 @@ function sectionOf(hash: string, profileHref: string | null): string | null {
 /** Thanh điều hướng bên trái (máy tính) / thanh tab dưới đáy (điện thoại), kèm danh sách game chơi gần đây. */
 export function Sidebar() {
   const { t, loc } = useI18n()
-  const [menuOpen, setMenuOpen] = useState(false)
   const favs = useFavoriteGames().slice(0, MAX_RECENT)
   const { api, user, games } = useServer()
   // Sidebar vẽ lại cùng trang mỗi lần đổi route hoặc quay về từ game nên đọc hash và `recent` lúc vẽ là đủ.
@@ -104,10 +102,7 @@ export function Sidebar() {
       </a>
       <nav className="sidenav-links" aria-label={t('nav.label')}>
         {item('home', '#/', ICON_HOME, t('nav.home'))}
-        <button type="button" className="sidenav-games" aria-haspopup="dialog" aria-expanded={menuOpen} aria-current={section === 'games' ? 'page' : undefined} onClick={() => setMenuOpen(true)}>
-          {ICON_GAMES}
-          <span>{t('nav.games')}</span>
-        </button>
+        {item('games', '#/games', ICON_GAMES, t('nav.games'))}
         {api && item('leaderboards', '#/leaderboards', ICON_BOARDS, t('nav.leaderboards'), t('nav.leaderboardsShort'))}
         {api && item('events', '#/events', ICON_EVENTS, t('ev.title'))}
         {api && item('news', '#/news', ICON_NEWS, t('news.title'))}
@@ -143,7 +138,6 @@ export function Sidebar() {
           </ul>
         </section>
       )}
-      {menuOpen && <GameMenu onClose={() => setMenuOpen(false)} />}
     </aside>
   )
 }

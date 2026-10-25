@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isNewGame, parseManifest } from './manifest'
+import { isNewGame, newestIds, parseManifest } from './manifest'
 
 const ok = (): any => ({
   id: 'abc',
@@ -63,5 +63,22 @@ describe('isNewGame', () => {
     expect(isNewGame({ addedAt: '2026-10-09' }, now)).toBe(true)
     expect(isNewGame({ addedAt: '2026-10-08' }, now)).toBe(false)
     expect(isNewGame({ addedAt: '2026-10-24' }, now)).toBe(false)
+  })
+})
+
+describe('newestIds', () => {
+  const now = Date.parse('2026-10-25T12:00:00Z')
+  const list = [
+    { id: 'a', addedAt: '2026-10-20' },
+    { id: 'b', addedAt: '2026-10-24' },
+    { id: 'c', addedAt: '2026-10-24' },
+    { id: 'd', addedAt: '2026-10-01' },
+    { id: 'e', addedAt: '2026-10-23' },
+  ]
+  it('chỉ lấy n game mới nhất: ngày thêm sau trước, cùng ngày thì game đứng sau trong danh mục trước', () => {
+    expect([...newestIds(list, now, 3)]).toEqual(['c', 'b', 'e'])
+  })
+  it('bỏ game đã quá NEW_DAYS ngày dù còn chỗ', () => {
+    expect([...newestIds(list, now, 10)]).toEqual(['c', 'b', 'e', 'a'])
   })
 })

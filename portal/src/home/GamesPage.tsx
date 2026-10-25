@@ -28,11 +28,17 @@ const initialSort = (): SortKey => {
   return SORT_KEYS.includes(v as SortKey) ? (v as SortKey) : 'order'
 }
 
+// Cả trăm game: mặc định xem gọn (icon + tên), ai muốn ảnh xem trước thì bật "Thẻ lớn".
+const VIEW_KEY = 'game-portal-view-v1'
+type View = 'compact' | 'cards'
+const initialView = (): View => (readRaw(VIEW_KEY) === 'cards' ? 'cards' : 'compact')
+
 /** Trang #/games: mọi game, lọc theo thể loại, tìm theo tên và sắp xếp (trang chủ chỉ hiện một phần). */
 export function GamesPage({ onThemeApplied }: { onThemeApplied?: () => void }) {
   const { t, lang } = useI18n()
   const [query, setQuery] = useState('')
   const [sort, setSort] = useState<SortKey>(initialSort)
+  const [view, setView] = useState<View>(initialView)
   const totals = usePlayTotals()
   const ratings = useRatingSummary()
   // Đổi cách sắp xếp thì không chạy lại hiệu ứng xuất hiện của thẻ
@@ -59,6 +65,21 @@ export function GamesPage({ onThemeApplied }: { onThemeApplied?: () => void }) {
       <main className="games-page">
         <div className="games-page-head">
           <h1 className="ev-heading">{t('games.all')}</h1>
+          <div className="games-view" role="group" aria-label={t('games.view')}>
+            {(['compact', 'cards'] as const).map((v) => (
+              <button
+                key={v}
+                type="button"
+                aria-pressed={view === v}
+                onClick={() => {
+                  setView(v)
+                  write(VIEW_KEY, v)
+                }}
+              >
+                {t(v === 'compact' ? 'games.viewCompact' : 'games.viewCards')}
+              </button>
+            ))}
+          </div>
           <label className="games-sort">
             <span>{t('games.sort')}</span>
             <select
@@ -78,7 +99,7 @@ export function GamesPage({ onThemeApplied }: { onThemeApplied?: () => void }) {
             </select>
           </label>
         </div>
-        <GameGrid {...data} openIds={new Set()} query={query} onClearQuery={() => setQuery('')} totals={totals} ratings={ratings} list={list} />
+        <GameGrid {...data} openIds={new Set()} query={query} onClearQuery={() => setQuery('')} totals={totals} ratings={ratings} list={list} compact={view === 'compact'} />
       </main>
     </div>
   )

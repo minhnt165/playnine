@@ -56,6 +56,32 @@ describe('Tài khoản khách', () => {
     await waitFor(() => expect(api.calls.some((c) => c.method === 'signInWithGoogle')).toBe(true))
   })
 
+  it('liên kết Google lỗi ngay (server chưa bật manual linking): khách thấy thông báo rõ ràng', async () => {
+    const api = createFakeApi({ user: GUEST })
+    api.fail('linkGoogle', new Error('linkGoogle: Manual linking is disabled'))
+    mount(api)
+    fireEvent.click(await screen.findByRole('button', { name: /Guest-ABCD/ }))
+    fireEvent.click(screen.getByRole('menuitem', { name: new RegExp(en('auth.link')) }))
+    expect(await screen.findByRole('alert')).toHaveTextContent(en('auth.linkDisabled'))
+  })
+
+  it('quay về từ Google với lỗi "identity already exists": báo tài khoản Google đã có và dọn tham số lỗi trên URL', async () => {
+    history.replaceState(null, '', '?error=server_error&error_code=identity_already_exists&error_description=Identity+is+already+linked+to+another+user#/play/2048')
+    const api = createFakeApi({ user: GUEST })
+    mount(api)
+    expect(await screen.findByRole('alert')).toHaveTextContent(en('auth.alreadyLinked'))
+    expect(location.search).toBe('')
+    expect(location.hash).toBe('#/play/2048')
+    history.replaceState(null, '', location.pathname)
+  })
+
+  it('lỗi khác khi quay về từ Google: thông báo lỗi chung', async () => {
+    history.replaceState(null, '', '?error=access_denied&error_description=User+cancelled')
+    mount(createFakeApi({}))
+    expect(await screen.findByRole('alert')).toHaveTextContent(en('auth.failed'))
+    expect(location.search).toBe('')
+  })
+
   it('menu hiện điểm tuần và tổng điểm kèm hạng', async () => {
     const api = createFakeApi({ user: GUEST, points: { g1: { week: { points: 120, rank: 4 }, all: { points: 980, rank: null } } } })
     mount(api)

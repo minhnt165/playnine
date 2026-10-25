@@ -29,6 +29,11 @@
 }
 .auth-menu a:hover, .auth-menu button:hover { background: var(--chip); }
 .auth-error { color: var(--fire); font-size: .8rem; }
+/* Đã đăng nhập (avatar): lỗi hiện thành bong bóng dưới avatar để không đẩy lệch thanh trên */
+.auth-wrap > .auth-error {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 30; width: max-content; max-width: min(320px, 80vw);
+  padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-solid); box-shadow: var(--shadow); line-height: 1.45;
+}
 
 /* Dòng trạng thái ghi điểm dưới thanh player và thông báo nổi. */
 .play-status {

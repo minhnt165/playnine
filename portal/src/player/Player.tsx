@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { GameToPortal } from '@playnine/sdk/protocol'
 import { SOUND_KEY } from '@playnine/sdk/sound'
+import { useFavorites } from '../data/favorites'
+import { recent } from '../data/recent'
 import { sudokuData } from '../data/sudoku'
 import { readSummary } from '../data/summary'
 import { CATS, gameById, GAMES, type Cat, type GameDef } from '../games/catalog'
@@ -13,6 +15,7 @@ import { useServer } from '../server/ServerProvider'
 import { useGameBridge } from './bridge'
 import { Toast, type Notice } from './Toast'
 import { gameHref, playHref } from './route'
+import { switchList } from './switchList'
 
 type Props = {
   /** Game đang mở; null khi ở trang chủ. */
@@ -36,6 +39,7 @@ export function Player({ game, heldIds, portalSeen }: Props) {
   gameRef.current = game
   const gameId = game?.id ?? null
   const name = game ? loc(game.name) : ''
+  const { ids: favIds } = useFavorites()
 
   // Cầu nối game ↔ server: RunManager tạo một lần, đọc người dùng hiện tại qua ref.
   const { api, user, authReady } = useServer()
@@ -210,7 +214,7 @@ export function Player({ game, heldIds, portalSeen }: Props) {
           {streak ? t('player.streak', { n: streak }) : ''}
         </span>
         <div className="pswitch" id="p-switch" aria-label={t('player.switch')}>
-          {GAMES.map((x) => (
+          {switchList(GAMES, gameId, recent(), favIds).map((x) => (
             <button
               key={x.id}
               type="button"

@@ -27,10 +27,6 @@
 /* Trang chi tiết: nút có chữ cạnh "Chơi ngay" */
 .detail-fav { width: auto; gap: 6px; padding: 0 14px; border-radius: 999px; font: inherit; font-size: .88rem; font-weight: 700; grid-auto-flow: column; height: 40px; }
 
-/* Menu game: trái tim nhỏ giữa tên game và nút chơi */
-.gmenu-fav { width: 36px; height: 36px; border-color: transparent; background: none; }
-.gmenu-fav:not(.on) { opacity: .7; }
-
 .fav-row { margin: 22px 0 26px; }
 .fav-row-icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: -3px; fill: #ff4d7d; }
 

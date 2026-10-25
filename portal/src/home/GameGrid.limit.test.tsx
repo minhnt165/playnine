@@ -1,6 +1,7 @@
 import { cleanup, render, waitFor } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { NEW_MAX } from '../games/manifest'
 import { I18nProvider } from '../i18n/i18n'
 import { createFakeApi } from '../server/fakeApi'
 import { ServerProvider } from '../server/ServerProvider'
@@ -13,14 +14,15 @@ vi.mock('../games/catalog', async (importOriginal) => {
   const base = real.gameById('2048')!
   const GAMES = Array.from({ length: 30 }, (_, i) => {
     const word = i < 26 ? 'Alpha' : 'Beta'
-    return { ...base, id: 'g' + i, dir: 'g' + i + '/', name: { en: word + ' ' + i, vi: word + ' ' + i }, sub: { en: 's', vi: 's' }, tags: { en: ['x'], vi: ['x'] } }
+    // Cả 30 game thêm cùng ngày, ngay trước `now` của lưới: đều là game "mới".
+    return { ...base, id: 'g' + i, dir: 'g' + i + '/', addedAt: '2026-12-30', name: { en: word + ' ' + i, vi: word + ' ' + i }, sub: { en: 's', vi: 's' }, tags: { en: ['x'], vi: ['x'] } }
   })
   return { ...real, GAMES, gameById: (id: string) => GAMES.find((g) => g.id === id) }
 })
 
 afterEach(cleanup)
 
-const grid = (props: { query?: string } = {}, api: ReturnType<typeof createFakeApi> | null = null): ReactNode => (
+const grid = (props: { query?: string; limit?: number; compact?: boolean } = {}, api: ReturnType<typeof createFakeApi> | null = null): ReactNode => (
   <I18nProvider>
     <ServerProvider api={api}>
       <GameGrid sd={emptySd()} xq={{ level: null } as never} rec={{}} sums={{}} openIds={new Set()} now={new Date(2027, 0, 1)} limit={24} {...props} />
@@ -45,6 +47,19 @@ describe('GameGrid limit', () => {
     const { container } = render(grid({ query: 'alpha' }))
     expect(visible(container)).toHaveLength(26)
     expect(container.querySelector('a.games-more')).toBeNull()
+  })
+
+  it('nhiều game cùng mới: nhãn "Mới" chỉ ở NEW_MAX game đứng cuối danh mục', () => {
+    const { container } = render(grid({ limit: undefined }))
+    const marked = [...container.querySelectorAll('#games > li')].filter((li) => li.querySelector('.ribbon-new'))
+    expect(marked).toHaveLength(NEW_MAX)
+    expect(marked[0].querySelector('a.card')!.getAttribute('href')).toBe('#/game/g' + (30 - NEW_MAX))
+  })
+
+  it('compact: lưới có lớp compact (trang #/games xem gọn)', () => {
+    const { container } = render(grid({ limit: undefined, compact: true }))
+    expect(container.querySelector('#games')!.classList.contains('compact')).toBe(true)
+    expect(container.querySelectorAll('#games > li')).toHaveLength(30)
   })
 
   it('game bị admin ẩn không chiếm suất trong 24 thẻ', async () => {

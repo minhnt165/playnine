@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import type { ServerApi } from './api'
 import { restoreReturnHash } from './returnHash'
 import { lazyApi } from './lazyApi'
+import { loadOrReload } from '../lib/chunkReload'
 import type { AuthUser, GameMeta } from './types'
 
 export type ServerCtx = {
@@ -22,7 +23,7 @@ function defaultApi(): ServerApi | null {
   const url = import.meta.env.VITE_SUPABASE_URL
   const key = import.meta.env.VITE_SUPABASE_ANON_KEY
   // supabase-js chỉ được tải khi cổng gọi server lần đầu (ngay sau lần vẽ đầu), không nằm trong bundle chính.
-  return url && key ? lazyApi(() => import('./supabaseApi').then((m) => m.createSupabaseApi(url, key))) : null
+  return url && key ? lazyApi(() => loadOrReload(() => import('./supabaseApi')).then((m) => m.createSupabaseApi(url, key))) : null
 }
 
 let sharedApi: ServerApi | null | undefined

@@ -16,18 +16,20 @@ import { useServer } from './server/ServerProvider'
 import { isPlaying } from './player/playing'
 import { parseRoute, type Route } from './player/route'
 import { useShortcuts } from './player/useShortcuts'
+import { loadOrReload } from './lib/chunkReload'
 
 // Trang phụ tải lười để bundle trang chủ nhẹ (Lighthouse điện thoại); trang chủ và Player vẫn nạp sẵn.
-const AdminPage = lazy(() => import('./admin/AdminPage').then((m) => ({ default: m.AdminPage })))
-const GamePage = lazy(() => import('./detail/GamePage').then((m) => ({ default: m.GamePage })))
-const EventPage = lazy(() => import('./events/EventPage').then((m) => ({ default: m.EventPage })))
-const EventsPage = lazy(() => import('./events/EventsPage').then((m) => ({ default: m.EventsPage })))
-const GamesPage = lazy(() => import('./home/GamesPage').then((m) => ({ default: m.GamesPage })))
-const HistoryPage = lazy(() => import('./history/HistoryPage').then((m) => ({ default: m.HistoryPage })))
-const LeaderboardsPage = lazy(() => import('./leaderboards/LeaderboardsPage').then((m) => ({ default: m.LeaderboardsPage })))
-const NewsPage = lazy(() => import('./news/NewsPage').then((m) => ({ default: m.NewsPage })))
-const PostPage = lazy(() => import('./news/PostPage').then((m) => ({ default: m.PostPage })))
-const ProfilePage = lazy(() => import('./profile/ProfilePage').then((m) => ({ default: m.ProfilePage })))
+// loadOrReload: file JS của bản cũ đã bị xóa sau deploy thì tải lại trang một lần.
+const AdminPage = lazy(() => loadOrReload(() => import('./admin/AdminPage')).then((m) => ({ default: m.AdminPage })))
+const GamePage = lazy(() => loadOrReload(() => import('./detail/GamePage')).then((m) => ({ default: m.GamePage })))
+const EventPage = lazy(() => loadOrReload(() => import('./events/EventPage')).then((m) => ({ default: m.EventPage })))
+const EventsPage = lazy(() => loadOrReload(() => import('./events/EventsPage')).then((m) => ({ default: m.EventsPage })))
+const GamesPage = lazy(() => loadOrReload(() => import('./home/GamesPage')).then((m) => ({ default: m.GamesPage })))
+const HistoryPage = lazy(() => loadOrReload(() => import('./history/HistoryPage')).then((m) => ({ default: m.HistoryPage })))
+const LeaderboardsPage = lazy(() => loadOrReload(() => import('./leaderboards/LeaderboardsPage')).then((m) => ({ default: m.LeaderboardsPage })))
+const NewsPage = lazy(() => loadOrReload(() => import('./news/NewsPage')).then((m) => ({ default: m.NewsPage })))
+const PostPage = lazy(() => loadOrReload(() => import('./news/PostPage')).then((m) => ({ default: m.PostPage })))
+const ProfilePage = lazy(() => loadOrReload(() => import('./profile/ProfilePage')).then((m) => ({ default: m.ProfilePage })))
 
 const currentGame = (): GameDef | null => {
   const r = parseRoute(location.hash)

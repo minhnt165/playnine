@@ -107,3 +107,13 @@ export function isNewGame(g: { addedAt: string }, now: number): boolean {
   if (t === null || t > now) return false
   return now - t < (NEW_DAYS + 1) * DAY
 }
+
+/** Số game tối đa mang nhãn "Mới": cổng thêm hàng chục game một lượt, nhãn chỉ có nghĩa khi dành cho vài game mới nhất. */
+export const NEW_MAX = 12
+
+/** Id của tối đa `n` game mới (isNewGame), mới nhất trước; cùng ngày thêm thì game đứng sau trong danh sách trước. */
+export function newestIds(list: { id: string; addedAt: string }[], now: number, n = NEW_MAX): Set<string> {
+  const fresh = list.map((g, i) => ({ g, i })).filter(({ g }) => isNewGame(g, now))
+  fresh.sort((a, b) => b.g.addedAt.localeCompare(a.g.addedAt) || b.i - a.i)
+  return new Set(fresh.slice(0, n).map(({ g }) => g.id))
+}

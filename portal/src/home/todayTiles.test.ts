@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { GAMES } from '../games/catalog'
+import { newestIds } from '../games/manifest'
 import { buildTodayTiles } from './todayTiles'
 import { emptySd, getI18n, sum } from './testUtil'
 
@@ -24,6 +25,14 @@ describe('buildTodayTiles', () => {
     expect(fresh.some((x) => x.badge === 'new')).toBe(true)
     const later = buildTodayTiles({ ...base(), now: new Date(2026, 11, 1, 10, 0), hiddenIds })
     expect(later.some((x) => x.badge === 'new')).toBe(false)
+  })
+
+  it('ô "Thử game mới" gợi ý game mới nhất chưa chơi, không phải game đầu danh mục', () => {
+    const hiddenIds = new Set(['sudoku', ...DAILY_IDS])
+    const [newest, second] = [...newestIds(GAMES, now.getTime())].filter((id) => !hiddenIds.has(id))
+    const tile = (rec: Record<string, number>) => buildTodayTiles({ ...base(), rec, hiddenIds }).find((x) => x.badge === 'new')
+    expect(tile({})?.game.id).toBe(newest)
+    expect(tile({ [newest]: 1 })?.game.id).toBe(second)
   })
 
   it('game có daily nhưng hôm nay chưa mở: thẻ daily với tiêu đề loc(g.daily)', () => {

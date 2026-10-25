@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { isHidden } from '../events/model'
 import { CATS, GAMES, type GameDef } from '../games/catalog'
+import { newestIds } from '../games/manifest'
 import type { SudokuData } from '../data/sudoku'
 import type { XqData } from '../data/xiangqi'
 import { XQ_LEVEL } from '../data/xiangqi'
@@ -44,12 +45,15 @@ type Props = {
   list?: GameDef[]
   /** Hiện tối đa bấy nhiêu thẻ (khi không tìm kiếm) kèm nút "Xem tất cả" tới #/games. */
   limit?: number
+  /** Thẻ gọn (không ảnh xem trước) cho trang #/games có cả trăm game. */
+  compact?: boolean
 }
 
-export function GameGrid({ sd, xq, rec, sums, openIds, now, query = '', onClearQuery, totals = {}, ratings = {}, list = GAMES, limit }: Props) {
+export function GameGrid({ sd, xq, rec, sums, openIds, now, query = '', onClearQuery, totals = {}, ratings = {}, list = GAMES, limit, compact = false }: Props) {
   const { t, loc } = useI18n()
   const [filter, setFilter] = useState<FilterKey>(initialFilter)
   const lastId = lastPlayedId(rec)
+  const newIds = newestIds(GAMES, now.getTime())
   const listRef = useRef<HTMLUListElement>(null)
   const { api, games } = useServer()
   // Game bị admin ẩn thì bỏ hẳn khỏi lưới (phím số vẫn dùng chỉ số gốc trong GAMES).
@@ -85,7 +89,7 @@ export function GameGrid({ sd, xq, rec, sums, openIds, now, query = '', onClearQ
           }}
         />
       </div>
-      <ul className="games" id="games" ref={listRef}>
+      <ul className={'games' + (compact ? ' compact' : '')} id="games" ref={listRef}>
         {cards.map((g) => (
           <GameCard
             key={g.id}
@@ -94,7 +98,7 @@ export function GameGrid({ sd, xq, rec, sums, openIds, now, query = '', onClearQ
             hidden={false}
             plays={api ? totals[g.id] : undefined}
             rating={ratings[g.id]}
-            ribbon={ribbonFor(g, { openIds, lastId, rec, t, now: now.getTime() })}
+            ribbon={ribbonFor(g, { openIds, lastId, rec, t, now: now.getTime(), newIds })}
             note={notes[g.id] || (sums[g.id]?.note ? String(sums[g.id].note) : loc(g.note))}
           />
         ))}
