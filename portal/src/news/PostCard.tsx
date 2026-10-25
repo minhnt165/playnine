@@ -1,5 +1,6 @@
 import { localized } from '../events/model'
 import { gameById } from '../games/catalog'
+import { previewBg } from '../home/GamePreview'
 import { useI18n } from '../i18n/i18n'
 import { postHref } from '../player/route'
 import type { Post } from '../server/types'
@@ -8,7 +9,7 @@ import type { Post } from '../server/types'
 export function PostCover({ post, className }: { post: Post; className: string }) {
   const game = post.gameId ? gameById(post.gameId) : undefined
   return (
-    <span className={className + (game ? ' pv-' + game.id : ' post-cover-brand')} aria-hidden="true">
+    <span className={className + (game ? ' pv-' + game.id : ' post-cover-brand')} style={game && previewBg(game)} aria-hidden="true">
       {game ? <span className="card-icon" dangerouslySetInnerHTML={{ __html: game.icon(game.dir) }} /> : <span className="post-cover-mark">9</span>}
     </span>
   )

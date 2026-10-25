@@ -5,6 +5,7 @@ import { useI18n } from '../i18n/i18n'
 import { formatCount } from '../lib/format'
 import { detailHref } from '../player/route'
 import { useServer } from '../server/ServerProvider'
+import { previewBg } from './GamePreview'
 
 const MAX = 5
 
@@ -37,8 +38,8 @@ export function MostPlayed({ totals, title, n = MAX }: { totals: Record<string, 
               <span className="most-rank" aria-hidden="true">
                 {i + 1}
               </span>
-              {/* Bìa dùng nền màu riêng của game (lớp pv-<id>) và icon lớn, không chạy preview động */}
-              <span className={'most-cover pv-' + game.id}>
+              {/* Bìa dùng nền màu riêng của game (lớp pv-<id> hoặc preview.bg) và icon lớn, không chạy preview động */}
+              <span className={'most-cover pv-' + game.id} style={previewBg(game)}>
                 <span className="card-icon" aria-hidden="true" dangerouslySetInnerHTML={{ __html: game.icon(game.dir) }} />
                 <span className="most-plays">{t('card.plays', { n: formatCount(plays, locale) })}</span>
               </span>

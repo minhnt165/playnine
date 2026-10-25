@@ -5,6 +5,7 @@ import { useI18n } from '../i18n/i18n'
 import { detailHref } from '../player/route'
 import { formatCount } from '../lib/format'
 import { FavButton } from './FavButton'
+import { GamePreview } from './GamePreview'
 import { canHover, prefersReducedMotion } from './media'
 
 type Props = {
@@ -47,14 +48,7 @@ export function GameCard({ game: g, index: i, ribbon, note, hidden, plays, ratin
         onPointerMove={tilt ? onMove : undefined}
         onPointerLeave={tilt ? onLeave : undefined}
       >
-        {/* Game mới có preview.svg tĩnh (tải lười); game cũ dùng preview JS gắn theo data-game. */}
-        <div
-          className={'preview pv-' + g.id}
-          data-game={g.preview ? undefined : g.id}
-          style={g.preview ? { background: g.preview.bg } : undefined}
-          aria-hidden="true"
-        >
-          {g.preview && <img className="pv-img" src={g.dir + 'preview.svg'} alt="" loading="lazy" decoding="async" />}
+        <GamePreview g={g}>
           {ribbon && (
             // Gần như mọi game đều "Mới" nên nhãn này nhạt hơn nhãn "đang mở"/"gần nhất".
             <span className={'ribbon' + (ribbon[0] === t('ribbon.new') ? ' ribbon-new' : '')}>
@@ -63,7 +57,7 @@ export function GameCard({ game: g, index: i, ribbon, note, hidden, plays, ratin
             </span>
           )}
           {i < 9 && <span className="kbd">{i + 1}</span>}
-        </div>
+        </GamePreview>
         <div className="card-body">
           <div className="card-head">
             <div className="card-icon" dangerouslySetInnerHTML={{ __html: g.icon(g.dir) }} />

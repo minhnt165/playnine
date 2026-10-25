@@ -12,6 +12,7 @@ import { detailHref, playHref } from '../player/route'
 import { rememberReturnHash } from '../server/returnHash'
 import { useServer } from '../server/ServerProvider'
 import { FavButton } from '../home/FavButton'
+import { GamePreview, previewBg } from '../home/GamePreview'
 import { GameRating } from './GameRating'
 import { similarGames } from './similar'
 
@@ -58,7 +59,7 @@ export function GamePage({ game, refreshKey, onThemeApplied }: Props) {
           {t('profile.back')}
         </a>
         <div className="detail-hero" ref={hero}>
-          <div className={'preview detail-preview pv-' + game.id} data-game={game.id} aria-hidden="true" />
+          <GamePreview key={game.id} g={game} className="detail-preview" eager />
           <div className="detail-info">
             <section className="detail-head">
               <span className="card-icon" dangerouslySetInnerHTML={{ __html: game.icon(game.dir) }} />
@@ -123,7 +124,7 @@ export function GamePage({ game, refreshKey, onThemeApplied }: Props) {
               {similar.map((g) => (
                 <li key={g.id}>
                   <a className="similar-item" href={detailHref(g)}>
-                    <span className={'similar-cover pv-' + g.id}>
+                    <span className={'similar-cover pv-' + g.id} style={previewBg(g)}>
                       <span className="card-icon" aria-hidden="true" dangerouslySetInnerHTML={{ __html: g.icon(g.dir) }} />
                     </span>
                     <span className="similar-name">{loc(g.name)}</span>

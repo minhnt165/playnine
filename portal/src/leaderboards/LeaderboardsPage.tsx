@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { GAMES } from '../games/catalog'
+import { previewBg } from '../home/GamePreview'
 import { Topbar } from '../home/Topbar'
 import { useI18n } from '../i18n/i18n'
 import { readRaw, write } from '../lib/storage'
@@ -76,7 +77,7 @@ export function LeaderboardsPage({ onThemeApplied }: { onThemeApplied?: () => vo
                 </div>
                 {selected && (
                   <div className="lbs-game-panel">
-                    <div className={'lbs-game-hero pv-' + selected.id}>
+                    <div className={'lbs-game-hero pv-' + selected.id} style={previewBg(selected)}>
                       <span className="card-icon" aria-hidden="true" dangerouslySetInnerHTML={{ __html: selected.icon(selected.dir) }} />
                       <span className="lbs-game-hero-text">
                         <b>{loc(selected.name)}</b>

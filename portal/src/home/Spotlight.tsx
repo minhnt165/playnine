@@ -6,6 +6,7 @@ import { greetingKey } from '../lib/time'
 import { isPlaying } from '../player/playing'
 import { detailHref, playHref } from '../player/route'
 import { featuredGames } from './featured'
+import { GamePreview } from './GamePreview'
 import { prefersReducedMotion } from './media'
 
 /** Băng lớn đầu trang chủ: lời chào, tiêu đề và một game nổi bật của hôm nay (chọn được trong 5 game). */
@@ -27,7 +28,7 @@ export function Spotlight({ now, games }: { now: Date; games: GameDef[] }) {
   return (
     <section className="spotlight reveal" style={{ '--i': 1 } as CSSProperties}>
       <div className="spot-media" ref={media}>
-        {g && <div className={'preview pv-' + g.id} data-game={g.id} aria-hidden="true" />}
+        {g && <GamePreview key={g.id} g={g} eager />}
       </div>
       <div className="spot-body">
         <p className="greet" id="greet">

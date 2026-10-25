@@ -38,6 +38,21 @@ describe('GamePage', () => {
     expect(screen.getByRole('link', { name: new RegExp(en('detail.play')) })).toHaveAttribute('href', '#/play/2048')
   })
 
+  it('game mới (preview.svg): ô xem trước lớn có ảnh và nền riêng, game tương tự có nền bìa', () => {
+    const bia = gameById('bia')!
+    const { container } = mount(null, bia)
+    const hero = container.querySelector('.detail-preview') as HTMLElement
+    expect(hero.querySelector('img.pv-img')!.getAttribute('src')).toBe(bia.dir + 'preview.svg')
+    expect(hero.style.background).not.toBe('')
+    const covers = [...container.querySelectorAll<HTMLElement>('.similar-cover')]
+    expect(covers.length).toBeGreaterThan(0)
+    // Game tương tự cũng là game mới thì bìa phải có nền riêng (không có lớp pv-<id> trong CSS).
+    for (const c of covers) {
+      const id = [...c.classList].find((k) => k.startsWith('pv-'))!.slice(3)
+      if (gameById(id)!.preview) expect(c.style.background).not.toBe('')
+    }
+  })
+
   it('có server: hiện bảng xếp hạng với các hàng', async () => {
     const api = createFakeApi({
       games: GAMES,
