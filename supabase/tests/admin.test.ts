@@ -140,7 +140,8 @@ describe('admin_save_event', () => {
     await expect(save(db, admin, ev({ starts_at: iso(2 * HOUR), ends_at: iso(HOUR) }))).rejects.toThrow(/bad_time/)
     await expect(save(db, admin, ev({ award_top: 101 }))).rejects.toThrow(/bad_award/)
     await expect(save(db, admin, ev({ award_top: -1 }))).rejects.toThrow(/bad_award/)
-    expect(Number((await db.query<any>('select count(*) as n from events')).rows[0].n)).toBe(0)
+    // Lời gọi sai không tạo gì: chỉ còn sự kiện mốc 100 game có sẵn từ migration.
+    expect(Number((await db.query<any>('select count(*) as n from events')).rows[0].n)).toBe(1)
     const id = await save(db, admin, ev({ title: { en: '  Cup  ', vi: ' ' } }))
     const row = (await db.query<any>('select * from events where id = $1', [id])).rows[0]
     expect(row).toMatchObject({ status: 'scheduled', game_id: '2048', mode: '4x4', agg: 'best', award_top: 3 })

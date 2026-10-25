@@ -32,16 +32,16 @@ const save = (db: PGlite, uid: string, p: unknown) =>
 
 const row = async (db: PGlite, id: string) => (await db.query<any>('select * from posts where id = $1', [id])).rows[0]
 
-const SEED = ['co-ganh-luat-choi-va-khai-cuoc', 'meo-choi-noi-hinh', 'playnine-moi-diem-thuong-tai-khoan-khach', 'sudoku-5-ky-thuat-giai-nhanh']
+const SEED = ['co-ganh-luat-choi-va-khai-cuoc', 'meo-choi-noi-hinh', 'playnine-100-game', 'playnine-moi-diem-thuong-tai-khoan-khach', 'sudoku-5-ky-thuat-giai-nhanh']
 
 describe('posts seed and visibility', () => {
-  it('ships 4 published bilingual sample posts readable by anon; only the newest is pinned', async () => {
+  it('ships 5 published bilingual sample posts readable by anon; only the newest is pinned', async () => {
     const db = await createDb()
     const rows = (await asAnon(db, () => db.query<any>('select * from posts order by published_at desc'))).rows
     expect(rows.map((r) => r.slug).sort()).toEqual(SEED)
-    expect(rows[0].slug).toBe('playnine-moi-diem-thuong-tai-khoan-khach')
-    expect(rows.map((r) => r.pinned)).toEqual([true, false, false, false])
-    expect(rows.map((r) => r.game_id)).toEqual([null, 'noihinh', 'sudoku', 'coganh'])
+    expect(rows[0].slug).toBe('playnine-100-game')
+    expect(rows.map((r) => r.pinned)).toEqual([true, false, false, false, false])
+    expect(rows.map((r) => r.game_id)).toEqual([null, null, 'noihinh', 'sudoku', 'coganh'])
     for (const r of rows) {
       for (const k of ['en', 'vi']) {
         expect(r.title[k].length).toBeGreaterThan(0)
@@ -69,7 +69,7 @@ describe('posts seed and visibility', () => {
       expect(slugs).toContain('live-post')
       expect(slugs).not.toContain('draft-post')
       expect(slugs).not.toContain('future-post')
-      expect(slugs).toHaveLength(5)
+      expect(slugs).toHaveLength(SEED.length + 1)
     }
   })
 
@@ -95,6 +95,7 @@ describe('admin posts RPCs', () => {
     expect(slugs).toEqual([
       'future-post',
       'draft-post',
+      'playnine-100-game',
       'playnine-moi-diem-thuong-tai-khoan-khach',
       'meo-choi-noi-hinh',
       'sudoku-5-ky-thuat-giai-nhanh',

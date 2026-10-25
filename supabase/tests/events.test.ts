@@ -83,7 +83,8 @@ describe('events tables', () => {
         for (const s of stmts) await expect(run(() => db.query(s))).rejects.toThrow(/permission denied/)
       }
     }
-    expect(Number((await asAnon(db, () => db.query<any>('select count(*) as n from events'))).rows[0].n)).toBe(1)
+    // Sự kiện của test cộng sự kiện mốc 100 game có sẵn từ migration.
+    expect(Number((await asAnon(db, () => db.query<any>('select count(*) as n from events'))).rows[0].n)).toBe(2)
     expect(Number((await asAnon(db, () => db.query<any>('select count(*) as n from collections'))).rows[0].n)).toBe(1)
   })
 

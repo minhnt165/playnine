@@ -1,5 +1,8 @@
 -- Mốc 100 game: bài viết "PlayNine có 100 game" (ghim) và sự kiện kỷ niệm một tuần cho Ghép Ba (điểm cao nhất).
 -- Giờ sự kiện có thể chỉnh lại trong trang admin trước khi bắt đầu.
+-- Chỉ bài mới nhất được ghim: bỏ ghim bài chào mừng cũ.
+update public.posts set pinned = false where slug = 'playnine-moi-diem-thuong-tai-khoan-khach';
+
 insert into public.posts (slug, title, summary, body, game_id, tags, pinned, published_at) values
 (
   'playnine-100-game',
