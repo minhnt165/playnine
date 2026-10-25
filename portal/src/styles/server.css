@@ -29,6 +29,8 @@
 }
 .auth-menu a:hover, .auth-menu button:hover { background: var(--chip); }
 .auth-error { color: var(--fire); font-size: .8rem; }
+/* Chi tiết lỗi gốc của server: dòng riêng, nhạt hơn; mã lỗi dài không được tràn bong bóng */
+.auth-error-detail { display: block; margin-top: 4px; color: var(--muted); font-size: .75rem; overflow-wrap: anywhere; }
 /* Đã đăng nhập (avatar): lỗi hiện thành bong bóng dưới avatar để không đẩy lệch thanh trên */
 .auth-wrap > .auth-error {
   position: absolute; top: calc(100% + 8px); right: 0; z-index: 30; width: max-content; max-width: min(320px, 80vw);

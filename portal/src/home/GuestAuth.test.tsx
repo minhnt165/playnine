@@ -18,7 +18,10 @@ const mount = (api: ReturnType<typeof createFakeApi>, autoGuest = false) =>
     </I18nProvider>,
   )
 
-beforeEach(() => localStorage.clear())
+beforeEach(() => {
+  localStorage.clear()
+  sessionStorage.clear()
+})
 afterEach(cleanup)
 
 describe('Tài khoản khách', () => {
@@ -75,11 +78,46 @@ describe('Tài khoản khách', () => {
     history.replaceState(null, '', location.pathname)
   })
 
-  it('lỗi khác khi quay về từ Google: thông báo lỗi chung', async () => {
+  it('lỗi khác khi đăng nhập Google: thông báo lỗi chung kèm chi tiết từ server', async () => {
     history.replaceState(null, '', '?error=access_denied&error_description=User+cancelled')
     mount(createFakeApi({}))
-    expect(await screen.findByRole('alert')).toHaveTextContent(en('auth.failed'))
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(en('auth.failed'))
+    expect(alert).toHaveTextContent('User cancelled')
     expect(location.search).toBe('')
+  })
+
+  it('liên kết Google lỗi ngay vì lý do khác: báo liên kết không thành công kèm chi tiết', async () => {
+    const api = createFakeApi({ user: GUEST })
+    api.fail('linkGoogle', new Error('linkGoogle: Unsupported provider: provider is not enabled'))
+    mount(api)
+    fireEvent.click(await screen.findByRole('button', { name: /Guest-ABCD/ }))
+    fireEvent.click(screen.getByRole('menuitem', { name: new RegExp(en('auth.link')) }))
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(en('auth.linkFailed'))
+    expect(alert).toHaveTextContent('Unsupported provider: provider is not enabled')
+    expect(alert).not.toHaveTextContent('linkGoogle:')
+  })
+
+  it('quay về từ Google sau khi bấm liên kết mà server báo lỗi: báo liên kết không thành công, không phải lỗi đăng nhập', async () => {
+    const api = createFakeApi({ user: GUEST })
+    mount(api)
+    fireEvent.click(await screen.findByRole('button', { name: /Guest-ABCD/ }))
+    fireEvent.click(screen.getByRole('menuitem', { name: new RegExp(en('auth.link')) }))
+    await waitFor(() => expect(api.calls.some((c) => c.method === 'linkGoogle')).toBe(true))
+    cleanup()
+    // Trình duyệt đã sang Google rồi quay lại trang với lỗi trên URL.
+    history.replaceState(null, '', '?error=server_error&error_code=unexpected_failure&error_description=Unable+to+exchange+external+code')
+    mount(createFakeApi({ user: GUEST }))
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(en('auth.linkFailed'))
+    expect(alert).toHaveTextContent('Unable to exchange external code')
+    expect(alert).toHaveTextContent('unexpected_failure')
+    cleanup()
+    // Đã báo xong thì quên việc đang liên kết: lỗi đăng nhập lần sau là lỗi đăng nhập.
+    history.replaceState(null, '', '?error=access_denied')
+    mount(createFakeApi({}))
+    expect(await screen.findByRole('alert')).toHaveTextContent(en('auth.failed'))
   })
 
   it('menu hiện điểm tuần và tổng điểm kèm hạng', async () => {

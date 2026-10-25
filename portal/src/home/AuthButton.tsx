@@ -3,7 +3,7 @@ import { useCloudStatus } from '../data/useCloudSync'
 import { useI18n } from '../i18n/i18n'
 import { usePoints } from '../leaderboards/usePoints'
 import { historyHref } from '../player/route'
-import { authErrorKind, takeUrlAuthError, type AuthErrorKind } from '../server/authError'
+import { authError, markLinking, takeLinking, takeUrlAuthError, type AuthError } from '../server/authError'
 import { rememberReturnHash } from '../server/returnHash'
 import { useServer } from '../server/ServerProvider'
 
@@ -65,13 +65,13 @@ export function AuthButton() {
   const { t } = useI18n()
   const { api, user, authReady } = useServer()
   const [open, setOpen] = useState(false)
-  const [error, setError] = useState<AuthErrorKind | null>(null)
+  const [error, setError] = useState<AuthError | null>(null)
   const ref = useRef<HTMLDivElement>(null)
 
   // Quay về từ Google mà đăng nhập / liên kết bị từ chối: Supabase báo lỗi trên URL, cổng phải nói ra thay vì im lặng.
   useEffect(() => {
-    const kind = takeUrlAuthError()
-    if (kind) setError(kind)
+    const err = takeUrlAuthError()
+    if (err) setError(err)
   }, [])
 
   useEffect(() => {
@@ -94,11 +94,14 @@ export function AuthButton() {
 
   const run = (fn: () => Promise<void>) => {
     setError(null)
-    fn().catch((e: unknown) => setError(authErrorKind(e instanceof Error ? e.message : String(e))))
+    fn().catch((e: unknown) => setError(authError(e instanceof Error ? e.message : String(e), takeLinking())))
   }
+  // Lỗi đã rõ nghĩa (chưa bật liên kết, Google đã có tài khoản) chỉ cần câu dễ hiểu; lỗi lạ thì kèm chi tiết của server.
+  const showDetail = error && (error.kind === 'failed' || error.kind === 'linkFailed') && error.detail
   const alert = error && (
     <span className="auth-error" role="alert">
-      {t(error === 'linkDisabled' ? 'auth.linkDisabled' : error === 'alreadyLinked' ? 'auth.alreadyLinked' : 'auth.failed')}
+      {t(`auth.${error.kind}`)}
+      {showDetail && <small className="auth-error-detail">{t('auth.errorDetail', { detail: error.detail })}</small>}
     </span>
   )
 
@@ -165,6 +168,7 @@ export function AuthButton() {
               onClick={() => {
                 setOpen(false)
                 rememberReturnHash()
+                markLinking()
                 run(() => api.linkGoogle())
               }}
             >
