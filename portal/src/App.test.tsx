@@ -55,8 +55,7 @@ describe('App routes', () => {
   it('#/admin hiện trang quản trị tạm', async () => {
     location.hash = '#/admin'
     const { container } = renderApp()
-    // Trang admin là chunk lazy lớn: lần import đầu khi cả bộ test chạy song song có thể quá 1 giây mặc định.
-    await waitFor(() => expect(container.querySelector('[data-page="admin"]')).not.toBeNull(), { timeout: 5000 })
+    await waitFor(() => expect(container.querySelector('[data-page="admin"]')).not.toBeNull())
   })
 
   it('#/game/2048 hiện trang giới thiệu game, không hiện lưới game', async () => {
