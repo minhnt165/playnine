@@ -1,4 +1,4 @@
-import { cleanup, screen } from '@testing-library/react'
+import { cleanup, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { mountWith } from '../events/testUtil'
 import { DICT } from '../i18n/dict'
@@ -60,7 +60,8 @@ describe('PostPage', () => {
     expect(container.querySelectorAll('.post-content li')).toHaveLength(2)
     expect(screen.getByRole('link', { name: new RegExp(en('detail.play')) })).toHaveAttribute('href', '#/play/sudoku')
     expect(screen.getByText('Other post').closest('a')).toHaveAttribute('href', '#/news/khac')
-    expect(document.title).toBe('Sudoku tips · PlayNine')
+    // Tiêu đề tab đặt trong effect, có thể chạy sau khi nội dung đã hiện.
+    await waitFor(() => expect(document.title).toBe('Sudoku tips · PlayNine'))
   })
 
   it('slug không có hoặc chưa đăng: news.notFound', async () => {
