@@ -19,6 +19,23 @@ test('home lists every game', async ({ page }) => {
   }
 });
 
+test.describe('phone width', () => {
+  test.use({ viewport: { width: 375, height: 800 } });
+  for (const [name, hash] of [['home', ''], ['all games', '#/games']]) {
+    test(`${name} never scrolls sideways; the filter row scrolls inside itself`, async ({ page }) => {
+      await page.goto(hash);
+      await expect(page.locator('#filters')).toBeVisible();
+      const { doc, vw, right } = await page.evaluate(() => ({
+        doc: document.documentElement.scrollWidth,
+        vw: document.documentElement.clientWidth,
+        right: document.querySelector('#filters')!.getBoundingClientRect().right,
+      }));
+      expect(doc).toBeLessThanOrEqual(vw);
+      expect(right).toBeLessThanOrEqual(vw);
+    });
+  }
+});
+
 test('filter persists after reload', async ({ page }) => {
   await page.goto('');
   const btn = () => page.locator('#filters button').nth(1);
