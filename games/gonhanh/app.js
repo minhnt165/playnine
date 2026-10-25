@@ -118,11 +118,12 @@
     const el = wordEls[k];
     const letters = el.children;
     const n = k === game.i ? game.cur.length : letters.length;
-    let x;
-    if (n < letters.length) x = letters[n].offsetLeft;
+    // .w là position: relative nên offsetLeft của chữ tính từ đầu từ: cộng thêm vị trí của từ trong dãy.
+    let x = el.offsetLeft;
+    if (n < letters.length) x += letters[n].offsetLeft;
     else {
       const last = letters[letters.length - 1];
-      x = last.offsetLeft + last.offsetWidth;
+      x += last.offsetLeft + last.offsetWidth;
     }
     const lineH = el.offsetHeight || 1;
     const line = Math.round(el.offsetTop / lineH);

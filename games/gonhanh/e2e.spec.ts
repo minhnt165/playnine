@@ -89,3 +89,24 @@ test('gonhanh reports a quit test with its current WPM, and nothing before the f
   const end = (await messages(page)).find((m) => m.type === 'pn:end');
   expect(end?.score).toBeGreaterThan(0);
 });
+
+test('gonhanh keeps the caret right before the next letter of the current word', async ({ page }) => {
+  await skipGuide(page);
+  await page.goto('#/play/gonhanh');
+  const frame = page.frameLocator('iframe');
+  await frame.locator('#btn-start').click();
+  const words = await frame.locator('#words .w').evaluateAll((els) => els.slice(0, 3).map((e) => e.textContent || ''));
+  // Gõ hết từ đầu, sang từ thứ hai gõ thêm 2 chữ: con trỏ phải đứng ngay trước chữ thứ ba của từ thứ hai.
+  await frame.locator('#inp').pressSequentially(words[0] + ' ' + words[1].slice(0, 2), { delay: 60 });
+  await expect(frame.locator('#words .w.cur')).toHaveText(words[1]);
+  await expect
+    .poll(() =>
+      frame.locator('#words').evaluate((root) => {
+        const caret = root.querySelector('.caret')!.getBoundingClientRect();
+        const letters = root.querySelectorAll('.w.cur i');
+        const target = letters[2]?.getBoundingClientRect() ?? letters[letters.length - 1].getBoundingClientRect();
+        return Math.abs(caret.left + caret.width / 2 - (letters[2] ? target.left : target.right));
+      }),
+    )
+    .toBeLessThan(3);
+});
