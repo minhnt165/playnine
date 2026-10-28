@@ -106,6 +106,23 @@ describe('Home', () => {
     expect(container.querySelectorAll('.plays')).toHaveLength(1)
   })
 
+  it('chơi xong quay lại (refreshKey đổi): thẻ hiện số lượt chơi mới', async () => {
+    const api = createFakeApi({ totals: { '2048': 5 } })
+    const tree = (key: number) => (
+      <I18nProvider>
+        <ServerProvider api={api}>
+          <Home openIds={new Set()} refreshKey={key} />
+        </ServerProvider>
+      </I18nProvider>
+    )
+    const { container, rerender } = render(tree(0))
+    const card = container.querySelector('a.card[href="#/game/2048"]')!
+    await waitFor(() => expect(card.querySelector('.plays')!.textContent).toBe('5 plays'))
+    await api.recordPlay('2048')
+    rerender(tree(1))
+    await waitFor(() => expect(card.querySelector('.plays')!.textContent).toBe('6 plays'))
+  })
+
   it('playTotals lỗi: không có .plays và không lỗi chưa bắt', async () => {
     const api = createFakeApi({ totals: { '2048': 5 } })
     api.fail('playTotals')

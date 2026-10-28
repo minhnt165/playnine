@@ -104,7 +104,7 @@ export function createFakeApi(seed: Partial<FakeState> = {}): FakeApi {
         listeners.forEach((l) => l(null))
       }),
     gameMeta: () => run('gameMeta', [], () => state.games),
-    playTotals: () => run('playTotals', [], () => state.totals),
+    playTotals: () => run('playTotals', [], () => ({ ...state.totals })),
     recordPlay: (gameId) =>
       run('recordPlay', [gameId], () => {
         state.totals[gameId] = (state.totals[gameId] ?? 0) + 1

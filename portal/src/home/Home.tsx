@@ -41,7 +41,7 @@ export function Home({ openIds, refreshKey, onThemeApplied }: Props) {
   const i18n = useI18n()
   const { games } = useServer()
   const [query, setQuery] = useState('')
-  const totals = usePlayTotals()
+  const totals = usePlayTotals(refreshKey)
   const ratings = useRatingSummary()
   // Đang tìm thì chỉ còn kết quả trong thư viện game, như cửa hàng game.
   const searching = query.trim() !== ''
