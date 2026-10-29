@@ -11,7 +11,7 @@
   PN && PN.init({ gameId: 'co9o' });
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.3.0';
+  const APP_VERSION = '1.3.1';
   const KEYS = {
     settings: 'playnine-co9o-settings-v1',
     save: 'playnine-co9o-save-v1',

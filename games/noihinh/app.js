@@ -8,7 +8,7 @@
   'use strict';
 
   const E = window.NoiHinh;
-  const APP_VERSION = '1.3.0';
+  const APP_VERSION = '1.3.1';
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'noihinh' });
   // Âm thanh / pháo giấy của SDK: SDK cũ hoặc chạy không có SDK thì im lặng, không lỗi

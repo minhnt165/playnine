@@ -15,7 +15,7 @@
   const sfx = (name, o) => { try { SFX && SFX.play(name, o); } catch (e) { /* bỏ qua */ } };
 
   // Phiên bản app: tăng khi phát hành, đồng bộ với ?v= ở index.html
-  const APP_VERSION = '1.3.0';
+  const APP_VERSION = '1.3.1';
   const KEYS = {
     settings: 'playnine-colat-settings-v1',
     save: 'playnine-colat-save-v1',

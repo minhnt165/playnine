@@ -12,7 +12,7 @@
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'phagach' });
 
-  const APP_VERSION = '1.3.0';
+  const APP_VERSION = '1.3.1';
   const E = window.PhaGach;
   const I18N = window.I18N;
   const t = I18N.t;

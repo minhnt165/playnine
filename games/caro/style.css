@@ -105,6 +105,17 @@ html, body {
   overscroll-behavior: none;
 }
 body { overflow-x: hidden; }
+/* Bấm/chạm liên tục trong game không bôi đen chữ hay bật menu sao chép; ô nhập vẫn chọn được */
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+input, textarea, select, [contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
 
 button {
   font: inherit;

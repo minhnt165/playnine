@@ -13,7 +13,7 @@
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'banbong' });
 
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.0.1';
   const MODE = 'classic';
   const E = window.BanBong;
   const I18N = window.I18N;

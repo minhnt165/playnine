@@ -108,6 +108,17 @@ body {
   background-size: 160px 160px, 100% 100%, 100% 100%;
   background-repeat: repeat, no-repeat, no-repeat;
 }
+/* Bấm/chạm liên tục trong game không bôi đen chữ hay bật menu sao chép; ô nhập vẫn chọn được */
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+input, textarea, select, [contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
 
 :root {
   --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cg fill='%23fff' opacity='.5'%3E%3Cpath d='M30 22c1 6 2 7 8 8-6 1-7 2-8 8-1-6-2-7-8-8 6-1 7-2 8-8z'/%3E%3Cpath d='M118 92c.7 4.2 1.4 4.9 5.6 5.6-4.2.7-4.9 1.4-5.6 5.6-.7-4.2-1.4-4.9-5.6-5.6 4.2-.7 4.9-1.4 5.6-5.6z'/%3E%3Ccircle cx='96' cy='26' r='2.2'/%3E%3Ccircle cx='22' cy='112' r='2'/%3E%3Ccircle cx='70' cy='70' r='1.6'/%3E%3Ccircle cx='146' cy='146' r='2'/%3E%3Ccircle cx='60' cy='136' r='1.4'/%3E%3C/g%3E%3Cg fill='none' stroke-width='2.4' stroke-linecap='round' opacity='.32'%3E%3Cpath d='M136 30l7-3' stroke='%23f07aa7'/%3E%3Cpath d='M44 84l-5 6' stroke='%237cc4f0'/%3E%3Cpath d='M84 124l7 2' stroke='%23f6b544'/%3E%3Cpath d='M150 110l-2 7' stroke='%238fd36a'/%3E%3C/g%3E%3C/svg%3E");
