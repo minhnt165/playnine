@@ -6,6 +6,9 @@
  *   - Thanh máy ở trên, thanh của bạn (kèm nút Hoàn tác / Xong lượt) ở dưới;
  *     màn hình ngang thấp thì hai thanh nằm bên phải bàn
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #d69650; }
 :root {
   --frame-1: #6e4123;
   --frame-2: #8c5833;

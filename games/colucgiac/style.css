@@ -4,6 +4,9 @@
  *     app.js tính viewBox và kích thước px theo khung, xoay bàn cho ô to nhất
  *   - Thanh người chơi trên / dưới (màn hình đứng) hoặc bên phải (màn hình ngang thấp)
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #e8463c; }
 :root {
   --red-1: #e2443a;
   --red-2: #a8261e;

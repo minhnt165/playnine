@@ -17,7 +17,7 @@
   const SIZE_MODES = ['5', '6', '7'];
   const kit = PNKit.init({
     gameId: 'batdang',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { size: '5', errors: 'auto', autoNotes: true },
     onSetting,

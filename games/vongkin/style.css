@@ -4,6 +4,9 @@
  *   - Vòng màu tím PlayNine; giải xong thì vòng chuyển sang xanh ngọc và phần trong vòng tô dần
  *   - Cỡ bàn theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #2dd4bf; }
 :root {
   --board-bg: #ffffff;
   --dot: #3b3f63;

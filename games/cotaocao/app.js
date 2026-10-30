@@ -22,7 +22,7 @@
   const { HUMAN, AI, BAR, OFF, LEVELS } = E;
   const kit = PNKit.init({
     gameId: 'cotaocao',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { level: 'medium', autoEnd: false },
     onSetting,

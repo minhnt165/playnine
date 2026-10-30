@@ -3,6 +3,9 @@
  *   - Bàn chơi: canvas tỉ lệ 2:3 (sân logic 240 x 360), lớn nhất vừa khung, không cuộn trang
  *   - Sân luôn là bầu trời đêm (neon), giao diện sáng chỉ làm sân dịu hơn một chút
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #37f0ff; }
 :root {
   --space-1: #1d2257;
   --space-2: #2a1f5c;

@@ -20,7 +20,7 @@
   const OPPS = ['ai1', 'ai2', 'pvp'];
   const kit = PNKit.init({
     gameId: 'conhay',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { level: 'medium', opp: 'ai1' },
     onSetting,

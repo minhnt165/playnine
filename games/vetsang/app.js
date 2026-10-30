@@ -16,7 +16,7 @@
   const coarse = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
   const kit = PNKit.init({
     gameId: 'vetsang',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { level: 'medium', vibrate: true, pad: coarse, guideSeen: false },
     onSetting,

@@ -4,6 +4,9 @@
  *   - Thẻ câu hỏi cũng là container: cỡ chữ phép tính / ô đáp án tính theo khung thẻ và độ dài phép tính
  *   - Mỗi phép một màu (cộng xanh lá, trừ xanh dương, nhân cam, chia hồng); hiệu ứng tắt khi giảm chuyển động
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #2dd4bf; }
 :root {
   --op-add: #15803d;
   --op-sub: #2563eb;

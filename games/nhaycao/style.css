@@ -2,6 +2,9 @@
  * Nhảy Cao - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
  *   Canvas đọc các biến --sky-*, --space-*, --cloud, --stars, --mark* để vẽ trời theo giao diện sáng / tối.
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #62b7ff; }
 :root {
   --sky-top: #8fd3ff;
   --sky-bot: #e4f5ff;

@@ -16,7 +16,7 @@
   const SVGNS = 'http://www.w3.org/2000/svg';
   const kit = PNKit.init({
     gameId: 'ranleothang',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { bots: '3', extraSix: true, speed: 'normal' },
     onSetting,

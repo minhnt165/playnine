@@ -15,7 +15,7 @@
   const MODES = Object.keys(E.MODES);
   const kit = PNKit.init({
     gameId: 'noimau',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { mode: '5x5' },
     onSetting: (key, value) => { if (key === 'mode') onModeSetting(value); },

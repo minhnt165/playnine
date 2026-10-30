@@ -4,6 +4,9 @@
  *   - Bài của bạn trải thẳng ở dưới, vạch màu dưới lá cùng bộ (app.js đặt --x, --w, data-g cho từng lá)
  *   - Cỡ lá do app.js tính theo chỗ trống (layout()): --hw bài trên tay, --cw nọc / chồng bỏ, --ow bài máy
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #2fd19f; }
 :root {
   --app-max: 980px;
   --felt-1: #1f6b5a;

@@ -35,7 +35,7 @@
 
   const kit = PNKit.init({
     gameId: 'xito',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { level: 'medium', speed: 'normal', fourColor: false },
     onSetting,

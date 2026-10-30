@@ -16,7 +16,7 @@
   const MODES = ['s', 'm', 'l'];
   const SIZE = { s: '8×8', m: '11×11', l: '14×14' };
   const COLORS = 8; // số màu vệt khoanh (lớp c0…c7 trong style.css)
-  const kit = PNKit.init({ gameId: 'timchu', version: '1.0.0', dict: window.GAME_DICT, defaults: { size: 's' }, onSetting });
+  const kit = PNKit.init({ gameId: 'timchu', version: '1.0.1', dict: window.GAME_DICT, defaults: { size: 's' }, onSetting });
   const t = kit.t;
   const $ = (id) => document.getElementById(id);
   const { keys } = kit.store;

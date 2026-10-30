@@ -15,7 +15,7 @@
   const MODES = ['s', 'm', 'l'];
   const kit = PNKit.init({
     gameId: 'vongkin',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { mode: 's', errors: 'auto', guideSeen: false },
     onSetting,

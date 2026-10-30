@@ -4,6 +4,9 @@
  *   - Màu nét vẽ lấy từ token --c-* (app.js đọc lại khi đổi giao diện); tối: bầu trời đêm, nét phát sáng
  *   - Điều khiển chạm: lớp .touch phủ .stage, hiện khi .app.touch-on (máy cảm ứng hoặc chọn "Hiện")
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #7df9ff; }
 :root {
   --app-max: 760px;
   --field-bg: linear-gradient(180deg, #dfe3fb 0%, #f4f2ff 55%, #fbf7ff 100%);

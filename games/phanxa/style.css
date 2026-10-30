@@ -4,6 +4,9 @@
  *   - Màu vẽ canvas đọc từ biến CSS dưới đây (đổi theo sáng / tối)
  *   - Điện thoại xoay ngang: thanh trên + ô số liệu dồn sang cột trái để sân đủ cao
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ff5c78; }
 :root {
   --app-max: 880px;
   --field-bg: #ffffff;

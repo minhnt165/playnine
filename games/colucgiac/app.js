@@ -18,7 +18,7 @@
   const { RED, BLUE, SWAP, LEVELS, SIZES } = E;
   const kit = PNKit.init({
     gameId: 'colucgiac',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { level: 'medium', side: 'red', size: '9', swap: true, opp: 'ai' },
     onSetting,

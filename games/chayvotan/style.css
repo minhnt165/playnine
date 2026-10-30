@@ -4,6 +4,9 @@
  *     app.js đọc lại khi đổi giao diện. Sáng = ban ngày, tối = ban đêm (trăng, sao)
  *   - Bàn chơi tự co theo khung (app.js đặt kích thước .board), lớp phủ bắt đầu / tạm dừng / hết ván nằm trên .stage
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ffa85c; }
 :root {
   --app-max: 1080px;
   /* Ban ngày */

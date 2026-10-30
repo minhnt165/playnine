@@ -24,7 +24,7 @@
     } catch (e) {}
   };
 
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.0.2';
   const E = window.TruotSo;
   const t = I18N.t;
 

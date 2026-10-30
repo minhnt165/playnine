@@ -17,7 +17,7 @@
   const coarse = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
   const kit = PNKit.init({
     gameId: 'mecungma',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     // điện thoại / máy tính bảng: mặc định hiện phím điều hướng ảo
     defaults: { vibrate: true, guideSeen: false, dpad: coarse },

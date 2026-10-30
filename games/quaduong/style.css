@@ -2,6 +2,9 @@
  * Qua Đường - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
  *   Bàn chơi là một <canvas> lấp đầy .stage; lớp phủ (bắt đầu / tạm dừng / hết lượt) nằm trên canvas.
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ffd23f; }
 :root {
   --overlay-bg: rgba(243, 244, 251, 0.82);
   --board-bg: #a6d96a;

@@ -14,7 +14,7 @@
   const E = window.GameEngine;
   const kit = PNKit.init({
     gameId: 'doanma',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { mode: 'easy' },
     onSetting: (key, value) => { if (key === 'mode') changeMode(value); },

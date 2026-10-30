@@ -39,7 +39,7 @@
 
   const kit = PNKit.init({
     gameId: 'baitam',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { speed: 'normal', level: 'easy', target: '100' },
     onSetting,

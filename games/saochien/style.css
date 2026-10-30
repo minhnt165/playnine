@@ -6,6 +6,9 @@
  *   - Cỡ bàn theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
  *   - Báo lỗi: sao vi phạm màu đỏ, vùng thừa sao / hết chỗ có sọc đỏ, số đếm ở mép đỏ khi hàng / cột sai
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ffd34d; }
 :root {
   --accent: #4338ca;
   --accent-strong: #3730a3;

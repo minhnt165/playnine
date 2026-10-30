@@ -15,7 +15,7 @@
   const LEVELS = ['easy', 'medium', 'hard'];
   const kit = PNKit.init({
     gameId: 'bongban',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { level: 'medium', vibrate: true, guideSeen: false },
     onSetting,

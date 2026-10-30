@@ -5,6 +5,9 @@
  *   - Hạt trắng: nền sáng viền đậm; hạt đen: đặc, có viền sáng ở giao diện tối để không chìm vào nền
  *   - Cỡ bàn theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #a48bff; }
 :root {
   --board-bg: #ffffff;
   --grid: rgba(20, 22, 43, 0.1);

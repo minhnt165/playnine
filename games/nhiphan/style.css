@@ -5,6 +5,9 @@
  *   - Ô sai luật: viền nét đứt + sọc chéo (không chỉ dựa vào màu đỏ)
  *   - Cỡ lưới theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #4f86ff; }
 :root {
   --cell-empty: #e6e8f6;
   --z-solid: #f28a2e;

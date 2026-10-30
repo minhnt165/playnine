@@ -4,6 +4,9 @@
  *   - Khối rơi / dồn cột bằng transition của transform; khối nổ co lại rồi mờ đi
  *   - Mỗi màu có thêm một hình nhỏ ở giữa để phân biệt khi khó nhìn màu
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #4d8dff; }
 :root {
   --b1: #ff5d73;
   --b1-d: #d93a55;

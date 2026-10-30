@@ -3,6 +3,9 @@
  *   - Bàn chơi: lá đặt tuyệt đối bằng transform, cỡ lá (--card-w) do app.js tính theo khung
  *   - Điện thoại dọc: thanh trên, HUD, bàn, nút điều khiển; ngang thấp: HUD và nút sang cột phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #34d399; }
 :root {
   --app-max: 980px;
   --felt: rgba(21, 128, 61, 0.07);

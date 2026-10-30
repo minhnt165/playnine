@@ -3,6 +3,9 @@
  *   Dây quân là SVG toạ độ theo đơn vị nửa quân (quân thường 2×1, quân đôi 1×2): mọi nét trên bàn tính theo đơn vị đó.
  *   Quân trên tay là <button> chứa SVG dựng dọc, cỡ theo biến --tw do app.js đặt.
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #34d399; }
 :root {
   --accent: #11845b;
   --accent-strong: #0b6b49;

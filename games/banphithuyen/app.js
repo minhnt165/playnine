@@ -15,7 +15,7 @@
 
   const E = window.GameEngine;
   const MODE = 'classic';
-  const VERSION = '1.0.0';
+  const VERSION = '1.0.1';
   const coarse = window.matchMedia('(pointer: coarse)');
   const reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
   const kit = PNKit.init({

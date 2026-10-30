@@ -5,6 +5,9 @@
  *   - Dọc: bàn trên, bảng điều khiển dưới; ngang / máy tính: bàn trái, bảng phải
  *   - Ô đất có dải màu nhóm ở mép trong, nhà / khách sạn nằm trên dải; chủ đất là viền + huy hiệu hình quân
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #7c5cff; }
 :root {
   --board-line: #c7cae3;
   --cell: #fdfdff;

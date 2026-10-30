@@ -5,6 +5,9 @@
  *   - Xoay góc: transform rotate(±90deg) trên .quad (transition), xong thì app trả góc về và vẽ lại quân
  *   - 8 mũi tên (.rot) quanh bàn, vị trí đặt bằng JS; màn hình ngang thấp: bàn trái, thanh người chơi phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #3cbcab; }
 :root {
   --plate: #17334a;
   --plate-edge: #0e2232;

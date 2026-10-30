@@ -4,6 +4,9 @@
  *   - Điện thoại dọc: bàn vuông trên, khay cuộn ngang dưới. Màn hình ngang / máy tính: bàn trái, cột phải (HUD, cỡ, khay dọc)
  *   - Mảnh là <canvas>; app.js đặt cỡ / vị trí bằng style và đọc các token --jg-* để vẽ bàn
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #fb923c; }
 :root {
   --accent: #c2410c;
   --accent-strong: #9a3412;

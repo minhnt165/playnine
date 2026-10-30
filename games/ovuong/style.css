@@ -3,6 +3,9 @@
  *   Bàn là SVG tọa độ theo ô: điểm ở tọa độ nguyên 0..n, mọi kích thước trên bàn tính theo đơn vị ô.
  *   Người 1 màu xanh tím (dấu tròn), người 2 màu cam (dấu thoi).
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ff8a5b; }
 :root {
   --p1: #4f52e8;
   --p1-soft: rgba(79, 82, 232, 0.16);

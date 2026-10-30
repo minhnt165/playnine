@@ -4,6 +4,9 @@
  *   - Cỡ bàn theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
  *   - Danh sách từ dạng thẻ bên dưới bàn (bên phải bàn trên màn hình ngang)
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ff922b; }
 :root {
   --accent: #d9480f;
   --accent-strong: #b93a08;

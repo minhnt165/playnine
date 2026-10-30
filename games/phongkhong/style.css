@@ -3,6 +3,9 @@
  *   - Bàn chơi: canvas tỉ lệ 2:3 (sân logic 240 x 360), lớn nhất vừa khung, không cuộn trang
  *   - Bảng màu sân (--pk-*) đọc từ JS để vẽ canvas: sáng = trời rạng sáng nét đậm, tối = trời đêm neon
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #7c5cff; }
 :root {
   --pk-sky-1: #f6f7ff;
   --pk-sky-2: #d9dffb;

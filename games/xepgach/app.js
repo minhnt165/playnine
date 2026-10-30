@@ -25,7 +25,7 @@
     } catch (e) {}
   };
 
-  const APP_VERSION = '1.3.1';
+  const APP_VERSION = '1.3.2';
   const E = window.XepGach;
   const T = window.I18N.t;
   // Điền chữ tĩnh theo ngôn ngữ trước khi vẽ phần động

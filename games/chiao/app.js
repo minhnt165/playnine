@@ -14,7 +14,7 @@
 
   const E = window.GameEngine;
   const MODES = E.MODES;
-  const kit = PNKit.init({ gameId: 'chiao', version: '1.0.0', dict: window.GAME_DICT, defaults: { size: 's', errors: true }, onSetting });
+  const kit = PNKit.init({ gameId: 'chiao', version: '1.0.1', dict: window.GAME_DICT, defaults: { size: 's', errors: true }, onSetting });
   const t = kit.t;
   const $ = (id) => document.getElementById(id);
   const { keys } = kit.store;

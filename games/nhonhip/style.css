@@ -5,6 +5,9 @@
  *   - Mỗi ô: màu tối khi nghỉ, màu sáng + viền trắng khi sáng (.lit), hình riêng (.sym), phím tắt (.keycap)
  *   - Giảm chuyển động: đổi màu tức thì, không quầng sáng, không hiệu ứng trang trí
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #60a5fa; }
 :root {
   --board: #262a45;
   --board-edge: #3a3f63;

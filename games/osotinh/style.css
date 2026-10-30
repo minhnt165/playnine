@@ -4,6 +4,9 @@
  *   - Cỡ lưới theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
  *   - Số người chơi điền màu tím (accent), số cho sẵn màu chữ thường; lỗi màu đỏ
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #8b6cff; }
 :root {
   --cell-bg: #ffffff;
   --thin: #d9dcef;

@@ -3,6 +3,9 @@
  *   - Bàn chơi là một <canvas> phủ kín .stage; màn chờ / tạm dừng / hết ván là lớp phủ bên trên
  * ===================================================================== */
 
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ffc461; }
+
 .stage {
   border-radius: var(--radius);
   overflow: hidden;

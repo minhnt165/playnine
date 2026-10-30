@@ -2,6 +2,9 @@
  * Ghép Chữ - Giao diện riêng của game (nền chung, nút, modal… đã có trong ../_kit/kit.css)
  *   Ô chữ kiểu quân gỗ màu kem; màu chip từ theo độ dài (3 → 7 chữ đậm dần, 7 chữ màu vàng).
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ffc45c; }
 :root {
   --tile-bg: linear-gradient(180deg, #fff8e4, #f6e2b3);
   --tile-text: #4a2c0e;

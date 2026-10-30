@@ -9,7 +9,7 @@
   const N = window.Nonogram;
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'tranhan' });
-  const APP_VERSION = '1.3.1';
+  const APP_VERSION = '1.3.2';
   const t = I18N.t;
   // Âm thanh / pháo giấy của SDK: SDK cũ hoặc thiếu thì bỏ qua, không bao giờ làm hỏng game
   const sfx = (name, o) => { try { window.PlayNine?.sfx?.play(name, o); } catch (e) { /* bỏ qua */ } };

@@ -5,6 +5,9 @@
  *   - Quân: thẻ tròn màu kem, viền và hình con vật theo màu phe, số bậc ở góc
  *   - Màn hình ngang thấp: bàn bên trái, hai thanh người chơi bên phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #78c86e; }
 :root {
   --p-red: #d8443a;
   --p-red-ink: #b42a21;

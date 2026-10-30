@@ -4,6 +4,9 @@
  *   Cỡ bàn --board và cạnh ô --cell do app.js tính theo chỗ trống (layout()).
  *   Màu ghế: 0 xanh dương (bạn), 1 đỏ, 2 xanh lá, 3 vàng; mỗi màu có ký hiệu riêng (sym-0 … sym-3).
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #4a86f0; }
 :root {
   --c0: #2f6fe4;
   --c1: #e0393e;

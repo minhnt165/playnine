@@ -1,4 +1,7 @@
 /* ===================== Bảng màu PlayNine ===================== */
+
+/* Màu nhận diện của game, tô nền cảnh của ../_kit/skin.css */
+:root { --scene: #f2b134; }
 :root {
   --bg: #f3f4fb;
   --surface: #ffffff;

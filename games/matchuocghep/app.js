@@ -16,7 +16,7 @@
   const MODES = E.MODES;
   // Điện thoại dọc lần đầu mở: mặc định bàn Tháp (quân to hơn hẳn Rùa trên màn hình hẹp)
   const narrow = window.innerWidth < 600 && window.innerHeight > window.innerWidth;
-  const kit = PNKit.init({ gameId: 'matchuocghep', version: '1.0.0', dict: window.GAME_DICT, defaults: { mode: narrow ? 'tower' : 'turtle', faces: 'auto' }, onSetting });
+  const kit = PNKit.init({ gameId: 'matchuocghep', version: '1.0.1', dict: window.GAME_DICT, defaults: { mode: narrow ? 'tower' : 'turtle', faces: 'auto' }, onSetting });
   const t = kit.t;
   const $ = (id) => document.getElementById(id);
   const { keys } = kit.store;

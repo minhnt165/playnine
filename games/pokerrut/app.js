@@ -17,7 +17,7 @@
   const MODE = 'classic';
   const kit = PNKit.init({
     gameId: 'pokerrut',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { suggest: false },
     onSetting: (key) => {

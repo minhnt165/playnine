@@ -4,6 +4,9 @@
  *     --gx / --gy (khoảng cách ống / hàng)
  *   - Màu nước đặt trên từng lớp: --c (màu), --ink (màu ký hiệu)
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #4f9bff; }
 :root {
   --accent: #2f7de1;
   --accent-strong: #1f63c0;

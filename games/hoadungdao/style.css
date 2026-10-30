@@ -4,6 +4,9 @@
  *   - Khối: lớn hồng đỏ có hoa, dọc xanh dương, ngang hổ phách, nhỏ xanh ngọc; cỡ ô --cs do app.js tính
  *   - Màn hình ngang thấp (điện thoại xoay ngang): cột trái thanh trên + số liệu + nút, khay bên phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ff5a76; }
 :root {
   --frame: #3f3776;
   --frame-hi: #574da0;

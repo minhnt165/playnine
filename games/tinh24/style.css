@@ -4,6 +4,9 @@
  *   - Phân số xếp chồng (tử / gạch / mẫu); cỡ chữ co theo độ dài số (data-len)
  *   - Cỡ bàn theo ô chứa (.table là container): 2×2 lá tỉ lệ 5:6, vừa khung, không cuộn
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ff8a4c; }
 :root {
   --accent: #d9480f;
   --accent-strong: #b83b0a;

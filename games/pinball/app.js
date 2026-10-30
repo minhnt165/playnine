@@ -24,7 +24,7 @@
 
   const kit = PNKit.init({
     gameId: 'pinball',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { vibrate: true, guideSeen: false },
     onSetting,

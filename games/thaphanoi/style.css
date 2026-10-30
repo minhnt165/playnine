@@ -3,6 +3,9 @@
  *   - Bàn chơi: 3 cọc là nút chiếm cả cột; đĩa đặt tuyệt đối trong .board, vị trí tính trong app.js (transform)
  *   - Kích thước theo biến --dh (cao đĩa), --pole-h, --base-h, --label-h do app.js đặt trên .board
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #8b6cff; }
 :root {
   --pole: #c7a37c;
   --pole-2: #a98058;

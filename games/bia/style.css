@@ -3,6 +3,9 @@
  *   - Màu bàn / băng / gậy là token CSS; app.js đọc lại khi đổi giao diện để vẽ canvas
  *   - Màn hình dọc: bàn đứng (xoay 90°) và bảng đánh ở dưới; ngang đủ rộng: bảng đánh bên phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #2ecc71; }
 :root {
   --felt: #1e8a57;
   --felt-2: #157046;

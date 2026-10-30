@@ -3,6 +3,9 @@
  *   - Màu đấu trường / vệt là token CSS, app.js đọc lại khi đổi giao diện để vẽ canvas
  *   - Đấu trường vuông vẽ giữa khung; nút rẽ (tùy chọn) nằm dưới khi màn hình dọc, hai bên khi màn hình ngang
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #22d3ee; }
 :root {
   --arena-bg: #eef1fb;
   --arena-line: rgba(40, 52, 120, 0.07);

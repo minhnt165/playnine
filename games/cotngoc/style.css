@@ -5,6 +5,9 @@
  *   - Nút cảm ứng (.pad) chỉ hiện khi máy có màn cảm ứng; điện thoại xoay ngang thì chia hai bên giếng
  *   - Lớp phủ bắt đầu / tạm dừng / hết ván phủ cả trang (dưới thanh trên)
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #a455f0; }
 :root {
   --app-max: 600px;
   --well-top: #2a2350;

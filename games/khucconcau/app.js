@@ -17,7 +17,7 @@
   const TOUCH_LIFT = 16; // chạm: chày nằm hơi trên đầu ngón tay (về phía đối thủ) để ngón tay không che chày
   const kit = PNKit.init({
     gameId: 'khucconcau',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { level: 'medium', vibrate: true, guideSeen: false },
     onSetting,

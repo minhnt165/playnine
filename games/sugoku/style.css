@@ -1,3 +1,6 @@
+/* Màu nhận diện của game, tô nền cảnh của ../_kit/skin.css */
+:root { --scene: #3b6cf6; }
+
 :root {
   --bg: #f3f4fb;
   --bg-accent: radial-gradient(1200px 600px at 50% -200px, #e4ddff 0%, transparent 70%);

@@ -4,6 +4,9 @@
  * Lá bài vẽ bằng CSS + SVG (không dùng ảnh ngoài), cỡ lá và độ xòe cột do
  * app.js tính theo khung để cả bàn luôn vừa màn hình, không phải cuộn.
  * ===================================================================== */
+
+/* Màu nhận diện của game, tô nền cảnh của ../_kit/skin.css */
+:root { --scene: #2e9e5e; }
 :root {
   --bg: #f3f4fb;
   --surface: #ffffff;

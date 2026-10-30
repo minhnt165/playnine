@@ -3,6 +3,9 @@
  *   Bàn cờ là SVG toạ độ 0..6 (lưới 7x7): mọi kích thước trên bàn tính theo đơn vị đó.
  *   Quân trắng / đen dùng gradient #grad-w / #grad-b trong index.html.
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #f59e0b; }
 :root {
   --board-1: #f0d7a4;
   --board-2: #ddb97c;

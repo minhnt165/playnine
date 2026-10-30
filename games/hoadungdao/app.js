@@ -15,7 +15,7 @@
   const E = window.GameEngine;
   const MODE = 'classic';
   const TOTAL = E.LEVELS.length;
-  const kit = PNKit.init({ gameId: 'hoadungdao', version: '1.0.0', dict: window.GAME_DICT });
+  const kit = PNKit.init({ gameId: 'hoadungdao', version: '1.0.1', dict: window.GAME_DICT });
   const t = kit.t;
   const $ = (id) => document.getElementById(id);
   const { keys } = kit.store;

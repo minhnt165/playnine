@@ -3,6 +3,9 @@
  *   Bàn chơi là một <canvas> lấp đầy .board; lớp phủ (bắt đầu / tạm dừng / hết ván) nằm trên canvas;
  *   phím điều hướng trên màn hình (.dpad) nằm dưới bàn chơi (màn ngang thấp: bên phải).
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #8b6cff; }
 :root {
   --overlay-bg: rgba(243, 244, 251, 0.8);
   --board-bg: #fbfaff;

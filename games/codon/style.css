@@ -4,6 +4,9 @@
  *   - Cỡ bàn theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
  *   - Lỗ đặt theo tọa độ của engine: --x, --y tính bằng đơn vị ô (--u = cạnh bàn / span)
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ffb060; }
 :root {
   --wood-1: #e2ad6d;
   --wood-2: #b8773c;

@@ -4,6 +4,9 @@
  *     (dấu nước vừa đi, quân ma, con trỏ bàn phím). app.js đặt kích thước px theo khung
  *   - Thanh người chơi + nút Bỏ lượt / Đầu hàng: trên–dưới bàn (màn hình đứng) hoặc cột bên phải (màn hình rộng / ngang thấp)
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #e3b877; }
 :root {
   --wood-1: #f2d39c;
   --wood-2: #e3b877;

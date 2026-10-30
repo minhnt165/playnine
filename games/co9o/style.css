@@ -3,6 +3,9 @@
  * Màu theo bộ nhận diện PlayNine, dark mode theo hệ thống hoặc chọn tay,
  * bàn cờ tự co theo chiều cao khung (iframe) để không phải cuộn khi chơi.
  * ===================================================================== */
+
+/* Màu nhận diện của game, tô nền cảnh của ../_kit/skin.css */
+:root { --scene: #e0565b; }
 :root {
   --bg: #f3f4fb;
   --surface: #ffffff;

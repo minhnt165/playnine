@@ -16,7 +16,7 @@
   const SIZE_MODES = ['5', '8', '10'];
   const kit = PNKit.init({
     gameId: 'saochien',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { size: '5', errors: true, auto: true, order: 'dot' },
     onSetting,

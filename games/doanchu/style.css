@@ -3,6 +3,9 @@
  *   - Màu ô: --c-correct (đúng chỗ), --c-present (có trong từ), --c-absent (không có); .contrast trên <html> = mù màu
  *   - Cỡ ô --tile do app.js tính theo khung (.stage) để vừa 390×844 dọc, 844×390 ngang và máy tính
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #34a362; }
 :root {
   --c-correct: #2f9a58;
   --c-present: #c9a019;

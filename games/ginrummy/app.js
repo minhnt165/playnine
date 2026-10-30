@@ -43,7 +43,7 @@
 
   const kit = PNKit.init({
     gameId: 'ginrummy',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { speed: 'normal', level: 'easy', bigGin: true },
     onSetting,

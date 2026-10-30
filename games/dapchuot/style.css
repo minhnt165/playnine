@@ -4,6 +4,9 @@
  *   - Mỗi hang: lòng hang (.pit), chuột trong khung cắt (.mole-clip > .mole), mép đất phía trước (.lip)
  *   - Hiệu ứng (búa, tia sáng, chữ điểm, bom nổ, bụi) nằm ở lớp #fx, tắt chuyển động khi giảm chuyển động
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #82d660; }
 :root {
   --grass-1: #a6dc72;
   --grass-2: #6cb84d;

@@ -3,6 +3,9 @@
  *   - Bảng màu bầu trời / đồi / tre / mặt đất cho canvas là token CSS (--sky-top…): app.js đọc lại khi đổi giao diện
  *   - Bàn chơi tự co theo khung (app.js đặt kích thước .board), lớp phủ bắt đầu / tạm dừng / hết lượt nằm trên .stage
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ffd666; }
 :root {
   --app-max: 760px;
   /* Ban ngày */

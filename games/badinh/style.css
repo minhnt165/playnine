@@ -4,6 +4,9 @@
  *     (translate + scale) nên lá bay từ bàn xuống đáy, từ nọc ra đáy bằng transition
  *   - Bàn nỉ xanh, chuỗi, điểm bay lên, băng hết ván
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #2ec48c; }
 :root {
   --app-max: 860px;
   --felt-1: #2f8d69;

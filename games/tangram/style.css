@@ -4,6 +4,9 @@
  *   - Màu 7 mảnh: --p0..--p6 (L L M S S Q P); hình bóng: --sil; khay: --tray
  *   - Màn thấp nằm ngang (điện thoại xoay ngang): thanh công cụ dựng đứng bên phải bàn
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #9b6cff; }
 :root {
   --app-max: 1000px;
   --sil: #2e3354;

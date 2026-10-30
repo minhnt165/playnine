@@ -3,6 +3,9 @@
  *   - Bàn vẽ bằng <canvas>; app.js đo khung .stage, đặt cỡ canvas và đọc màu bàn từ các token dưới đây
  *   - Dọc: số liệu + chế độ trên, bàn dưới; ngang thấp (điện thoại xoay ngang): bàn trái, số liệu phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ef4444; }
 :root {
   --board-bg: #dcdff3;
   --cell-a: #eceefb;

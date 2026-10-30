@@ -4,6 +4,9 @@
  *   - Dọc: HUD một hàng trên bàn; ngang: bàn ở giữa, HUD hai bên (.play là lưới 3 cột)
  *   - Màu bàn lấy từ token --pf-* / --c-* (app.js đọc lại khi đổi giao diện); tối: bàn "Tinh vân" phát sáng
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ff5fa8; }
 :root {
   --pf-top: #f4f1ff;
   --pf-bottom: #dcd6fb;

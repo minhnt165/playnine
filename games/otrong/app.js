@@ -16,7 +16,7 @@
   const F_ORDER = [3, 2, 1, 0]; // ô đích hiển thị từ trái sang: ♠ ♥ ♦ ♣ (chất theo engine: C D H S)
   const kit = PNKit.init({
     gameId: 'otrong',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { auto: true, fourColor: false },
     onSetting,

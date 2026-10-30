@@ -7,7 +7,7 @@
   'use strict';
 
   const M = window.Minesweeper;
-  const APP_VERSION = '1.3.1';
+  const APP_VERSION = '1.3.2';
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'minesweeper' });
   const t = I18N.t;

@@ -5,6 +5,9 @@
  *   - Cỡ lá do app.js tính theo chỗ trống (layout()): --hw lá trên tay, --cw lá giữa bàn, --ow lá úp của máy
  *   - Màn ngang (.stage.wide): máy Tây / Đông hai bên, thanh của bạn nằm cùng hàng với bài
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ff5d7a; }
 :root {
   --app-max: 980px;
   --felt-1: #8a2c4a;

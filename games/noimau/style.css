@@ -3,6 +3,9 @@
  *   - 12 màu đường (--c0 … --c11) đủ tách nhau trên nền sáng và tối
  *   - Bàn chơi là một SVG vuông, cạnh = min(rộng, cao) của .stage (container query)
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #3b82f6; }
 :root {
   --c0: #ef4444;
   --c1: #3b82f6;

@@ -4,6 +4,9 @@
  *   - Mê cung vẽ bằng canvas (app.js đọc các token --mz-* bên dưới); .stage là ô chứa, canvas tự co vừa khung
  *   - Màn hình ngang thấp hoặc máy tính: mê cung bên trái, số liệu + chọn cỡ bên phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #34d399; }
 :root {
   --accent: #0b7f58;
   --accent-strong: #08664a;

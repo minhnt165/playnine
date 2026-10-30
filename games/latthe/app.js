@@ -8,7 +8,7 @@
   'use strict';
 
   const E = window.LatThe;
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.0.2';
   const PN = window.PlayNine || null; // SDK PlayNine: chỉ có khi chạy trong cổng
   PN && PN.init({ gameId: 'latthe' });
   // Âm thanh / pháo giấy của SDK: SDK cũ hoặc chạy không có SDK thì im lặng, không lỗi

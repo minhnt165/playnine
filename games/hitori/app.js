@@ -12,7 +12,7 @@
 
   const E = window.GameEngine;
   const MODES = ['5', '7', '9'];
-  const kit = PNKit.init({ gameId: 'hitori', version: '1.0.0', dict: window.GAME_DICT, defaults: { size: '5', errors: true }, onSetting });
+  const kit = PNKit.init({ gameId: 'hitori', version: '1.0.1', dict: window.GAME_DICT, defaults: { size: '5', errors: true }, onSetting });
   const t = kit.t;
   const $ = (id) => document.getElementById(id);
   const { keys } = kit.store;

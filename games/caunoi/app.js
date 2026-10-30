@@ -18,7 +18,7 @@
   const MODES = Object.keys(E.MODES);
   const kit = PNKit.init({
     gameId: 'caunoi',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { mode: 's', errors: 'auto' },
     onSetting: (key, value) => {

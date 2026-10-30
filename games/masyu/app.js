@@ -16,7 +16,7 @@
   const MODES = ['s', 'm', 'l', 'daily'];
   const kit = PNKit.init({
     gameId: 'masyu',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { mode: 's', size: 's', errors: 'auto', guideSeen: false },
     onSetting,

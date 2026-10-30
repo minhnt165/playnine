@@ -17,7 +17,7 @@
   const FLIP_MS = 320; // khoảng cách lật giữa hai ô khi lộ màu
   const kit = PNKit.init({
     gameId: 'doanchu',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { hard: false, contrast: false, guideSeen: false },
     onSetting,

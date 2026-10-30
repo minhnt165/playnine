@@ -4,6 +4,9 @@
  *   - Cột dưới (dọc) / cột phải (ngang): bài + chip của bạn, lịch sử ngắn, thanh cược và nút
  *   - Cỡ lá chung / lá máy do app.js đặt theo khung bàn (--board-w, --bot-w)
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #50d28c; }
 :root {
   --app-max: 620px;
   --felt-1: #23875a;

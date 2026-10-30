@@ -4,6 +4,9 @@
  *   - Xe: phần tử .car đặt bằng transform theo --cell (px, app.js tính theo khung), hình xe là SVG tự vẽ
  *   - Màn hình ngang thấp (điện thoại xoay ngang): cột trái thanh trên + số liệu + nút, bãi đỗ bên phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #e5383b; }
 :root {
   --lot-frame: #4a4f73;
   --lot-frame-hi: #5b6189;

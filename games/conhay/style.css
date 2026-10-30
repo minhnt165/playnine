@@ -5,6 +5,9 @@
  *   - Màu người chơi: --pl0 đỏ (bạn), --pl1 xanh dương, --pl2 xanh lục
  *   - Màn hình ngang thấp: bàn bên trái, thẻ người chơi bên phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #f2555a; }
 :root {
   --pl0: #e5484d;
   --pl0-ink: #a8242a;

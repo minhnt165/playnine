@@ -13,7 +13,7 @@
   const MODE = 'classic';
   const kit = PNKit.init({
     gameId: 'rotnuoc',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { symbols: true },
     onSetting(key) {

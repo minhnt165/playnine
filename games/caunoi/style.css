@@ -3,6 +3,9 @@
  *   - Bàn chơi là một SVG vuông (mặt biển), cạnh = min(rộng, cao) của .stage (container query)
  *   - Đảo trắng viền xanh biển; đủ cầu thì xanh lá; lỗi thì đỏ; cầu màu gỗ
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #3898ec; }
 :root {
   --sea: #e3f0fa;
   --sea-dot: rgba(37, 99, 160, 0.22);

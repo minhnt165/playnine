@@ -4,6 +4,9 @@
  *   - Cỡ bàn theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
  *   - Báo lỗi: ô đen kề nhau / hai vòng trùng số màu đỏ, ô trắng bị tách rời có sọc đỏ, số còn trùng màu hổ phách
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #2dd4bf; }
 :root {
   --accent: #0d8578;
   --accent-strong: #0a6b61;

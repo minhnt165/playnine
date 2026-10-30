@@ -20,7 +20,7 @@
 
   const kit = PNKit.init({
     gameId: 'thienthach',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { controls: 'buttons', autofire: false, vibrate: true, guideSeen: false },
     onSetting,

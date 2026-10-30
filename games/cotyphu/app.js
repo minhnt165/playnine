@@ -20,7 +20,7 @@
   const { BOARD, GROUPS, N, LEVELS } = E;
   const kit = PNKit.init({
     gameId: 'cotyphu',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { level: 'medium', speed: 'normal' },
     onSetting,

@@ -1,6 +1,9 @@
 /* =====================================================================
  * Lật Thẻ - Giao diện (nền giấy dó, lưng thẻ sơn mài đỏ viền vàng; có dark mode)
  * ===================================================================== */
+
+/* Màu nhận diện của game, tô nền cảnh của ../_kit/skin.css */
+:root { --scene: #e03c3c; }
 :root {
   --bg: #f5ecdc;
   --surface: #fffaf1;

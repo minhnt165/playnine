@@ -3,6 +3,9 @@
  *   - Bàn nỉ xanh: nhà cái ở trên, người chơi ở dưới, hộp bài góc phải; cỡ lá (--card-w) do app.js tính theo khung
  *   - Màn hình ngang thấp: bàn bên trái, HUD + điều khiển bên phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #2fa36c; }
 :root {
   --app-max: 620px;
   --felt-1: #2a9663;

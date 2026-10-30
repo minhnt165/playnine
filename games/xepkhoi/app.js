@@ -14,7 +14,7 @@
   const N = E.SIZE;
   const PITCH = 1.07; // khoảng cách giữa hai ô = 1 ô + khe 0.07 ô (khớp style.css)
   const PAD = 0.1; // lề trong của bàn, tính theo ô
-  const kit = PNKit.init({ gameId: 'xepkhoi', version: '1.0.0', dict: window.GAME_DICT });
+  const kit = PNKit.init({ gameId: 'xepkhoi', version: '1.0.1', dict: window.GAME_DICT });
   const t = kit.t;
   const $ = (id) => document.getElementById(id);
   const { keys } = kit.store;

@@ -12,7 +12,7 @@
 
   const E = window.GameEngine;
   const MODES = ['5x5', '7x7'];
-  const kit = PNKit.init({ gameId: 'tatden', version: '1.0.0', dict: window.GAME_DICT, defaults: { size: '5x5' }, onSetting });
+  const kit = PNKit.init({ gameId: 'tatden', version: '1.0.1', dict: window.GAME_DICT, defaults: { size: '5x5' }, onSetting });
   const t = kit.t;
   const $ = (id) => document.getElementById(id);
   const { keys } = kit.store;

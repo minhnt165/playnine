@@ -4,6 +4,9 @@
  *   - Ô gõ cao đúng 3 dòng; con trỏ trượt mượt giữa các chữ
  *   - Bàn phím điện thoại bật: app.js đặt --vvh / --vvtop theo visualViewport và lớp html.kb để gọn bố cục
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #2dd4bf; }
 :root {
   --accent: #0b7a70;
   --accent-strong: #08655c;

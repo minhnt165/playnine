@@ -5,6 +5,9 @@
  *   - Cỡ quân do app.js tính theo khung (--tw, --th, --dep): vừa khít, không cuộn
  *   - Màn hình ngang: bàn bên trái, số liệu + chọn bàn + nút bên phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #34c79a; }
 :root {
   --accent: #0f7a5c;
   --accent-strong: #0b634a;

@@ -6,6 +6,9 @@
  *   - Cỡ bàn theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
  *   - Dưới bàn: thanh "số tiếp theo" (lùi / chọn / tiến) và hàng công cụ
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ff5c9d; }
 :root {
   --grid-line: #d9dbef;
   --board-bg: #c9cbe6;

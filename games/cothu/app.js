@@ -16,7 +16,7 @@
   const LEVELS = E.LEVELS;
   const kit = PNKit.init({
     gameId: 'cothu',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { level: 'medium', side: 'red' },
     onSetting,

@@ -18,7 +18,7 @@
   const MODE = 'classic';
   const kit = PNKit.init({
     gameId: 'xidach',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { fourColor: false },
     onSetting: (key) => { if (key === 'fourColor') applyFourColor(); },

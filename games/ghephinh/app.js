@@ -19,7 +19,7 @@
   const E = window.GameEngine;
   const SC = window.JigsawScenes;
   const SIZE_MODES = ['easy', 'medium', 'hard'];
-  const kit = PNKit.init({ gameId: 'ghephinh', version: '1.0.0', dict: window.GAME_DICT, defaults: { size: 'easy', grid: true, edges: false }, onSetting });
+  const kit = PNKit.init({ gameId: 'ghephinh', version: '1.0.1', dict: window.GAME_DICT, defaults: { size: 'easy', grid: true, edges: false }, onSetting });
   const t = kit.t;
   const $ = (id) => document.getElementById(id);
   const { keys } = kit.store;

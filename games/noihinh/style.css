@@ -1,6 +1,9 @@
 /* =====================================================================
  * Nối Hình - Giao diện (nền tím pastel, bảng gỗ, khay gỗ, nút xanh lá; có dark mode)
  * ===================================================================== */
+
+/* Màu nhận diện của game, tô nền cảnh của ../_kit/skin.css */
+:root { --scene: #b18cff; }
 :root {
   --bg: #e9dcf5;
   --surface: #ffffff;

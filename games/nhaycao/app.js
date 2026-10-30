@@ -18,7 +18,7 @@
   const VH = E.VIEW_H;
   const kit = PNKit.init({
     gameId: 'nhaycao',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { tilt: false, vibrate: true, guideSeen: false },
     onSetting,

@@ -21,7 +21,7 @@
   const LEVELS = E.LEVELS;
   const kit = PNKit.init({
     gameId: 'bia',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { level: 'medium', opponent: 'cpu', guide: true, vibrate: true, guideSeen: false },
     onSetting,

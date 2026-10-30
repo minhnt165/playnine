@@ -4,6 +4,9 @@
  *   - Khay nỉ xanh, xúc xắc ngà, nút lắc vàng; viên đang giữ nhô lên có viền vàng và nhãn "GIỮ"
  *   - Lắc: viên bay lộn một vòng rồi chạm bàn (tắt khi giảm chuyển động)
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #2fa077; }
 :root {
   --app-max: 600px;
   --felt: radial-gradient(130% 120% at 50% 0%, #2a8c69 0%, #1a6b50 55%, #12523d 100%);

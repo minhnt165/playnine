@@ -3,6 +3,9 @@
  *   - Bàn chơi SVG: sàn ô cờ nhạt, tường tím than, đích vòng hổ phách, thùng gỗ (vào đích thì xanh lá)
  *   - Màn hình ngang thấp (điện thoại xoay ngang): cột trái thanh trên + số liệu + nút, bàn chơi bên phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #e8930c; }
 :root {
   --floor: #e7e4f6;
   --floor-alt: #dfdbf1;

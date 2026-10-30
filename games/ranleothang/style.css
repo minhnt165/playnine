@@ -4,6 +4,9 @@
  *   - Quân là lớp HTML phủ trên bàn, mỗi quân một khung cỡ đúng một ô, dời bằng transform (--x, --y tính theo ô)
  *   - Bàn luôn vuông, vừa khung (.stage là container); điện thoại nằm ngang: bàn bên trái, người chơi + xúc xắc bên phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #7cdb78; }
 :root {
   --p0: #ef4444;
   --p1: #2563eb;

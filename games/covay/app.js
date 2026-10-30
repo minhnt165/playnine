@@ -19,7 +19,7 @@
   const { BLACK, WHITE, PASS, RESIGN, LEVELS, SIZES } = E;
   const kit = PNKit.init({
     gameId: 'covay',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { level: 'medium', side: 'black', size: '9', opp: 'ai', confirm: true },
     onSetting,

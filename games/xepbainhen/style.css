@@ -3,6 +3,9 @@
  *   - Bàn chơi rộng hơn khung mặc định của kit để đủ chỗ 10 cột trên máy tính
  *   - Vị trí từng lá do app.js tính (translate), cỡ lá đặt bằng --card-w trên .board
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #4adea0; }
 :root {
   --app-max: 1120px;
   --felt: rgba(106, 76, 245, 0.06);

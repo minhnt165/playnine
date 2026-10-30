@@ -1,6 +1,9 @@
 /* =====================================================================
  * Tranh Ẩn - Giao diện (bảng màu PlayNine, dark mode, mobile first)
  * ===================================================================== */
+
+/* Màu nhận diện của game, tô nền cảnh của ../_kit/skin.css */
+:root { --scene: #f59e0b; }
 :root {
   --bg: #f3f4fb;
   --surface: #ffffff;

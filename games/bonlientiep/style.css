@@ -4,6 +4,9 @@
  * Khung gỗ khoét 42 lỗ (mask), quân nằm phía sau khung nên rơi "vào" lỗ;
  * bàn tự co theo khung (iframe) để không phải cuộn khi chơi.
  * ===================================================================== */
+
+/* Màu nhận diện của game, tô nền cảnh của ../_kit/skin.css */
+:root { --scene: #f2b705; }
 :root {
   --bg: #f3f4fb;
   --surface: #ffffff;

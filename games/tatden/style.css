@@ -3,6 +3,9 @@
  *   - Bàn đèn: khung xanh đêm ở cả hai giao diện để đèn sáng nổi bật, đèn vàng ấm có quầng sáng
  *   - Cỡ bàn theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ffc83d; }
 :root {
   --panel: linear-gradient(160deg, #2c3068, #1c1f48);
   --panel-edge: rgba(255, 255, 255, 0.08);

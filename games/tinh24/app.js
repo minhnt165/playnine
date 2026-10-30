@@ -14,7 +14,7 @@
 
   const E = window.GameEngine;
   const MODES = E.MODES;
-  const kit = PNKit.init({ gameId: 'tinh24', version: '1.0.0', dict: window.GAME_DICT, defaults: { level: 'easy' }, onSetting });
+  const kit = PNKit.init({ gameId: 'tinh24', version: '1.0.1', dict: window.GAME_DICT, defaults: { level: 'easy' }, onSetting });
   const t = kit.t;
   const $ = (id) => document.getElementById(id);
   const { keys } = kit.store;

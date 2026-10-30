@@ -5,6 +5,9 @@
  *   - 5 lá: cỡ theo khung (app.js đặt --card-w), nhãn GIỮ dưới lá đang giữ
  *   - Màn hình ngang thấp: bảng trả bên trái, bài + nút bên phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ffd54a; }
 :root {
   --app-max: 760px;
   --machine: linear-gradient(170deg, #22339a 0%, #15216d 55%, #0e174f 100%);

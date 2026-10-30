@@ -3,6 +3,9 @@
  *   Đè token màu của kit trong :root nếu game cần bảng màu riêng.
  * ===================================================================== */
 
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ff6fa8; }
+
 /* Nút chạm lớn giữa màn hình */
 .tap-button {
   width: min(70vw, 280px);

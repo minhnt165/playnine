@@ -1,6 +1,6 @@
 # PlayNine Kit
 
-Phần dùng chung cho **game mới** (JS thuần, không bước build): bảng màu sáng/tối của PlayNine, thanh trên, nút, modal, toast, cài đặt, lưu trữ, đa ngôn ngữ, SDK, âm thanh, đồng hồ. Game cũ (21 game đầu) không dùng kit và không phải sửa.
+Phần dùng chung cho **game mới** (JS thuần, không bước build): bảng màu sáng/tối của PlayNine, thanh trên, nút, modal, toast, cài đặt, lưu trữ, đa ngôn ngữ, SDK, âm thanh, đồng hồ. Game cũ (21 game đầu) không dùng kit; 20 game trong số đó nạp `skin.css` sau `style.css` của mình để có cùng phong cách casual game (font, nút nổi, popup, nền cảnh) mà vẫn giữ màu riêng. Cờ Tướng (`xiangqi`, một file) tự chép phong cách đó vào khối `<style>`. Sửa phong cách ở `kit.css` thì xem lại `skin.css` cho khớp.
 
 `npm run assemble` chép thư mục này ra `dist/_kit/`, nên game nạp bằng đường dẫn tương đối `../_kit/`. Trang mẫu: `_kit/demo.html` (dev: http://localhost:5180/playnine/_kit/demo.html).
 
@@ -9,7 +9,8 @@ Phần dùng chung cho **game mới** (JS thuần, không bước build): bảng
 ```html
 <head>
   <script>/* áp theme đã lưu trước khi vẽ: đọc playnine-<id>-settings-v1 .theme */</script>
-  <link rel="stylesheet" href="../_kit/kit.css?v=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../_kit/kit.css?v=3">
   <link rel="stylesheet" href="style.css?v=1.0.0">
 </head>
 <body>
@@ -23,6 +24,8 @@ Phần dùng chung cho **game mới** (JS thuần, không bước build): bảng
 ```
 
 `style.css` của game đè token trong `:root` (ví dụ `--accent`, `--bg`) và thêm phần riêng (bàn chơi, quân…). Xem `games/_template/` để có khung đầy đủ.
+
+Giao diện theo phong cách casual game: tiêu đề, số liệu HUD, nút và tiêu đề popup dùng font Baloo 2 (`--font-display`), chữ thường dùng Be Vietnam Pro (`--font`); nút và ô HUD nổi có gờ đáy (`--edge`, `--accent-edge`), bấm thì lún xuống; popup bật ra giữa màn hình; `#modal-win` có ba ngôi sao. Mỗi game đặt `--scene` (màu nhận diện, lấy màu `rgba` đầu tiên trong `preview.bg` của `game.json`) để tô nền cảnh: `:root { --scene: #ffc83d; }`. Không đặt thì nền theo `--accent`.
 
 ## API
 

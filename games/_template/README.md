@@ -7,7 +7,7 @@ Game {{nameVi}} ({{nameEn}}) của PlayNine, viết bằng HTML + CSS + JavaScri
 ## Việc cần làm khi biến khung này thành game thật
 
 1. `engine.js` + `test.js`: viết luật game dạng hàm thuần (trạng thái cũ vào, trạng thái mới ra), `toJSON` / `fromJSON` cho ván lưu; test trước (`node test.js`).
-2. `index.html`, `style.css`, `app.js`: phần chơi trong `<main class="stage">`; giữ thanh trên, các modal Cài đặt / Cách chơi / Thống kê. Đè token màu của kit trong `:root` của `style.css` nếu cần.
+2. `index.html`, `style.css`, `app.js`: phần chơi trong `<main class="stage">`; giữ thanh trên, các modal Cài đặt / Cách chơi / Thống kê. Đặt `--scene` trong `style.css` bằng màu `rgba` đầu tiên của `preview.bg` (màu nền cảnh của game); đè token màu khác của kit trong `:root` nếu cần.
 3. `i18n.js`: chuỗi tiếng Anh và tiếng Việt (bắt buộc `meta.title`, `meta.description`, `app.name`).
 4. `game.json`: điền `sub`, `desc`, `tags`, `note`, nền `preview.bg`, thể loại, và phần `server`:
    - `metric`: `time_low` (nhanh nhất), `score_high` (điểm cao nhất) hoặc `wins` (số ván thắng);

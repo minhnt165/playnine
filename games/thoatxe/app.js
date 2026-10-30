@@ -13,7 +13,7 @@
 
   const E = window.GameEngine;
   const N = E.N;
-  const kit = PNKit.init({ gameId: 'thoatxe', version: '1.0.0', dict: window.GAME_DICT });
+  const kit = PNKit.init({ gameId: 'thoatxe', version: '1.0.1', dict: window.GAME_DICT });
   const t = kit.t;
   const $ = (id) => document.getElementById(id);
   const { keys } = kit.store;

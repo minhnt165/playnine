@@ -17,7 +17,7 @@
   const SIDES = { white: E.WHITE, black: E.BLACK };
   const kit = PNKit.init({
     gameId: 'cochinquan',
-    version: '1.0.0',
+    version: '1.0.1',
     dict: window.GAME_DICT,
     defaults: { level: 'easy', side: 'white' },
     onSetting: (key) => { if (key === 'level' || key === 'side') changeSetting(); },

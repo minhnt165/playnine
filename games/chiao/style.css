@@ -4,6 +4,9 @@
  *   - 8 màu cho hình hợp lệ (--f0..7 nền, --e0..7 viền), mỗi giao diện một bộ để rõ trên nền sáng / tối
  *   - Cỡ bàn theo ô chứa (.stage là container): luôn vuông, vừa khung, không cuộn
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #3fd08e; }
 :root {
   --board-bg: #ffffff;
   --grid: rgba(20, 22, 43, 0.12);

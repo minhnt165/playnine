@@ -5,6 +5,9 @@
  *   - Bố cục: .seas đổi grid-template-areas theo lớp place / battle và tall / wide2 / wide3 (app.js chọn)
  *   - Tàu: thân vẽ bằng clip-path (mũi nhọn), chi tiết boong bằng gradient; tàu chìm cháy sẫm
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #5ab4f0; }
 :root {
   --app-max: 1100px;
   --sea-1: #c4e6f8;

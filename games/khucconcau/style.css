@@ -3,6 +3,9 @@
  *   - Màu bàn / chày / đĩa là token CSS, app.js đọc lại khi đổi giao diện để vẽ canvas
  *   - Màn hình ngang rộng: nới khung app để bàn nằm ngang (người bên trái, máy bên phải)
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #4d8bff; }
 :root {
   --rink-1: #f4f9ff;
   --rink-2: #dce9fa;

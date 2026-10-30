@@ -3,6 +3,9 @@
  *   - Kích thước bàn / khay do app.js tính theo khung (.stage) và ghi vào --cell, --tcell, --board
  *   - Màu khối --c1..--c8 (số màu trong engine), ô trống, bóng mờ chỗ đặt, đường sắp xóa
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #1fb5d6; }
 :root {
   --c1: #f5b301; /* vuông */
   --c2: #1fb5d6; /* thẳng */

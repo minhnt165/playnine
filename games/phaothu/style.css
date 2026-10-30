@@ -3,6 +3,9 @@
  *   - Màu trời / đất / pháo là token CSS; app.js đọc lại khi đổi giao diện để vẽ canvas
  *   - Màn hình dọc: bản đồ trên, bảng ngắm dưới; màn hình ngang đủ rộng: bảng ngắm ở bên phải
  * ===================================================================== */
+
+/* Màu nhận diện của game (giống preview.bg trong game.json), tô nền cảnh của kit */
+:root { --scene: #ffb020; }
 :root {
   --tank-0: #e5484d;
   --tank-0-dark: #8f1d22;
